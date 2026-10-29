@@ -895,13 +895,13 @@
 		text-align: center;
 	}
 
-	.download-brand-btn.svg-btn {
+	.download-brand-btn {
 		background: var(--brand-emerald, #13371b);
 		color: #ffffff;
 		border: 1px solid var(--brand-emerald, #13371b);
 	}
 
-	.download-brand-btn.svg-btn:hover {
+	.download-brand-btn:hover {
 		background: var(--brand-leaf, #598f3a);
 		border-color: var(--brand-leaf, #598f3a);
 		color: #ffffff;
@@ -909,34 +909,17 @@
 		transform: translateY(-1px);
 	}
 
-	:global(.dark) .download-brand-btn.svg-btn {
+	:global(.dark) .download-brand-btn {
 		background: var(--brand-gold, #ffb327);
 		color: #101e14;
 		border-color: var(--brand-gold, #ffb327);
 	}
 
-	:global(.dark) .download-brand-btn.svg-btn:hover {
+	:global(.dark) .download-brand-btn:hover {
 		background: #ffa80a;
 		border-color: #ffa80a;
 		color: #101e14;
 		box-shadow: 0 4px 12px rgba(255, 179, 39, 0.35);
-	}
-
-	.download-brand-btn.png-btn {
-		background: var(--bg-secondary);
-		color: var(--fg-primary);
-		border: 1px solid var(--border);
-	}
-
-	.download-brand-btn.png-btn:hover {
-		background: var(--panel-bg);
-		border-color: var(--border-hover);
-		color: var(--brand-leaf, #598f3a);
-		transform: translateY(-1px);
-	}
-
-	:global(.dark) .download-brand-btn.png-btn:hover {
-		color: var(--brand-gold, #ffb327);
 	}
 
 	/* RESPONSIVE */
