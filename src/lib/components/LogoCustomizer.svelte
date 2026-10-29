@@ -15,13 +15,25 @@
 
 	let { brandColors }: Props = $props();
 
+	type BgShape = 'circle' | 'solid' | 'transparent';
+
 	// Presets
 	const PRESETS = [
 		{
 			id: 'canonical',
 			nameUk: 'Канонічний',
 			nameEn: 'Canonical',
-			bgEnabled: true,
+			bgShape: 'circle' as BgShape,
+			bgCircle: '#13371B',
+			paw: '#FFFFFF',
+			vetCrew: '#FFB327',
+			hospital: '#598F3A'
+		},
+		{
+			id: 'solid-emerald',
+			nameUk: 'Суцільний смарагд',
+			nameEn: 'Solid Emerald',
+			bgShape: 'solid' as BgShape,
 			bgCircle: '#13371B',
 			paw: '#FFFFFF',
 			vetCrew: '#FFB327',
@@ -31,7 +43,7 @@
 			id: 'transparent-gold',
 			nameUk: 'Без тла (Золотий)',
 			nameEn: 'Transparent (Gold)',
-			bgEnabled: false,
+			bgShape: 'transparent' as BgShape,
 			bgCircle: '#13371B',
 			paw: '#13371B',
 			vetCrew: '#FFB327',
@@ -41,7 +53,7 @@
 			id: 'light-theme',
 			nameUk: 'Світла тема',
 			nameEn: 'Light Theme',
-			bgEnabled: true,
+			bgShape: 'circle' as BgShape,
 			bgCircle: '#598F3A',
 			paw: '#FFB327',
 			vetCrew: '#E5E5E5',
@@ -51,7 +63,7 @@
 			id: 'monochrome-white',
 			nameUk: 'Монохром (Білий)',
 			nameEn: 'Monochrome (White)',
-			bgEnabled: false,
+			bgShape: 'transparent' as BgShape,
 			bgCircle: '#13371B',
 			paw: '#FFFFFF',
 			vetCrew: '#FFFFFF',
@@ -61,7 +73,7 @@
 			id: 'monochrome-dark',
 			nameUk: 'Монохром (Темний)',
 			nameEn: 'Monochrome (Dark)',
-			bgEnabled: false,
+			bgShape: 'transparent' as BgShape,
 			bgCircle: '#13371B',
 			paw: '#262626',
 			vetCrew: '#262626',
@@ -70,7 +82,7 @@
 	];
 
 	// Active configuration state
-	let bgEnabled = $state(true);
+	let bgShape = $state<BgShape>('circle');
 	let bgCircleColor = $state('#13371B');
 	let pawColor = $state('#FFFFFF');
 	let vetCrewColor = $state('#FFB327');
@@ -84,7 +96,7 @@
 	let previewGrid = $state<'subtle' | 'dark' | 'light'>('subtle');
 
 	function applyPreset(p: (typeof PRESETS)[0]) {
-		bgEnabled = p.bgEnabled;
+		bgShape = p.bgShape;
 		bgCircleColor = p.bgCircle;
 		pawColor = p.paw;
 		vetCrewColor = p.vetCrew;
@@ -123,13 +135,16 @@
 
 	// Dynamic SVG string generation for download and canvas export
 	let svgString = $derived.by(() => {
-		const bgCircleElement = bgEnabled
-			? `<circle id="bg-circle" cx="485.31" cy="485.31" r="461.76" fill="${bgCircleColor}"/>`
-			: '';
+		const bgElement =
+			bgShape === 'circle'
+				? `<circle id="bg-circle" cx="485.31" cy="485.31" r="461.76" fill="${bgCircleColor}"/>`
+				: bgShape === 'solid'
+				? `<rect id="bg-solid" x="0" y="0" width="970.62" height="970.62" fill="${bgCircleColor}"/>`
+				: '';
 
 		return `<svg id="vet-crew-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 970.62 970.62" width="970.62" height="970.62">
   <title>Vet Crew Hospital Logo</title>
-  ${bgCircleElement}
+  ${bgElement}
   <g id="logo-content" transform="translate(0, 6.15)">
     <g id="paw" fill="${pawColor}">
       <path id="paw-toe-right" d="${logoPaths['paw-toe-right'].d}"/>
@@ -149,7 +164,8 @@
 		const url = URL.createObjectURL(blob);
 		const link = document.createElement('a');
 		link.href = url;
-		link.download = `VetCrewHospital-${bgEnabled ? 'badge' : 'nobg'}.svg`;
+		const suffix = bgShape === 'circle' ? 'badge' : bgShape === 'solid' ? 'solid' : 'transparent';
+		link.download = `VetCrewHospital-${suffix}.svg`;
 		document.body.appendChild(link);
 		link.click();
 		document.body.removeChild(link);
@@ -170,6 +186,11 @@
 			const ctx = canvas.getContext('2d');
 			if (!ctx) return;
 
+			if (bgShape === 'solid') {
+				ctx.fillStyle = bgCircleColor;
+				ctx.fillRect(0, 0, size, size);
+			}
+
 			const img = new Image();
 			const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
 			const url = URL.createObjectURL(svgBlob);
@@ -189,7 +210,8 @@
 				const pngUrl = URL.createObjectURL(pngBlob);
 				const link = document.createElement('a');
 				link.href = pngUrl;
-				link.download = `VetCrewHospital-${bgEnabled ? 'badge' : 'nobg'}-2x.png`;
+				const suffix = bgShape === 'circle' ? 'badge' : bgShape === 'solid' ? 'solid' : 'transparent';
+				link.download = `VetCrewHospital-${suffix}-2x.png`;
 				document.body.appendChild(link);
 				link.click();
 				document.body.removeChild(link);
@@ -210,8 +232,8 @@
 		<div class="presets-list">
 			{#each PRESETS as p (p.id)}
 				{@const isActive =
-					bgEnabled === p.bgEnabled &&
-					(!p.bgEnabled || bgCircleColor.toLowerCase() === p.bgCircle.toLowerCase()) &&
+					bgShape === p.bgShape &&
+					(p.bgShape === 'transparent' || bgCircleColor.toLowerCase() === p.bgCircle.toLowerCase()) &&
 					pawColor.toLowerCase() === p.paw.toLowerCase() &&
 					vetCrewColor.toLowerCase() === p.vetCrew.toLowerCase() &&
 					hospitalColor.toLowerCase() === p.hospital.toLowerCase()}
@@ -221,7 +243,11 @@
 					class:is-active={isActive}
 					onclick={() => applyPreset(p)}
 				>
-					<span class="preset-dot" style:background-color={p.bgEnabled ? p.bgCircle : p.paw}></span>
+					<span
+						class="preset-dot"
+						class:preset-dot--solid={p.bgShape === 'solid'}
+						style:background-color={p.bgShape !== 'transparent' ? p.bgCircle : p.paw}
+					></span>
 					<span>{langStore.current === 'uk' ? p.nameUk : p.nameEn}</span>
 				</button>
 			{/each}
@@ -293,12 +319,22 @@
 					width="280"
 					height="280"
 				>
-					{#if bgEnabled}
+					{#if bgShape === 'circle'}
 						<circle
 							id="live-bg-circle"
 							cx="485.31"
 							cy="485.31"
 							r="461.76"
+							fill={bgCircleColor}
+						/>
+					{:else if bgShape === 'solid'}
+						<rect
+							id="live-bg-solid"
+							x="0"
+							y="0"
+							width="970.62"
+							height="970.62"
+							rx="36"
 							fill={bgCircleColor}
 						/>
 					{/if}
@@ -320,28 +356,52 @@
 
 		<!-- Right: Element & Color Controls -->
 		<div class="controls-panel">
-			<!-- 1. Background Toggle -->
+			<!-- 1. Background Shape 3-Way Selector -->
 			<div class="control-row bg-toggle-row">
 				<div class="row-meta">
-					<span class="control-title">{langStore.current === 'uk' ? 'Фонове коло:' : 'Background Circle:'}</span>
-					<span class="control-desc">{langStore.current === 'uk' ? 'Увімкнути чи зробити тло прозорим' : 'Toggle fill or transparent'}</span>
+					<span class="control-title">{langStore.current === 'uk' ? 'Форма підкладки:' : 'Background Style:'}</span>
+					<span class="control-desc">
+						{langStore.current === 'uk'
+							? 'Кругла емблема, суцільний квадрат або прозоре тло'
+							: 'Circle badge, solid canvas, or transparent'}
+					</span>
 				</div>
 				<div class="toggle-pill-wrap">
 					<button
 						type="button"
 						class="pill-btn"
-						class:is-active={bgEnabled}
-						onclick={() => (bgEnabled = true)}
+						class:is-active={bgShape === 'circle'}
+						onclick={() => {
+							bgShape = 'circle';
+							activeGroup = 'bgCircle';
+						}}
+						title={langStore.current === 'uk' ? 'Канонічна кругла емблема' : 'Round emblem badge'}
 					>
-						{langStore.current === 'uk' ? 'З фоном' : 'With Fill'}
+						<span class="pill-glyph">●</span>
+						<span>{langStore.current === 'uk' ? 'Кругла' : 'Circle'}</span>
 					</button>
 					<button
 						type="button"
 						class="pill-btn"
-						class:is-active={!bgEnabled}
-						onclick={() => (bgEnabled = false)}
+						class:is-active={bgShape === 'solid'}
+						onclick={() => {
+							bgShape = 'solid';
+							activeGroup = 'bgCircle';
+						}}
+						title={langStore.current === 'uk' ? 'Суцільна заливка артборду' : 'Full solid canvas fill'}
 					>
-						{langStore.current === 'uk' ? 'Прозоре' : 'Transparent'}
+						<span class="pill-glyph">■</span>
+						<span>{langStore.current === 'uk' ? 'Суцільна' : 'Solid'}</span>
+					</button>
+					<button
+						type="button"
+						class="pill-btn"
+						class:is-active={bgShape === 'transparent'}
+						onclick={() => (bgShape = 'transparent')}
+						title={langStore.current === 'uk' ? 'Без підкладки (прозорий фон)' : 'Transparent without fill'}
+					>
+						<span class="pill-glyph">◌</span>
+						<span>{langStore.current === 'uk' ? 'Без фону' : 'No Fill'}</span>
 					</button>
 				</div>
 			</div>
@@ -352,13 +412,26 @@
 					type="button"
 					class="element-tab"
 					class:is-selected={activeGroup === 'bgCircle'}
-					class:is-disabled={!bgEnabled}
-					onclick={() => { if (bgEnabled) activeGroup = 'bgCircle'; }}
+					class:is-disabled={bgShape === 'transparent'}
+					onclick={() => {
+						if (bgShape === 'transparent') bgShape = 'circle';
+						activeGroup = 'bgCircle';
+					}}
 				>
-					<span class="tab-indicator" style:background-color={bgEnabled ? bgCircleColor : 'transparent'}></span>
+					<span
+						class="tab-indicator"
+						class:tab-indicator--solid={bgShape === 'solid'}
+						style:background-color={bgShape !== 'transparent' ? bgCircleColor : 'transparent'}
+					></span>
 					<div class="tab-text">
-						<span class="tab-name">{langStore.current === 'uk' ? 'Коло основи' : 'Background'}</span>
-						<code class="tab-hex">{bgEnabled ? bgCircleColor : (langStore.current === 'uk' ? 'Прозоре' : 'None')}</code>
+						<span class="tab-name">
+							{langStore.current === 'uk'
+								? (bgShape === 'solid' ? 'Суцільний фон' : 'Коло основи')
+								: (bgShape === 'solid' ? 'Solid Fill' : 'Base Circle')}
+						</span>
+						<code class="tab-hex">
+							{bgShape !== 'transparent' ? bgCircleColor : (langStore.current === 'uk' ? 'Прозоре' : 'None')}
+						</code>
 					</div>
 				</button>
 
@@ -408,9 +481,17 @@
 					<span class="palette-title">
 						{langStore.current === 'uk' ? 'Виберіть колір для:' : 'Choose color for:'}
 						<strong>
-							{activeGroup === 'bgCircle' ? (langStore.current === 'uk' ? 'Коло основи' : 'Background') :
-							 activeGroup === 'paw' ? (langStore.current === 'uk' ? 'Лапка' : 'Paw Print') :
-							 activeGroup === 'vetCrew' ? '«VET CREW»' : '«HOSPITAL»'}
+							{#if activeGroup === 'bgCircle'}
+								{langStore.current === 'uk'
+									? (bgShape === 'solid' ? 'Суцільного фону' : 'Кола основи')
+									: (bgShape === 'solid' ? 'Solid Background' : 'Circle Base')}
+							{:else if activeGroup === 'paw'}
+								{langStore.current === 'uk' ? 'Лапки' : 'Paw Print'}
+							{:else if activeGroup === 'vetCrew'}
+								«VET CREW»
+							{:else if activeGroup === 'hospital'}
+								«HOSPITAL»
+							{/if}
 						</strong>
 					</span>
 				</div>
@@ -527,6 +608,10 @@
 		height: 10px;
 		border-radius: 50%;
 		border: 1px solid rgba(0, 0, 0, 0.15);
+	}
+
+	.preset-dot--solid {
+		border-radius: 2px;
 	}
 
 	/* WORKSPACE */
@@ -706,6 +791,9 @@
 	}
 
 	.pill-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
 		padding: 0.4rem 0.85rem;
 		border-radius: 8px;
 		font-size: 0.8rem;
@@ -716,10 +804,21 @@
 		transition: all 0.15s ease;
 	}
 
+	.pill-glyph {
+		font-size: 0.75rem;
+		line-height: 1;
+		opacity: 0.85;
+	}
+
 	.pill-btn.is-active {
 		background: var(--panel-bg);
 		color: var(--fg-primary);
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	}
+
+	.pill-btn.is-active .pill-glyph {
+		color: var(--brand-leaf);
+		opacity: 1;
 	}
 
 	/* ELEMENT TABS */
@@ -759,6 +858,11 @@
 		border-radius: 50%;
 		border: 1.5px solid rgba(0, 0, 0, 0.2);
 		flex-shrink: 0;
+		transition: border-radius 0.2s ease;
+	}
+
+	.tab-indicator--solid {
+		border-radius: 4px;
 	}
 
 	.tab-text {
@@ -871,6 +975,28 @@
 
 		.swatches-grid {
 			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 640px) {
+		.control-row.bg-toggle-row {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 0.75rem;
+		}
+
+		.toggle-pill-wrap {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			width: 100%;
+		}
+
+		.pill-btn {
+			padding: 0.45rem 0.25rem;
+			font-size: 0.72rem;
+			justify-content: center;
+			text-align: center;
+			gap: 0.2rem;
 		}
 	}
 </style>
