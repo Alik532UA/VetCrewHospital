@@ -25,6 +25,18 @@ export function isEditableTarget(target: EventTarget | null | undefined): boolea
 	return typeof element?.closest === 'function' && element.closest(EDITABLE) !== null;
 }
 
+export function toKeyStroke(event: KeyboardEvent): KeyStroke {
+	return {
+		letter: shortcutLetter(event),
+		code: event.code,
+		repeat: event.repeat,
+		ctrlKey: event.ctrlKey,
+		altKey: event.altKey,
+		metaKey: event.metaKey,
+		target: event.composedPath?.()[0] ?? event.target
+	};
+}
+
 export function createKeySequence(options: {
 	/** Мала латинська літера. */
 	letter: string;
@@ -48,7 +60,12 @@ export function createKeySequence(options: {
 
 	return {
 		/** true — серію завершено цим натисканням. */
-		handle(stroke: KeyStroke): boolean {
+		handle(input: KeyStroke | KeyboardEvent): boolean {
+			const stroke: KeyStroke =
+				typeof input === 'object' && input !== null && 'key' in input
+					? toKeyStroke(input as KeyboardEvent)
+					: (input as KeyStroke);
+
 			// Затиснута клавіша — одне натискання, а набір у полі — не жест і не скидання.
 			if (stroke.repeat || isEditableTarget(stroke.target) || MODIFIER.test(stroke.code)) return false;
 			if (stroke.letter !== options.letter || stroke.ctrlKey || stroke.altKey || stroke.metaKey) {

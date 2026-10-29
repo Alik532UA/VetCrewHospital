@@ -6,7 +6,7 @@
 	import { logService } from '../services/logService.svelte';
 	import { debugMode } from '../debug/debugMode.svelte';
 	import { hardReset } from '../debug/hardReset';
-	import { createKeySequence, listenForSequences } from '../debug/keySequence';
+	import { createKeySequence } from '../debug/keySequence';
 	import { fetchServedVersion } from '../services/servedVersion';
 
 	let copied = $state(false);
@@ -14,11 +14,35 @@
 	let copyTimer: ReturnType<typeof setTimeout> | undefined;
 
 	const urlDebug = $derived(browser && page.url.searchParams.get('debug') === '1');
-	const isVisible = $derived(dev || urlDebug || debugMode.enabled || logService.errorCount > 0);
+	const isVisible = $derived(urlDebug || debugMode.enabled || logService.errorCount > 0);
 	const errors = $derived(logService.errorCount);
 	const hasUpdate = $derived(
 		Boolean(logService.servedVersion && logService.servedVersion !== APP_VERSION)
 	);
+
+	const versionSequence = createKeySequence({
+		letter: 'v',
+		threshold: () => debugMode.pressesToToggle,
+		onComplete: () => {
+			const shown = debugMode.toggle();
+			logService.info('ui', `ServiceBadge visibility toggled: ${shown}`);
+		}
+	});
+
+	const resetSequence = createKeySequence({
+		letter: 'r',
+		threshold: () => (dev ? 5 : 25),
+		onComplete: () => {
+			const ok = confirm('Скинути всі збережені дані та кеші застосунку?');
+			if (ok) void hardReset();
+		}
+	});
+
+	function handleKeydown(event: KeyboardEvent) {
+		if (versionSequence.handle(event) || resetSequence.handle(event)) {
+			event.preventDefault();
+		}
+	}
 
 	$effect(() => {
 		if (!browser) return;
@@ -28,31 +52,7 @@
 			if (served) logService.servedVersion = served;
 		});
 
-		// 2. Службові жести клавіатури: V — показати/сховати табло, R — скидання
-		const vThreshold = () => (debugMode.enabled ? 5 : dev ? 5 : 55);
-		const rThreshold = () => (dev ? 5 : 25);
-
-		const cleanup = listenForSequences(
-			createKeySequence({
-				letter: 'v',
-				threshold: vThreshold,
-				onComplete: () => {
-					debugMode.set(!debugMode.enabled);
-					logService.info('ui', `ServiceBadge visibility toggled: ${debugMode.enabled}`);
-				}
-			}),
-			createKeySequence({
-				letter: 'r',
-				threshold: rThreshold,
-				onComplete: () => {
-					const ok = confirm('Скинути всі збережені дані та кеші застосунку?');
-					if (ok) void hardReset();
-				}
-			})
-		);
-
 		return () => {
-			cleanup();
 			if (copyTimer) clearTimeout(copyTimer);
 		};
 	});
@@ -71,6 +71,8 @@
 		}
 	}
 </script>
+
+<svelte:window onkeydown={handleKeydown} />
 
 {#if fallbackReport}
 	<div class="service-report-fallback-wrapper">
