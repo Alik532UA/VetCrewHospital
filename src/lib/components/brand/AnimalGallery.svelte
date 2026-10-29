@@ -162,7 +162,7 @@
 					<label
 						class="color-pill-btn custom-picker-pill"
 						class:is-active={!brandColors.some((c) => c.hex.toUpperCase() === animalColor.toUpperCase())}
-						title={langStore.current === 'uk' ? 'Кастомний колір (палітра)' : 'Custom color'}
+						title={langStore.current === 'uk' ? 'Власний колір (палітра)' : 'Custom color'}
 					>
 						<input
 							type="color"
