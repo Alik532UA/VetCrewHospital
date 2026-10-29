@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
+	import { themeStore } from '$lib/theme.svelte';
 	import { downloadUrlAsPng } from '$lib/utils/exportPng';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 
@@ -50,8 +51,11 @@
 		{ hex: '#FFFFFF', name: 'White', textColor: '#13371b' }
 	];
 
-	// Default color is #13371B as requested
-	let animalColor = $state<string>('#13371B');
+	let customSelectedColor = $state<string | null>(null);
+	let animalColor = $derived(
+		customSelectedColor ?? (themeStore.current === 'dark' ? '#93C84A' : '#13371B')
+	);
+
 	let stageTheme = $state<StageTheme>('checker');
 	let searchQuery = $state('');
 	let selectedCategory = $state<'all' | 'birds' | 'reptiles' | 'mammals' | 'exotics'>('all');
@@ -142,7 +146,7 @@
 							class="color-pill-btn"
 							class:is-active={animalColor.toUpperCase() === c.hex.toUpperCase()}
 							style:background-color={c.hex}
-							onclick={() => (animalColor = c.hex)}
+							onclick={() => (customSelectedColor = c.hex)}
 							title="{c.name} ({c.hex})"
 							aria-label="{c.name} ({c.hex})"
 						>
@@ -163,7 +167,7 @@
 						<input
 							type="color"
 							value={animalColor}
-							oninput={(e) => (animalColor = (e.target as HTMLInputElement).value.toUpperCase())}
+							oninput={(e) => (customSelectedColor = (e.target as HTMLInputElement).value.toUpperCase())}
 							aria-label="Custom color picker"
 						/>
 						<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="picker-icon" aria-hidden="true">
@@ -182,7 +186,7 @@
 			</div>
 		</div>
 
-		<!-- 2. Filter & Search Toolbar -->
+		<!-- 2. Filter & Search Toolbar (Single balanced row) -->
 		<div class="gallery-toolbar">
 			<div class="category-chips">
 				<button
@@ -233,19 +237,19 @@
 			</div>
 
 			<div class="search-wrap">
-				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
+				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
 					<circle cx="11" cy="11" r="8"/>
 					<line x1="21" y1="21" x2="16.65" y2="16.65"/>
 				</svg>
 				<input
 					type="text"
 					class="search-input"
-					placeholder={langStore.current === 'uk' ? 'Пошук тварини (напр. папуга, агама)...' : 'Search animal...'}
+					placeholder={langStore.current === 'uk' ? 'Пошук тварини...' : 'Search animal...'}
 					bind:value={searchQuery}
 				/>
 				{#if searchQuery}
 					<button type="button" class="clear-btn" onclick={() => (searchQuery = '')} aria-label="Clear">
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 							<line x1="18" y1="6" x2="6" y2="18"/>
 							<line x1="6" y1="6" x2="18" y2="18"/>
 						</svg>
@@ -274,20 +278,17 @@
 					<span class="animal-name-primary">
 						{langStore.current === 'uk' ? a.nameUk : a.nameEn}
 					</span>
-					<span class="animal-name-secondary">
-						{langStore.current === 'uk' ? a.nameEn : a.nameUk}
-					</span>
 				</div>
 
 				<div class="animal-card-actions">
 					<button
 						type="button"
-						class="download-animal-btn svg-btn"
+						class="download-animal-btn"
 						onclick={(e) => downloadColoredSvg(e, a)}
 						disabled={isDownloading === a.id}
-						title="{langStore.current === 'uk' ? `Завантажити SVG у кольорі ${animalColor}` : `Download SVG in ${animalColor}`}"
+						title="{langStore.current === 'uk' ? `Завантажити SVG (${animalColor})` : `Download SVG (${animalColor})`}"
 					>
-						<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 							<polyline points="7 10 12 15 17 10"></polyline>
 							<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -297,12 +298,12 @@
 
 					<button
 						type="button"
-						class="download-animal-btn png-btn"
+						class="download-animal-btn"
 						onclick={(e) => downloadColoredPng(e, a)}
 						disabled={isDownloading === `${a.id}-png`}
-						title="{langStore.current === 'uk' ? `Завантажити PNG (2000 px) у кольорі ${animalColor}` : `Download PNG (2000 px) in ${animalColor}`}"
+						title="{langStore.current === 'uk' ? `Завантажити PNG (${animalColor})` : `Download PNG (${animalColor})`}"
 					>
-						<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 							<polyline points="7 10 12 15 17 10"></polyline>
 							<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -323,27 +324,24 @@
 		width: 100%;
 	}
 
+	/* CONTROLS CARD */
 	.gallery-controls-card {
 		display: flex;
 		flex-direction: column;
-		gap: 1.25rem;
-		padding: 1.25rem 1.5rem;
-		background: var(--panel-bg);
+		gap: 1rem;
+		padding: 1.15rem 1.35rem;
+		background: var(--bg-secondary);
+		border-radius: 16px;
 		border: 1px solid var(--border);
-		border-radius: 18px;
-		backdrop-filter: blur(14px);
-		-webkit-backdrop-filter: blur(14px);
 	}
 
-	/* COLOR PICKER ROW */
+	/* ROW 1: COLOR PICKER & STAGE */
 	.color-picker-row {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 1rem;
+		gap: 1.25rem;
 		flex-wrap: wrap;
-		padding-bottom: 1rem;
-		border-bottom: 1px solid var(--border);
 	}
 
 	.color-picker-left {
@@ -376,21 +374,25 @@
 		font-weight: 700;
 		padding: 0.2rem 0.55rem;
 		border-radius: 6px;
-		background: var(--bg-secondary);
+		background: var(--panel-bg);
 		border: 1px solid var(--border);
 		color: var(--brand-leaf);
+	}
+
+	:global([data-theme='dark']) .active-hex-badge {
+		color: var(--brand-gold);
 	}
 
 	.colors-palette-wrap {
 		display: flex;
 		align-items: center;
-		gap: 0.55rem;
+		gap: 0.5rem;
 		flex-wrap: wrap;
 	}
 
 	.color-pill-btn {
-		width: 32px;
-		height: 32px;
+		width: 30px;
+		height: 30px;
 		border-radius: 50%;
 		border: 2px solid rgba(0, 0, 0, 0.15);
 		cursor: pointer;
@@ -398,7 +400,7 @@
 		align-items: center;
 		justify-content: center;
 		transition: all 0.18s ease;
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 	}
 
 	.color-pill-btn:hover {
@@ -408,8 +410,12 @@
 
 	.color-pill-btn.is-active {
 		border-color: var(--fg-primary);
-		transform: scale(1.18);
+		transform: scale(1.15);
 		box-shadow: 0 0 0 3px rgba(89, 143, 58, 0.35);
+	}
+
+	:global([data-theme='dark']) .color-pill-btn.is-active {
+		box-shadow: 0 0 0 3px rgba(255, 179, 39, 0.35);
 	}
 
 	.custom-picker-pill {
@@ -417,26 +423,15 @@
 		border-radius: 50%;
 		overflow: hidden;
 		isolation: isolate;
-		-webkit-mask-image: -webkit-radial-gradient(white, black);
-		mask-image: radial-gradient(circle, #fff 100%, #000 100%);
-		background: transparent;
-	}
-
-	.custom-picker-pill::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		border-radius: 50%;
-		clip-path: circle(50% at 50% 50%);
-		background: conic-gradient(from 180deg at 50% 50%, #FFB327 0deg, #93C84A 72deg, #598F3A 144deg, #13371B 216deg, #FFB327 360deg);
-		z-index: 0;
+		background: conic-gradient(from 180deg at 50% 50%, #FF0000 0deg, #FFA500 51deg, #FFFF00 102deg, #008000 153deg, #0000FF 204deg, #4B0082 255deg, #EE82EE 306deg, #FF0000 360deg);
 	}
 
 	.custom-picker-pill input[type="color"] {
 		position: absolute;
-		inset: 0;
-		width: 100%;
-		height: 100%;
+		top: -10px;
+		left: -10px;
+		width: 50px;
+		height: 50px;
 		opacity: 0;
 		cursor: pointer;
 		z-index: 2;
@@ -445,24 +440,24 @@
 	.picker-icon {
 		position: relative;
 		z-index: 1;
-		font-size: 0.9rem;
+		font-size: 0.85rem;
 		pointer-events: none;
 		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.65));
 	}
 
-	/* TOOLBAR */
+	/* ROW 2: TOOLBAR */
 	.gallery-toolbar {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 1rem;
+		gap: 0.85rem;
 		flex-wrap: wrap;
 	}
 
 	.category-chips {
 		display: flex;
 		align-items: center;
-		gap: 0.45rem;
+		gap: 0.4rem;
 		flex-wrap: wrap;
 	}
 
@@ -470,12 +465,12 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.45rem;
-		padding: 0.38rem 0.8rem;
+		padding: 0.35rem 0.75rem;
 		border-radius: 20px;
-		background: var(--bg-secondary);
+		background: var(--panel-bg);
 		border: 1px solid var(--border);
 		color: var(--fg-secondary);
-		font-size: 0.8rem;
+		font-size: 0.78rem;
 		font-weight: 600;
 		cursor: pointer;
 		transition: all 0.2s ease;
@@ -492,18 +487,18 @@
 		color: var(--brand-leaf);
 	}
 
-	:global(.dark) .filter-chip.is-active {
+	:global([data-theme='dark']) .filter-chip.is-active {
 		border-color: var(--brand-gold);
 		background: rgba(255, 179, 39, 0.15);
 		color: var(--brand-gold);
 	}
 
 	.chip-count {
-		font-size: 0.72rem;
+		font-size: 0.7rem;
 		opacity: 0.75;
-		background: var(--panel-bg);
-		padding: 1px 6px;
-		border-radius: 10px;
+		background: var(--bg-secondary);
+		padding: 1px 5px;
+		border-radius: 8px;
 		border: 1px solid var(--border);
 	}
 
@@ -511,7 +506,8 @@
 		position: relative;
 		display: flex;
 		align-items: center;
-		min-width: 260px;
+		width: 220px;
+		flex-shrink: 0;
 	}
 
 	.search-icon {
@@ -523,18 +519,22 @@
 
 	.search-input {
 		width: 100%;
-		padding: 0.48rem 2rem 0.48rem 2.25rem;
-		border-radius: 10px;
+		padding: 0.4rem 1.8rem 0.4rem 2.2rem;
+		border-radius: 999px;
 		border: 1px solid var(--border);
 		background: var(--panel-bg);
 		color: var(--fg-primary);
-		font-size: 0.82rem;
+		font-size: 0.8rem;
 		outline: none;
 		transition: border-color 0.2s ease;
 	}
 
 	.search-input:focus {
 		border-color: var(--brand-leaf);
+	}
+
+	:global([data-theme='dark']) .search-input:focus {
+		border-color: var(--brand-gold);
 	}
 
 	.clear-btn {
@@ -545,12 +545,15 @@
 		color: var(--fg-muted);
 		cursor: pointer;
 		font-size: 0.8rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	/* GRID */
 	.animals-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
 		gap: 0.85rem;
 	}
 
@@ -559,12 +562,11 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		padding: 1rem 0.85rem;
-		border-radius: 16px;
+		padding: 0.85rem 0.75rem;
+		border-radius: 14px;
 		background: var(--panel-bg);
 		border: 1px solid var(--border);
 		transition: all 0.2s ease;
-		text-align: center;
 	}
 
 	.animal-card:hover {
@@ -589,15 +591,15 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		margin: 0.35rem 0 0.65rem;
-		background: var(--bg-secondary);
-		border-radius: 14px;
+		margin: 0.35rem 0 0.5rem;
+		border-radius: 12px;
 		padding: 0.65rem;
 		transition: transform 0.2s ease;
+		border: 1px solid var(--border);
 	}
 
 	.animal-card:hover .icon-stage {
-		transform: scale(1.06);
+		transform: scale(1.05);
 	}
 
 	.animal-svg-mask {
@@ -616,9 +618,9 @@
 
 	.card-meta {
 		display: flex;
-		flex-direction: column;
-		gap: 0.15rem;
-		margin-bottom: 0.75rem;
+		align-items: center;
+		justify-content: center;
+		margin-bottom: 0.55rem;
 		min-width: 0;
 		width: 100%;
 	}
@@ -630,14 +632,7 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-	}
-
-	.animal-name-secondary {
-		font-size: 0.7rem;
-		color: var(--fg-muted);
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		text-align: center;
 	}
 
 	.animal-card-actions {
@@ -645,7 +640,7 @@
 		grid-template-columns: 1fr 1fr;
 		gap: 0.35rem;
 		width: 100%;
-		margin-top: 0.35rem;
+		margin-top: auto;
 	}
 
 	.download-animal-btn {
@@ -654,59 +649,60 @@
 		justify-content: center;
 		gap: 0.25rem;
 		padding: 0.35rem 0.45rem;
-		border-radius: 8px;
+		border-radius: 7px;
 		font-size: 0.72rem;
 		font-weight: 700;
 		cursor: pointer;
+		background: var(--bg-secondary);
+		border: 1px solid var(--border);
+		color: var(--fg-secondary);
 		transition: all 0.15s ease;
 		text-align: center;
 	}
 
-	.download-animal-btn {
-		background: var(--brand-emerald, #13371b);
-		color: #ffffff;
-		border: 1px solid var(--brand-emerald, #13371b);
-	}
-
 	.download-animal-btn:hover:not(:disabled) {
-		background: var(--brand-leaf, #598f3a);
-		border-color: var(--brand-leaf, #598f3a);
+		background: var(--brand-emerald, #13371b);
+		border-color: var(--brand-emerald, #13371b);
 		color: #ffffff;
-		box-shadow: 0 3px 10px rgba(89, 143, 58, 0.25);
-		transform: scale(1.03);
+		transform: translateY(-1px);
+		box-shadow: 0 2px 6px rgba(19, 55, 27, 0.2);
 	}
 
-	:global(.dark) .download-animal-btn {
+	:global([data-theme='dark']) .download-animal-btn:hover:not(:disabled) {
 		background: var(--brand-gold, #ffb327);
-		color: #101e14;
 		border-color: var(--brand-gold, #ffb327);
-	}
-
-	:global(.dark) .download-animal-btn:hover:not(:disabled) {
-		background: #ffa80a;
-		border-color: #ffa80a;
 		color: #101e14;
-		box-shadow: 0 3px 10px rgba(255, 179, 39, 0.35);
+		box-shadow: 0 2px 6px rgba(255, 179, 39, 0.25);
 	}
 
 	.download-animal-btn:disabled {
-		opacity: 0.6;
+		opacity: 0.5;
 		cursor: wait;
 	}
 
-	@media (max-width: 600px) {
-		.animals-grid {
-			grid-template-columns: repeat(2, 1fr);
+	@media (max-width: 768px) {
+		.gallery-controls-card {
+			padding: 1rem;
 		}
 
 		.color-picker-row {
 			flex-direction: column;
 			align-items: flex-start;
-			gap: 0.75rem;
+			gap: 1rem;
+		}
+
+		.gallery-toolbar {
+			flex-direction: column;
+			align-items: stretch;
 		}
 
 		.search-wrap {
 			width: 100%;
+		}
+
+		.animals-grid {
+			grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+			gap: 0.65rem;
 		}
 	}
 </style>
