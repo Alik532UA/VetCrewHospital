@@ -47,10 +47,6 @@
 	class:is-expanded={isExpanded}
 	class:is-shifted-up={isShiftedUp}
 >
-	<h2 class="contact-heading">
-		{langStore.t('contacts_heading')}
-	</h2>
-
 	<nav class="contact-links" aria-label="Hospital Contacts">
 		{#each channels as item (item.id)}
 			<a
@@ -106,38 +102,6 @@
 
 	.contact-container.is-shifted-up {
 		transform: translateX(-50%) translateY(-105px);
-	}
-
-	.contact-heading {
-		margin: 0 0 0.5rem 0;
-		padding: 0;
-		font-family: inherit;
-		font-size: 0.82rem;
-		font-weight: 600;
-		letter-spacing: 0.08em;
-		color: var(--fg-secondary);
-		text-align: center;
-		white-space: nowrap;
-		pointer-events: auto;
-		user-select: none;
-		-webkit-user-select: none;
-		opacity: 0.75;
-		transition:
-			font-size 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-			opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-			margin-bottom 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-			color 0.35s ease,
-			transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
-	}
-
-	.contact-container.is-expanded .contact-heading {
-		font-size: 1.05rem;
-		font-weight: 700;
-		letter-spacing: 0.09em;
-		color: var(--fg-primary);
-		opacity: 1;
-		margin-bottom: 0.85rem;
-		transform: translateY(-2px);
 	}
 
 	.contact-links {
@@ -277,20 +241,6 @@
 
 		.contact-container.is-shifted-up {
 			transform: translateX(-50%) translateY(-115px);
-		}
-
-		.contact-heading {
-			font-size: 0.72rem;
-			letter-spacing: 0.04em;
-			margin-bottom: 0.35rem;
-			opacity: 0.78;
-		}
-
-		.contact-container.is-expanded .contact-heading {
-			font-size: 0.86rem;
-			margin-bottom: 0.55rem;
-			opacity: 1;
-			transform: translateY(-1px);
 		}
 
 		.contact-links {
