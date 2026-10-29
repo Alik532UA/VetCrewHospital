@@ -51,8 +51,8 @@
 		},
 		{
 			id: 'light-theme',
-			nameUk: 'Світла тема',
-			nameEn: 'Light Theme',
+			nameUk: 'Світла емблема',
+			nameEn: 'Light Emblem',
 			bgShape: 'circle' as BgShape,
 			bgCircle: '#598F3A',
 			paw: '#FFB327',

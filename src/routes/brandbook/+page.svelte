@@ -4,6 +4,7 @@
 	import { langStore } from '$lib/lang.svelte';
 	import LogoCustomizer from '$lib/components/LogoCustomizer.svelte';
 	import BrandToc from '$lib/components/brand/BrandToc.svelte';
+	import BrandSlogan from '$lib/components/brand/BrandSlogan.svelte';
 	import AnimalGallery from '$lib/components/brand/AnimalGallery.svelte';
 	import QrShowcase from '$lib/components/brand/QrShowcase.svelte';
 	import BrandTypography from '$lib/components/brand/BrandTypography.svelte';
@@ -269,95 +270,7 @@
 						</div>
 					</div>
 
-					<div class="slogan-showcase-stack">
-						<!-- 1. FULL SLOGAN COMPOSITION -->
-						<div class="slogan-container">
-							<div class="slogan-visual">
-								<img
-									src="{base}/brand/slogan/exotic-wild-special-important.svg"
-									alt="Екзотичні Дикі Особливі Важливі"
-									class="slogan-svg-hero"
-								/>
-							</div>
-
-							<div class="slogan-details">
-								<div class="values-pills">
-									<span class="val-pill">
-										<strong>Екзотичні</strong>
-										<span>(Exotic)</span>
-									</span>
-									<span class="val-pill">
-										<strong>Дикі</strong>
-										<span>(Wild)</span>
-									</span>
-									<span class="val-pill">
-										<strong>Особливі</strong>
-										<span>(Special)</span>
-									</span>
-									<span class="val-pill">
-										<strong>Важливі</strong>
-										<span>(Important)</span>
-									</span>
-								</div>
-
-								<p class="slogan-philosophy">
-									{langStore.current === 'uk'
-										? 'Кожен пацієнт шпиталю — від папуги чи черепахи до сокола чи лева — отримує рівноцінну турботу, найсучасніше реанімаційне обладнання та безкомпромісну любов лікарів.'
-										: 'Every patient, whether a parrot, reptile, predator, or rescue animal, receives equal care, state-of-the-art diagnostics, and unwavering devotion.'}
-								</p>
-
-								<a
-									href="{base}/brand/slogan/exotic-wild-special-important.svg"
-									download="vet-crew-slogan-values.svg"
-									class="download-brand-btn primary"
-								>
-									<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-										<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-										<polyline points="7 10 12 15 17 10"></polyline>
-										<line x1="12" y1="15" x2="12" y2="3"></line>
-									</svg>
-									<span>{langStore.current === 'uk' ? 'Завантажити повну емблему слогану (SVG)' : 'Download Slogan Emblem SVG'}</span>
-								</a>
-							</div>
-						</div>
-
-						<!-- 2. STANDALONE BUTTERFLY SYMBOL -->
-						<div class="slogan-container butterfly-box">
-							<div class="slogan-visual butterfly-visual">
-								<img
-									src="{base}/brand/slogan/butterfly.svg"
-									alt="Фірмовий метелик Vet Crew"
-									class="butterfly-svg-hero"
-								/>
-							</div>
-
-							<div class="slogan-details">
-								<div class="butterfly-meta-head">
-									<span class="sub-badge">{langStore.current === 'uk' ? 'Фірмовий графічний символ' : 'Official Brand Symbol'}</span>
-									<h3 class="butterfly-title">{langStore.current === 'uk' ? 'Метелик Vet Crew (Butterfly)' : 'Vet Crew Butterfly Symbol'}</h3>
-								</div>
-
-								<p class="slogan-philosophy">
-									{langStore.current === 'uk'
-										? 'Графічний знак метелика символізує відродження, витонченість та захист крихкого дикого життя. Використовується як автономний декоративний елемент на бейджах, мерчі, уніформі персоналу та рекламних банерах.'
-										: 'The butterfly mark embodies revival, grace, and the fragile beauty of wild nature. Used as a standalone brand icon on uniforms, merchandise, badges, and awareness campaigns.'}
-								</p>
-
-								<a
-									href="{base}/brand/slogan/butterfly.svg"
-									download="vet-crew-butterfly-symbol.svg"
-									class="download-brand-btn"
-								>
-									<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-										<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-										<polyline points="7 10 12 15 17 10"></polyline>
-										<line x1="12" y1="15" x2="12" y2="3"></line>
-									</svg>
-									<span>{langStore.current === 'uk' ? 'Завантажити окремо метелик (SVG)' : 'Download Butterfly SVG'}</span>
-								</a>
-							</div>
-						</div>
-					</div>
+					<BrandSlogan />
 				</section>
 
 				<!-- SECTION 05: ANIMAL ICONOGRAPHY (24) -->
@@ -801,130 +714,6 @@
 		border-color: var(--brand-leaf);
 	}
 
-	.download-brand-btn.primary {
-		background: var(--brand-leaf);
-		color: #ffffff;
-		border-color: var(--brand-leaf);
-	}
-
-	.download-brand-btn.primary:hover {
-		background: #46732c;
-	}
-
-	/* SECTION 04: SLOGAN */
-	.slogan-showcase-stack {
-		display: flex;
-		flex-direction: column;
-		gap: 1.75rem;
-	}
-
-	.slogan-container {
-		display: grid;
-		grid-template-columns: 320px 1fr;
-		gap: 2rem;
-		align-items: center;
-		background: var(--bg-secondary);
-		border-radius: 1.5rem;
-		padding: 1.75rem;
-		border: 1px solid var(--border);
-	}
-
-	.butterfly-box {
-		background: var(--panel-bg);
-	}
-
-	.slogan-visual {
-		background: var(--panel-bg);
-		border-radius: 1.25rem;
-		padding: 1.5rem;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border: 1px solid var(--border);
-		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-	}
-
-	.butterfly-visual {
-		background: #13371b;
-		box-shadow: 0 10px 28px rgba(19, 55, 27, 0.25);
-	}
-
-	.slogan-svg-hero {
-		max-width: 100%;
-		max-height: 240px;
-		object-fit: contain;
-		filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.1));
-	}
-
-	.butterfly-svg-hero {
-		max-width: 100%;
-		max-height: 220px;
-		object-fit: contain;
-		filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.35));
-		transition: transform 0.3s ease;
-	}
-
-	.butterfly-box:hover .butterfly-svg-hero {
-		transform: scale(1.05);
-	}
-
-	:global([data-theme='dark']) .slogan-svg-hero {
-		filter: brightness(1.15) drop-shadow(0 6px 16px rgba(0, 0, 0, 0.5));
-	}
-
-	.butterfly-meta-head {
-		display: flex;
-		flex-direction: column;
-		gap: 0.3rem;
-	}
-
-	.butterfly-title {
-		font-size: 1.3rem;
-		font-weight: 800;
-		color: var(--fg-primary);
-		margin: 0;
-	}
-
-	.slogan-details {
-		display: flex;
-		flex-direction: column;
-		gap: 1.25rem;
-	}
-
-	.values-pills {
-		display: flex;
-		gap: 0.65rem;
-		flex-wrap: wrap;
-	}
-
-	.val-pill {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.35rem;
-		padding: 0.45rem 0.85rem;
-		border-radius: 10px;
-		background: var(--panel-bg);
-		border: 1px solid var(--border);
-		font-size: 0.85rem;
-		color: var(--fg-primary);
-	}
-
-	.val-pill strong {
-		color: var(--brand-leaf);
-	}
-
-	.val-pill span {
-		font-size: 0.74rem;
-		color: var(--fg-muted);
-	}
-
-	.slogan-philosophy {
-		font-size: 0.95rem;
-		line-height: 1.6;
-		color: var(--fg-secondary);
-		margin: 0;
-	}
-
 	/* RESPONSIVE */
 	@media (max-width: 900px) {
 		.brandbook-page {
@@ -956,11 +745,6 @@
 
 		.naming-grid {
 			grid-template-columns: 1fr;
-		}
-
-		.slogan-container {
-			grid-template-columns: 1fr;
-			gap: 1.25rem;
 		}
 	}
 </style>

@@ -2,88 +2,68 @@
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 
-	interface QrItem {
-		id: string;
-		titleUk: string;
-		titleEn: string;
-		descUk: string;
-		descEn: string;
-		fileBg: string;
-		fileNobg: string;
-		color: string;
-	}
-
-	const QR_ITEMS: QrItem[] = [
-		{
-			id: 'wifi',
-			titleUk: 'Гостьовий Wi-Fi',
-			titleEn: 'Guest Wi-Fi',
-			descUk: 'Підключення відвідувачів до швидкісної мережі в залі очікування',
-			descEn: 'Visitor Wi-Fi connection in reception & waiting rooms',
-			fileBg: 'wifi.svg',
-			fileNobg: 'wifi-nobg.svg',
-			color: '#38bdf8'
-		},
-		{
-			id: 'google-reviews',
-			titleUk: 'Google Відгуки',
-			titleEn: 'Google Reviews',
-			descUk: 'Прямий перехід на профіль шпиталю в Google Maps для відгуків',
-			descEn: 'Direct QR to the hospital Google Maps profile & rating',
-			fileBg: 'google-reviews.svg',
-			fileNobg: 'google-reviews-nobg.svg',
-			color: '#ffb327'
-		},
-		{
-			id: 'instagram',
-			titleUk: 'Instagram',
-			titleEn: 'Instagram',
-			descUk: 'Офіційна сторінка: порятунок тварин, реанімація та життя клініки',
-			descEn: 'Official social media: daily patient updates & rescue stories',
-			fileBg: 'instagram.svg',
-			fileNobg: 'instagram-nobg.svg',
-			color: '#e1306c'
-		},
-		{
-			id: 'website',
-			titleUk: 'Офіційний сайт',
-			titleEn: 'Official Website',
-			descUk: 'Цілодобовий онлайн-запис, контакти та повний перелік послуг',
-			descEn: '24/7 emergency contact, appointment booking & directions',
-			fileBg: 'website.svg',
-			fileNobg: 'website-nobg.svg',
-			color: '#598f3a'
-		},
-		{
-			id: 'reviews',
-			titleUk: 'Відгуки про лікарів',
-			titleEn: 'Doctor Reviews',
-			descUk: 'Форма зворотного зв\'язку та оцінки якості надання допомоги',
-			descEn: 'Quality assessment and client feedback questionnaire',
-			fileBg: 'reviews.svg',
-			fileNobg: 'reviews-nobg.svg',
-			color: '#ffb327'
-		},
-		{
-			id: 'master-plaque',
-			titleUk: 'Мастер-макет таблички',
-			titleEn: 'Master Plaque Stand',
-			descUk: 'Повний друкований макет акрилової стійки для рецепції',
-			descEn: 'Complete acrylic counter signage template for hospital reception',
-			fileBg: 'pj-qr.svg',
-			fileNobg: 'pj-qr.svg',
-			color: '#13371b'
-		}
-	];
-
+	// Global format toggle: with background container vs transparent without background
 	let withBg = $state(true);
+
+	// Subvariant selections
+	type ReviewVariant = 'vidhuk' | 'google-reviews' | 'reviews';
+	let reviewVariant = $state<ReviewVariant>('vidhuk');
+
+	type WebsiteVariant = 'v2' | 'v1';
+	let websiteVariant = $state<WebsiteVariant>('v2');
+
+	const REVIEW_FILES: Record<ReviewVariant, { bg: string; nobg: string; labelUk: string; labelEn: string }> = {
+		vidhuk: {
+			bg: 'vidhuk.svg',
+			nobg: 'vidhuk-nobg.svg',
+			labelUk: 'Відгуки (UA)',
+			labelEn: 'Reviews (UA)'
+		},
+		'google-reviews': {
+			bg: 'google-reviews.svg',
+			nobg: 'google-reviews-nobg.svg',
+			labelUk: 'Google Reviews',
+			labelEn: 'Google Reviews'
+		},
+		reviews: {
+			bg: 'reviews.svg',
+			nobg: 'reviews-nobg.svg',
+			labelUk: 'Reviews',
+			labelEn: 'Reviews'
+		}
+	};
+
+	const WEBSITE_FILES: Record<WebsiteVariant, { bg: string; nobg: string; labelUk: string; labelEn: string }> = {
+		v2: {
+			bg: 'website-v2.svg',
+			nobg: 'website-v2-nobg.svg',
+			labelUk: 'Нова іконка (v2)',
+			labelEn: 'New Icon (v2)'
+		},
+		v1: {
+			bg: 'website.svg',
+			nobg: 'website-nobg.svg',
+			labelUk: 'Класична (v1)',
+			labelEn: 'Classic (v1)'
+		}
+	};
+
+	let activeReviewFile = $derived(withBg ? REVIEW_FILES[reviewVariant].bg : REVIEW_FILES[reviewVariant].nobg);
+	let activeWebsiteFile = $derived(withBg ? WEBSITE_FILES[websiteVariant].bg : WEBSITE_FILES[websiteVariant].nobg);
+	let wifiFile = $derived(withBg ? 'wifi.svg' : 'wifi-nobg.svg');
+	let igFile = $derived(withBg ? 'instagram.svg' : 'instagram-nobg.svg');
 </script>
 
 <div class="qr-showcase-widget">
 	<!-- Control Bar: Mode Toggle -->
 	<div class="showcase-toolbar">
 		<div class="mode-meta">
-			<span class="mode-label">{langStore.current === 'uk' ? 'Формат відображення:' : 'Format:'}</span>
+			<span class="mode-label">{langStore.current === 'uk' ? 'Формат макета:' : 'Signage Format:'}</span>
+			<span class="mode-desc">
+				{langStore.current === 'uk'
+					? 'Оберіть повнорозмірний акриловий контейнер або прозорий векторний QR-код без тла.'
+					: 'Select full acrylic container or clean transparent vector QR artwork.'}
+			</span>
 		</div>
 
 		<div class="toggle-pill-wrap">
@@ -94,7 +74,7 @@
 				onclick={() => (withBg = true)}
 			>
 				<span class="pill-glyph">■</span>
-				<span>{langStore.current === 'uk' ? 'З фірмовим контейнером' : 'With Background Container'}</span>
+				<span>{langStore.current === 'uk' ? 'З фірмовим контейнером' : 'With Background Plaque'}</span>
 			</button>
 			<button
 				type="button"
@@ -102,7 +82,7 @@
 				class:is-active={!withBg}
 				onclick={() => (withBg = false)}
 			>
-				<span class="pill-glyph">░</span>
+				<span class="pill-glyph">◌</span>
 				<span>{langStore.current === 'uk' ? 'Чистий без фону (прозорий)' : 'Transparent (No Background)'}</span>
 			</button>
 		</div>
@@ -110,42 +90,242 @@
 
 	<!-- Cards Grid -->
 	<div class="qr-cards-grid">
-		{#each QR_ITEMS as q (q.id)}
-			{@const currentFile = withBg ? q.fileBg : q.fileNobg}
-			<div class="qr-card">
-				<div class="qr-preview-stage" class:is-nobg={!withBg}>
-					<img
-						src="{base}/brand/qr/{encodeURIComponent(currentFile)}"
-						alt="{q.titleUk} ({q.titleEn})"
-						class="qr-svg-render"
-						loading="lazy"
-					/>
-				</div>
+		<!-- 1. Master Background Plaque Template -->
+		<div class="qr-card template-card">
+			<div class="qr-preview-stage">
+				<img
+					src="{base}/brand/qr/background.svg"
+					alt="Фоновий контейнер (Підкладка)"
+					class="qr-svg-render"
+					loading="lazy"
+				/>
+			</div>
 
-				<div class="qr-meta">
-					<div class="qr-title-row">
-						<span class="qr-title">{langStore.current === 'uk' ? q.titleUk : q.titleEn}</span>
-						<span class="qr-badge" style="--accent: {q.color};">SVG</span>
+			<div class="qr-meta">
+				<div class="qr-title-row">
+					<h3 class="qr-title">{langStore.current === 'uk' ? 'Фоновий контейнер' : 'Plaque Background'}</h3>
+					<span class="qr-badge badge--neutral">{langStore.current === 'uk' ? 'Шаблон' : 'Template'}</span>
+				</div>
+				<p class="qr-desc">
+					{langStore.current === 'uk'
+						? 'Чистий фірмовий векторний шаблон підкладки для друку акрилових стійок або верстки нових QR-табличок.'
+						: 'Blank branded plaque container template for acrylic stand manufacturing or laying out new QR signs.'}
+				</p>
+			</div>
+
+			<div class="qr-actions">
+				<a
+					href="{base}/brand/qr/background.svg"
+					download="vet-crew-qr-plaque-background.svg"
+					class="download-qr-btn"
+				>
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="7 10 12 15 17 10"></polyline>
+						<line x1="12" y1="15" x2="12" y2="3"></line>
+					</svg>
+					<span>{langStore.current === 'uk' ? 'Завантажити шаблон SVG' : 'Download Template SVG'}</span>
+				</a>
+			</div>
+		</div>
+
+		<!-- 2. Wi-Fi Signage -->
+		<div class="qr-card">
+			<div class="qr-preview-stage" class:is-nobg={!withBg}>
+				<img
+					src="{base}/brand/qr/{wifiFile}"
+					alt="Wi-Fi"
+					class="qr-svg-render"
+					loading="lazy"
+				/>
+			</div>
+
+			<div class="qr-meta">
+				<div class="qr-title-row">
+					<h3 class="qr-title">Wi-Fi</h3>
+					<span class="qr-badge badge--wifi">Wi-Fi</span>
+				</div>
+				<p class="qr-desc">
+					{langStore.current === 'uk'
+						? 'Миттєве підключення відвідувачів до швидкісної бездротової мережі в рецепції та зоні очікування.'
+						: 'Instant visitor Wi-Fi network connection for reception desks and waiting areas.'}
+				</p>
+			</div>
+
+			<div class="qr-actions">
+				<a
+					href="{base}/brand/qr/{wifiFile}"
+					download="vet-crew-wifi{withBg ? '' : '-nobg'}.svg"
+					class="download-qr-btn"
+				>
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="7 10 12 15 17 10"></polyline>
+						<line x1="12" y1="15" x2="12" y2="3"></line>
+					</svg>
+					<span>{langStore.current === 'uk' ? 'Завантажити SVG' : 'Download SVG'}</span>
+				</a>
+			</div>
+		</div>
+
+		<!-- 3. Instagram Signage -->
+		<div class="qr-card">
+			<div class="qr-preview-stage" class:is-nobg={!withBg}>
+				<img
+					src="{base}/brand/qr/{igFile}"
+					alt="Instagram"
+					class="qr-svg-render"
+					loading="lazy"
+				/>
+			</div>
+
+			<div class="qr-meta">
+				<div class="qr-title-row">
+					<h3 class="qr-title">Instagram</h3>
+					<span class="qr-badge badge--ig">Social</span>
+				</div>
+				<p class="qr-desc">
+					{langStore.current === 'uk'
+						? 'Офіційна сторінка клініки: щоденні історії порятунку диких пацієнтів, новини шпиталю та фотозвіти.'
+						: 'Official clinic Instagram: daily exotic wildlife rescues, patient recoveries, and news.'}
+				</p>
+			</div>
+
+			<div class="qr-actions">
+				<a
+					href="{base}/brand/qr/{igFile}"
+					download="vet-crew-instagram{withBg ? '' : '-nobg'}.svg"
+					class="download-qr-btn"
+				>
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="7 10 12 15 17 10"></polyline>
+						<line x1="12" y1="15" x2="12" y2="3"></line>
+					</svg>
+					<span>{langStore.current === 'uk' ? 'Завантажити SVG' : 'Download SVG'}</span>
+				</a>
+			</div>
+		</div>
+
+		<!-- 4. Google Reviews Signage (Master Card with 3 subvariants) -->
+		<div class="qr-card">
+			<div class="qr-preview-stage" class:is-nobg={!withBg}>
+				<img
+					src="{base}/brand/qr/{activeReviewFile}"
+					alt="Google Reviews"
+					class="qr-svg-render"
+					loading="lazy"
+				/>
+			</div>
+
+			<div class="qr-meta">
+				<div class="qr-title-row">
+					<h3 class="qr-title">{langStore.current === 'uk' ? 'Відгуки' : 'Reviews'}</h3>
+					<span class="qr-badge badge--reviews">Google Maps</span>
+				</div>
+				<p class="qr-desc">
+					{langStore.current === 'uk'
+						? 'Пряме посилання на картку Vet Crew Hospital у Google Maps для оцінки та відгуків клієнтів (єдиний QR-код у 3 мовних варіантах).'
+						: 'Direct QR code to Vet Crew Hospital on Google Maps for ratings and client reviews (identical QR code across 3 lettering variants).'}
+				</p>
+
+				<!-- Subvariant Switcher -->
+				<div class="subvariant-section">
+					<span class="subvariant-title">{langStore.current === 'uk' ? 'Варіант напису:' : 'Variant:'}</span>
+					<div class="subvariant-pills">
+						{#each (['vidhuk', 'google-reviews', 'reviews'] as const) as v}
+							<button
+								type="button"
+								class="sub-pill"
+								class:is-active={reviewVariant === v}
+								onclick={() => (reviewVariant = v)}
+							>
+								{langStore.current === 'uk' ? REVIEW_FILES[v].labelUk : REVIEW_FILES[v].labelEn}
+							</button>
+						{/each}
 					</div>
-					<p class="qr-desc">{langStore.current === 'uk' ? q.descUk : q.descEn}</p>
-				</div>
-
-				<div class="qr-actions">
-					<a
-						href="{base}/brand/qr/{encodeURIComponent(currentFile)}"
-						download="{currentFile}"
-						class="download-qr-btn"
-					>
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-							<polyline points="7 10 12 15 17 10"></polyline>
-							<line x1="12" y1="15" x2="12" y2="3"></line>
-						</svg>
-						<span>{langStore.current === 'uk' ? 'Завантажити SVG' : 'Download SVG'}</span>
-					</a>
 				</div>
 			</div>
-		{/each}
+
+			<div class="qr-actions">
+				<a
+					href="{base}/brand/qr/{activeReviewFile}"
+					download="vet-crew-{reviewVariant}{withBg ? '' : '-nobg'}.svg"
+					class="download-qr-btn"
+				>
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="7 10 12 15 17 10"></polyline>
+						<line x1="12" y1="15" x2="12" y2="3"></line>
+					</svg>
+					<span>
+						{langStore.current === 'uk'
+							? `Завантажити ${REVIEW_FILES[reviewVariant].labelUk} (SVG)`
+							: `Download ${REVIEW_FILES[reviewVariant].labelEn} (SVG)`}
+					</span>
+				</a>
+			</div>
+		</div>
+
+		<!-- 5. Official Website Signage (Master Card with v2 / v1 subvariants) -->
+		<div class="qr-card">
+			<div class="qr-preview-stage" class:is-nobg={!withBg}>
+				<img
+					src="{base}/brand/qr/{activeWebsiteFile}"
+					alt="Офіційний сайт"
+					class="qr-svg-render"
+					loading="lazy"
+				/>
+			</div>
+
+			<div class="qr-meta">
+				<div class="qr-title-row">
+					<h3 class="qr-title">{langStore.current === 'uk' ? 'Офіційний сайт' : 'Official Website'}</h3>
+					<span class="qr-badge badge--web">Web</span>
+				</div>
+				<p class="qr-desc">
+					{langStore.current === 'uk'
+						? 'Цілодобовий онлайн-запис, контакти чергових лікарів, графік прийому та повний перелік медичних послуг.'
+						: '24/7 online appointment booking, emergency contacts, on-call schedules, and medical service directory.'}
+				</p>
+
+				<!-- Subvariant Switcher -->
+				<div class="subvariant-section">
+					<span class="subvariant-title">{langStore.current === 'uk' ? 'Версія іконки:' : 'Icon Version:'}</span>
+					<div class="subvariant-pills">
+						{#each (['v2', 'v1'] as const) as v}
+							<button
+								type="button"
+								class="sub-pill"
+								class:is-active={websiteVariant === v}
+								onclick={() => (websiteVariant = v)}
+							>
+								{langStore.current === 'uk' ? WEBSITE_FILES[v].labelUk : WEBSITE_FILES[v].labelEn}
+							</button>
+						{/each}
+					</div>
+				</div>
+			</div>
+
+			<div class="qr-actions">
+				<a
+					href="{base}/brand/qr/{activeWebsiteFile}"
+					download="vet-crew-{websiteVariant === 'v2' ? 'website-v2' : 'website'}{withBg ? '' : '-nobg'}.svg"
+					class="download-qr-btn"
+				>
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="7 10 12 15 17 10"></polyline>
+						<line x1="12" y1="15" x2="12" y2="3"></line>
+					</svg>
+					<span>
+						{langStore.current === 'uk'
+							? `Завантажити ${WEBSITE_FILES[websiteVariant].labelUk} (SVG)`
+							: `Download ${WEBSITE_FILES[websiteVariant].labelEn} (SVG)`}
+					</span>
+				</a>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -153,194 +333,351 @@
 	.qr-showcase-widget {
 		display: flex;
 		flex-direction: column;
-		gap: 1.25rem;
-		width: 100%;
+		gap: 1.5rem;
 	}
 
 	.showcase-toolbar {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
 		gap: 1rem;
-		flex-wrap: wrap;
-		padding: 0.85rem 1.25rem;
+		padding: 1.1rem 1.4rem;
 		background: var(--bg-secondary);
-		border-radius: 14px;
 		border: 1px solid var(--border);
+		border-radius: 16px;
+	}
+
+	.mode-meta {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
 	}
 
 	.mode-label {
 		font-size: 0.85rem;
 		font-weight: 700;
+		color: var(--fg-primary);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.mode-desc {
+		font-size: 0.85rem;
 		color: var(--fg-secondary);
 	}
 
 	.toggle-pill-wrap {
-		display: inline-flex;
-		padding: 3px;
+		display: flex;
+		gap: 0.4rem;
 		background: var(--panel-bg);
-		border-radius: 10px;
+		padding: 0.35rem;
+		border-radius: 12px;
 		border: 1px solid var(--border);
 	}
 
 	.pill-btn {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.35rem;
-		padding: 0.38rem 0.85rem;
+		gap: 0.5rem;
+		padding: 0.5rem 0.95rem;
+		border: 1px solid transparent;
 		border-radius: 8px;
-		font-size: 0.8rem;
-		font-weight: 700;
-		color: var(--fg-secondary);
 		background: transparent;
+		color: var(--fg-secondary);
+		font-size: 0.84rem;
+		font-weight: 600;
 		cursor: pointer;
-		transition: all 0.15s ease;
-		border: none;
+		transition: all 0.2s ease;
 	}
 
-	.pill-glyph {
-		font-size: 0.8rem;
+	.pill-btn:hover {
+		color: var(--fg-primary);
+		background: var(--bg-secondary);
 	}
 
 	.pill-btn.is-active {
-		background: var(--bg-secondary);
-		color: var(--brand-leaf);
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+		background: var(--panel-bg);
+		color: var(--brand-emerald);
+		border-color: var(--brand-leaf);
+		box-shadow: 0 2px 8px rgba(89, 143, 58, 0.18);
 	}
 
-	/* GRID */
+	:global(.dark) .pill-btn.is-active {
+		color: var(--brand-gold);
+		border-color: var(--brand-gold);
+		box-shadow: 0 2px 8px rgba(255, 179, 39, 0.15);
+	}
+
+	.pill-glyph {
+		font-size: 1rem;
+		line-height: 1;
+	}
+
+	/* CARDS GRID */
 	.qr-cards-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-		gap: 1.25rem;
+		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+		gap: 1.4rem;
 	}
 
 	.qr-card {
 		display: flex;
 		flex-direction: column;
-		border-radius: 16px;
 		background: var(--panel-bg);
 		border: 1px solid var(--border);
-		padding: 1.25rem;
-		transition: all 0.2s ease;
+		border-radius: 18px;
+		overflow: hidden;
+		transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
 	}
 
 	.qr-card:hover {
-		transform: translateY(-2px);
+		transform: translateY(-3px);
 		border-color: var(--border-hover);
-		box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+		box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
 	}
 
+	.qr-card.template-card {
+		border-style: dashed;
+		border-color: var(--border-hover);
+		background: linear-gradient(180deg, var(--panel-bg) 0%, var(--bg-secondary) 100%);
+	}
+
+	/* PREVIEW STAGE */
 	.qr-preview-stage {
-		height: 200px;
-		border-radius: 12px;
-		background: var(--bg-secondary);
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 1rem;
-		margin-bottom: 1rem;
-		transition: background 0.2s ease;
+		padding: 2rem 1.5rem;
+		background: var(--bg-secondary);
+		min-height: 270px;
+		border-bottom: 1px solid var(--border);
+		position: relative;
 	}
 
 	.qr-preview-stage.is-nobg {
-		background-color: var(--bg-secondary);
-		background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.04) 25%, transparent 25%),
-			linear-gradient(-45deg, rgba(0, 0, 0, 0.04) 25%, transparent 25%),
-			linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.04) 75%),
-			linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.04) 75%);
+		background-image: 
+			linear-gradient(45deg, rgba(0,0,0,0.04) 25%, transparent 25%),
+			linear-gradient(-45deg, rgba(0,0,0,0.04) 25%, transparent 25%),
+			linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.04) 75%),
+			linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.04) 75%);
 		background-size: 16px 16px;
 		background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
 	}
 
-	.qr-svg-render {
-		max-width: 100%;
-		max-height: 100%;
-		object-fit: contain;
-		filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08));
+	:global(.dark) .qr-preview-stage.is-nobg {
+		background-image: 
+			linear-gradient(45deg, rgba(255,255,255,0.04) 25%, transparent 25%),
+			linear-gradient(-45deg, rgba(255,255,255,0.04) 25%, transparent 25%),
+			linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.04) 75%),
+			linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.04) 75%);
 	}
 
+	.qr-svg-render {
+		max-width: 100%;
+		max-height: 230px;
+		width: auto;
+		height: auto;
+		object-fit: contain;
+		filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.08));
+		transition: transform 0.25s ease;
+	}
+
+	.qr-card:hover .qr-svg-render {
+		transform: scale(1.03);
+	}
+
+	/* META INFO */
 	.qr-meta {
+		padding: 1.25rem 1.4rem;
 		display: flex;
 		flex-direction: column;
-		gap: 0.35rem;
+		gap: 0.65rem;
 		flex: 1;
-		margin-bottom: 1rem;
 	}
 
 	.qr-title-row {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 0.5rem;
+		gap: 0.75rem;
 	}
 
 	.qr-title {
-		font-size: 1rem;
+		margin: 0;
+		font-size: 1.15rem;
 		font-weight: 700;
 		color: var(--fg-primary);
+		letter-spacing: -0.01em;
 	}
 
 	.qr-badge {
 		font-size: 0.68rem;
 		font-weight: 800;
-		padding: 2px 6px;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		padding: 0.22rem 0.55rem;
 		border-radius: 6px;
 		background: rgba(89, 143, 58, 0.12);
-		color: var(--brand-leaf);
+		color: var(--brand-emerald);
+	}
+
+	:global(.dark) .qr-badge {
+		color: var(--brand-gold);
+		background: rgba(255, 179, 39, 0.12);
+	}
+
+	.qr-badge.badge--wifi {
+		background: rgba(56, 189, 248, 0.15);
+		color: #0284c7;
+	}
+
+	:global(.dark) .qr-badge.badge--wifi {
+		background: rgba(56, 189, 248, 0.2);
+		color: #38bdf8;
+	}
+
+	.qr-badge.badge--ig {
+		background: rgba(225, 48, 108, 0.15);
+		color: #e1306c;
+	}
+
+	.qr-badge.badge--reviews {
+		background: rgba(255, 179, 39, 0.18);
+		color: #b45309;
+	}
+
+	:global(.dark) .qr-badge.badge--reviews {
+		color: #ffb327;
+	}
+
+	.qr-badge.badge--web {
+		background: rgba(89, 143, 58, 0.16);
+		color: #598f3a;
+	}
+
+	.qr-badge.badge--neutral {
+		background: var(--bg-secondary);
+		color: var(--fg-secondary);
+		border: 1px solid var(--border);
 	}
 
 	.qr-desc {
-		font-size: 0.78rem;
-		line-height: 1.4;
-		color: var(--fg-muted);
 		margin: 0;
+		font-size: 0.86rem;
+		line-height: 1.45;
+		color: var(--fg-secondary);
 	}
 
-	.qr-actions {
+	/* SUBVARIANT SECTION */
+	.subvariant-section {
+		margin-top: 0.35rem;
 		display: flex;
-		align-items: center;
+		flex-direction: column;
+		gap: 0.4rem;
+		padding-top: 0.65rem;
+		border-top: 1px solid var(--border);
+	}
+
+	.subvariant-title {
+		font-size: 0.72rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--fg-muted, var(--fg-secondary));
+	}
+
+	.subvariant-pills {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+	}
+
+	.sub-pill {
+		padding: 0.32rem 0.65rem;
+		border-radius: 6px;
+		border: 1px solid var(--border);
+		background: var(--bg-secondary);
+		color: var(--fg-secondary);
+		font-size: 0.76rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: all 0.16s ease;
+	}
+
+	.sub-pill:hover {
+		color: var(--fg-primary);
+		border-color: var(--border-hover);
+	}
+
+	.sub-pill.is-active {
+		background: var(--brand-emerald);
+		color: #ffffff;
+		border-color: var(--brand-emerald);
+		box-shadow: 0 2px 6px rgba(19, 55, 27, 0.25);
+	}
+
+	:global(.dark) .sub-pill.is-active {
+		background: var(--brand-gold);
+		color: #101e14;
+		border-color: var(--brand-gold);
+		box-shadow: 0 2px 6px rgba(255, 179, 39, 0.25);
+	}
+
+	/* ACTIONS */
+	.qr-actions {
+		padding: 0 1.4rem 1.4rem;
 	}
 
 	.download-qr-btn {
-		width: 100%;
-		display: inline-flex;
+		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 0.45rem;
-		padding: 0.55rem 1rem;
+		gap: 0.5rem;
+		width: 100%;
+		padding: 0.7rem 1rem;
 		border-radius: 10px;
 		background: var(--bg-secondary);
 		border: 1px solid var(--border);
 		color: var(--fg-primary);
-		font-size: 0.8rem;
-		font-weight: 700;
+		font-size: 0.84rem;
+		font-weight: 600;
 		text-decoration: none;
 		transition: all 0.2s ease;
 	}
 
 	.download-qr-btn:hover {
-		background: var(--brand-leaf);
+		background: var(--brand-emerald);
 		color: #ffffff;
-		border-color: var(--brand-leaf);
+		border-color: var(--brand-emerald);
+		box-shadow: 0 4px 12px rgba(19, 55, 27, 0.2);
 	}
 
-	@media (max-width: 600px) {
+	:global(.dark) .download-qr-btn:hover {
+		background: var(--brand-gold);
+		color: #101e14;
+		border-color: var(--brand-gold);
+		box-shadow: 0 4px 12px rgba(255, 179, 39, 0.2);
+	}
+
+	@media (max-width: 640px) {
 		.showcase-toolbar {
 			flex-direction: column;
-			align-items: stretch;
+			align-items: flex-start;
 		}
 
 		.toggle-pill-wrap {
-			display: grid;
-			grid-template-columns: 1fr 1fr;
+			width: 100%;
 		}
 
 		.pill-btn {
+			flex: 1;
 			justify-content: center;
-			font-size: 0.74rem;
-			padding: 0.45rem 0.3rem;
+		}
+
+		.qr-cards-grid {
+			grid-template-columns: 1fr;
 		}
 	}
 </style>
-
