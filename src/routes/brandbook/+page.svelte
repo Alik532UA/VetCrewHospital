@@ -9,61 +9,37 @@
 	const colors = [
 		{
 			hex: '#93C84A',
-			name: 'lGreen',
-			titleUa: 'Світло-зелений (Light Green)',
-			titleEn: 'Light Green',
-			roleUa: 'Акцентний свіжий тон, молода зелень, паростки та оптимізм',
-			roleEn: 'Fresh accent tone, vitality, renewal and health',
+			name: 'light Green',
 			textColor: '#101e14',
 			rgb: '147, 200, 74'
 		},
 		{
 			hex: '#E5E5E5',
 			name: 'gWhite',
-			titleUa: 'М\'який білий (Soft White)',
-			titleEn: 'Soft / Gray White',
-			roleUa: 'Фоновий нейтральний тон, лапки, чистота та стерильність',
-			roleEn: 'Neutral background tone, paw prints, purity and hygiene',
 			textColor: '#101e14',
 			rgb: '229, 229, 229'
 		},
 		{
 			hex: '#598F3A',
-			name: 'green',
-			titleUa: 'Трав\'яний зелений (Hospital Green)',
-			titleEn: 'Hospital Leaf Green',
-			roleUa: 'Фірмовий напис «HOSPITAL», гармонія та спокій',
-			roleEn: 'Signature «HOSPITAL» arc text, balance and healing',
+			name: 'main Green',
 			textColor: '#ffffff',
 			rgb: '89, 143, 58'
 		},
 		{
 			hex: '#FFB327',
 			name: 'yellow',
-			titleUa: 'Теплий золотий (Amber Yellow)',
-			titleEn: 'Amber Gold / Yellow',
-			roleUa: 'Фірмовий напис «VET CREW», увага, тепло та турбота',
-			roleEn: 'Signature «VET CREW» gold text, warmth and devotion',
 			textColor: '#101e14',
 			rgb: '255, 179, 39'
 		},
 		{
 			hex: '#13371B',
-			name: 'dGreen',
-			titleUa: 'Темний смарагдовий (Dark Forest Green)',
-			titleEn: 'Dark Emerald / Forest Green',
-			roleUa: 'Основа емблеми-кола, глибина, надійність та стабільність',
-			roleEn: 'Circle emblem foundation, deep stability and authority',
+			name: 'dark Green',
 			textColor: '#ffffff',
 			rgb: '19, 55, 27'
 		},
 		{
 			hex: '#262626',
 			name: 'gBlack',
-			titleUa: 'Графітовий чорний (Charcoal Black)',
-			titleEn: 'Charcoal Black',
-			roleUa: 'Контрастний текст, глибокі тіні та структуруючий тон',
-			roleEn: 'Contrast typography, structural depth and dark UI elements',
 			textColor: '#ffffff',
 			rgb: '38, 38, 38'
 		}
@@ -135,10 +111,6 @@
 							<span class="tile-tag">{c.name}</span>
 						</div>
 						<div class="tile-info">
-							<div class="tile-header">
-								<span class="tile-name">{langStore.current === 'uk' ? c.titleUa : c.titleEn}</span>
-							</div>
-							<p class="tile-role">{langStore.current === 'uk' ? c.roleUa : c.roleEn}</p>
 							<div class="copy-actions">
 								<button
 									type="button"
@@ -447,31 +419,17 @@
 	}
 
 	.tile-info {
-		padding: 1.25rem;
+		padding: 1rem 1.25rem;
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
-		flex: 1;
-		justify-content: space-between;
-	}
-
-	.tile-name {
-		font-size: 0.96rem;
-		font-weight: 700;
-		color: var(--fg-primary);
-	}
-
-	.tile-role {
-		font-size: 0.82rem;
-		color: var(--fg-secondary);
-		line-height: 1.45;
+		justify-content: center;
 	}
 
 	.copy-actions {
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
-		margin-top: 0.5rem;
+		flex-wrap: wrap;
 	}
 
 	.copy-btn {
