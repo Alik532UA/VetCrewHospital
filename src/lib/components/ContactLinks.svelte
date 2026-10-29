@@ -105,24 +105,27 @@
 	}
 
 	.contact-links {
-		display: flex;
+		display: grid;
+		grid-template-columns: repeat(3, 100px);
+		justify-items: center;
 		align-items: center;
-		justify-content: center;
-		gap: 2.5rem;
 		padding: 0.25rem 1rem;
 		pointer-events: auto;
-		transition: gap 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+		transition: grid-template-columns 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 	}
 
 	.is-expanded .contact-links {
-		gap: 4.8rem;
+		grid-template-columns: repeat(3, 160px);
 	}
 
 	.link-item {
 		position: relative;
+		width: 100%;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		justify-content: center;
+		text-align: center;
 		text-decoration: none;
 		outline: none;
 	}
@@ -244,12 +247,14 @@
 		}
 
 		.contact-links {
-			gap: 1.8rem;
+			grid-template-columns: repeat(3, minmax(70px, 1fr));
+			gap: 0;
 			padding: 0.2rem 0.5rem;
 		}
 
 		.is-expanded .contact-links {
-			gap: clamp(1.2rem, 6vw, 2.8rem);
+			grid-template-columns: repeat(3, minmax(88px, 1fr));
+			gap: 0;
 		}
 
 		.link-item {

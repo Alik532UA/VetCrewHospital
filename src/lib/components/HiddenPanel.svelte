@@ -139,10 +139,10 @@
 	}
 
 	.hidden-panel-content {
-		display: flex;
+		display: grid;
+		grid-template-columns: repeat(3, 84px);
+		justify-items: center;
 		align-items: center;
-		justify-content: center;
-		gap: 1.25rem;
 		padding: 0.65rem 1.4rem;
 		background: var(--panel-bg);
 		backdrop-filter: blur(20px) saturate(180%);
@@ -156,8 +156,10 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		justify-content: center;
+		width: 100%;
 		gap: 0.35rem;
-		padding: 0.45rem 0.75rem;
+		padding: 0.45rem 0.6rem;
 		border-radius: 14px;
 		background: transparent;
 		border: 1px solid transparent;
@@ -217,7 +219,8 @@
 		}
 
 		.hidden-panel-content {
-			gap: 0.75rem;
+			grid-template-columns: repeat(3, minmax(64px, 1fr));
+			gap: 0.4rem;
 			padding: 0.5rem 0.85rem;
 		}
 
