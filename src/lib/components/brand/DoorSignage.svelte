@@ -130,7 +130,11 @@
 					class:is-active={currentFormat === 'composite'}
 					onclick={() => (currentFormat = 'composite')}
 				>
-					<span class="tab-glyph">🚪</span>
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M18 20V6a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v14"/>
+						<path d="M2 20h20"/>
+						<path d="M14 12v.01"/>
+					</svg>
 					<span>{langStore.current === 'uk' ? 'Іконка + напис' : 'Icon + Text'}</span>
 				</button>
 				<button
@@ -139,7 +143,15 @@
 					class:is-active={currentFormat === 'icon'}
 					onclick={() => (currentFormat = 'icon')}
 				>
-					<span class="tab-glyph">🏥</span>
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M12 6v4"/>
+						<path d="M14 14h-4"/>
+						<path d="M14 18h-4"/>
+						<path d="M14 8h-4"/>
+						<path d="M18 12h-4"/>
+						<rect width="16" height="20" x="4" y="2" rx="2"/>
+						<path d="M10 22v-4h4v4"/>
+					</svg>
 					<span>{langStore.current === 'uk' ? 'Тільки іконка' : 'Icon Only'}</span>
 				</button>
 				<button
@@ -148,7 +160,11 @@
 					class:is-active={currentFormat === 'text'}
 					onclick={() => (currentFormat = 'text')}
 				>
-					<span class="tab-glyph">📝</span>
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<polyline points="4 7 4 4 20 4 20 7"/>
+						<line x1="9" x2="15" y1="20" y2="20"/>
+						<line x1="12" x2="12" y1="4" y2="20"/>
+					</svg>
 					<span>{langStore.current === 'uk' ? 'Тільки напис' : 'Text Only'}</span>
 				</button>
 			</div>
@@ -175,7 +191,9 @@
 							aria-label="{c.name} ({c.hex})"
 						>
 							{#if signColor.toUpperCase() === c.hex.toUpperCase()}
-								<span class="check-mark" style:color={c.textColor}>✓</span>
+								<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c.textColor} stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<polyline points="20 6 9 17 4 12"/>
+								</svg>
 							{/if}
 						</button>
 					{/each}
@@ -188,7 +206,13 @@
 							oninput={(e) => (signColor = (e.target as HTMLInputElement).value.toUpperCase())}
 							aria-label="Custom color picker"
 						/>
-						<span class="picker-icon">🎨</span>
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="picker-icon" aria-hidden="true">
+							<circle cx="13.5" cy="6.5" r=".5" fill="#ffffff"/>
+							<circle cx="17.5" cy="10.5" r=".5" fill="#ffffff"/>
+							<circle cx="8.5" cy="7.5" r=".5" fill="#ffffff"/>
+							<circle cx="6.5" cy="12.5" r=".5" fill="#ffffff"/>
+							<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+						</svg>
 					</label>
 				</div>
 			</div>
@@ -202,9 +226,13 @@
 						class="stage-btn"
 						class:is-active={stageTheme === 'light'}
 						onclick={() => (stageTheme = 'light')}
-						title="Світле тло"
+						title={langStore.current === 'uk' ? 'Світле тло' : 'Light background'}
+						aria-label={langStore.current === 'uk' ? 'Світле тло' : 'Light background'}
 					>
-						<span>⚪</span>
+						<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<circle cx="12" cy="12" r="4"/>
+							<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+						</svg>
 					</button>
 					<button
 						type="button"
@@ -212,6 +240,7 @@
 						class:is-active={stageTheme === 'emerald'}
 						onclick={() => (stageTheme = 'emerald')}
 						title="Фірмовий смарагд #13371B"
+						aria-label="Фірмовий смарагд #13371B"
 					>
 						<span class="emerald-dot"></span>
 					</button>
@@ -220,18 +249,25 @@
 						class="stage-btn"
 						class:is-active={stageTheme === 'dark'}
 						onclick={() => (stageTheme = 'dark')}
-						title="Темне тло"
+						title={langStore.current === 'uk' ? 'Темне тло' : 'Dark background'}
+						aria-label={langStore.current === 'uk' ? 'Темне тло' : 'Dark background'}
 					>
-						<span>⚫</span>
+						<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+						</svg>
 					</button>
 					<button
 						type="button"
 						class="stage-btn"
 						class:is-active={stageTheme === 'checker'}
 						onclick={() => (stageTheme = 'checker')}
-						title="Шахматка (прозоре тло)"
+						title={langStore.current === 'uk' ? 'Прозоре тло (сітка)' : 'Transparent checkerboard'}
+						aria-label={langStore.current === 'uk' ? 'Прозоре тло (сітка)' : 'Transparent checkerboard'}
 					>
-						<span>░</span>
+						<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<rect width="18" height="18" x="3" y="3" rx="2"/>
+							<path d="M3 12h18M12 3v18"/>
+						</svg>
 					</button>
 				</div>
 			</div>
@@ -395,11 +431,6 @@
 		box-shadow: 0 2px 8px rgba(255, 179, 39, 0.25);
 	}
 
-	.tab-glyph {
-		font-size: 1rem;
-		line-height: 1;
-	}
-
 	/* STYLING ROW: PALETTE + STAGE */
 	.styling-row {
 		display: flex;
@@ -473,11 +504,6 @@
 		box-shadow: 0 0 0 3px rgba(255, 179, 39, 0.35);
 	}
 
-	.check-mark {
-		font-size: 0.75rem;
-		font-weight: 900;
-	}
-
 	.custom-picker-pill {
 		background: conic-gradient(from 0deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
 		overflow: hidden;
@@ -524,13 +550,26 @@
 		border-radius: 6px;
 		border: 1px solid transparent;
 		background: transparent;
+		color: var(--fg-secondary);
 		cursor: pointer;
 		font-size: 0.8rem;
 		transition: all 0.15s ease;
 	}
 
+	.stage-btn svg {
+		opacity: 0.75;
+		transition: opacity 0.15s ease, transform 0.15s ease;
+	}
+
+	.stage-btn:hover svg,
+	.stage-btn.is-active svg {
+		opacity: 1;
+		transform: scale(1.08);
+	}
+
 	.stage-btn.is-active {
 		background: var(--bg-secondary);
+		color: var(--fg-primary);
 		border-color: var(--border-hover);
 		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 	}

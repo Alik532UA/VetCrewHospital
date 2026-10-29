@@ -120,7 +120,9 @@
 						aria-label="{c.name} ({c.hex})"
 					>
 						{#if animalColor.toUpperCase() === c.hex.toUpperCase()}
-							<span class="check-mark" style:color={c.textColor}>✓</span>
+							<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c.textColor} stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<polyline points="20 6 9 17 4 12"/>
+							</svg>
 						{/if}
 					</button>
 				{/each}
@@ -133,7 +135,13 @@
 						oninput={(e) => (animalColor = (e.target as HTMLInputElement).value.toUpperCase())}
 						aria-label="Custom color picker"
 					/>
-					<span class="picker-icon">🎨</span>
+					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="picker-icon" aria-hidden="true">
+						<circle cx="13.5" cy="6.5" r=".5" fill="#ffffff"/>
+						<circle cx="17.5" cy="10.5" r=".5" fill="#ffffff"/>
+						<circle cx="8.5" cy="7.5" r=".5" fill="#ffffff"/>
+						<circle cx="6.5" cy="12.5" r=".5" fill="#ffffff"/>
+						<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+					</svg>
 				</label>
 			</div>
 		</div>
@@ -200,7 +208,12 @@
 					bind:value={searchQuery}
 				/>
 				{#if searchQuery}
-					<button type="button" class="clear-btn" onclick={() => (searchQuery = '')} aria-label="Clear">✕</button>
+					<button type="button" class="clear-btn" onclick={() => (searchQuery = '')} aria-label="Clear">
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<line x1="18" y1="6" x2="6" y2="18"/>
+							<line x1="6" y1="6" x2="18" y2="18"/>
+						</svg>
+					</button>
 				{/if}
 			</div>
 		</div>
@@ -332,12 +345,6 @@
 		border-color: var(--fg-primary);
 		transform: scale(1.18);
 		box-shadow: 0 0 0 3px rgba(89, 143, 58, 0.35);
-	}
-
-	.check-mark {
-		font-size: 0.82rem;
-		font-weight: 900;
-		line-height: 1;
 	}
 
 	.custom-picker-pill {
