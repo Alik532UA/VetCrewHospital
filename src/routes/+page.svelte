@@ -180,8 +180,8 @@
 	<meta
 		property="og:title"
 		content="{langStore.current === 'uk'
-			? 'Vet Crew Hospital — Центр лікування екзотичних та диких тварин'
-			: 'Vet Crew Hospital — Care Center for Exotic and Wild Animals'}"
+			? 'Центр лікування екзотичних та диких тварин'
+			: 'Care Center for Exotic and Wild Animals'}"
 	/>
 	<meta
 		property="og:description"
@@ -193,8 +193,8 @@
 	<meta
 		name="twitter:title"
 		content="{langStore.current === 'uk'
-			? 'Vet Crew Hospital — Центр лікування екзотичних та диких тварин'
-			: 'Vet Crew Hospital — Care Center for Exotic and Wild Animals'}"
+			? 'Центр лікування екзотичних та диких тварин'
+			: 'Care Center for Exotic and Wild Animals'}"
 	/>
 	<meta
 		name="twitter:description"
