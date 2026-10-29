@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="uk" data-theme="dark">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.svg" type="image/svg+xml" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+		<meta name="color-scheme" content="light dark" />
+		<title>Vet Crew Hospital — Ветеринарний Госпіталь</title>
+		<meta name="description" content="Vet Crew Hospital — ветеринарний госпіталь та невідкладна турбота. Телефон: +380775010101." />
+		<meta name="theme-color" content="#08100a" />
+
+		<!-- Open Graph -->
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="Vet Crew Hospital" />
+		<meta property="og:title" content="Vet Crew Hospital — Ветеринарний Госпіталь" />
+		<meta property="og:description" content="Vet Crew Hospital — невідкладна ветеринарна допомога, Instagram та маршрут на мапі." />
+		<meta property="og:image" content="%sveltekit.assets%/logo.svg" />
+		<meta property="og:locale" content="uk_UA" />
+		<meta property="og:locale:alternate" content="en_US" />
+
+		<!-- Google Fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+		%sveltekit.head%
+		<script>
+			try {
+				const saved = localStorage.getItem('vetcrewhospital_theme');
+				const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+				const theme = saved || (prefersDark ? 'dark' : 'light');
+				document.documentElement.setAttribute('data-theme', theme);
+				const meta = document.querySelector('meta[name="theme-color"]');
+				if (meta) {
+					meta.setAttribute('content', theme === 'dark' ? '#08100a' : '#f5f7f4');
+				}
+			} catch {}
+		</script>
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">%sveltekit.body%</div>
+	</body>
+</html>
+

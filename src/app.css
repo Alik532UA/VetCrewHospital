@@ -1,0 +1,106 @@
+:root {
+	--font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	--transition-speed: 0.5s;
+	--transition-easing: cubic-bezier(0.16, 1, 0.3, 1);
+	color-scheme: light dark;
+
+	/* Core Brand Accents */
+	--brand-circle: #13371b;
+	--brand-gold: #ffb327;
+	--brand-gold-glow: rgba(255, 179, 39, 0.4);
+	--brand-leaf: #598f3a;
+
+	/* Action Colors */
+	--color-phone: #22c55e;
+	--glow-phone: rgba(34, 197, 94, 0.35);
+	--color-insta: #e1306c;
+	--glow-insta: rgba(225, 48, 108, 0.35);
+	--color-map: #3b82f6;
+	--glow-map: rgba(59, 130, 246, 0.35);
+}
+
+:root,
+[data-theme='dark'] {
+	--bg-primary: #070e09;
+	--bg-secondary: #0d1a10;
+	--bg-radial: radial-gradient(
+		circle 650px at var(--mouse-x, 50%) var(--mouse-y, 50%),
+		rgba(89, 143, 58, 0.12),
+		rgba(255, 179, 39, 0.035),
+		transparent 70%
+	);
+	--card-bg: rgba(19, 55, 27, 0.28);
+	--card-bg-hover: rgba(25, 75, 36, 0.45);
+	--card-border: rgba(255, 255, 255, 0.1);
+	--card-border-hover: rgba(255, 179, 39, 0.45);
+	--card-shadow: 0 12px 36px -8px rgba(0, 0, 0, 0.65), 0 0 1px 1px rgba(255, 255, 255, 0.05);
+	--text-primary: #f5f8f5;
+	--text-secondary: #9cb5a1;
+	--text-muted: #5e7763;
+	--nav-bg: rgba(13, 26, 16, 0.75);
+	--nav-border: rgba(255, 255, 255, 0.08);
+	--pill-bg: rgba(255, 255, 255, 0.06);
+	--pill-hover: rgba(255, 255, 255, 0.12);
+	color-scheme: dark;
+}
+
+[data-theme='light'] {
+	--bg-primary: #f5f8f5;
+	--bg-secondary: #e6ede6;
+	--bg-radial: radial-gradient(
+		circle 650px at var(--mouse-x, 50%) var(--mouse-y, 50%),
+		rgba(89, 143, 58, 0.14),
+		rgba(255, 179, 39, 0.07),
+		transparent 70%
+	);
+	--card-bg: rgba(255, 255, 255, 0.82);
+	--card-bg-hover: rgba(255, 255, 255, 0.98);
+	--card-border: rgba(19, 55, 27, 0.14);
+	--card-border-hover: rgba(19, 55, 27, 0.35);
+	--card-shadow: 0 14px 34px -8px rgba(19, 55, 27, 0.12), 0 1px 3px rgba(0, 0, 0, 0.04);
+	--text-primary: #0c1c10;
+	--text-secondary: #36503b;
+	--text-muted: #6e8673;
+	--nav-bg: rgba(245, 248, 245, 0.85);
+	--nav-border: rgba(19, 55, 27, 0.1);
+	--pill-bg: rgba(19, 55, 27, 0.06);
+	--pill-hover: rgba(19, 55, 27, 0.12);
+	color-scheme: only light;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	-webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	background-color: var(--bg-primary);
+	color: var(--text-primary);
+	font-family: var(--font-main);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	transition:
+		background-color var(--transition-speed) var(--transition-easing),
+		color var(--transition-speed) var(--transition-easing);
+	user-select: none;
+	-webkit-user-select: none;
+}
+
+button {
+	font-family: inherit;
+	cursor: pointer;
+	border: none;
+	background: none;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
