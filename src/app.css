@@ -112,9 +112,15 @@ body {
 }
 
 /* Allow native page scroll on content pages like /brandbook */
-html:has(.brandbook-page),
-body:has(.brandbook-page) {
+html:has(.brandbook-page) {
+	overflow-x: clip !important;
 	overflow-y: auto !important;
+	height: auto !important;
+	min-height: 100% !important;
+}
+
+body:has(.brandbook-page) {
+	overflow: visible !important;
 	height: auto !important;
 	min-height: 100% !important;
 	user-select: text !important;

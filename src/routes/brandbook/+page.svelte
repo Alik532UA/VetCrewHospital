@@ -387,7 +387,7 @@
 
 <style>
 	:global(body:has(.brandbook-page)) {
-		overflow-y: auto !important;
+		overflow: visible !important;
 		height: auto !important;
 		min-height: 100% !important;
 		user-select: text !important;
@@ -414,7 +414,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1.5rem;
-		padding-left: calc(46px + 2rem);
+		padding-left: calc(64px + 2rem);
 		transition: padding 0.2s ease;
 	}
 
@@ -483,7 +483,7 @@
 	/* 2-COLUMN BRANDBOOK LAYOUT */
 	.brandbook-layout {
 		display: grid;
-		grid-template-columns: 46px minmax(0, 1fr);
+		grid-template-columns: 64px minmax(0, 1fr);
 		gap: 2rem;
 		align-items: start;
 		min-width: 0;
