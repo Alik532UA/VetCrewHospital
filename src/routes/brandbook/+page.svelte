@@ -182,7 +182,7 @@
 									<div class="swatch-top-row">
 										<span class="tile-hex">{c.hex}</span>
 										<span class="swatch-copy-hint">
-											{#if copiedVal === c.hex}
+											{#if copiedVal === c.hex || copiedVal === `rgb(${c.rgb})`}
 												<span class="copied-badge">
 													<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
 														<polyline points="20 6 9 17 4 12"></polyline>
@@ -212,9 +212,9 @@
 												e.stopPropagation();
 												copyToClipboard(c.hex);
 											}}
+											title="{langStore.current === 'uk' ? `Скопіювати HEX (${c.hex})` : `Copy HEX (${c.hex})`}"
 										>
-											<span>{copiedVal === c.hex ? (langStore.current === 'uk' ? 'Скопійовано!' : 'Copied!') : c.hex}</span>
-											<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+											<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 												{#if copiedVal === c.hex}
 													<polyline points="20 6 9 17 4 12"></polyline>
 												{:else}
@@ -222,19 +222,28 @@
 													<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
 												{/if}
 											</svg>
+											<span>{copiedVal === c.hex ? (langStore.current === 'uk' ? 'Скопійовано!' : 'Copied!') : c.hex}</span>
 										</button>
 
 										<button
 											type="button"
-											class="copy-btn secondary"
+											class="copy-btn"
 											class:is-copied={copiedVal === `rgb(${c.rgb})`}
 											onclick={(e) => {
 												e.stopPropagation();
 												copyToClipboard(`rgb(${c.rgb})`);
 											}}
-											title="{langStore.current === 'uk' ? `Скопіювати RGB: ${c.rgb}` : `Copy RGB: ${c.rgb}`}"
+											title="{langStore.current === 'uk' ? `Скопіювати RGB (${c.rgb})` : `Copy RGB (${c.rgb})`}"
 										>
-											<span>{copiedVal === `rgb(${c.rgb})` ? 'RGB OK' : `RGB: ${c.rgb}`}</span>
+											<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+												{#if copiedVal === `rgb(${c.rgb})`}
+													<polyline points="20 6 9 17 4 12"></polyline>
+												{:else}
+													<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+													<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+												{/if}
+											</svg>
+											<span>{copiedVal === `rgb(${c.rgb})` ? (langStore.current === 'uk' ? 'Скопійовано!' : 'Copied!') : `RGB: ${c.rgb}`}</span>
 										</button>
 									</div>
 								</div>
@@ -778,49 +787,52 @@
 	}
 
 	.copy-actions {
-		display: flex;
-		align-items: center;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
 		gap: 0.5rem;
-		flex-wrap: wrap;
 	}
 
 	.copy-btn {
 		display: inline-flex;
 		align-items: center;
+		justify-content: center;
 		gap: 0.35rem;
-		padding: 0.35rem 0.65rem;
+		padding: 0.45rem 0.55rem;
 		border-radius: 8px;
-		background: var(--border);
+		background: var(--bg-secondary);
 		color: var(--fg-primary);
 		font-family: monospace;
-		font-size: 0.78rem;
+		font-size: 0.76rem;
 		font-weight: 700;
 		cursor: pointer;
-		border: 1px solid transparent;
+		border: 1px solid var(--border);
 		transition: all 0.2s ease;
+		text-align: center;
+		white-space: nowrap;
 	}
 
 	.copy-btn:hover {
 		border-color: var(--border-hover);
 		background: var(--panel-bg);
+		color: var(--brand-leaf, #598f3a);
+	}
+
+	:global(.dark) .copy-btn:hover {
+		color: var(--brand-gold, #ffb327);
 	}
 
 	.copy-btn.is-copied {
-		background: var(--brand-leaf, #598f3a);
+		background: var(--brand-emerald, #13371b);
 		color: #ffffff;
-		border-color: var(--brand-leaf, #598f3a);
+		border-color: var(--brand-emerald, #13371b);
+		box-shadow: 0 2px 8px rgba(19, 55, 27, 0.25);
 	}
 
 	:global(.dark) .copy-btn.is-copied {
 		background: var(--brand-gold, #ffb327);
 		color: #101e14;
 		border-color: var(--brand-gold, #ffb327);
-	}
-
-	.copy-btn.secondary {
-		font-weight: 500;
-		font-size: 0.72rem;
-		color: var(--fg-secondary);
+		box-shadow: 0 2px 8px rgba(255, 179, 39, 0.25);
 	}
 
 	/* SECTION 03: NAMING & SUB-BRANDS */
