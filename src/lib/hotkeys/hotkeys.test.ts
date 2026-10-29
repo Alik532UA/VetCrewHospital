@@ -188,5 +188,16 @@ describe('hotkeys (HOTKEYS-v10)', () => {
 			service.handle(createMockEvent({ code: 'Digit3' }));
 			expect(sec3).toHaveBeenCalledTimes(1);
 		});
+
+		it('обробляє Escape через глобальну або шарову дію', () => {
+			const escapeAction = vi.fn(() => true);
+			const service = new HotkeyService({ escape: escapeAction });
+
+			const event = createMockEvent({ code: 'Escape' });
+			service.handle(event);
+
+			expect(escapeAction).toHaveBeenCalledTimes(1);
+			expect(event.defaultPrevented).toBe(true);
+		});
 	});
 });

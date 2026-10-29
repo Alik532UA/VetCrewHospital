@@ -50,7 +50,8 @@ export function isControlActivation(event: KeyboardEvent): boolean {
 
 export const NATIVE_ESCAPE = ['dialog:modal', '[popover]:popover-open:not([popover="manual" i])'] as const;
 
-export function nativeLayerOpen(doc: Document): boolean {
+export function nativeLayerOpen(doc?: Document | null): boolean {
+	if (!doc || typeof doc.querySelector !== 'function') return false;
 	return NATIVE_ESCAPE.some((selector) => {
 		try {
 			return doc.querySelector(selector) !== null;
@@ -85,7 +86,13 @@ export class HotkeyService {
 	#dispatch(event: KeyboardEvent): boolean {
 		const top = this.#layers.at(-1);
 		if (event.code === 'Escape') {
-			if (nativeLayerOpen(event.currentTarget instanceof Document ? event.currentTarget : document)) {
+			const doc =
+				typeof Document !== 'undefined' && event.currentTarget instanceof Document
+					? event.currentTarget
+					: typeof document !== 'undefined'
+						? document
+						: null;
+			if (doc && nativeLayerOpen(doc)) {
 				return false;
 			}
 			return top?.handle(event) ?? (this.actions['escape']?.() ?? false);
