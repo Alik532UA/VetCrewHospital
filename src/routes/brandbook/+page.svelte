@@ -2,6 +2,7 @@
 	import { base } from '$app/paths';
 	import { resolve } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
+	import LogoCustomizer from '$lib/components/LogoCustomizer.svelte';
 
 	let copiedVal = $state<string | null>(null);
 
@@ -143,71 +144,21 @@
 			</div>
 		</section>
 
-		<!-- SECTION 2: LOGO ANATOMY -->
+		<!-- SECTION 2: LOGO ANATOMY & CUSTOMIZER -->
 		<section class="guide-card" id="logo-anatomy">
 			<div class="card-head">
 				<span class="step-num">02</span>
 				<div>
-					<h2 class="card-title">{langStore.current === 'uk' ? 'Логотип та композиція' : 'Logo & Anatomy'}</h2>
+					<h2 class="card-title">{langStore.current === 'uk' ? 'Логотип та генератор кольорів' : 'Logo & Color Studio'}</h2>
 					<p class="card-desc">
 						{langStore.current === 'uk'
-							? 'Офіційна кругла емблема діаметром 970.62px із центром у точці (485.31, 485.31).'
-							: 'Official circular emblem with viewBox 970.62px centered at (485.31, 485.31).'}
+							? 'Налаштовуйте кольори для кожної частини логотипу або виберіть готовий шаблон, тестуйте на різному тлі та завантажуйте готовий векторний SVG чи PNG.'
+							: 'Customize colors for each logo element or pick a preset, test on light/dark stage and export ready SVG or PNG.'}
 					</p>
 				</div>
 			</div>
 
-			<div class="anatomy-grid">
-				<div class="logo-preview-box">
-					<div class="preview-inner">
-						<img
-							src="{base}/logo.svg"
-							alt="Vet Crew Hospital Logo"
-							class="static-logo-img"
-							width="220"
-							height="220"
-						/>
-					</div>
-					<div class="preview-caption">
-						<span>{langStore.current === 'uk' ? 'Векторний оригінал' : 'Vector Original'}</span>
-						<a href="{base}/logo.svg" download="VetCrewHospital-logo.svg" class="download-link">
-							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-								<polyline points="7 10 12 15 17 10"></polyline>
-								<line x1="12" y1="15" x2="12" y2="3"></line>
-							</svg>
-							<span>SVG</span>
-						</a>
-					</div>
-				</div>
-
-				<div class="anatomy-specs">
-					<div class="spec-row">
-						<span class="spec-label">Коло основи (Circle BG):</span>
-						<span class="spec-val"><code>#13371B</code> (dark Green), R: 461.76px</span>
-					</div>
-					<div class="spec-row">
-						<span class="spec-label">Лапка (Paw Print):</span>
-						<span class="spec-val"><code>#FFFFFF</code>, 4 пальчики + подушечка</span>
-					</div>
-					<div class="spec-row">
-						<span class="spec-label">Напис «VET CREW»:</span>
-						<span class="spec-val"><code>#FFB327</code> (yellow), центральний масивний блок</span>
-					</div>
-					<div class="spec-row">
-						<span class="spec-label">Напис «HOSPITAL»:</span>
-						<span class="spec-val"><code>#598F3A</code> (main Green), нижня центрована дуга</span>
-					</div>
-					<div class="spec-row">
-						<span class="spec-label">Геометрія та пропорції:</span>
-						<span class="spec-val">
-							{langStore.current === 'uk'
-								? 'Векторний SVG 970.62 × 970.62 px, радіус центрального кола 461.76 px, оптична компенсація зсуву Y = +6.15 px.'
-								: 'Vector SVG 970.62 × 970.62 px, center circle radius 461.76 px, optical vertical compensation Y = +6.15 px.'}
-						</span>
-					</div>
-				</div>
-			</div>
+			<LogoCustomizer brandColors={colors} />
 		</section>
 
 		<!-- SECTION 3: TYPOGRAPHY -->
@@ -469,162 +420,8 @@
 		color: var(--fg-secondary);
 	}
 
-	/* ANATOMY GRID */
-	.anatomy-grid {
-		display: grid;
-		grid-template-columns: 340px 1fr;
-		gap: 2rem;
-		align-items: center;
-	}
-
-	.logo-preview-box {
-		border-radius: 1.25rem;
-		border: 1px solid var(--border);
-		background: var(--bg-secondary);
-		padding: 1.5rem;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 1.25rem;
-	}
-
-	.preview-inner {
-		width: 220px;
-		height: 220px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.static-logo-img {
-		width: 100%;
-		height: 100%;
-		object-fit: contain;
-		display: block;
-		filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.15));
-		transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-	}
-
-	.static-logo-img:hover {
-		transform: scale(1.03);
-	}
-
-	.preview-caption {
-		width: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		font-size: 0.78rem;
-		font-weight: 600;
-		color: var(--fg-secondary);
-	}
-
-	.download-link {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.3rem;
-		padding: 0.25rem 0.55rem;
-		border-radius: 6px;
-		background: var(--border);
-		color: var(--fg-primary);
-		text-decoration: none;
-		font-weight: 700;
-		font-size: 0.74rem;
-	}
-
-	.download-link:hover {
-		background: var(--brand-leaf);
-		color: #ffffff;
-	}
-
-	.anatomy-specs {
-		display: flex;
-		flex-direction: column;
-		gap: 0.85rem;
-	}
-
-	.spec-row {
-		display: flex;
-		flex-direction: column;
-		gap: 0.2rem;
-		padding-bottom: 0.75rem;
-		border-bottom: 1px solid var(--border);
-	}
-
-	.spec-label {
-		font-size: 0.82rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--fg-muted);
-	}
-
-	.spec-val {
-		font-size: 0.95rem;
-		color: var(--fg-primary);
-		line-height: 1.45;
-	}
-
-	.spec-val code {
-		font-family: monospace;
-		font-weight: 700;
-		padding: 0.15rem 0.4rem;
-		border-radius: 4px;
-		background: var(--border);
-		color: var(--brand-leaf);
-	}
-
-	/* TYPOGRAPHY */
-	.type-samples {
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
-	}
-
-	.type-item {
-		display: flex;
-		flex-direction: column;
-		gap: 0.35rem;
-		padding-bottom: 1.25rem;
-		border-bottom: 1px solid var(--border);
-	}
-
-	.type-meta {
-		font-size: 0.76rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: var(--fg-muted);
-	}
-
-	.type-demo {
-		color: var(--fg-primary);
-		line-height: 1.35;
-	}
-
-	.bold-demo {
-		font-size: 1.75rem;
-		font-weight: 800;
-		letter-spacing: -0.01em;
-	}
-
-	.medium-demo {
-		font-size: 1.2rem;
-		font-weight: 600;
-	}
-
-	.regular-demo {
-		font-size: 0.96rem;
-		font-weight: 400;
-		color: var(--fg-secondary);
-	}
-
 	@media (max-width: 860px) {
 		.palette-grid {
-			grid-template-columns: 1fr;
-		}
-
-		.anatomy-grid {
 			grid-template-columns: 1fr;
 		}
 	}
