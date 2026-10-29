@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
+	import { themeStore } from '$lib/theme.svelte';
 	import { downloadUrlAsPng } from '$lib/utils/exportPng';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 
@@ -57,7 +58,10 @@
 
 	// Unified controls state
 	let currentFormat = $state<SignFormat>('composite');
-	let signColor = $state<string>('#13371B');
+	let customSelectedColor = $state<string | null>(null);
+	let signColor = $derived(
+		customSelectedColor ?? (themeStore.current === 'dark' ? '#93C84A' : '#13371B')
+	);
 	let stageTheme = $state<StageTheme>('checker');
 	let isDownloading = $state<string | null>(null);
 
@@ -207,7 +211,7 @@
 							class="color-pill-btn"
 							class:is-active={signColor.toUpperCase() === c.hex.toUpperCase()}
 							style:background-color={c.hex}
-							onclick={() => (signColor = c.hex)}
+							onclick={() => (customSelectedColor = c.hex)}
 							title="{c.name} ({c.hex})"
 							aria-label="{c.name} ({c.hex})"
 						>
@@ -228,7 +232,7 @@
 						<input
 							type="color"
 							value={signColor}
-							oninput={(e) => (signColor = (e.target as HTMLInputElement).value.toUpperCase())}
+							oninput={(e) => (customSelectedColor = (e.target as HTMLInputElement).value.toUpperCase())}
 							aria-label="Custom color picker"
 						/>
 						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="picker-icon" aria-hidden="true">
@@ -356,8 +360,18 @@
 	}
 
 	.format-row {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
 		padding-bottom: 1.1rem;
 		border-bottom: 1px solid var(--border);
+	}
+
+	.format-group {
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+		flex-wrap: wrap;
 	}
 
 	.control-label-group {
@@ -412,11 +426,12 @@
 		box-shadow: 0 2px 8px rgba(19, 55, 27, 0.25);
 	}
 
+	:global([data-theme='dark']) .format-tab-btn.is-active,
 	:global(.dark) .format-tab-btn.is-active {
-		background: var(--brand-gold, #ffb327);
-		color: #101e14;
-		border-color: var(--brand-gold, #ffb327);
-		box-shadow: 0 2px 8px rgba(255, 179, 39, 0.25);
+		background: var(--brand-emerald, #13371b);
+		color: #ffffff;
+		border-color: var(--brand-leaf, #598f3a);
+		box-shadow: 0 2px 8px rgba(89, 143, 58, 0.25);
 	}
 
 	/* STYLING ROW: PALETTE + STAGE */
@@ -714,40 +729,32 @@
 		justify-content: center;
 		gap: 0.35rem;
 		width: 100%;
-		padding: 0.6rem 0.5rem;
-		border-radius: 9px;
+		padding: 0.55rem 0.5rem;
+		border-radius: 8px;
 		font-size: 0.76rem;
 		font-weight: 700;
 		cursor: pointer;
-		transition: all 0.2s ease;
+		transition: all 0.18s ease;
 		text-align: center;
-	}
-
-	.download-sign-btn {
-		background: var(--brand-emerald, #13371b);
-		color: #ffffff;
-		border: 1px solid var(--brand-emerald, #13371b);
+		background: var(--panel-bg);
+		border: 1px solid var(--border);
+		color: var(--fg-secondary);
 	}
 
 	.download-sign-btn:hover:not(:disabled) {
-		background: var(--brand-leaf, #598f3a);
-		border-color: var(--brand-leaf, #598f3a);
+		background: var(--brand-emerald, #13371b);
+		border-color: var(--brand-emerald, #13371b);
 		color: #ffffff;
-		box-shadow: 0 4px 12px rgba(89, 143, 58, 0.25);
 		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba(19, 55, 27, 0.2);
 	}
 
-	:global(.dark) .download-sign-btn {
-		background: var(--brand-gold, #ffb327);
-		color: #101e14;
-		border-color: var(--brand-gold, #ffb327);
-	}
-
+	:global([data-theme='dark']) .download-sign-btn:hover:not(:disabled),
 	:global(.dark) .download-sign-btn:hover:not(:disabled) {
-		background: #ffa80a;
-		border-color: #ffa80a;
+		background: var(--brand-gold, #ffb327);
+		border-color: var(--brand-gold, #ffb327);
 		color: #101e14;
-		box-shadow: 0 4px 12px rgba(255, 179, 39, 0.35);
+		box-shadow: 0 4px 12px rgba(255, 179, 39, 0.25);
 	}
 
 	.download-sign-btn:disabled {
