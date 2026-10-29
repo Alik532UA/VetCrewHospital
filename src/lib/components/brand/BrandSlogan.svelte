@@ -329,9 +329,9 @@
 		gap: 0.35rem;
 		padding: 0.55rem 0.85rem;
 		border-radius: 8px;
-		background: var(--panel-bg);
-		border: 1px solid var(--border);
-		color: var(--fg-secondary);
+		background: rgba(19, 55, 27, 0.08);
+		border: 1px solid rgba(19, 55, 27, 0.22);
+		color: var(--brand-emerald, #13371b);
 		font-size: 0.76rem;
 		font-weight: 700;
 		text-decoration: none;
@@ -346,7 +346,14 @@
 		border-color: var(--brand-emerald, #13371b);
 		color: #ffffff;
 		transform: translateY(-1px);
-		box-shadow: 0 4px 12px rgba(19, 55, 27, 0.2);
+		box-shadow: 0 4px 12px rgba(19, 55, 27, 0.25);
+	}
+
+	:global([data-theme='dark']) .download-brand-btn,
+	:global(.dark) .download-brand-btn {
+		background: rgba(255, 179, 39, 0.12);
+		border: 1px solid rgba(255, 179, 39, 0.35);
+		color: var(--brand-gold, #ffb327);
 	}
 
 	:global([data-theme='dark']) .download-brand-btn:hover:not(:disabled),
@@ -354,11 +361,11 @@
 		background: var(--brand-gold, #ffb327);
 		border-color: var(--brand-gold, #ffb327);
 		color: #101e14;
-		box-shadow: 0 4px 12px rgba(255, 179, 39, 0.25);
+		box-shadow: 0 4px 14px rgba(255, 179, 39, 0.35);
 	}
 
 	.download-brand-btn:disabled {
-		opacity: 0.6;
+		opacity: 0.55;
 		cursor: wait;
 	}
 

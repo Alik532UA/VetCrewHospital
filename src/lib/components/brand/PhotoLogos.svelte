@@ -271,9 +271,9 @@
 		transition: all 0.18s ease;
 		text-align: center;
 		white-space: nowrap;
-		background: var(--panel-bg);
-		border: 1px solid var(--border);
-		color: var(--fg-secondary);
+		background: rgba(19, 55, 27, 0.08);
+		border: 1px solid rgba(19, 55, 27, 0.22);
+		color: var(--brand-emerald, #13371b);
 	}
 
 	.download-btn:hover:not(:disabled) {
@@ -281,7 +281,14 @@
 		border-color: var(--brand-emerald, #13371b);
 		color: #ffffff;
 		transform: translateY(-1px);
-		box-shadow: 0 4px 12px rgba(19, 55, 27, 0.2);
+		box-shadow: 0 4px 12px rgba(19, 55, 27, 0.25);
+	}
+
+	:global([data-theme='dark']) .download-btn,
+	:global(.dark) .download-btn {
+		background: rgba(255, 179, 39, 0.12);
+		border: 1px solid rgba(255, 179, 39, 0.35);
+		color: var(--brand-gold, #ffb327);
 	}
 
 	:global([data-theme='dark']) .download-btn:hover:not(:disabled),
@@ -289,11 +296,11 @@
 		background: var(--brand-gold, #ffb327);
 		border-color: var(--brand-gold, #ffb327);
 		color: #101e14;
-		box-shadow: 0 4px 12px rgba(255, 179, 39, 0.25);
+		box-shadow: 0 4px 14px rgba(255, 179, 39, 0.35);
 	}
 
 	.download-btn:disabled {
-		opacity: 0.6;
+		opacity: 0.55;
 		cursor: wait;
 	}
 </style>

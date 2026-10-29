@@ -464,23 +464,32 @@
 	.download-font-btn {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.4rem;
+		gap: 0.35rem;
 		padding: 0.45rem 0.85rem;
 		border-radius: 8px;
-		background: var(--panel-bg);
-		border: 1px solid var(--border);
-		color: var(--fg-primary);
-		font-size: 0.78rem;
+		background: rgba(19, 55, 27, 0.08);
+		border: 1px solid rgba(19, 55, 27, 0.22);
+		color: var(--brand-emerald, #13371b);
+		font-size: 0.76rem;
 		font-weight: 700;
 		text-decoration: none;
 		transition: all 0.18s ease;
+		white-space: nowrap;
 	}
 
 	.download-font-btn:hover {
-		background: var(--brand-leaf, #598f3a);
+		background: var(--brand-emerald, #13371b);
 		color: #ffffff;
-		border-color: var(--brand-leaf, #598f3a);
+		border-color: var(--brand-emerald, #13371b);
 		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba(19, 55, 27, 0.25);
+	}
+
+	:global([data-theme='dark']) .download-font-btn,
+	:global(.dark) .download-font-btn {
+		background: rgba(255, 179, 39, 0.12);
+		border: 1px solid rgba(255, 179, 39, 0.35);
+		color: var(--brand-gold, #ffb327);
 	}
 
 	:global([data-theme='dark']) .download-font-btn:hover,
@@ -488,6 +497,7 @@
 		background: var(--brand-gold, #ffb327);
 		color: #101e14;
 		border-color: var(--brand-gold, #ffb327);
+		box-shadow: 0 4px 14px rgba(255, 179, 39, 0.35);
 	}
 
 	/* INTERACTIVE TYPE TESTER */

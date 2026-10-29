@@ -283,7 +283,7 @@
 										download="vet-crew-hospital-ua.svg"
 										class="download-brand-btn svg-btn"
 									>
-										<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 											<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 											<polyline points="7 10 12 15 17 10"></polyline>
 											<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -295,7 +295,7 @@
 										class="download-brand-btn png-btn"
 										onclick={() => downloadUrlAsPng(`${base}/brand/naming/vet-crew-hospital-ua.svg`, 'vet-crew-hospital-ua-2000px.png', 2000)}
 									>
-										<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 											<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 											<polyline points="7 10 12 15 17 10"></polyline>
 											<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -323,7 +323,7 @@
 										download="vet-crew-shop.svg"
 										class="download-brand-btn svg-btn"
 									>
-										<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 											<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 											<polyline points="7 10 12 15 17 10"></polyline>
 											<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -335,7 +335,7 @@
 										class="download-brand-btn png-btn"
 										onclick={() => downloadUrlAsPng(`${base}/brand/subbrands/vet-crew-shop.svg`, 'vet-crew-shop-2000px.png', 2000)}
 									>
-										<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 											<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 											<polyline points="7 10 12 15 17 10"></polyline>
 											<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -866,42 +866,47 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		gap: 0.45rem;
-		padding: 0.6rem 0.85rem;
-		border-radius: 10px;
-		font-size: 0.8rem;
+		gap: 0.35rem;
+		padding: 0.55rem 0.85rem;
+		border-radius: 8px;
+		font-size: 0.76rem;
 		font-weight: 700;
 		text-decoration: none;
-		transition: all 0.2s ease;
+		transition: all 0.18s ease;
 		cursor: pointer;
 		text-align: center;
+		white-space: nowrap;
+		background: rgba(19, 55, 27, 0.08);
+		border: 1px solid rgba(19, 55, 27, 0.22);
+		color: var(--brand-emerald, #13371b);
 	}
 
-	.download-brand-btn {
+	.download-brand-btn:hover:not(:disabled) {
 		background: var(--brand-emerald, #13371b);
+		border-color: var(--brand-emerald, #13371b);
 		color: #ffffff;
-		border: 1px solid var(--brand-emerald, #13371b);
-	}
-
-	.download-brand-btn:hover {
-		background: var(--brand-leaf, #598f3a);
-		border-color: var(--brand-leaf, #598f3a);
-		color: #ffffff;
-		box-shadow: 0 4px 12px rgba(89, 143, 58, 0.25);
 		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba(19, 55, 27, 0.25);
 	}
 
+	:global([data-theme='dark']) .download-brand-btn,
 	:global(.dark) .download-brand-btn {
-		background: var(--brand-gold, #ffb327);
-		color: #101e14;
-		border-color: var(--brand-gold, #ffb327);
+		background: rgba(255, 179, 39, 0.12);
+		border: 1px solid rgba(255, 179, 39, 0.35);
+		color: var(--brand-gold, #ffb327);
 	}
 
-	:global(.dark) .download-brand-btn:hover {
-		background: #ffa80a;
-		border-color: #ffa80a;
+	:global([data-theme='dark']) .download-brand-btn:hover:not(:disabled),
+	:global(.dark) .download-brand-btn:hover:not(:disabled) {
+		background: var(--brand-gold, #ffb327);
+		border-color: var(--brand-gold, #ffb327);
 		color: #101e14;
-		box-shadow: 0 4px 12px rgba(255, 179, 39, 0.35);
+		box-shadow: 0 4px 14px rgba(255, 179, 39, 0.35);
+	}
+
+	.download-brand-btn:disabled {
+		opacity: 0.55;
+		cursor: wait;
 	}
 
 	/* RESPONSIVE */
