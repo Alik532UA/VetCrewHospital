@@ -78,7 +78,7 @@
 			textEn: 'Exotic. Wild. Special. Important.'
 		},
 		{
-			labelUk: 'Цифри & контакти',
+			labelUk: 'Цифри та знаки',
 			labelEn: 'Numbers & Info',
 			textUk: '0123456789 — +380 (44) 123-45-67 · vetcrew.org @ 24/7',
 			textEn: '0123456789 — +1 (800) 555-0199 · vetcrew.org @ 24/7'
@@ -349,7 +349,7 @@
 
 	.specimen-weights {
 		font-size: 0.72rem;
-		font-family: inherit;
+		font-family: var(--font-sans, inherit);
 		font-variant-numeric: tabular-nums;
 		font-weight: 700;
 		padding: 0.22rem 0.65rem;
@@ -616,7 +616,7 @@
 
 	.slider-label {
 		font-size: 0.82rem;
-		font-family: inherit;
+		font-family: var(--font-sans, inherit);
 		font-variant-numeric: tabular-nums;
 		font-weight: 700;
 		color: var(--fg-secondary);
