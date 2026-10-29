@@ -2,6 +2,7 @@
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 	import { downloadUrlAsPng } from '$lib/utils/exportPng';
+	import { logService } from '$lib/services/logService.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 
 	// Global format toggle: with background container vs transparent without background
@@ -31,7 +32,7 @@
 		try {
 			await downloadUrlAsPng(`${base}/brand/qr/${relativeFile}`, `${baseFilename}-2000px.png`, 2000);
 		} catch (err) {
-			console.error('PNG export failed', err);
+			logService.error('brand', 'PNG export failed', err);
 		} finally {
 			isExporting = null;
 		}

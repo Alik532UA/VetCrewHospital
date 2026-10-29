@@ -3,6 +3,7 @@
 	import { langStore } from '$lib/lang.svelte';
 	import { themeStore } from '$lib/theme.svelte';
 	import { downloadUrlAsPng } from '$lib/utils/exportPng';
+	import { logService } from '$lib/services/logService.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 
 	import {
@@ -66,7 +67,7 @@
 			document.body.removeChild(link);
 			URL.revokeObjectURL(downloadUrl);
 		} catch (err) {
-			console.error('Download error:', err);
+			logService.error('brand', 'Download error', err);
 		} finally {
 			isDownloading = null;
 		}
@@ -90,7 +91,7 @@
 				}
 			);
 		} catch (err) {
-			console.error('Download PNG error:', err);
+			logService.error('brand', 'Download PNG error', err);
 		} finally {
 			isDownloading = null;
 		}

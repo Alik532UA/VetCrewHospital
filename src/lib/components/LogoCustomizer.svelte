@@ -3,6 +3,7 @@
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 	import logoPaths from '$lib/assets/logo-paths.json';
+	import { logService } from '$lib/services/logService.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 
 	interface ColorOption {
@@ -221,7 +222,7 @@
 				URL.revokeObjectURL(pngUrl);
 			}, 'image/png');
 		} catch (e) {
-			console.error('PNG export failed', e);
+			logService.error('brand', 'PNG export failed', e);
 		} finally {
 			isExportingPng = false;
 		}

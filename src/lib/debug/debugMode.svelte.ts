@@ -1,0 +1,25 @@
+// src/lib/debug/debugMode.svelte.ts — лише коли збір логів із пристроїв (DEBUGGING § 3)
+import { dev } from '$app/environment';
+import { storage } from '$lib/services/storage';
+
+const KEY = 'debug_mode';
+
+/** Тристановий прапорець: true — увімкнено, false — вимкнено, null — нічого не сказано. */
+function readSaved(): boolean | null {
+	const value = storage.get(KEY);
+	return value === '1' ? true : value === '0' ? false : null;
+}
+
+class DebugMode {
+	saved = $state<boolean | null>(readSaved());
+	/** Без явного вибору табло видно в dev і не видно в production (§ 2.1). */
+	enabled = $derived(this.saved ?? dev);
+
+	set(value: boolean): void {
+		this.saved = value;
+		storage.set(KEY, value ? '1' : '0');
+	}
+}
+
+export const debugMode = new DebugMode();
+

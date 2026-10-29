@@ -1,8 +1,12 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
+	import { page } from '$app/state';
 	import { themeStore } from '../theme.svelte';
 	import { langStore } from '../lang.svelte';
 	import { canFullscreen, toggleFullscreen, isFullscreenActive } from '../services/fullscreen';
 	import { APP_VERSION } from '../version';
+	import { logService } from '../services/logService.svelte';
+	import { debugMode } from '../debug/debugMode.svelte';
 
 	interface Props {
 		isVisible?: boolean;
@@ -13,6 +17,29 @@
 	let isSupported = $state(true);
 	let isFullscreen = $state(false);
 	let isDark = $derived(themeStore.current === 'dark');
+
+	let copied = $state(false);
+	let fallbackReport = $state<string | null>(null);
+	let copyTimer: ReturnType<typeof setTimeout> | undefined;
+
+	const urlDebug = $derived(browser && page.url.searchParams.get('debug') === '1');
+	const panelVisible = $derived(isVisible || urlDebug || debugMode.enabled);
+	const errors = $derived(logService.errorCount);
+
+	$effect(() => () => clearTimeout(copyTimer));
+
+	async function copyReport() {
+		const report = logService.getReport();
+		try {
+			await navigator.clipboard.writeText(report);
+			copied = true;
+			clearTimeout(copyTimer);
+			copyTimer = setTimeout(() => (copied = false), 2000);
+		} catch (error) {
+			logService.warn('ui', 'Clipboard write failed, showing report inline', error);
+			fallbackReport = report;
+		}
+	}
 
 	$effect(() => {
 		if (typeof document === 'undefined') return;
@@ -35,9 +62,9 @@
 
 <nav
 	class="hidden-panel-wrapper"
-	class:is-visible={isVisible}
+	class:is-visible={panelVisible}
 	aria-label="Додаткові налаштування"
-	aria-hidden={!isVisible}
+	aria-hidden={!panelVisible}
 >
 	<div class="hidden-panel-content">
 		<!-- 1. ТЕМА -->
@@ -114,10 +141,37 @@
 			</button>
 		{/if}
 
-		<div class="version-badge" title="Версія: v${APP_VERSION}">
-			<span>v{APP_VERSION}</span>
-		</div>
+		<!-- 4. ДІАГНОСТИЧНИЙ ЗВІТ / ВЕРСІЯ -->
+		<button
+			type="button"
+			class="action-item version-btn"
+			class:has-errors={errors > 0}
+			class:copied
+			onclick={copyReport}
+			aria-label="Діагностика: v{APP_VERSION}"
+			title="Скопіювати діагностичний звіт (v{APP_VERSION})"
+		>
+			<span class="action-icon-box">
+				{#if copied}
+					<svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+						<polyline points="20 6 9 17 4 12"/>
+					</svg>
+				{:else if errors > 0}
+					<span class="error-badge">{errors > 99 ? '99+' : errors}</span>
+				{:else}
+					<svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+						<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+						<path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+					</svg>
+				{/if}
+			</span>
+			<span class="action-title">{copied ? 'Copied' : `v${APP_VERSION}`}</span>
+		</button>
 	</div>
+
+	{#if fallbackReport}
+		<textarea class="service-report-fallback" readonly value={fallbackReport}></textarea>
+	{/if}
 </nav>
 
 <style>
@@ -128,7 +182,8 @@
 		right: 0;
 		z-index: 25;
 		display: flex;
-		justify-content: center;
+		flex-direction: column;
+		align-items: center;
 		pointer-events: none;
 		opacity: 0;
 		transform: translateY(40px) scale(0.96);
@@ -145,10 +200,10 @@
 
 	.hidden-panel-content {
 		display: grid;
-		grid-template-columns: repeat(3, 84px);
+		grid-template-columns: repeat(4, 78px);
 		justify-items: center;
 		align-items: center;
-		padding: 0.65rem 1.4rem;
+		padding: 0.65rem 1.2rem;
 		background: var(--panel-bg);
 		backdrop-filter: blur(20px) saturate(180%);
 		-webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -164,7 +219,7 @@
 		justify-content: center;
 		width: 100%;
 		gap: 0.35rem;
-		padding: 0.45rem 0.6rem;
+		padding: 0.45rem 0.5rem;
 		border-radius: 14px;
 		background: transparent;
 		border: 1px solid transparent;
@@ -216,6 +271,43 @@
 		transition: color 0.25s ease;
 	}
 
+	.error-badge {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 18px;
+		height: 18px;
+		padding: 0 4px;
+		border-radius: 9px;
+		background: #dc2626;
+		color: #ffffff;
+		font-size: 0.65rem;
+		font-weight: 700;
+		line-height: 1;
+	}
+
+	.version-btn.has-errors {
+		color: #ef4444;
+	}
+
+	.version-btn.copied {
+		color: #22c55e;
+	}
+
+	.service-report-fallback {
+		margin-top: 0.5rem;
+		width: min(90vw, 500px);
+		height: 120px;
+		background: var(--panel-bg);
+		color: var(--text-primary);
+		border: 1px solid var(--panel-border);
+		border-radius: 12px;
+		padding: 0.5rem;
+		font-family: monospace;
+		font-size: 0.7rem;
+		box-shadow: var(--panel-shadow);
+	}
+
 	@media (max-width: 640px) {
 		.hidden-panel-wrapper {
 			bottom: 0.85rem;
@@ -224,44 +316,27 @@
 		}
 
 		.hidden-panel-content {
-			grid-template-columns: repeat(3, minmax(64px, 1fr));
-			gap: 0.4rem;
-			padding: 0.5rem 0.85rem;
+			grid-template-columns: repeat(4, minmax(54px, 1fr));
+			gap: 0.25rem;
+			padding: 0.45rem 0.65rem;
 		}
 
 		.action-item {
-			padding: 0.35rem 0.5rem;
+			padding: 0.3rem 0.35rem;
 		}
 
 		.action-icon-box {
-			width: 28px;
-			height: 28px;
+			width: 26px;
+			height: 26px;
 		}
 
 		.action-icon {
-			width: 20px;
-			height: 20px;
+			width: 18px;
+			height: 18px;
 		}
 
 		.action-title {
-			font-size: 0.68rem;
+			font-size: 0.65rem;
 		}
 	}
-
-	.version-badge {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		padding: 4px 10px;
-		font-family: 'InGlobal', monospace, sans-serif;
-		font-size: 0.72rem;
-		font-weight: 700;
-		letter-spacing: 0.05em;
-		color: var(--text-muted);
-		opacity: 0.65;
-		border-left: 1px solid var(--border);
-		margin-left: 4px;
-		user-select: none;
-	}
-
 </style>

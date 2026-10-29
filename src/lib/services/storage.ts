@@ -4,6 +4,7 @@
  */
 import { browser } from '$app/environment';
 import { STORAGE_PREFIX } from './storagePrefix';
+import { logService } from './logService.svelte';
 
 export { STORAGE_PREFIX };
 
@@ -16,7 +17,7 @@ function createStore(area: 'localStorage' | 'sessionStorage') {
 			return window[area];
 		} catch (error) {
 			available = false;
-			console.warn(`[storage] ${area} is blocked or unavailable:`, error);
+			logService.warn('storage', `${area} is blocked or unavailable`, error);
 			return null;
 		}
 	}
@@ -28,7 +29,7 @@ function createStore(area: 'localStorage' | 'sessionStorage') {
 			try {
 				return s.getItem(STORAGE_PREFIX + key);
 			} catch (error) {
-				console.warn(`[storage] Read failed for key "${key}":`, error);
+				logService.warn('storage', `Read failed for key "${key}"`, error);
 				return null;
 			}
 		},
@@ -40,7 +41,7 @@ function createStore(area: 'localStorage' | 'sessionStorage') {
 				s.setItem(STORAGE_PREFIX + key, value);
 				return true;
 			} catch (error) {
-				console.warn(`[storage] Write failed for key "${key}":`, error);
+				logService.warn('storage', `Write failed for key "${key}"`, error);
 				return false;
 			}
 		},
@@ -52,7 +53,7 @@ function createStore(area: 'localStorage' | 'sessionStorage') {
 				s.removeItem(STORAGE_PREFIX + key);
 				return true;
 			} catch (error) {
-				console.warn(`[storage] Remove failed for key "${key}":`, error);
+				logService.warn('storage', `Remove failed for key "${key}"`, error);
 				return false;
 			}
 		},
@@ -73,7 +74,7 @@ function createStore(area: 'localStorage' | 'sessionStorage') {
 				}
 				return true;
 			} catch (error) {
-				console.warn(`[storage] Clear failed for namespace "${STORAGE_PREFIX}":`, error);
+				logService.warn('storage', `Clear failed for namespace "${STORAGE_PREFIX}"`, error);
 				return false;
 			}
 		}
@@ -83,3 +84,5 @@ function createStore(area: 'localStorage' | 'sessionStorage') {
 export const safeLocalStorage = createStore('localStorage');
 export const safeSessionStorage = createStore('sessionStorage');
 
+export const storage = safeLocalStorage;
+export const sessionStore = safeSessionStorage;
