@@ -473,6 +473,7 @@
 		transition: transform 0.15s ease, box-shadow 0.15s ease;
 	}
 
+	:global([data-theme='dark']) .color-pill-btn,
 	:global(.dark) .color-pill-btn {
 		border-color: rgba(255, 255, 255, 0.25);
 	}
@@ -482,14 +483,15 @@
 	}
 
 	.color-pill-btn.is-active {
-		border-color: var(--brand-emerald);
-		box-shadow: 0 0 0 3px rgba(89, 143, 58, 0.35);
-		transform: scale(1.1);
+		border-color: var(--brand-emerald, #13371b);
+		box-shadow: 0 0 0 3px rgba(89, 143, 58, 0.45);
+		transform: scale(1.15);
 	}
 
+	:global([data-theme='dark']) .color-pill-btn.is-active,
 	:global(.dark) .color-pill-btn.is-active {
 		border-color: var(--brand-gold);
-		box-shadow: 0 0 0 3px rgba(255, 179, 39, 0.35);
+		box-shadow: 0 0 0 3px rgba(255, 179, 39, 0.45);
 	}
 
 	.custom-picker-pill {
@@ -508,7 +510,7 @@
 		inset: 0;
 		border-radius: 50%;
 		clip-path: circle(50% at 50% 50%);
-		background: conic-gradient(from 180deg at 50% 50%, #FFB327 0deg, #93C84A 72deg, #598F3A 144deg, #13371B 216deg, #FFB327 360deg);
+		background: conic-gradient(from 180deg at 50% 50%, #FF0000 0deg, #FFA500 51deg, #FFFF00 102deg, #008000 153deg, #0000FF 204deg, #4B0082 255deg, #EE82EE 306deg, #FF0000 360deg);
 		z-index: 0;
 	}
 

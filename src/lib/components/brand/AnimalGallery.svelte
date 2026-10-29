@@ -170,7 +170,7 @@
 							oninput={(e) => (customSelectedColor = (e.target as HTMLInputElement).value.toUpperCase())}
 							aria-label="Custom color picker"
 						/>
-						<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="picker-icon" aria-hidden="true">
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="picker-icon" aria-hidden="true">
 							<circle cx="13.5" cy="6.5" r=".5" fill="#ffffff"/>
 							<circle cx="17.5" cy="10.5" r=".5" fill="#ffffff"/>
 							<circle cx="8.5" cy="7.5" r=".5" fill="#ffffff"/>
@@ -409,13 +409,14 @@
 	}
 
 	.color-pill-btn.is-active {
-		border-color: var(--fg-primary);
+		border-color: var(--brand-emerald, #13371b);
 		transform: scale(1.15);
-		box-shadow: 0 0 0 3px rgba(89, 143, 58, 0.35);
+		box-shadow: 0 0 0 3px rgba(89, 143, 58, 0.45);
 	}
 
 	:global([data-theme='dark']) .color-pill-btn.is-active {
-		box-shadow: 0 0 0 3px rgba(255, 179, 39, 0.35);
+		border-color: var(--brand-gold, #ffb327);
+		box-shadow: 0 0 0 3px rgba(255, 179, 39, 0.45);
 	}
 
 	.custom-picker-pill {
@@ -423,15 +424,26 @@
 		border-radius: 50%;
 		overflow: hidden;
 		isolation: isolate;
+		-webkit-mask-image: -webkit-radial-gradient(white, black);
+		mask-image: radial-gradient(circle, #fff 100%, #000 100%);
+		background: transparent;
+	}
+
+	.custom-picker-pill::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: 50%;
+		clip-path: circle(50% at 50% 50%);
 		background: conic-gradient(from 180deg at 50% 50%, #FF0000 0deg, #FFA500 51deg, #FFFF00 102deg, #008000 153deg, #0000FF 204deg, #4B0082 255deg, #EE82EE 306deg, #FF0000 360deg);
+		z-index: 0;
 	}
 
 	.custom-picker-pill input[type="color"] {
 		position: absolute;
-		top: -10px;
-		left: -10px;
-		width: 50px;
-		height: 50px;
+		inset: 0;
+		width: 100%;
+		height: 100%;
 		opacity: 0;
 		cursor: pointer;
 		z-index: 2;
@@ -440,7 +452,6 @@
 	.picker-icon {
 		position: relative;
 		z-index: 1;
-		font-size: 0.85rem;
 		pointer-events: none;
 		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.65));
 	}
