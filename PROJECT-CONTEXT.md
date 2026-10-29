@@ -94,4 +94,12 @@
 ## 12. Версіонування застосунку (VERSIONING-v10 § 1–3)
 
 - **Джерело версії (`src/lib/version.ts`)**:
-  - Константа `APP_VERSION` (`0.1.0`) експортується для клієнтського коду та відображається у висувній системній панелі (`HiddenPanel.svelte`).
+  - Константа `APP_VERSION` (`0.1.0`) експортується для клієнтського коду та відображається у висувній системній панелі (`HiddenPanel.svelte`).## 13. Організація структури коду (PROJECT-STRUCTURE-v10 § 4.1 & § 7)
+
+- **Канонічний розподіл `src/lib/`**:
+  - `src/lib/controllers/`: реактивні класи стану на базі Svelte 5 Runes (`lang.svelte.ts`, `theme.svelte.ts`).
+  - `src/lib/config/`: системні константи та налаштування середовища (`version.ts`).
+  - `src/lib/data/`: статичні масиви даних, реєстри та дизайн-пресети (`typography.ts`, `doorSignage.ts`, `animals.ts`, `qrShowcase.ts`), що винесені з компонентів для збереження чистоти шаблонів.
+  - `src/lib/security/`: безпека даних та екранування (`jsonLd.ts`).
+  - `src/lib/services/`: нереактивні сервіси та адаптери (`storage.ts`, `fullscreen.ts`).
+  - `src/lib/utils/`: чисті допоміжні функції (`exportPng.ts`).

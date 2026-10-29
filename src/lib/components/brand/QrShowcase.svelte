@@ -8,48 +8,16 @@
 	let withBg = $state(true);
 	let stageTheme = $state<StageTheme>('checker');
 
+	import {
+		REVIEW_FILES,
+		WEBSITE_FILES,
+		type ReviewVariant,
+		type WebsiteVariant
+	} from '$lib/data/qrShowcase';
+
 	// Subvariant selections
-	type ReviewVariant = 'vidhuk' | 'google-reviews' | 'reviews';
 	let reviewVariant = $state<ReviewVariant>('vidhuk');
-
-	type WebsiteVariant = 'v2' | 'v1';
 	let websiteVariant = $state<WebsiteVariant>('v2');
-
-	const REVIEW_FILES: Record<ReviewVariant, { bg: string; nobg: string; labelUk: string; labelEn: string }> = {
-		vidhuk: {
-			bg: 'vidhuk.svg',
-			nobg: 'vidhuk-nobg.svg',
-			labelUk: 'Відгуки (UA)',
-			labelEn: 'Reviews (UA)'
-		},
-		'google-reviews': {
-			bg: 'google-reviews.svg',
-			nobg: 'google-reviews-nobg.svg',
-			labelUk: 'Google Reviews',
-			labelEn: 'Google Reviews'
-		},
-		reviews: {
-			bg: 'reviews.svg',
-			nobg: 'reviews-nobg.svg',
-			labelUk: 'Reviews',
-			labelEn: 'Reviews'
-		}
-	};
-
-	const WEBSITE_FILES: Record<WebsiteVariant, { bg: string; nobg: string; labelUk: string; labelEn: string }> = {
-		v2: {
-			bg: 'website-v2.svg',
-			nobg: 'website-v2-nobg.svg',
-			labelUk: 'Валентина',
-			labelEn: 'Valentyna'
-		},
-		v1: {
-			bg: 'website.svg',
-			nobg: 'website-nobg.svg',
-			labelUk: 'Алік',
-			labelEn: 'Alik'
-		}
-	};
 
 	let activeReviewFile = $derived(withBg ? REVIEW_FILES[reviewVariant].bg : REVIEW_FILES[reviewVariant].nobg);
 	let activeWebsiteFile = $derived(withBg ? WEBSITE_FILES[websiteVariant].bg : WEBSITE_FILES[websiteVariant].nobg);
