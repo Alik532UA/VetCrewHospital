@@ -22,9 +22,11 @@
 	let smoothTiltX = $state(0);
 	let smoothTiltY = $state(0);
 
-	// Specular highlight gradient coords (%)
+	// Specular highlight gradient coords (%) with smooth lerping
 	let glowX = $state(50);
 	let glowY = $state(50);
+	let targetGlowX = $state(50);
+	let targetGlowY = $state(50);
 
 	// Interactive elements state
 	interface LogoElementState {
@@ -172,8 +174,8 @@
 				rawSvgX = ((e.clientX - rect.left) / rect.width) * 970.62;
 				rawSvgY = ((e.clientY - rect.top) / rect.height) * 970.62;
 
-				glowX = Math.max(5, Math.min(95, (rawSvgX / 970.62) * 100));
-				glowY = Math.max(5, Math.min(95, (rawSvgY / 970.62) * 100));
+				targetGlowX = Math.max(5, Math.min(95, (rawSvgX / 970.62) * 100));
+				targetGlowY = Math.max(5, Math.min(95, (rawSvgY / 970.62) * 100));
 			}
 
 			isHovering = true;
@@ -197,8 +199,8 @@
 			if (isMobile) {
 				// MOBILE MODE:
 				// Autonomous breathing wave and gyro tilt
-				glowX = 50 + Math.sin(idleT * 0.8) * 22;
-				glowY = 50 + Math.cos(idleT * 0.6) * 18;
+				targetGlowX = 50 + Math.sin(idleT * 0.8) * 22;
+				targetGlowY = 50 + Math.cos(idleT * 0.6) * 18;
 
 				document.documentElement.style.setProperty('--mouse-x', `${50 + Math.sin(idleT * 0.5) * 15}%`);
 				document.documentElement.style.setProperty('--mouse-y', `${50 + Math.cos(idleT * 0.4) * 12}%`);
@@ -256,8 +258,8 @@
 					targetNormY = Math.cos(idleT * 0.6) * 0.18;
 					activeSvgX = 485.31 + Math.sin(idleT * 0.9) * 200;
 					activeSvgY = 485.31 + Math.cos(idleT * 0.7) * 150;
-					glowX = (activeSvgX / 970.62) * 100;
-					glowY = (activeSvgY / 970.62) * 100;
+					targetGlowX = (activeSvgX / 970.62) * 100;
+					targetGlowY = (activeSvgY / 970.62) * 100;
 				}
 
 				targetTiltX = -targetNormY * 11;
@@ -350,6 +352,10 @@
 			smoothTiltX += (targetTiltX - smoothTiltX) * 0.08;
 			smoothTiltY += (targetTiltY - smoothTiltY) * 0.08;
 
+			// Lerp specular highlight sheen smoothly
+			glowX += (targetGlowX - glowX) * 0.06;
+			glowY += (targetGlowY - glowY) * 0.06;
+
 			animId = requestAnimationFrame(loop);
 		}
 
@@ -397,12 +403,12 @@
 					id="specular-highlight"
 					cx="{glowX.toFixed(1)}%"
 					cy="{glowY.toFixed(1)}%"
-					r="68%"
+					r="75%"
 				>
-					<stop offset="0%" stop-color="#ffffff" stop-opacity="0.38" />
-					<stop offset="35%" stop-color="#ffffff" stop-opacity="0.12" />
-					<stop offset="70%" stop-color="#ffffff" stop-opacity="0.0" />
-					<stop offset="100%" stop-color="#000000" stop-opacity="0.25" />
+					<stop offset="0%" stop-color="#ffffff" stop-opacity="0.18" />
+					<stop offset="40%" stop-color="#ffffff" stop-opacity="0.05" />
+					<stop offset="75%" stop-color="#ffffff" stop-opacity="0.0" />
+					<stop offset="100%" stop-color="#000000" stop-opacity="0.12" />
 				</radialGradient>
 
 				<!-- Subtle metallic rim rim-glow -->
@@ -431,12 +437,12 @@
 
 			<!-- 2. Dynamic Specular Sheen Overlay -->
 			<circle
+				class="sheen-overlay"
 				cx="485.31"
 				cy="485.31"
 				r="461.76"
 				fill="url(#specular-highlight)"
 				pointer-events="none"
-				style="mix-blend-mode: overlay;"
 			/>
 
 			<!-- 3. Logo Content Group -->
@@ -515,6 +521,12 @@
 	.vet-crew-svg circle,
 	.vet-crew-svg g {
 		transition: fill var(--transition-speed) var(--transition-easing);
+	}
+
+	.sheen-overlay {
+		opacity: var(--logo-sheen-opacity, 0.5);
+		mix-blend-mode: var(--logo-sheen-blend, overlay);
+		transition: opacity var(--transition-speed) var(--transition-easing);
 	}
 
 	:global([data-theme='light']) .vet-crew-svg {

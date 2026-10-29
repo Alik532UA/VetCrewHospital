@@ -10,6 +10,11 @@
 	--brand-gold-glow: rgba(255, 179, 39, 0.45);
 	--brand-leaf: #598f3a;
 
+	/* Specular Sheen & Flashlight Accents (Theme-dependent) */
+	--logo-sheen-opacity: 0.5; /* Dark theme: 2x weaker and softer */
+	--logo-sheen-blend: overlay;
+	--bg-radial-opacity: 0.5;
+
 	/* Dynamic Logo Parts Variables */
 	--logo-bg-circle: #13371b;
 	--logo-paw: #ffffff;
@@ -19,6 +24,10 @@
 
 :root,
 [data-theme='light'] {
+	/* Specular Sheen & Flashlight: 3x weaker and very gentle in light theme */
+	--logo-sheen-opacity: 0.33;
+	--logo-sheen-blend: soft-light;
+
 	/* Light Theme Custom Palette from User Swatch */
 	--logo-bg-circle: #598F3A;
 	--logo-paw: #FFB327;
@@ -40,14 +49,17 @@
 	--panel-shadow: 0 16px 40px -10px rgba(19, 55, 27, 0.12), 0 0 25px rgba(0, 0, 0, 0.03);
 	--bg-radial: radial-gradient(
 		circle 650px at var(--mouse-x, 50%) var(--mouse-y, 50%),
-		rgba(89, 143, 58, 0.1),
-		rgba(255, 179, 39, 0.05),
+		rgba(89, 143, 58, 0.04),
+		rgba(255, 179, 39, 0.015),
 		transparent 70%
 	);
 	color-scheme: only light;
 }
 
 [data-theme='dark'] {
+	--logo-sheen-opacity: 0.5;
+	--logo-sheen-blend: overlay;
+
 	--logo-bg-circle: #13371b;
 	--logo-paw: #ffffff;
 	--logo-vet-crew: #ffb327;
@@ -68,8 +80,8 @@
 	--panel-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.65), 0 0 25px rgba(255, 255, 255, 0.04);
 	--bg-radial: radial-gradient(
 		circle 650px at var(--mouse-x, 50%) var(--mouse-y, 50%),
-		rgba(89, 143, 58, 0.12),
-		rgba(255, 179, 39, 0.035),
+		rgba(89, 143, 58, 0.06),
+		rgba(255, 179, 39, 0.018),
 		transparent 70%
 	);
 	color-scheme: dark;
