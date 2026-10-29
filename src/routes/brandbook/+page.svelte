@@ -16,6 +16,7 @@
 
 	let copiedVal = $state<string | null>(null);
 	let namingStage = $state<StageTheme>('checker');
+	let sloganStage = $state<StageTheme>('checker');
 
 	const colors = [
 		{
@@ -275,6 +276,7 @@
 								/>
 							</div>
 							<div class="branding-info">
+								<h3 class="branding-title">{langStore.current === 'uk' ? 'Вет Крю Хоспітал (UA)' : 'Vet Crew Hospital (UA)'}</h3>
 								<div class="branding-actions">
 									<a
 										href="{base}/brand/naming/vet-crew-hospital-ua.svg"
@@ -314,6 +316,7 @@
 								/>
 							</div>
 							<div class="branding-info">
+								<h3 class="branding-title">VET CREW SHOP</h3>
 								<div class="branding-actions">
 									<a
 										href="{base}/brand/subbrands/vet-crew-shop.svg"
@@ -347,14 +350,17 @@
 
 				<!-- SECTION 04: BRAND SLOGAN & MISSION -->
 				<section class="guide-card" id="slogan">
-					<div class="card-head">
-						<span class="step-num">04</span>
-						<div>
-							<h2 class="card-title">{langStore.current === 'uk' ? 'Фірмовий слоган та цінності' : 'Brand Slogan & Values'}</h2>
+					<div class="card-head card-head--with-action">
+						<div class="card-head-title-wrap">
+							<span class="step-num">04</span>
+							<div>
+								<h2 class="card-title">{langStore.current === 'uk' ? 'Фірмовий слоган та цінності' : 'Brand Slogan & Values'}</h2>
+							</div>
 						</div>
+						<StageBgSwitcher bind:current={sloganStage} />
 					</div>
 
-					<BrandSlogan />
+					<BrandSlogan stageTheme={sloganStage} />
 				</section>
 
 				<!-- SECTION 05: ANIMAL ICONOGRAPHY (24) -->
@@ -830,48 +836,24 @@
 	}
 
 	.branding-info {
-		padding: 1.5rem;
+		padding: 1rem 1.25rem 1.25rem;
 		display: flex;
 		flex-direction: column;
-		gap: 0.65rem;
-		flex: 1;
-	}
-
-	.branding-badge {
-		font-size: 0.7rem;
-		font-weight: 800;
-		color: var(--brand-leaf);
-		background: rgba(89, 143, 58, 0.12);
-		padding: 3px 8px;
-		border-radius: 6px;
-		width: fit-content;
-		letter-spacing: 0.04em;
-	}
-
-	.branding-badge.shop-badge {
-		color: #ffb327;
-		background: rgba(255, 179, 39, 0.15);
+		gap: 0.75rem;
 	}
 
 	.branding-title {
-		font-size: 1.2rem;
-		font-weight: 800;
+		font-size: 0.95rem;
+		font-weight: 700;
 		color: var(--fg-primary);
 		margin: 0;
-	}
-
-	.branding-text {
-		font-size: 0.85rem;
-		line-height: 1.5;
-		color: var(--fg-secondary);
-		margin: 0 0 auto;
 	}
 
 	.branding-actions {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 0.6rem;
-		margin-top: 0.85rem;
+		margin: 0;
 	}
 
 	@media (max-width: 520px) {
