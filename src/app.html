@@ -1,18 +1,18 @@
 <!doctype html>
-<html lang="uk" data-theme="dark">
+<html lang="uk" data-theme="light">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.svg" type="image/svg+xml" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 		<meta name="color-scheme" content="light dark" />
-		<title>Vet Crew Hospital — Ветеринарний Госпіталь</title>
+		<title>Vet Crew Hospital</title>
 		<meta name="description" content="Vet Crew Hospital — ветеринарний госпіталь та невідкладна турбота. Телефон: +380775010101." />
-		<meta name="theme-color" content="#08100a" />
+		<meta name="theme-color" content="#f5f8f5" />
 
 		<!-- Open Graph -->
 		<meta property="og:type" content="website" />
 		<meta property="og:site_name" content="Vet Crew Hospital" />
-		<meta property="og:title" content="Vet Crew Hospital — Ветеринарний Госпіталь" />
+		<meta property="og:title" content="Vet Crew Hospital" />
 		<meta property="og:description" content="Vet Crew Hospital — невідкладна ветеринарна допомога, Instagram та маршрут на мапі." />
 		<meta property="og:image" content="%sveltekit.assets%/logo.svg" />
 		<meta property="og:locale" content="uk_UA" />
@@ -27,12 +27,12 @@
 		<script>
 			try {
 				const saved = localStorage.getItem('vetcrewhospital_theme');
-				const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-				const theme = saved || (prefersDark ? 'dark' : 'light');
+				// ALWAYS default to 'light' regardless of system / browser prefers-color-scheme
+				const theme = (saved === 'dark' || saved === 'light') ? saved : 'light';
 				document.documentElement.setAttribute('data-theme', theme);
 				const meta = document.querySelector('meta[name="theme-color"]');
 				if (meta) {
-					meta.setAttribute('content', theme === 'dark' ? '#08100a' : '#f5f7f4');
+					meta.setAttribute('content', theme === 'dark' ? '#070e09' : '#f5f8f5');
 				}
 			} catch {}
 		</script>
@@ -41,4 +41,3 @@
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>
 </html>
-

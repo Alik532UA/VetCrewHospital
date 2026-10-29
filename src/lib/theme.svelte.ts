@@ -3,14 +3,15 @@ import { safeLocalStorage } from './services/storage';
 export type Theme = 'dark' | 'light';
 
 class ThemeStore {
-	current = $state<Theme>('dark');
+	current = $state<Theme>('light');
 
 	constructor() {
 		if (typeof window !== 'undefined') {
 			const saved = safeLocalStorage.get('theme') as Theme | null;
+			// ALWAYS default to 'light' regardless of browser or system prefers-color-scheme
 			if (saved === 'dark' || saved === 'light') {
 				this.current = saved;
-			} else if (window.matchMedia?.('(prefers-color-scheme: light)').matches) {
+			} else {
 				this.current = 'light';
 			}
 			this.apply();
@@ -43,4 +44,3 @@ class ThemeStore {
 }
 
 export const themeStore = new ThemeStore();
-

@@ -5,47 +5,37 @@ export type Lang = 'uk' | 'en';
 const TRANSLATIONS = {
 	uk: {
 		hospital_name: 'Vet Crew Hospital',
-		status_badge: 'Госпіталь 24/7 • Відкрито',
-		emergency_tagline: 'Цілодобова ветеринарна допомога та турбота',
-		subtitle_hero: 'Надійний захист та лікування для вашого улюбленця',
-		scroll_hint: 'Прокрутіть або торкніться для контактів',
-		scroll_back: 'Повернутися нагору',
-		btn_phone_label: 'Телефон',
+		contacts_heading: 'КОНТАКТИ',
+		btn_phone: 'Телефон',
 		btn_phone_display: '+380 77 501 01 01',
-		btn_phone_sub: 'Цілодобова гаряча лінія',
-		btn_phone_action: 'Подзвонити зараз',
-		btn_instagram_label: 'Instagram',
-		btn_instagram_sub: '@vet.crew.hospital',
-		btn_instagram_action: 'Перейти до профілю',
-		btn_map_label: 'Карта та маршрут',
-		btn_map_sub: 'Google Maps навігація',
-		btn_map_action: 'Прокласти маршрут',
-		copy_phone: 'Скопіювати номер',
-		copied: 'Номер скопійовано!',
-		theme_toggle: 'Змінити тему',
-		lang_name: 'UA'
+		btn_instagram: 'Instagram',
+		btn_instagram_display: '@vet.crew.hospital',
+		btn_map: 'Карта',
+		btn_map_display: 'Google Maps',
+		theme_btn: 'Тема',
+		lang_btn: 'Мова',
+		lang_name: 'UA',
+		fullscreen: 'Екран',
+		fullscreen_exit: 'Згорнути',
+		scroll_hero: 'Головна',
+		scroll_contacts: 'Контакти'
 	},
 	en: {
 		hospital_name: 'Vet Crew Hospital',
-		status_badge: 'Hospital 24/7 • Open Now',
-		emergency_tagline: '24/7 Veterinary emergency & loving care',
-		subtitle_hero: 'Dedicated protection & treatment for your pet',
-		scroll_hint: 'Scroll or tap for emergency contacts',
-		scroll_back: 'Back to top',
-		btn_phone_label: 'Phone',
+		contacts_heading: 'CONTACTS',
+		btn_phone: 'Phone',
 		btn_phone_display: '+380 77 501 01 01',
-		btn_phone_sub: '24/7 Emergency Line',
-		btn_phone_action: 'Call Now',
-		btn_instagram_label: 'Instagram',
-		btn_instagram_sub: '@vet.crew.hospital',
-		btn_instagram_action: 'Visit Instagram',
-		btn_map_label: 'Map & Location',
-		btn_map_sub: 'Google Maps navigation',
-		btn_map_action: 'Get Directions',
-		copy_phone: 'Copy phone number',
-		copied: 'Phone number copied!',
-		theme_toggle: 'Toggle theme',
-		lang_name: 'EN'
+		btn_instagram: 'Instagram',
+		btn_instagram_display: '@vet.crew.hospital',
+		btn_map: 'Map',
+		btn_map_display: 'Google Maps',
+		theme_btn: 'Theme',
+		lang_btn: 'Language',
+		lang_name: 'EN',
+		fullscreen: 'Fullscreen',
+		fullscreen_exit: 'Exit',
+		scroll_hero: 'Hero',
+		scroll_contacts: 'Contacts'
 	}
 } as const;
 
@@ -91,4 +81,3 @@ class LangStore {
 }
 
 export const langStore = new LangStore();
-

@@ -495,18 +495,10 @@
 		max-height: 440px;
 		position: relative;
 		transform-style: preserve-3d;
-		transition:
-			width 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-			height 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-			transform 0.12s linear;
+		transition: transform 0.12s linear;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-	}
-
-	.is-compact .logo-stage {
-		width: min(38vw, 170px);
-		height: min(38vw, 170px);
 	}
 
 	.vet-crew-svg {
@@ -533,11 +525,6 @@
 		.logo-stage {
 			width: min(76vw, 290px);
 			height: min(76vw, 290px);
-		}
-
-		.is-compact .logo-stage {
-			width: min(34vw, 130px);
-			height: min(34vw, 130px);
 		}
 	}
 </style>

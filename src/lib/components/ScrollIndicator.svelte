@@ -3,166 +3,93 @@
 
 	interface Props {
 		state: 1 | 2;
-		ontoggle: () => void;
+		onGoToState: (state: 1 | 2) => void;
 	}
 
-	let { state, ontoggle }: Props = $props();
+	let { state, onGoToState }: Props = $props();
 </script>
 
-<div class="indicator-container">
-	<!-- Right-side pagination track -->
-	<div class="pagination-track" role="tablist" aria-label="Scroll States">
-		<button
-			type="button"
-			class="pagination-dot"
-			class:active={state === 1}
-			onclick={() => {
-				if (state !== 1) ontoggle();
-			}}
-			aria-label="State 1: Logo Hero"
-		></button>
-		<button
-			type="button"
-			class="pagination-dot"
-			class:active={state === 2}
-			onclick={() => {
-				if (state !== 2) ontoggle();
-			}}
-			aria-label="State 2: Contacts"
-		></button>
-	</div>
-
-	<!-- Bottom Cue Pill -->
+<aside class="scroll-indicator" aria-label="Індикатор стану скролу">
 	<button
 		type="button"
-		class="cue-pill"
-		onclick={ontoggle}
-		aria-label={state === 1 ? langStore.t('scroll_hint') : langStore.t('scroll_back')}
+		class="state-dot"
+		class:active={state === 1}
+		onclick={() => onGoToState(1)}
+		aria-label={langStore.t('scroll_hero')}
+		title={langStore.t('scroll_hero')}
 	>
-		<span class="cue-text">
-			{state === 1 ? langStore.t('scroll_hint') : langStore.t('scroll_back')}
-		</span>
-		<svg
-			class="cue-icon"
-			class:is-up={state === 2}
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			stroke-width="2.5"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-		>
-			<polyline points="6 9 12 15 18 9"/>
-		</svg>
+		<span class="dot-inner"></span>
 	</button>
-</div>
+
+	<button
+		type="button"
+		class="state-dot"
+		class:active={state === 2}
+		onclick={() => onGoToState(2)}
+		aria-label={langStore.t('scroll_contacts')}
+		title={langStore.t('scroll_contacts')}
+	>
+		<span class="dot-inner"></span>
+	</button>
+</aside>
 
 <style>
-	.indicator-container {
-		position: fixed;
-		pointer-events: none;
-		z-index: 30;
-	}
-
-	/* Right-side dots */
-	.pagination-track {
+	.scroll-indicator {
 		position: fixed;
 		right: 1.5rem;
 		top: 50%;
 		transform: translateY(-50%);
+		z-index: 60;
 		display: flex;
 		flex-direction: column;
-		gap: 0.65rem;
-		padding: 0.5rem 0.35rem;
-		border-radius: 9999px;
-		background: var(--nav-bg);
-		border: 1px solid var(--nav-border);
+		gap: 0.85rem;
+		padding: 0.6rem 0.4rem;
+		background: var(--panel-bg);
 		backdrop-filter: blur(12px);
 		-webkit-backdrop-filter: blur(12px);
-		pointer-events: auto;
-		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-	}
-
-	.pagination-dot {
-		width: 8px;
-		height: 8px;
 		border-radius: 9999px;
-		background: var(--text-muted);
-		opacity: 0.35;
-		transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-		cursor: pointer;
+		border: 1px solid var(--border);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+		transition: opacity 0.28s ease-out;
 	}
 
-	.pagination-dot:hover {
-		opacity: 0.7;
-		transform: scale(1.2);
-	}
-
-	.pagination-dot.active {
-		height: 22px;
-		opacity: 1;
-		background: var(--brand-gold);
-		box-shadow: 0 0 10px var(--brand-gold-glow);
-	}
-
-	/* Bottom Cue Pill */
-	.cue-pill {
-		position: fixed;
-		bottom: 6.25rem;
-		left: 50%;
-		transform: translateX(-50%);
-		pointer-events: auto;
-		display: inline-flex;
+	.state-dot {
+		width: 24px;
+		height: 24px;
+		display: flex;
 		align-items: center;
-		gap: 0.4rem;
-		padding: 0.35rem 0.85rem;
-		border-radius: 9999px;
-		background: var(--nav-bg);
-		border: 1px solid var(--nav-border);
-		backdrop-filter: blur(14px);
-		-webkit-backdrop-filter: blur(14px);
-		color: var(--text-secondary);
-		font-size: 0.78rem;
-		font-weight: 600;
+		justify-content: center;
+		background: transparent;
+		border: none;
 		cursor: pointer;
-		transition: all 0.3s ease;
-		animation: cueBounce 2.4s infinite ease-in-out;
+		padding: 0;
 	}
 
-	.cue-pill:hover {
-		color: var(--text-primary);
-		border-color: var(--card-border-hover);
-		transform: translateX(-50%) translateY(-2px);
+	.dot-inner {
+		width: 7px;
+		height: 7px;
+		border-radius: 9999px;
+		background: var(--text-secondary);
+		opacity: 0.45;
+		transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 	}
 
-	.cue-icon {
-		width: 14px;
-		height: 14px;
-		transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	.state-dot:hover .dot-inner {
+		opacity: 0.9;
+		transform: scale(1.3);
 	}
 
-	.cue-icon.is-up {
-		transform: rotate(180deg);
+	.state-dot.active .dot-inner {
+		width: 8px;
+		height: 20px;
+		opacity: 1;
+		background: linear-gradient(180deg, var(--brand-gold) 0%, var(--brand-leaf) 100%);
+		box-shadow: 0 0 12px var(--brand-gold-glow);
 	}
 
-	@keyframes cueBounce {
-		0%, 100% {
-			transform: translateX(-50%) translateY(0);
-		}
-		50% {
-			transform: translateX(-50%) translateY(5px);
-		}
-	}
-
-	@media (max-width: 600px) {
-		.pagination-track {
-			right: 0.75rem;
-		}
-
-		.cue-pill {
-			bottom: 5.8rem;
-			font-size: 0.72rem;
+	@media (max-width: 768px), (pointer: coarse) {
+		.scroll-indicator {
+			display: none !important;
 		}
 	}
 </style>
-
