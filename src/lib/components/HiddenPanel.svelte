@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
 	import { themeStore } from '../theme.svelte';
 	import { langStore } from '../lang.svelte';
 	import { canFullscreen, toggleFullscreen, isFullscreenActive } from '../services/fullscreen';
@@ -90,26 +89,7 @@
 			<span class="action-title">{langStore.t('lang_name')}</span>
 		</button>
 
-		<!-- 3. БРЕНДБУК -->
-		<a
-			href={resolve('/brandbook')}
-			class="action-item brandbook-item"
-			aria-label={langStore.t('brandbook_btn')}
-			title={langStore.t('brandbook_btn')}
-		>
-			<span class="action-icon-box">
-				<svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-					<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
-					<circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
-					<circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
-					<circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
-					<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C21.938 6.5 17.5 2 12 2z"></path>
-				</svg>
-			</span>
-			<span class="action-title">{langStore.t('brandbook_btn')}</span>
-		</a>
-
-		<!-- 4. ПОВНИЙ ЕКРАН (якщо підтримується) -->
+		<!-- 3. ПОВНИЙ ЕКРАН (якщо підтримується) -->
 		{#if isSupported}
 			<button
 				type="button"
