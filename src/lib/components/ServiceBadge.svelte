@@ -47,12 +47,22 @@
 	$effect(() => {
 		if (!browser) return;
 
-		// 1. Перевірка версії на сервері
+		// 1. Початкова перевірка версії на сервері
 		void fetchServedVersion().then((served) => {
 			if (served) logService.servedVersion = served;
 		});
 
+		// 2. Періодичний фоновий моніторинг оновлень кожні 60 секунд
+		const pollTimer = setInterval(() => {
+			if (navigator.onLine) {
+				void fetchServedVersion().then((served) => {
+					if (served) logService.servedVersion = served;
+				});
+			}
+		}, 60000);
+
 		return () => {
+			clearInterval(pollTimer);
 			if (copyTimer) clearTimeout(copyTimer);
 		};
 	});

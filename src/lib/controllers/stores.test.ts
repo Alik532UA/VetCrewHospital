@@ -1,4 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+vi.mock('$app/environment', () => ({ browser: true }));
+
 import { langStore } from './lang.svelte';
 import { themeStore } from './theme.svelte';
 
@@ -36,6 +39,26 @@ describe('themeStore controller', () => {
 
 		themeStore.set('light');
 		expect(themeStore.current).toBe('light');
+	});
+
+	it('оновлює meta[name="theme-color"] при перемиканні теми', () => {
+		const meta = {
+			content: '',
+			setAttribute: (k: string, v: string) => {
+				if (k === 'content') meta.content = v;
+			}
+		};
+		const doc = {
+			documentElement: { setAttribute: () => {}, classList: { toggle: () => {} } },
+			querySelector: (selector: string) => (selector === 'meta[name="theme-color"]' ? meta : null)
+		};
+		vi.stubGlobal('document', doc);
+
+		themeStore.set('dark');
+		expect(meta.content).toBe('#070e09');
+
+		themeStore.set('light');
+		expect(meta.content).toBe('#f5f8f5');
 	});
 });
 

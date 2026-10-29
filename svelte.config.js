@@ -26,6 +26,9 @@ const config = {
 		},
 		prerender: {
 			entries: ['*']
+		},
+		version: {
+			pollInterval: 60000
 		}
 	}
 };

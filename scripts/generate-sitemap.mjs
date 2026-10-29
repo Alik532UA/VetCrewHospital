@@ -13,7 +13,7 @@ function findHtmlFiles(dir, out = []) {
 		const full = join(dir, entry);
 		if (statSync(full).isDirectory()) {
 			findHtmlFiles(full, out);
-		} else if (entry === 'index.html') {
+		} else if (entry.endsWith('.html') && entry !== '404.html') {
 			out.push(full.replace(/\\/g, '/'));
 		}
 	}
@@ -26,11 +26,18 @@ try {
 
 	for (const file of files) {
 		const html = readFileSync(file, 'utf8');
-		const canonical = html.match(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/)?.[1];
-		
-		const dir = file.slice(BUILD_DIR.length + 1, -'/index.html'.length);
-		const isHome = dir === '';
-		const loc = canonical || (isHome ? `${DEFAULT_ORIGIN}/` : `${DEFAULT_ORIGIN}/${dir}/`);
+
+		// Пропускаємо сторінки із забороною індексації (SEO-v10 § 5.2)
+		const robotsMatch = html.match(/<meta[^>]+name="robots"[^>]+content="([^"]+)"/i);
+		if (robotsMatch && robotsMatch[1].toLowerCase().includes('noindex')) {
+			continue;
+		}
+
+		const canonical = html.match(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/i)?.[1];
+		const relative = file.slice(BUILD_DIR.length + 1);
+		const isHome = relative === 'index.html';
+		const cleanPath = relative.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
+		const loc = canonical || (isHome ? `${DEFAULT_ORIGIN}/` : `${DEFAULT_ORIGIN}/${cleanPath}/`);
 		const priority = isHome ? '1.0' : '0.8';
 
 		pages.push({ loc, priority });
@@ -55,4 +62,3 @@ ${urls}
 } catch (error) {
 	console.warn('[generate-sitemap] Не вдалося згенерувати sitemap.xml:', error.message);
 }
-

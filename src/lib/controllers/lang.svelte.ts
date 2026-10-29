@@ -55,7 +55,7 @@ class LangStore {
 			if (saved === 'uk' || saved === 'en') {
 				this.current = saved;
 			} else {
-				const navLang = navigator.language.toLowerCase();
+				const navLang = typeof navigator !== 'undefined' ? navigator.language.toLowerCase() : 'uk';
 				this.current = navLang.startsWith('uk') ? 'uk' : 'en';
 			}
 			this.apply();
@@ -75,7 +75,7 @@ class LangStore {
 	}
 
 	apply() {
-		if (!browser) return;
+		if (!browser || typeof document === 'undefined') return;
 		document.documentElement.setAttribute('lang', this.current);
 		safeLocalStorage.set('lang', this.current);
 	}

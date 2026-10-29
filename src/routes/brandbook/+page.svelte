@@ -79,7 +79,7 @@
 	/>
 </svelte:head>
 
-<main id="main-content" class="brandbook-page">
+<main id="main-content" tabindex="-1" class="brandbook-page">
 	<div class="brandbook-container">
 		<!-- HEADER -->
 		<header class="brandbook-header">

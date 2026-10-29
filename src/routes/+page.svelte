@@ -188,7 +188,7 @@
 
 <JsonLd schema={hospitalSchema} />
 
-<main id="main-content" class="page-container state-{scrollState}">
+<main id="main-content" tabindex="-1" class="page-container state-{scrollState}">
 	<!-- Central Hero SVG Logo with dynamic cursor reactivity -->
 	<section
 		class="hero-center state-{scrollState}"

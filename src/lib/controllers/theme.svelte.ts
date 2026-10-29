@@ -32,7 +32,7 @@ class ThemeStore {
 	}
 
 	apply() {
-		if (!browser) return;
+		if (!browser || typeof document === 'undefined') return;
 		document.documentElement.setAttribute('data-theme', this.current);
 		document.documentElement.classList.toggle('dark', this.current === 'dark');
 		document.documentElement.classList.toggle('light', this.current === 'light');

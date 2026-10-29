@@ -71,6 +71,10 @@
 		top: 16px;
 	}
 
+	:global(main:focus) {
+		outline: none;
+	}
+
 	.app-root {
 		position: relative;
 		width: 100%;
