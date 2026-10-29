@@ -2,768 +2,753 @@
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 
-	interface RoomPlaque {
+	type SignFormat = 'composite' | 'icon' | 'text';
+
+	interface SignItem {
 		id: string;
 		num: string;
 		titleUk: string;
 		titleEn: string;
-		textSvg: string;
-		compSvg: string;
+		file: string;
 	}
 
-	const ROOM_PLAQUES: RoomPlaque[] = [
-		{ id: 'reception', num: '01', titleUk: 'Рецепція', titleEn: 'Reception', textSvg: 'reception.svg', compSvg: 'reception.svg' },
-		{ id: 'pet-shop', num: '02', titleUk: 'Зоомагазин', titleEn: 'Pet Shop', textSvg: 'pet-shop.svg', compSvg: 'pet-shop.svg' },
-		{ id: 'hospital', num: '03', titleUk: 'Стаціонар', titleEn: 'Inpatient Hospital', textSvg: 'hospital.svg', compSvg: 'hospital.svg' },
-		{ id: 'surgery', num: '04', titleUk: 'Операційна', titleEn: 'Surgery Room', textSvg: 'surgery.svg', compSvg: 'surgery.svg' },
-		{ id: 'procedures', num: '05', titleUk: 'Процедурна', titleEn: 'Procedure Room', textSvg: 'procedures.svg', compSvg: 'procedures.svg' },
-		{ id: 'consultation', num: '06', titleUk: 'Приймальний кабінет', titleEn: 'Examination Room', textSvg: 'consultation.svg', compSvg: 'consultation.svg' },
-		{ id: 'laboratory', num: '07', titleUk: 'Лабораторія', titleEn: 'Laboratory', textSvg: 'laboratory.svg', compSvg: 'laboratory.svg' }
+	const COMPOSITE_PLAQUES: SignItem[] = [
+		{ id: 'reception', num: '01', titleUk: 'Рецепція', titleEn: 'Reception Desk', file: 'reception.svg' },
+		{ id: 'pet-shop', num: '02', titleUk: 'Зоомагазин', titleEn: 'Vet Crew Shop', file: 'pet-shop.svg' },
+		{ id: 'hospital', num: '03', titleUk: 'Стаціонар', titleEn: 'Inpatient Hospital', file: 'hospital.svg' },
+		{ id: 'surgery', num: '04', titleUk: 'Операційна', titleEn: 'Surgery Room', file: 'surgery.svg' },
+		{ id: 'procedures', num: '05', titleUk: 'Процедурна', titleEn: 'Procedure Room', file: 'procedures.svg' },
+		{ id: 'consultation', num: '06', titleUk: 'Приймальний кабінет', titleEn: 'Examination Room', file: 'consultation.svg' },
+		{ id: 'laboratory', num: '07', titleUk: 'Лабораторія', titleEn: 'Clinical Laboratory', file: 'laboratory.svg' }
 	];
 
-	interface DeptIcon {
-		id: string;
-		num: string;
-		titleUk: string;
-		titleEn: string;
-		descUk: string;
-		descEn: string;
+	const TEXT_PLAQUES: SignItem[] = [
+		{ id: 'reception', num: '01', titleUk: 'Рецепція', titleEn: 'Reception Desk', file: 'reception.svg' },
+		{ id: 'pet-shop', num: '02', titleUk: 'Зоомагазин', titleEn: 'Vet Crew Shop', file: 'pet-shop.svg' },
+		{ id: 'hospital', num: '03', titleUk: 'Стаціонар', titleEn: 'Inpatient Hospital', file: 'hospital.svg' },
+		{ id: 'surgery', num: '04', titleUk: 'Операційна', titleEn: 'Surgery Room', file: 'surgery.svg' },
+		{ id: 'procedures', num: '05', titleUk: 'Процедурна', titleEn: 'Procedure Room', file: 'procedures.svg' },
+		{ id: 'consultation', num: '06', titleUk: 'Приймальний кабінет', titleEn: 'Examination Room', file: 'consultation.svg' },
+		{ id: 'laboratory', num: '07', titleUk: 'Лабораторія', titleEn: 'Clinical Laboratory', file: 'laboratory.svg' }
+	];
+
+	const ICON_PLAQUES: SignItem[] = [
+		{ id: 'reception', num: '01', titleUk: 'Рецепція', titleEn: 'Reception & Waiting', file: 'reception.svg' },
+		{ id: 'pet-shop', num: '02', titleUk: 'Зоомагазин', titleEn: 'Pet Shop & Gear', file: 'pet-shop.svg' },
+		{ id: 'pharmacy', num: '03', titleUk: 'Ветеринарна аптека', titleEn: 'Veterinary Pharmacy', file: 'pharmacy.svg' },
+		{ id: 'herpetology', num: '04', titleUk: 'Герпетологія (Рептилії)', titleEn: 'Herpetology Department', file: 'herpetology.svg' },
+		{ id: 'ornithology', num: '05', titleUk: 'Орнітологія (Птахи)', titleEn: 'Ornithology Department', file: 'ornithology.svg' },
+		{ id: 'surgery', num: '06', titleUk: 'Хірургічний блок', titleEn: 'Surgical Suite', file: 'surgery.svg' },
+		{ id: 'hospital', num: '07', titleUk: 'Цілодобовий стаціонар', titleEn: '24/7 Inpatient Care', file: 'hospital.svg' },
+		{ id: 'laboratory', num: '08', titleUk: 'Клінічна лабораторія', titleEn: 'Clinical Laboratory', file: 'laboratory.svg' }
+	];
+
+	const BRAND_COLORS = [
+		{ hex: '#13371B', name: 'Dark Green', textColor: '#ffffff' },
+		{ hex: '#598F3A', name: 'Main Green', textColor: '#ffffff' },
+		{ hex: '#93C84A', name: 'Light Green', textColor: '#101e14' },
+		{ hex: '#FFB327', name: 'Brand Gold', textColor: '#101e14' },
+		{ hex: '#E5E5E5', name: 'Light Gray', textColor: '#101e14' },
+		{ hex: '#262626', name: 'Dark Gray', textColor: '#ffffff' },
+		{ hex: '#FFFFFF', name: 'Pure White', textColor: '#13371b' }
+	];
+
+	// Unified controls state
+	let currentFormat = $state<SignFormat>('composite');
+	let signColor = $state<string>('#13371B');
+	let stageTheme = $state<'light' | 'emerald' | 'dark' | 'checker'>('light');
+	let isDownloading = $state<string | null>(null);
+
+	let currentList = $derived(
+		currentFormat === 'composite'
+			? COMPOSITE_PLAQUES
+			: currentFormat === 'text'
+			? TEXT_PLAQUES
+			: ICON_PLAQUES
+	);
+
+	function getAssetUrl(item: SignItem): string {
+		if (currentFormat === 'composite') {
+			return `${base}/brand/signage/composite/${item.file}`;
+		} else if (currentFormat === 'text') {
+			return `${base}/brand/signage/text/${item.file}`;
+		} else {
+			// For icon, clean 13371B master icon
+			return `${base}/brand/signage/icons/13371B/${item.file}`;
+		}
 	}
 
-	const DEPT_ICONS: DeptIcon[] = [
-		{ id: 'reception', num: '01', titleUk: 'Рецепція та зона очікування', titleEn: 'Reception & Waiting', descUk: 'Стійка первинної реєстрації пацієнтів та оформлення картки.', descEn: 'Primary patient registration desk.' },
-		{ id: 'pet-shop', num: '02', titleUk: 'Зоомагазин та амуніція', titleEn: 'Pet Shop & Gear', descUk: 'Спеціалізовані корми, вітаміни та аксесуари для екзотів.', descEn: 'Specialized feeds and accessories.' },
-		{ id: 'pharmacy', num: '03', titleUk: 'Ветеринарна аптека', titleEn: 'Veterinary Pharmacy', descUk: 'Ліцензовані медикаменти, вакцини та лікувальні препарати.', descEn: 'Certified pharmaceuticals and vaccines.' },
-		{ id: 'herpetology', num: '04', titleUk: 'Герпетологія (Рептилії)', titleEn: 'Herpetology Department', descUk: 'Спеціалізоване терапевтичне відділення лікування змій, ящірок та черепах.', descEn: 'Reptile and amphibian medicine.' },
-		{ id: 'ornithology', num: '05', titleUk: 'Орнітологія (Птахи)', titleEn: 'Ornithology Department', descUk: 'Діагностика та лікування папуг, хижих птахів і водоплавних.', descEn: 'Avian clinical care and surgery.' },
-		{ id: 'surgery', num: '06', titleUk: 'Хірургічний блок', titleEn: 'Surgical Suite', descUk: 'Стерильні операційні зали, газовий наркоз, мікрохірургія.', descEn: 'Sterile surgery and micro-procedures.' },
-		{ id: 'hospital', num: '07', titleUk: 'Цілодобовий стаціонар', titleEn: '24/7 Inpatient Care', descUk: 'Кисневі бокси, інфузомати та цілодобовий моніторинг пацієнтів.', descEn: '24/7 oxygen therapy and hospitalization.' },
-		{ id: 'laboratory', num: '08', titleUk: 'Клінічна лабораторія', titleEn: 'Clinical Laboratory', descUk: 'Експрес-аналізи крові, мікроскопія, біохімія за 20 хвилин.', descEn: 'On-site express biochemical diagnostics.' }
-	];
+	async function downloadColoredSignSvg(e: MouseEvent, item: SignItem) {
+		e.preventDefault();
+		isDownloading = item.id;
+		try {
+			const url = getAssetUrl(item);
+			const res = await fetch(url);
+			let svgText = await res.text();
 
-	const SIGN_COLORS = [
-		{ hex: '13371B', name: 'Dark Green', textColor: '#ffffff' },
-		{ hex: '598F3A', name: 'Main Green', textColor: '#ffffff' },
-		{ hex: '93C84A', name: 'Light Green', textColor: '#101e14' },
-		{ hex: 'FFB327', name: 'Yellow', textColor: '#101e14' },
-		{ hex: 'E5E5E5', name: 'Light Gray', textColor: '#101e14' },
-		{ hex: '262626', name: 'Dark Gray', textColor: '#ffffff' },
-		{ hex: '000000', name: 'Black', textColor: '#ffffff' }
-	];
+			// Replace color in style tag (fill: #13371b) and inline attributes
+			svgText = svgText.replace(/fill:\s*#[0-9a-fA-F]{6}/g, `fill: ${signColor}`);
+			svgText = svgText.replace(/fill="(?!(?:none))#[0-9a-fA-F]{6}"/g, `fill="${signColor}"`);
 
-	let signageTab = $state<'plaques' | 'icons'>('plaques');
-	let plaqueStyle = $state<'composite' | 'text'>('composite');
-	let activeDept = $state<string>('reception');
-	let activeColor = $state<string>('13371B');
-	let stageBg = $state<'light' | 'dark' | 'checker'>('light');
-
-	let selectedDeptObj = $derived(DEPT_ICONS.find((d) => d.id === activeDept) ?? DEPT_ICONS[0]);
+			const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
+			const downloadUrl = URL.createObjectURL(blob);
+			const link = document.createElement('a');
+			link.href = downloadUrl;
+			const formatLabel =
+				currentFormat === 'composite' ? 'Іконка+Напис' : currentFormat === 'text' ? 'Тільки напис' : 'Іконка';
+			link.download = `${item.num} - ${item.titleUk} (${formatLabel}, ${signColor}).svg`;
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			URL.revokeObjectURL(downloadUrl);
+		} catch (err) {
+			console.error('Download error:', err);
+		} finally {
+			isDownloading = null;
+		}
+	}
 </script>
 
 <div class="door-signage-widget">
-	<!-- MAIN MODE TOGGLE (Кабінетні таблички / Піктограми) -->
-	<div class="signage-mode-header">
-		<div class="mode-tabs">
-			<button
-				type="button"
-				class="mode-tab-btn"
-				class:is-active={signageTab === 'plaques'}
-				onclick={() => (signageTab = 'plaques')}
-			>
-				<span class="mode-icon">🚪</span>
-				<span>{langStore.current === 'uk' ? 'Дверні таблички кабінетів (7)' : 'Door Plaques (7)'}</span>
-			</button>
-			<button
-				type="button"
-				class="mode-tab-btn"
-				class:is-active={signageTab === 'icons'}
-				onclick={() => (signageTab = 'icons')}
-			>
-				<span class="mode-icon">🏥</span>
-				<span>{langStore.current === 'uk' ? 'Піктограми відділень (8 × 7 кольорів)' : 'Department Icons (8 × 7 Colors)'}</span>
-			</button>
+	<!-- UNIFIED CONTROL TOOLBAR -->
+	<div class="unified-controls-panel">
+		<!-- ROW 1: Format Selector -->
+		<div class="control-row format-row">
+			<div class="control-label-group">
+				<span class="control-title">{langStore.current === 'uk' ? 'Формат навігації:' : 'Signage Layout:'}</span>
+				<span class="control-hint">
+					{langStore.current === 'uk'
+						? 'Перемикайте між комбінованою табличкою, чистою піктограмою або текстовою вивіскою'
+						: 'Switch between composite plaque, icon-only or text-only layouts'}
+				</span>
+			</div>
+
+			<div class="format-pill-tabs">
+				<button
+					type="button"
+					class="format-tab-btn"
+					class:is-active={currentFormat === 'composite'}
+					onclick={() => (currentFormat = 'composite')}
+				>
+					<span class="tab-glyph">🚪</span>
+					<span>{langStore.current === 'uk' ? 'Іконка + напис' : 'Icon + Text'}</span>
+				</button>
+				<button
+					type="button"
+					class="format-tab-btn"
+					class:is-active={currentFormat === 'icon'}
+					onclick={() => (currentFormat = 'icon')}
+				>
+					<span class="tab-glyph">🏥</span>
+					<span>{langStore.current === 'uk' ? 'Тільки іконка' : 'Icon Only'}</span>
+				</button>
+				<button
+					type="button"
+					class="format-tab-btn"
+					class:is-active={currentFormat === 'text'}
+					onclick={() => (currentFormat = 'text')}
+				>
+					<span class="tab-glyph">📝</span>
+					<span>{langStore.current === 'uk' ? 'Тільки напис' : 'Text Only'}</span>
+				</button>
+			</div>
 		</div>
 
-		{#if signageTab === 'plaques'}
-			<!-- Sub-toggle: Composite vs Text Only -->
-			<div class="plaque-subtoggle">
-				<span class="subtoggle-label">{langStore.current === 'uk' ? 'Формат таблички:' : 'Plaque Layout:'}</span>
-				<div class="pill-group">
+		<!-- ROW 2: Interactive Color Palette + Background Stage -->
+		<div class="control-row styling-row">
+			<!-- Color Picker (as in 24 Animals) -->
+			<div class="color-picker-box">
+				<div class="color-label-wrap">
+					<span class="control-title">{langStore.current === 'uk' ? 'Колір табличок:' : 'Sign Color:'}</span>
+					<code class="active-hex-badge">{signColor}</code>
+				</div>
+
+				<div class="colors-palette-wrap">
+					{#each BRAND_COLORS as c (c.hex)}
+						<button
+							type="button"
+							class="color-pill-btn"
+							class:is-active={signColor.toUpperCase() === c.hex.toUpperCase()}
+							style:background-color={c.hex}
+							onclick={() => (signColor = c.hex)}
+							title="{c.name} ({c.hex})"
+							aria-label="{c.name} ({c.hex})"
+						>
+							{#if signColor.toUpperCase() === c.hex.toUpperCase()}
+								<span class="check-mark" style:color={c.textColor}>✓</span>
+							{/if}
+						</button>
+					{/each}
+
+					<!-- Custom HTML5 Color Picker -->
+					<label class="color-pill-btn custom-picker-pill" title={langStore.current === 'uk' ? 'Кастомний колір' : 'Custom color'}>
+						<input
+							type="color"
+							value={signColor}
+							oninput={(e) => (signColor = (e.target as HTMLInputElement).value.toUpperCase())}
+							aria-label="Custom color picker"
+						/>
+						<span class="picker-icon">🎨</span>
+					</label>
+				</div>
+			</div>
+
+			<!-- Stage Background Switcher -->
+			<div class="stage-bg-box">
+				<span class="control-title">{langStore.current === 'uk' ? 'Тло прев\'ю:' : 'Stage:'}</span>
+				<div class="stage-toggle-btns">
 					<button
 						type="button"
-						class="sub-pill"
-						class:is-active={plaqueStyle === 'composite'}
-						onclick={() => (plaqueStyle = 'composite')}
+						class="stage-btn"
+						class:is-active={stageTheme === 'light'}
+						onclick={() => (stageTheme = 'light')}
+						title="Світле тло"
 					>
-						<span>{langStore.current === 'uk' ? 'Напис + Іконка' : 'Text + Icon'}</span>
+						<span>⚪</span>
 					</button>
 					<button
 						type="button"
-						class="sub-pill"
-						class:is-active={plaqueStyle === 'text'}
-						onclick={() => (plaqueStyle = 'text')}
+						class="stage-btn"
+						class:is-active={stageTheme === 'emerald'}
+						onclick={() => (stageTheme = 'emerald')}
+						title="Фірмовий смарагд #13371B"
 					>
-						<span>{langStore.current === 'uk' ? 'Тільки напис' : 'Text Only'}</span>
+						<span class="emerald-dot"></span>
+					</button>
+					<button
+						type="button"
+						class="stage-btn"
+						class:is-active={stageTheme === 'dark'}
+						onclick={() => (stageTheme = 'dark')}
+						title="Темне тло"
+					>
+						<span>⚫</span>
+					</button>
+					<button
+						type="button"
+						class="stage-btn"
+						class:is-active={stageTheme === 'checker'}
+						onclick={() => (stageTheme = 'checker')}
+						title="Шахматка (прозоре тло)"
+					>
+						<span>░</span>
 					</button>
 				</div>
 			</div>
-		{/if}
+		</div>
 	</div>
 
-	<!-- TAB 1: DOOR PLAQUES -->
-	{#if signageTab === 'plaques'}
-		<div class="plaques-grid">
-			{#each ROOM_PLAQUES as p (p.id)}
-				<div class="plaque-card">
-					<div class="plaque-card-header">
-						<span class="room-num">#{p.num}</span>
-						<span class="room-title">{langStore.current === 'uk' ? p.titleUk : p.titleEn}</span>
-					</div>
-
-					<div class="plaque-preview-stage">
-						<img
-							src="{base}/brand/signage/{plaqueStyle}/{p.id}.svg"
-							alt="{p.titleUk}"
-							class="plaque-img"
-							loading="lazy"
-						/>
-					</div>
-
-					<div class="plaque-card-footer">
-						<span class="file-dim">Vector SVG • Print HQ</span>
-						<a
-							href="{base}/brand/signage/{plaqueStyle}/{p.id}.svg"
-							download="{p.titleUk} {plaqueStyle === 'composite' ? '+ icon' : ''}.svg"
-							class="download-sign-btn"
-							title="{langStore.current === 'uk' ? 'Завантажити векторний SVG для плотерної порізки чи друку' : 'Download SVG'}"
-						>
-							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-								<polyline points="7 10 12 15 17 10"></polyline>
-								<line x1="12" y1="15" x2="12" y2="3"></line>
-							</svg>
-							<span>SVG</span>
-						</a>
-					</div>
-				</div>
-			{/each}
-		</div>
-	{:else}
-		<!-- TAB 2: DEPARTMENT ICONS IN 7 PALETTES -->
-		<div class="dept-icons-studio">
-			<!-- Controls: Department Chips & Color Palette -->
-			<div class="dept-controls-bar">
-				<!-- Department Chips -->
-				<div class="dept-selector-wrap">
-					<span class="bar-label">{langStore.current === 'uk' ? 'Оберіть відділення:' : 'Select Department:'}</span>
-					<div class="dept-chips-list">
-						{#each DEPT_ICONS as d (d.id)}
-							<button
-								type="button"
-								class="dept-chip"
-								class:is-active={activeDept === d.id}
-								onclick={() => (activeDept = d.id)}
-							>
-								<span class="dept-num">#{d.num}</span>
-								<span>{langStore.current === 'uk' ? d.titleUk : d.titleEn}</span>
-							</button>
-						{/each}
+	<!-- SIGNS GRID -->
+	<div
+		class="signage-grid"
+		class:grid--composite={currentFormat === 'composite'}
+		class:grid--text={currentFormat === 'text'}
+		class:grid--icon={currentFormat === 'icon'}
+	>
+		{#each currentList as item (item.id)}
+			{@const assetUrl = getAssetUrl(item)}
+			<div class="sign-card" class:sign-card--icon={currentFormat === 'icon'}>
+				<!-- Card Header -->
+				<div class="sign-card-header">
+					<span class="sign-num">#{item.num}</span>
+					<div class="sign-titles">
+						<span class="sign-name-uk">{item.titleUk}</span>
+						<span class="sign-name-en">{item.titleEn}</span>
 					</div>
 				</div>
 
-				<!-- Color Palette Selector -->
-				<div class="color-selector-wrap">
-					<div class="color-label-row">
-						<span class="bar-label">{langStore.current === 'uk' ? 'Колір піктограми:' : 'Icon Color:'}</span>
-						<code class="hex-badge">#{activeColor}</code>
-					</div>
+				<!-- Live Preview Stage with dynamic color mask -->
+				<div
+					class="sign-preview-stage stage--{stageTheme}"
+					class:stage--compact={currentFormat === 'text'}
+					class:stage--square={currentFormat === 'icon'}
+				>
+					<div
+						class="sign-svg-mask"
+						style:background-color={signColor}
+						style:--mask-url="url('{assetUrl}')"
+						aria-label="{item.titleUk}"
+					></div>
+				</div>
 
-					<div class="color-dots-row">
-						{#each SIGN_COLORS as c (c.hex)}
-							<button
-								type="button"
-								class="sign-color-dot"
-								class:is-active={activeColor === c.hex}
-								style:background-color="#{c.hex}"
-								onclick={() => (activeColor = c.hex)}
-								title="{c.name} (#{c.hex})"
-								aria-label="{c.name}"
-							>
-								{#if activeColor === c.hex}
-									<span class="dot-check" style:color={c.textColor}>✓</span>
-								{/if}
-							</button>
-						{/each}
-					</div>
+				<!-- Download Action Button with injected color -->
+				<div class="sign-card-footer">
+					<button
+						type="button"
+						class="download-sign-btn"
+						onclick={(e) => downloadColoredSignSvg(e, item)}
+						disabled={isDownloading === item.id}
+					>
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+							<polyline points="7 10 12 15 17 10"></polyline>
+							<line x1="12" y1="15" x2="12" y2="3"></line>
+						</svg>
+						<span>
+							{isDownloading === item.id
+								? '...'
+								: langStore.current === 'uk'
+								? `Завантажити SVG (${signColor})`
+								: `Download SVG (${signColor})`}
+						</span>
+					</button>
 				</div>
 			</div>
-
-			<!-- Live Department Icon Stage Showcase -->
-			<div class="dept-showcase-box">
-				<div class="showcase-stage bg-{stageBg}">
-					<!-- Background style switchers in corner -->
-					<div class="stage-bg-toggles">
-						<button
-							type="button"
-							class="bg-btn"
-							class:is-active={stageBg === 'light'}
-							onclick={() => (stageBg = 'light')}
-							title="Світле тло"
-						>
-							☀️
-						</button>
-						<button
-							type="button"
-							class="bg-btn"
-							class:is-active={stageBg === 'dark'}
-							onclick={() => (stageBg = 'dark')}
-							title="Темне тло"
-						>
-							🌙
-						</button>
-						<button
-							type="button"
-							class="bg-btn"
-							class:is-active={stageBg === 'checker'}
-							onclick={() => (stageBg = 'checker')}
-							title="Шахове тло (прозорість)"
-						>
-							🏁
-						</button>
-					</div>
-
-					<img
-						src="{base}/brand/signage/icons/{activeColor}/{activeDept}.svg"
-						alt="{selectedDeptObj.titleUk}"
-						class="showcase-icon-img"
-					/>
-				</div>
-
-				<div class="showcase-info">
-					<div class="showcase-meta">
-						<div class="showcase-titles">
-							<span class="dept-badge">#{selectedDeptObj.num} • {langStore.current === 'uk' ? 'Офіційна піктограма' : 'Official Pictogram'}</span>
-							<h3 class="showcase-heading">
-								{langStore.current === 'uk' ? selectedDeptObj.titleUk : selectedDeptObj.titleEn}
-							</h3>
-						</div>
-						<p class="showcase-desc">
-							{langStore.current === 'uk' ? selectedDeptObj.descUk : selectedDeptObj.descEn}
-						</p>
-					</div>
-
-					<div class="showcase-download-zone">
-						<div class="color-spec-pill">
-							<span class="swatch-indicator" style:background-color="#{activeColor}"></span>
-							<span class="spec-name">Колір: #{activeColor}</span>
-						</div>
-
-						<a
-							href="{base}/brand/signage/icons/{activeColor}/{activeDept}.svg"
-							download="{selectedDeptObj.num} - {selectedDeptObj.titleUk} (#{activeColor}).svg"
-							class="download-dept-btn"
-						>
-							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-								<polyline points="7 10 12 15 17 10"></polyline>
-								<line x1="12" y1="15" x2="12" y2="3"></line>
-							</svg>
-							<span>{langStore.current === 'uk' ? 'Завантажити SVG піктограми' : 'Download Pictogram SVG'}</span>
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	{/if}
+		{/each}
+	</div>
 </div>
 
 <style>
 	.door-signage-widget {
 		display: flex;
 		flex-direction: column;
-		gap: 1.75rem;
+		gap: 1.8rem;
 		width: 100%;
 	}
 
-	.signage-mode-header {
+	/* UNIFIED CONTROLS PANEL */
+	.unified-controls-panel {
+		display: flex;
+		flex-direction: column;
+		gap: 1.2rem;
+		padding: 1.4rem;
+		border-radius: 18px;
+		background: var(--bg-secondary);
+		border: 1px solid var(--border);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+	}
+
+	.control-row {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 1rem;
+		gap: 1.2rem;
 		flex-wrap: wrap;
-		padding-bottom: 0.5rem;
 	}
 
-	.mode-tabs {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.4rem;
-		padding: 4px;
-		background: var(--bg-secondary);
-		border: 1px solid var(--border);
-		border-radius: 14px;
-	}
-
-	.mode-tab-btn {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 0.5rem 1rem;
-		border-radius: 10px;
-		font-size: 0.86rem;
-		font-weight: 700;
-		color: var(--fg-secondary);
-		background: transparent;
-		cursor: pointer;
-		transition: all 0.15s ease;
-	}
-
-	.mode-tab-btn.is-active {
-		background: var(--panel-bg);
-		color: var(--fg-primary);
-		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-	}
-
-	.mode-icon {
-		font-size: 1rem;
-	}
-
-	.plaque-subtoggle {
-		display: flex;
-		align-items: center;
-		gap: 0.6rem;
-	}
-
-	.subtoggle-label {
-		font-size: 0.82rem;
-		font-weight: 600;
-		color: var(--fg-muted);
-	}
-
-	.pill-group {
-		display: inline-flex;
-		padding: 3px;
-		background: var(--bg-secondary);
-		border: 1px solid var(--border);
-		border-radius: 10px;
-	}
-
-	.sub-pill {
-		padding: 0.35rem 0.75rem;
-		border-radius: 7px;
-		font-size: 0.78rem;
-		font-weight: 700;
-		color: var(--fg-secondary);
-		background: transparent;
-		cursor: pointer;
-		transition: all 0.15s ease;
-	}
-
-	.sub-pill.is-active {
-		background: var(--panel-bg);
-		color: var(--fg-primary);
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-	}
-
-	/* PLAQUES GRID */
-	.plaques-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-		gap: 1.25rem;
-	}
-
-	.plaque-card {
-		display: flex;
-		flex-direction: column;
-		background: var(--bg-secondary);
-		border: 1px solid var(--border);
-		border-radius: 18px;
-		overflow: hidden;
-		transition: all 0.2s ease;
-	}
-
-	.plaque-card:hover {
-		transform: translateY(-2px);
-		border-color: var(--border-hover);
-		box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-	}
-
-	.plaque-card-header {
-		display: flex;
-		align-items: center;
-		gap: 0.6rem;
-		padding: 0.85rem 1.15rem;
+	.format-row {
+		padding-bottom: 1.1rem;
 		border-bottom: 1px solid var(--border);
 	}
 
-	.room-num {
-		font-size: 0.72rem;
-		font-family: monospace;
-		font-weight: 700;
-		color: var(--brand-leaf);
-		background: rgba(89, 143, 58, 0.1);
-		padding: 2px 6px;
-		border-radius: 6px;
+	.control-label-group {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
 	}
 
-	.room-title {
-		font-size: 0.9rem;
-		font-weight: 700;
+	.control-title {
+		font-size: 0.85rem;
+		font-weight: 800;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
 		color: var(--fg-primary);
 	}
 
-	.plaque-preview-stage {
-		min-height: 140px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 1.5rem;
-		background: var(--panel-bg);
-	}
-
-	.plaque-img {
-		max-width: 100%;
-		max-height: 100px;
-		object-fit: contain;
-		filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.06));
-	}
-
-	.plaque-card-footer {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 0.75rem 1.15rem;
-		border-top: 1px solid var(--border);
-	}
-
-	.file-dim {
-		font-size: 0.72rem;
-		color: var(--fg-muted);
-	}
-
-	.download-sign-btn {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.35rem;
-		padding: 0.32rem 0.75rem;
-		border-radius: 8px;
-		background: var(--bg-secondary);
-		border: 1px solid var(--border);
-		color: var(--fg-primary);
-		font-size: 0.76rem;
-		font-weight: 700;
-		text-decoration: none;
-		transition: all 0.15s ease;
-	}
-
-	.download-sign-btn:hover {
-		background: var(--brand-leaf);
-		color: #ffffff;
-		border-color: var(--brand-leaf);
-		transform: scale(1.04);
-	}
-
-	/* DEPT ICONS STUDIO */
-	.dept-icons-studio {
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
-	}
-
-	.dept-controls-bar {
-		display: flex;
-		flex-direction: column;
-		gap: 1.25rem;
-		padding: 1.25rem 1.5rem;
-		background: var(--panel-bg);
-		border: 1px solid var(--border);
-		border-radius: 18px;
-		backdrop-filter: blur(14px);
-		-webkit-backdrop-filter: blur(14px);
-	}
-
-	.bar-label {
+	.control-hint {
 		font-size: 0.82rem;
-		font-weight: 700;
 		color: var(--fg-secondary);
 	}
 
-	.dept-selector-wrap {
-		display: flex;
-		flex-direction: column;
-		gap: 0.65rem;
+	/* FORMAT TABS */
+	.format-pill-tabs {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		background: var(--panel-bg);
+		padding: 0.35rem;
+		border-radius: 12px;
+		border: 1px solid var(--border);
 	}
 
-	.dept-chips-list {
+	.format-tab-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.55rem 1rem;
+		border-radius: 8px;
+		border: 1px solid transparent;
+		background: transparent;
+		color: var(--fg-secondary);
+		font-size: 0.86rem;
+		font-weight: 700;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.format-tab-btn:hover {
+		color: var(--fg-primary);
+		background: var(--bg-secondary);
+	}
+
+	.format-tab-btn.is-active {
+		background: var(--brand-emerald);
+		color: #ffffff;
+		border-color: var(--brand-emerald);
+		box-shadow: 0 2px 8px rgba(19, 55, 27, 0.25);
+	}
+
+	:global(.dark) .format-tab-btn.is-active {
+		background: var(--brand-gold);
+		color: #101e14;
+		border-color: var(--brand-gold);
+		box-shadow: 0 2px 8px rgba(255, 179, 39, 0.25);
+	}
+
+	.tab-glyph {
+		font-size: 1rem;
+		line-height: 1;
+	}
+
+	/* STYLING ROW: PALETTE + STAGE */
+	.styling-row {
 		display: flex;
 		align-items: center;
-		gap: 0.45rem;
+		justify-content: space-between;
+		gap: 1.2rem;
 		flex-wrap: wrap;
 	}
 
-	.dept-chip {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.45rem;
-		padding: 0.38rem 0.75rem;
-		border-radius: 20px;
-		background: var(--bg-secondary);
-		border: 1px solid var(--border);
-		color: var(--fg-secondary);
-		font-size: 0.78rem;
-		font-weight: 600;
-		cursor: pointer;
-		transition: all 0.15s ease;
-	}
-
-	.dept-chip:hover {
-		border-color: var(--border-hover);
-		color: var(--fg-primary);
-	}
-
-	.dept-chip.is-active {
-		border-color: var(--brand-leaf);
-		background: rgba(89, 143, 58, 0.14);
-		color: var(--brand-leaf);
-	}
-
-	.dept-num {
-		font-size: 0.7rem;
-		font-family: monospace;
-		opacity: 0.75;
-	}
-
-	.color-selector-wrap {
+	.color-picker-box {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
 		gap: 1rem;
 		flex-wrap: wrap;
-		padding-top: 0.85rem;
-		border-top: 1px solid var(--border);
 	}
 
-	.color-label-row {
-		display: flex;
-		align-items: center;
-		gap: 0.6rem;
-	}
-
-	.hex-badge {
-		font-size: 0.78rem;
-		font-family: monospace;
-		font-weight: 700;
-		padding: 0.2rem 0.55rem;
-		border-radius: 6px;
-		background: var(--bg-secondary);
-		border: 1px solid var(--border);
-		color: var(--brand-leaf);
-	}
-
-	.color-dots-row {
+	.color-label-wrap {
 		display: flex;
 		align-items: center;
 		gap: 0.55rem;
 	}
 
-	.sign-color-dot {
-		width: 32px;
-		height: 32px;
+	.active-hex-badge {
+		font-family: monospace;
+		font-size: 0.8rem;
+		font-weight: 700;
+		padding: 0.2rem 0.5rem;
+		border-radius: 6px;
+		background: var(--panel-bg);
+		color: var(--fg-primary);
+		border: 1px solid var(--border);
+	}
+
+	.colors-palette-wrap {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		flex-wrap: wrap;
+	}
+
+	.color-pill-btn {
+		position: relative;
+		width: 30px;
+		height: 30px;
 		border-radius: 50%;
 		border: 2px solid rgba(0, 0, 0, 0.15);
 		cursor: pointer;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		transition: all 0.15s ease;
-	}
-
-	.sign-color-dot:hover {
-		transform: scale(1.15);
-	}
-
-	.sign-color-dot.is-active {
-		border-color: var(--fg-primary);
-		transform: scale(1.18);
-		box-shadow: 0 0 0 3px rgba(89, 143, 58, 0.35);
-	}
-
-	.dot-check {
-		font-size: 0.82rem;
-		font-weight: 900;
-		line-height: 1;
-	}
-
-	/* SHOWCASE BOX */
-	.dept-showcase-box {
-		display: grid;
-		grid-template-columns: 280px 1fr;
-		gap: 2rem;
-		align-items: center;
-		padding: 2rem;
-		background: var(--bg-secondary);
-		border: 1px solid var(--border);
-		border-radius: 20px;
-	}
-
-	.showcase-stage {
-		position: relative;
-		width: 100%;
-		height: 240px;
-		border-radius: 16px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 1.5rem;
-		border: 1px solid var(--border);
-		transition: background 0.2s ease;
+		padding: 0;
+		transition: transform 0.15s ease, box-shadow 0.15s ease;
 	}
 
-	.showcase-stage.bg-light {
+	:global(.dark) .color-pill-btn {
+		border-color: rgba(255, 255, 255, 0.25);
+	}
+
+	.color-pill-btn:hover {
+		transform: scale(1.15);
+	}
+
+	.color-pill-btn.is-active {
+		border-color: var(--brand-emerald);
+		box-shadow: 0 0 0 3px rgba(89, 143, 58, 0.35);
+		transform: scale(1.1);
+	}
+
+	:global(.dark) .color-pill-btn.is-active {
+		border-color: var(--brand-gold);
+		box-shadow: 0 0 0 3px rgba(255, 179, 39, 0.35);
+	}
+
+	.check-mark {
+		font-size: 0.75rem;
+		font-weight: 900;
+	}
+
+	.custom-picker-pill {
+		background: conic-gradient(from 0deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+		overflow: hidden;
+	}
+
+	.custom-picker-pill input[type="color"] {
+		position: absolute;
+		inset: 0;
+		opacity: 0;
+		cursor: pointer;
+		width: 100%;
+		height: 100%;
+	}
+
+	.picker-icon {
+		font-size: 0.75rem;
+		pointer-events: none;
+		filter: drop-shadow(0 1px 2px rgba(0,0,0,0.6));
+	}
+
+	/* STAGE BG SWITCHER */
+	.stage-bg-box {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+	}
+
+	.stage-toggle-btns {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		background: var(--panel-bg);
+		padding: 0.25rem;
+		border-radius: 8px;
+		border: 1px solid var(--border);
+	}
+
+	.stage-btn {
+		width: 28px;
+		height: 28px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 6px;
+		border: 1px solid transparent;
+		background: transparent;
+		cursor: pointer;
+		font-size: 0.8rem;
+		transition: all 0.15s ease;
+	}
+
+	.stage-btn.is-active {
+		background: var(--bg-secondary);
+		border-color: var(--border-hover);
+		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+	}
+
+	.emerald-dot {
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		background: #13371b;
+		border: 1px solid rgba(255, 255, 255, 0.4);
+	}
+
+	/* SIGNS GRID */
+	.signage-grid {
+		display: grid;
+		gap: 1.4rem;
+	}
+
+	.grid--composite,
+	.grid--text {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.grid--icon {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+
+	@media (max-width: 960px) {
+		.grid--composite,
+		.grid--text {
+			grid-template-columns: 1fr;
+		}
+
+		.grid--icon {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 540px) {
+		.grid--icon {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	/* CARD */
+	.sign-card {
+		display: flex;
+		flex-direction: column;
+		background: var(--panel-bg);
+		border: 1px solid var(--border);
+		border-radius: 16px;
+		overflow: hidden;
+		transition: all 0.25s ease;
+		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+	}
+
+	.sign-card:hover {
+		border-color: var(--border-hover);
+		box-shadow: 0 10px 24px rgba(0, 0, 0, 0.07);
+		transform: translateY(-2px);
+	}
+
+	.sign-card-header {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 1rem 1.25rem;
+		border-bottom: 1px solid var(--border);
+		background: var(--bg-secondary);
+	}
+
+	.sign-num {
+		font-family: monospace;
+		font-size: 0.76rem;
+		font-weight: 800;
+		color: var(--brand-leaf);
+		background: rgba(89, 143, 58, 0.12);
+		padding: 0.2rem 0.5rem;
+		border-radius: 6px;
+	}
+
+	.sign-titles {
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+		overflow: hidden;
+	}
+
+	.sign-name-uk {
+		font-size: 1rem;
+		font-weight: 800;
+		color: var(--fg-primary);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.sign-name-en {
+		font-size: 0.78rem;
+		font-weight: 600;
+		color: var(--fg-secondary);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	/* PREVIEW STAGE */
+	.sign-preview-stage {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 1.8rem 1.4rem;
+		min-height: 160px;
+		position: relative;
+		transition: background 0.25s ease;
+	}
+
+	.sign-preview-stage.stage--compact {
+		min-height: 120px;
+		padding: 1.2rem;
+	}
+
+	.sign-preview-stage.stage--square {
+		min-height: 200px;
+		padding: 2rem;
+	}
+
+	.stage--light {
 		background: #ffffff;
 	}
 
-	.showcase-stage.bg-dark {
-		background: #101e14;
+	.stage--emerald {
+		background: #13371b;
 	}
 
-	.showcase-stage.bg-checker {
-		background-color: #ffffff;
-		background-image: linear-gradient(45deg, #e6ede6 25%, transparent 25%),
-			linear-gradient(-45deg, #e6ede6 25%, transparent 25%),
-			linear-gradient(45deg, transparent 75%, #e6ede6 75%),
-			linear-gradient(-45deg, transparent 75%, #e6ede6 75%);
+	.stage--dark {
+		background: #141716;
+	}
+
+	.stage--checker {
+		background-color: #fafafa;
+		background-image: 
+			linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%),
+			linear-gradient(-45deg, rgba(0,0,0,0.05) 25%, transparent 25%),
+			linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.05) 75%),
+			linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.05) 75%);
 		background-size: 16px 16px;
 		background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
 	}
 
-	.stage-bg-toggles {
-		position: absolute;
-		top: 0.65rem;
-		right: 0.65rem;
-		display: inline-flex;
-		gap: 3px;
-		padding: 2px;
-		background: rgba(0, 0, 0, 0.35);
-		border-radius: 8px;
-		backdrop-filter: blur(8px);
+	:global(.dark) .stage--checker {
+		background-color: #121513;
+		background-image: 
+			linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
+			linear-gradient(-45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
+			linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.05) 75%),
+			linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.05) 75%);
 	}
 
-	.bg-btn {
-		font-size: 0.72rem;
-		padding: 3px 6px;
-		border-radius: 5px;
-		cursor: pointer;
-		opacity: 0.7;
-		transition: opacity 0.15s ease;
-	}
-
-	.bg-btn:hover,
-	.bg-btn.is-active {
-		opacity: 1;
-		background: rgba(255, 255, 255, 0.25);
-	}
-
-	.showcase-icon-img {
+	.sign-svg-mask {
+		width: 100%;
+		height: 100%;
 		max-width: 100%;
 		max-height: 140px;
-		object-fit: contain;
-		filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.1));
+		-webkit-mask: var(--mask-url) no-repeat center / contain;
+		mask: var(--mask-url) no-repeat center / contain;
+		transition: background-color 0.2s ease, transform 0.2s ease;
 	}
 
-	.showcase-info {
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
+	.stage--square .sign-svg-mask {
+		max-height: 160px;
 	}
 
-	.showcase-meta {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
+	.sign-card:hover .sign-svg-mask {
+		transform: scale(1.03);
 	}
 
-	.dept-badge {
-		font-size: 0.76rem;
-		font-weight: 700;
-		color: var(--brand-leaf);
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
+	/* FOOTER ACTION */
+	.sign-card-footer {
+		padding: 0.9rem 1.25rem;
+		background: var(--bg-secondary);
+		border-top: 1px solid var(--border);
+		margin-top: auto;
 	}
 
-	.showcase-heading {
-		font-size: 1.5rem;
-		font-weight: 800;
-		color: var(--fg-primary);
-		margin: 0;
-	}
-
-	.showcase-desc {
-		font-size: 0.95rem;
-		line-height: 1.6;
-		color: var(--fg-secondary);
-		margin: 0;
-		max-width: 580px;
-	}
-
-	.showcase-download-zone {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-		flex-wrap: wrap;
-	}
-
-	.color-spec-pill {
+	.download-sign-btn {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.45rem;
-		padding: 0.45rem 0.85rem;
-		border-radius: 10px;
+		justify-content: center;
+		gap: 0.5rem;
+		width: 100%;
+		padding: 0.65rem 1rem;
+		border-radius: 9px;
 		background: var(--panel-bg);
 		border: 1px solid var(--border);
-	}
-
-	.swatch-indicator {
-		width: 12px;
-		height: 12px;
-		border-radius: 50%;
-		border: 1px solid rgba(0, 0, 0, 0.15);
-	}
-
-	.spec-name {
-		font-size: 0.78rem;
-		font-family: monospace;
-		font-weight: 700;
 		color: var(--fg-primary);
-	}
-
-	.download-dept-btn {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 0.55rem 1.15rem;
-		border-radius: 10px;
-		background: var(--brand-leaf);
-		color: #ffffff;
-		font-size: 0.84rem;
+		font-size: 0.82rem;
 		font-weight: 700;
-		text-decoration: none;
-		transition: all 0.18s ease;
-		box-shadow: 0 4px 14px rgba(89, 143, 58, 0.25);
+		cursor: pointer;
+		transition: all 0.2s ease;
 	}
 
-	.download-dept-btn:hover {
-		transform: scale(1.04);
-		box-shadow: 0 6px 20px rgba(89, 143, 58, 0.35);
+	.download-sign-btn:hover:not(:disabled) {
+		background: var(--brand-emerald);
+		color: #ffffff;
+		border-color: var(--brand-emerald);
+		box-shadow: 0 4px 12px rgba(19, 55, 27, 0.2);
 	}
 
-	@media (max-width: 768px) {
-		.dept-showcase-box {
-			grid-template-columns: 1fr;
-		}
+	:global(.dark) .download-sign-btn:hover:not(:disabled) {
+		background: var(--brand-gold);
+		color: #101e14;
+		border-color: var(--brand-gold);
+		box-shadow: 0 4px 12px rgba(255, 179, 39, 0.2);
+	}
 
-		.showcase-stage {
-			height: 200px;
-		}
+	.download-sign-btn:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
 	}
 </style>
