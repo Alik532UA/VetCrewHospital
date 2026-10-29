@@ -5,20 +5,21 @@
 	import ScrollIndicator from '../lib/components/ScrollIndicator.svelte';
 	import { langStore } from '../lib/lang.svelte';
 
-	// 2 Scroll States (matching DeviantBlaze architecture):
+	// 3 Scroll States (matching DeviantBlaze architecture):
 	// 1: Standard default (centered logo, clean borderless buttons, labels on hover)
-	// 2: Softly shifted up to expand contact details and reveal bottom tools panel
-	let scrollState = $state<1 | 2>(1);
+	// 2: Bottom contact buttons expanded (icons grow, labels visible, logo shifts slightly up)
+	// 3: Contact buttons shifted UP, and hidden bottom tools panel revealed
+	let scrollState = $state<1 | 2 | 3>(1);
 
 	function stepScroll(direction: number) {
 		if (direction > 0) {
-			scrollState = scrollState === 2 ? 1 : 2;
+			scrollState = scrollState === 3 ? 1 : ((scrollState + 1) as 1 | 2 | 3);
 		} else {
-			scrollState = scrollState === 1 ? 2 : 1;
+			scrollState = scrollState === 1 ? 3 : ((scrollState - 1) as 1 | 2 | 3);
 		}
 	}
 
-	function goToState(state: 1 | 2) {
+	function goToState(state: 1 | 2 | 3) {
 		scrollState = state;
 	}
 
@@ -115,13 +116,13 @@
 	<!-- Bottom Center Contact Channels: Phone, Instagram, Map -->
 	<ContactLinks
 		isExpanded={scrollState === 2}
-		isShiftedUp={scrollState === 2}
+		isShiftedUp={scrollState === 3}
 	/>
 
-	<!-- Hidden Actions Panel in State 2 (Theme, Lang, Fullscreen) -->
-	<HiddenPanel isVisible={scrollState === 2} />
+	<!-- Hidden Actions Panel ONLY in State 3 (Theme, Lang, Fullscreen) -->
+	<HiddenPanel isVisible={scrollState === 3} />
 
-	<!-- 2-State Cyclic Scroll Indicator on Right Edge -->
+	<!-- 3-State Cyclic Scroll Indicator on Right Edge -->
 	<ScrollIndicator
 		state={scrollState}
 		onGoToState={goToState}
@@ -162,9 +163,14 @@
 		transform: translateY(0);
 	}
 
-	/* State 2: Softly shifts slightly up to give room to bottom channels & panel */
+	/* State 2: Softly shifts slightly up as bottom channels expand */
 	.hero-center.state-2 {
 		transform: translateY(-8vh);
+	}
+
+	/* State 3: Shifts slightly further up for hidden panel */
+	.hero-center.state-3 {
+		transform: translateY(-13vh);
 	}
 
 	@media (max-width: 640px) {
@@ -174,6 +180,10 @@
 
 		.hero-center.state-2 {
 			transform: translateY(-6vh);
+		}
+
+		.hero-center.state-3 {
+			transform: translateY(-10vh);
 		}
 	}
 </style>

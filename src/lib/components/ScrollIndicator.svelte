@@ -2,8 +2,8 @@
 	import { langStore } from '../lang.svelte';
 
 	interface Props {
-		state: 1 | 2;
-		onGoToState: (state: 1 | 2) => void;
+		state: 1 | 2 | 3;
+		onGoToState: (state: 1 | 2 | 3) => void;
 	}
 
 	let { state, onGoToState }: Props = $props();
@@ -15,8 +15,8 @@
 		class="state-dot"
 		class:active={state === 1}
 		onclick={() => onGoToState(1)}
-		aria-label={langStore.t('scroll_hero')}
-		title={langStore.t('scroll_hero')}
+		aria-label="Слайд 1: Головна"
+		title="Слайд 1: Головна"
 	>
 		<span class="dot-inner"></span>
 	</button>
@@ -26,8 +26,19 @@
 		class="state-dot"
 		class:active={state === 2}
 		onclick={() => onGoToState(2)}
-		aria-label={langStore.t('scroll_contacts')}
-		title={langStore.t('scroll_contacts')}
+		aria-label="Слайд 2: Контакти"
+		title="Слайд 2: Контакти"
+	>
+		<span class="dot-inner"></span>
+	</button>
+
+	<button
+		type="button"
+		class="state-dot"
+		class:active={state === 3}
+		onclick={() => onGoToState(3)}
+		aria-label="Слайд 3: Меню та налаштування"
+		title="Слайд 3: Меню та налаштування"
 	>
 		<span class="dot-inner"></span>
 	</button>
