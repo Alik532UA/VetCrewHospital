@@ -15,7 +15,7 @@
 		},
 		{
 			hex: '#E5E5E5',
-			name: 'gWhite',
+			name: 'Light',
 			textColor: '#101e14',
 			rgb: '229, 229, 229'
 		},
@@ -39,7 +39,7 @@
 		},
 		{
 			hex: '#262626',
-			name: 'gBlack',
+			name: 'Dark',
 			textColor: '#ffffff',
 			rgb: '38, 38, 38'
 		}
