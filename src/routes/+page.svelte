@@ -110,13 +110,6 @@
 		aria-label="Vet Crew Hospital"
 	>
 		<VetCrewLogo />
-		<div class="brand-typography">
-			<h1 class="brand-title">
-				<span class="title-vet">VET</span>
-				<span class="title-crew">CREW</span>
-				<span class="title-hospital">HOSPITAL</span>
-			</h1>
-		</div>
 	</section>
 
 	<!-- Bottom Center Contact Channels: Phone, Instagram, Map -->
@@ -157,13 +150,9 @@
 		width: 100%;
 		height: 100%;
 		display: flex;
-		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		padding: 1.5rem;
-		padding-top: 2rem;
-		padding-bottom: 3.5rem;
-		gap: 1.25rem;
 		transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
 		will-change: transform;
 	}
@@ -178,49 +167,13 @@
 		transform: translateY(-8vh);
 	}
 
-	.brand-typography {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		text-align: center;
-		pointer-events: none;
-	}
-
-	.brand-title {
-		display: flex;
-		align-items: baseline;
-		gap: 0.45rem;
-		font-size: clamp(1.4rem, 4vw, 2.2rem);
-		font-weight: 900;
-		letter-spacing: 0.05em;
-		line-height: 1.1;
-	}
-
-	.title-vet,
-	.title-crew {
-		color: var(--brand-gold);
-		text-shadow: 0 0 20px var(--brand-gold-glow);
-	}
-
-	.title-hospital {
-		color: var(--brand-leaf);
-		font-weight: 700;
-		font-size: 0.75em;
-		letter-spacing: 0.12em;
-	}
-
 	@media (max-width: 640px) {
 		.hero-center {
 			padding-bottom: 4.5rem;
-			gap: 0.85rem;
 		}
 
 		.hero-center.state-2 {
 			transform: translateY(-6vh);
-		}
-
-		.brand-title {
-			font-size: 1.35rem;
 		}
 	}
 </style>
