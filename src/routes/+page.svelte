@@ -7,9 +7,9 @@
 
 	// 3 Scroll States (matching DeviantBlaze architecture):
 	// 1: Standard default (centered logo, clean borderless buttons, labels on hover)
-	// 2: Bottom contact buttons expanded (icons grow, labels visible, logo shifts slightly up)
+	// 2: Bottom contact buttons expanded (icons grow, labels visible, logo shifts slightly up) - DEFAULT STATE
 	// 3: Contact buttons shifted UP, and hidden bottom tools panel revealed
-	let scrollState = $state<1 | 2 | 3>(1);
+	let scrollState = $state<1 | 2 | 3>(2);
 
 	function stepScroll(direction: number) {
 		if (direction > 0) {
