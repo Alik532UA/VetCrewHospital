@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { themeStore } from '$lib/theme.svelte';
+	import ServiceBadge from '$lib/components/ServiceBadge.svelte';
 	import type { Snippet } from 'svelte';
 
 	interface Props {
@@ -20,6 +21,8 @@
 	<div class="ambient-glow"></div>
 
 	{@render children?.()}
+
+	<ServiceBadge />
 </div>
 
 <style>
@@ -48,4 +51,3 @@
 		transition: background-image 0.15s ease-out;
 	}
 </style>
-

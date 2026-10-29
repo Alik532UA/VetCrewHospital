@@ -1,5 +1,6 @@
 // src/lib/services/logService.test.ts
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { APP_VERSION } from '../config/version';
 
 vi.mock('$app/environment', () => ({ browser: true, dev: false }));
 
@@ -114,6 +115,6 @@ describe('журнал (DEBUGGING § 1)', () => {
 	it('заголовок звіту: VERSION і дата ISO 8601 (§ 2.3)', async () => {
 		const report = (await load()).getReport();
 		expect(report).toMatch(/^DATE: \d{4}-\d\d-\d\dT[\d:.]+Z$/m);
-		expect(report).toContain('VERSION: 0.1.0');
+		expect(report).toContain(`VERSION: ${APP_VERSION}`);
 	});
 });

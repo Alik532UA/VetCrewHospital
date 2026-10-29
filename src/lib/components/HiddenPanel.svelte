@@ -2,8 +2,6 @@
 	import { themeStore } from '../theme.svelte';
 	import { langStore } from '../lang.svelte';
 	import { canFullscreen, toggleFullscreen, isFullscreenActive } from '../services/fullscreen';
-	import { APP_VERSION } from '../version';
-	import { logService } from '../services/logService.svelte';
 
 	interface Props {
 		isVisible?: boolean;
@@ -14,22 +12,6 @@
 	let isSupported = $state(true);
 	let isFullscreen = $state(false);
 	let isDark = $derived(themeStore.current === 'dark');
-
-	let copied = $state(false);
-	let copyTimer: ReturnType<typeof setTimeout> | undefined;
-
-	$effect(() => () => clearTimeout(copyTimer));
-
-	async function copyReport() {
-		try {
-			await navigator.clipboard.writeText(logService.getReport());
-			copied = true;
-			clearTimeout(copyTimer);
-			copyTimer = setTimeout(() => (copied = false), 1500);
-		} catch (error) {
-			logService.warn('ui', 'Clipboard write failed', error);
-		}
-	}
 
 	$effect(() => {
 		if (typeof document === 'undefined') return;
@@ -130,16 +112,6 @@
 				<span class="action-title">{isFullscreen ? langStore.t('fullscreen_exit') : langStore.t('fullscreen')}</span>
 			</button>
 		{/if}
-
-		<button
-			type="button"
-			class="version-badge"
-			onclick={copyReport}
-			title="Версія: v{APP_VERSION} (натисніть, щоб скопіювати діагностичний звіт)"
-			aria-label="Версія v{APP_VERSION}"
-		>
-			<span>{copied ? 'Copied' : `v${APP_VERSION}`}</span>
-		</button>
 	</div>
 </nav>
 
@@ -269,30 +241,5 @@
 		.action-title {
 			font-size: 0.68rem;
 		}
-	}
-
-	.version-badge {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		padding: 4px 10px;
-		font-family: 'InGlobal', monospace, sans-serif;
-		font-size: 0.72rem;
-		font-weight: 700;
-		letter-spacing: 0.05em;
-		color: var(--text-muted);
-		opacity: 0.65;
-		border: none;
-		border-left: 1px solid var(--border);
-		background: transparent;
-		cursor: pointer;
-		margin-left: 4px;
-		user-select: none;
-		transition: opacity 0.2s ease, color 0.2s ease;
-	}
-
-	.version-badge:hover {
-		opacity: 1;
-		color: var(--text-primary);
 	}
 </style>
