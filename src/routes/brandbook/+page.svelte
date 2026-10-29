@@ -14,28 +14,28 @@
 			rgb: '147, 200, 74'
 		},
 		{
-			hex: '#E5E5E5',
-			name: 'Light',
-			textColor: '#101e14',
-			rgb: '229, 229, 229'
-		},
-		{
 			hex: '#598F3A',
 			name: 'main Green',
 			textColor: '#ffffff',
 			rgb: '89, 143, 58'
 		},
 		{
-			hex: '#FFB327',
-			name: 'yellow',
-			textColor: '#101e14',
-			rgb: '255, 179, 39'
-		},
-		{
 			hex: '#13371B',
 			name: 'dark Green',
 			textColor: '#ffffff',
 			rgb: '19, 55, 27'
+		},
+		{
+			hex: '#E5E5E5',
+			name: 'Light',
+			textColor: '#101e14',
+			rgb: '229, 229, 229'
+		},
+		{
+			hex: '#FFB327',
+			name: 'yellow',
+			textColor: '#101e14',
+			rgb: '255, 179, 39'
 		},
 		{
 			hex: '#262626',
