@@ -54,3 +54,4 @@ export const SIGNAGE_BRAND_COLORS: SignColor[] = [
 	{ hex: '#262626', name: 'Dark Gray', textColor: '#ffffff' },
 	{ hex: '#FFFFFF', name: 'Pure White', textColor: '#13371b' }
 ];
+

@@ -45,3 +45,4 @@ export const ANIMAL_BRAND_COLORS = [
 	{ hex: '#262626', name: 'Dark Gray', textColor: '#ffffff' },
 	{ hex: '#FFFFFF', name: 'White', textColor: '#13371b' }
 ];
+

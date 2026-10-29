@@ -87,3 +87,4 @@ export const TYPOGRAPHY_PRESETS: TypographyPreset[] = [
 		textEn: '0123456789 — +380 77 501 01 01 · vetcrew.org'
 	}
 ];
+
