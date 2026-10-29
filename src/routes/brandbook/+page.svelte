@@ -2,7 +2,6 @@
 	import { base } from '$app/paths';
 	import { resolve } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
-	import VetCrewLogo from '$lib/components/VetCrewLogo.svelte';
 
 	let copiedVal = $state<string | null>(null);
 
@@ -152,8 +151,8 @@
 					<h2 class="card-title">{langStore.current === 'uk' ? 'Логотип та композиція' : 'Logo & Anatomy'}</h2>
 					<p class="card-desc">
 						{langStore.current === 'uk'
-							? 'Динамічна кругла емблема діаметром 970.62px із центром у точці (485.31, 485.31).'
-							: 'Dynamic round emblem with viewBox 970.62px centered at (485.31, 485.31).'}
+							? 'Офіційна кругла емблема діаметром 970.62px із центром у точці (485.31, 485.31).'
+							: 'Official circular emblem with viewBox 970.62px centered at (485.31, 485.31).'}
 					</p>
 				</div>
 			</div>
@@ -161,10 +160,16 @@
 			<div class="anatomy-grid">
 				<div class="logo-preview-box">
 					<div class="preview-inner">
-						<VetCrewLogo />
+						<img
+							src="{base}/logo.svg"
+							alt="Vet Crew Hospital Logo"
+							class="static-logo-img"
+							width="220"
+							height="220"
+						/>
 					</div>
 					<div class="preview-caption">
-						<span>{langStore.current === 'uk' ? 'Інтерактивний 3D-компонент' : 'Interactive 3D Component'}</span>
+						<span>{langStore.current === 'uk' ? 'Векторний оригінал' : 'Vector Original'}</span>
 						<a href="{base}/logo.svg" download="VetCrewHospital-logo.svg" class="download-link">
 							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -179,26 +184,26 @@
 				<div class="anatomy-specs">
 					<div class="spec-row">
 						<span class="spec-label">Коло основи (Circle BG):</span>
-						<span class="spec-val"><code>#13371B</code> (dGreen), R: 461.76px</span>
+						<span class="spec-val"><code>#13371B</code> (dark Green), R: 461.76px</span>
 					</div>
 					<div class="spec-row">
 						<span class="spec-label">Лапка (Paw Print):</span>
-						<span class="spec-val"><code>#FFFFFF</code> (gWhite), 4 пальчики + подушечка</span>
+						<span class="spec-val"><code>#FFFFFF</code>, 4 пальчики + подушечка</span>
 					</div>
 					<div class="spec-row">
 						<span class="spec-label">Напис «VET CREW»:</span>
-						<span class="spec-val"><code>#FFB327</code> (Amber Gold), масивний центральний блок</span>
+						<span class="spec-val"><code>#FFB327</code> (yellow), центральний масивний блок</span>
 					</div>
 					<div class="spec-row">
 						<span class="spec-label">Напис «HOSPITAL»:</span>
-						<span class="spec-val"><code>#598F3A</code> (green), нижня центрована дуга</span>
+						<span class="spec-val"><code>#598F3A</code> (main Green), нижня центрована дуга</span>
 					</div>
 					<div class="spec-row">
-						<span class="spec-label">Фізична поведінка:</span>
+						<span class="spec-label">Геометрія та пропорції:</span>
 						<span class="spec-val">
 							{langStore.current === 'uk'
-								? 'Пружинний 3D-нахил за курсором (до 11°), спекулярний відблиск, підтримка гіроскопа мобільних пристроїв.'
-								: 'Spring 3D tilt tracking cursor (up to 11°), specular highlight sheen, mobile gyroscope support.'}
+								? 'Векторний SVG 970.62 × 970.62 px, радіус центрального кола 461.76 px, оптична компенсація зсуву Y = +6.15 px.'
+								: 'Vector SVG 970.62 × 970.62 px, center circle radius 461.76 px, optical vertical compensation Y = +6.15 px.'}
 						</span>
 					</div>
 				</div>
@@ -489,6 +494,19 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+	}
+
+	.static-logo-img {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+		display: block;
+		filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.15));
+		transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	.static-logo-img:hover {
+		transform: scale(1.03);
 	}
 
 	.preview-caption {
