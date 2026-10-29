@@ -2,81 +2,51 @@
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 
-	interface PhotoEmblem {
+	interface EmblemItem {
 		id: string;
 		num: string;
-		titleUk: string;
-		titleEn: string;
-		descUk: string;
-		descEn: string;
-		previewFile: string;
-		fullFile: string;
-		speciesUk: string;
-		speciesEn: string;
+		svgFile: string;
+		pngFile: string;
 	}
 
-	const EMBLEMS: PhotoEmblem[] = [
+	const EMBLEMS: EmblemItem[] = [
 		{
 			id: 'emblem-01',
 			num: '01',
-			titleUk: 'Фото-емблема — Варіант I (Хижаки та птахи)',
-			titleEn: 'Photo Emblem — Edition I (Predators & Avian)',
-			descUk: 'Спеціальна композиція з вмонтованими портретами врятованих хижих птахів та диких котів у подушечках лапки.',
-			descEn: 'Artistic composite emblem incorporating rescued birds of prey and feline patients inside paw pads.',
-			previewFile: '2026-09-19-01_v1.svg',
-			fullFile: '2026-09-19-01_v1.svg',
-			speciesUk: 'Сокіл, Сова, Дикий кіт, Лев',
-			speciesEn: 'Falcon, Owl, Wild Cat, Lion'
+			svgFile: 'emblem-animals-01.svg',
+			pngFile: 'emblem-animals-01.png'
 		},
 		{
 			id: 'emblem-02',
 			num: '02',
-			titleUk: 'Фото-емблема — Варіант II (Дика природа)',
-			titleEn: 'Photo Emblem — Edition II (Wild Kingdom)',
-			descUk: 'Емблема з акцентом на африканську фауну, екзотичних ссавців та папуг у круглому медальйоні.',
-			descEn: 'Emblem highlighting exotic wildlife, mammals and parrots within the circular badge.',
-			previewFile: '2026-09-19-02_v1.svg',
-			fullFile: '2026-09-19-02_v1.svg',
-			speciesUk: 'Какаду, Леопард, Мавпа, Лисиця',
-			speciesEn: 'Cockatoo, Leopard, Primate, Fox'
+			svgFile: 'emblem-animals-02.svg',
+			pngFile: 'emblem-animals-02.png'
 		},
 		{
 			id: 'emblem-03',
 			num: '03',
-			titleUk: 'Фото-емблема — Варіант III (Екзотичні види)',
-			titleEn: 'Photo Emblem — Edition III (Exotic Species)',
-			descUk: 'Гармонійне поєднання рідкісних рептилій, папуг ара та екзотичних підопічних шпиталю.',
-			descEn: 'Harmonious composition featuring rare reptiles, macaws and exotic patients.',
-			previewFile: '2026-09-19-03_v3.svg',
-			fullFile: '2026-09-19-03_v3.svg',
-			speciesUk: 'Ара, Хамелеон, Агама, Тхір',
-			speciesEn: 'Macaw, Chameleon, Agama, Ferret'
+			svgFile: 'emblem-animals-03.svg',
+			pngFile: 'emblem-animals-03.png'
 		},
 		{
 			id: 'emblem-04',
 			num: '04',
-			titleUk: 'Фото-емблема — Варіант IV (Пацієнти Vet Crew)',
-			titleEn: 'Photo Emblem — Edition IV (Vet Crew Patients)',
-			descUk: 'Колаж реальних пацієнтів, реабілітованих лікарями шпиталю Vet Crew в Одесі.',
-			descEn: 'Montage of real rescued animals rehabilitated by Vet Crew Hospital in Odesa.',
-			previewFile: '2026-09-19-04_v1.svg',
-			fullFile: '2026-09-19-04_v1.svg',
-			speciesUk: 'Єнот, Сова, Яструб, Каракал',
-			speciesEn: 'Raccoon, Owl, Hawk, Caracal'
+			svgFile: 'emblem-animals-04.svg',
+			pngFile: 'emblem-animals-04.png'
 		}
 	];
 
-	let stageTheme = $state<'emerald' | 'light' | 'dark' | 'checker'>('emerald');
+	let stageTheme = $state<'light' | 'emerald' | 'dark' | 'checker'>('light');
 </script>
 
 <div class="photo-logos-widget">
 	<div class="photo-logos-header">
 		<div class="header-info">
-			<span class="sub-badge">Master Vector Artwork • 5738×5738 px HQ</span>
+			<span class="sub-badge">Pure Vector Artwork • Clean SVG & HQ PNG</span>
 			<p class="section-lead">
 				{langStore.current === 'uk'
-					? 'Ексклюзивні офіційні емблеми шпиталю з вмонтованими живими фотографіями диких пацієнтів у подушечках лапки. Використовуються на преміальних поліграфічних носіях, банерах, сувенірній продукції та стендах.'
-					: 'Exclusive official hospital emblems featuring live photographic portraits of wild patients masked within the paw pads. Designed for high-end print, banners, merch, and exhibition stands.'}
+					? 'Офіційні векторні композиції емблеми шпиталю з силуетами тварин. Чиста векторна графіка без растрових нашарувань — оптимізована для якісного масштабування та друку будь-якого формату.'
+					: 'Official Vet Crew Hospital vector emblems featuring wildlife silhouettes. Pure vector artwork with no raster bloat, fully scalable for high-resolution print and digital media.'}
 			</p>
 		</div>
 
@@ -87,87 +57,94 @@
 				<button
 					type="button"
 					class="theme-btn"
+					class:is-active={stageTheme === 'light'}
+					onclick={() => (stageTheme = 'light')}
+					title="Світле тло"
+				>
+					<span class="color-dot dot-light"></span>
+					<span>{langStore.current === 'uk' ? 'Світле' : 'Light'}</span>
+				</button>
+				<button
+					type="button"
+					class="theme-btn"
 					class:is-active={stageTheme === 'emerald'}
 					onclick={() => (stageTheme = 'emerald')}
 					title="Фірмовий смарагд #13371B"
 				>
 					<span class="color-dot dot-emerald"></span>
-					<span>Смарагд</span>
-				</button>
-				<button
-					type="button"
-					class="theme-btn"
-					class:is-active={stageTheme === 'light'}
-					onclick={() => (stageTheme = 'light')}
-					title="Світлий фон"
-				>
-					<span class="color-dot dot-light"></span>
-					<span>Світле</span>
+					<span>{langStore.current === 'uk' ? 'Смарагд' : 'Emerald'}</span>
 				</button>
 				<button
 					type="button"
 					class="theme-btn"
 					class:is-active={stageTheme === 'dark'}
 					onclick={() => (stageTheme = 'dark')}
-					title="Темний графіт"
+					title="Темне тло"
 				>
 					<span class="color-dot dot-dark"></span>
-					<span>Темне</span>
+					<span>{langStore.current === 'uk' ? 'Темне' : 'Dark'}</span>
 				</button>
 				<button
 					type="button"
 					class="theme-btn"
 					class:is-active={stageTheme === 'checker'}
 					onclick={() => (stageTheme = 'checker')}
-					title="Шахова прозорість"
+					title="Шахматка (прозоре тло)"
 				>
-					<span class="color-dot dot-checker">🏁</span>
-					<span>Сітка</span>
+					<span class="color-dot dot-checker"></span>
+					<span>{langStore.current === 'uk' ? 'Сітка' : 'Grid'}</span>
 				</button>
 			</div>
 		</div>
 	</div>
 
-	<!-- 4 CARDS GRID -->
+	<!-- Emblem Cards Grid -->
 	<div class="emblems-grid">
 		{#each EMBLEMS as item (item.id)}
 			<div class="emblem-card">
-				<div class="emblem-stage bg-{stageTheme}">
+				<div class="emblem-preview-stage stage--{stageTheme}">
 					<img
-						src="{base}/brand/photo-emblems/preview/{item.previewFile}"
-						alt="{item.titleUk}"
-						class="emblem-img"
+						src="{base}/brand/emblems/{item.svgFile}"
+						alt="Емблема шпиталю з тваринами (Варіант {item.num})"
+						class="emblem-svg-render"
 						loading="lazy"
 					/>
 				</div>
 
 				<div class="emblem-card-body">
-					<div class="emblem-meta-top">
-						<span class="edition-tag">EDITION #{item.num}</span>
-						<h3 class="emblem-card-title">{langStore.current === 'uk' ? item.titleUk : item.titleEn}</h3>
+					<div class="emblem-card-header">
+						<span class="edition-num">EDITION #{item.num}</span>
+						<h3 class="emblem-card-title">
+							{langStore.current === 'uk' ? `Варіант ${item.num}` : `Option ${item.num}`}
+						</h3>
 					</div>
 
-					<p class="emblem-card-desc">
-						{langStore.current === 'uk' ? item.descUk : item.descEn}
-					</p>
-
-					<div class="species-bar">
-						<span class="species-label">{langStore.current === 'uk' ? 'Пацієнти у лапці:' : 'Featured Wildlife:'}</span>
-						<span class="species-list">{langStore.current === 'uk' ? item.speciesUk : item.speciesEn}</span>
-					</div>
-
+					<!-- Two dedicated download buttons for SVG and PNG -->
 					<div class="emblem-card-actions">
 						<a
-							href="{base}/brand/photo-emblems/{item.fullFile}"
-							download="VetCrew-Animal-Emblem-v{item.num}.svg"
-							class="download-hq-btn"
+							href="{base}/brand/emblems/{item.svgFile}"
+							download="vet-crew-emblem-{item.num}.svg"
+							class="download-btn svg-btn"
 						>
 							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 								<polyline points="7 10 12 15 17 10"></polyline>
 								<line x1="12" y1="15" x2="12" y2="3"></line>
 							</svg>
-							<span>{langStore.current === 'uk' ? 'Завантажити Vector SVG (Print HQ • 2.5 MB)' : 'Download Print HQ SVG (2.5 MB)'}</span>
+							<span>{langStore.current === 'uk' ? 'Завантажити SVG (Вектор)' : 'Download Vector (SVG)'}</span>
+						</a>
+
+						<a
+							href="{base}/brand/emblems/{item.pngFile}"
+							download="vet-crew-emblem-{item.num}.png"
+							class="download-btn png-btn"
+						>
+							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+								<polyline points="7 10 12 15 17 10"></polyline>
+								<line x1="12" y1="15" x2="12" y2="3"></line>
+							</svg>
+							<span>{langStore.current === 'uk' ? 'Завантажити PNG (2000 px)' : 'Download PNG (2000 px)'}</span>
 						</a>
 					</div>
 				</div>
@@ -180,7 +157,7 @@
 	.photo-logos-widget {
 		display: flex;
 		flex-direction: column;
-		gap: 2rem;
+		gap: 1.8rem;
 		width: 100%;
 	}
 
@@ -248,16 +225,19 @@
 		color: var(--fg-secondary);
 		background: transparent;
 		cursor: pointer;
-		transition: all 0.15s ease;
+		border: 1px solid transparent;
+		transition: all 0.2s ease;
 	}
 
 	.theme-btn:hover {
 		color: var(--fg-primary);
+		background: var(--panel-bg);
 	}
 
 	.theme-btn.is-active {
 		background: var(--panel-bg);
 		color: var(--fg-primary);
+		border-color: var(--border-hover);
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 	}
 
@@ -265,177 +245,213 @@
 		width: 10px;
 		height: 10px;
 		border-radius: 50%;
-		border: 1px solid rgba(0, 0, 0, 0.2);
 	}
 
-	.dot-emerald { background: #13371B; }
-	.dot-light { background: #FFFFFF; }
-	.dot-dark { background: #1a1a1a; }
-	.dot-checker { border: none; font-size: 0.7rem; line-height: 1; }
+	.dot-emerald {
+		background: #13371b;
+	}
 
-	/* GRID OF 4 EMBLEMS */
+	.dot-light {
+		background: #ffffff;
+		border: 1px solid #d1d5db;
+	}
+
+	.dot-dark {
+		background: #181c19;
+		border: 1px solid #374151;
+	}
+
+	.dot-checker {
+		background-image: 
+			linear-gradient(45deg, #bbb 25%, transparent 25%),
+			linear-gradient(-45deg, #bbb 25%, transparent 25%),
+			linear-gradient(45deg, transparent 75%, #bbb 75%),
+			linear-gradient(-45deg, transparent 75%, #bbb 75%);
+		background-size: 6px 6px;
+		background-position: 0 0, 0 3px, 3px -3px, -3px 0px;
+	}
+
+	/* GRID */
 	.emblems-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-		gap: 1.75rem;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1.8rem;
+	}
+
+	@media (max-width: 900px) {
+		.emblems-grid {
+			grid-template-columns: 1fr;
+		}
 	}
 
 	.emblem-card {
 		display: flex;
 		flex-direction: column;
-		border-radius: 20px;
-		background: var(--panel-bg);
+		background: var(--bg-secondary);
 		border: 1px solid var(--border);
+		border-radius: 1.5rem;
 		overflow: hidden;
-		transition: all 0.25s ease;
+		transition: all 0.3s ease;
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
 	}
 
 	.emblem-card:hover {
-		transform: translateY(-3px);
 		border-color: var(--border-hover);
-		box-shadow: 0 16px 36px rgba(0, 0, 0, 0.1);
+		box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+		transform: translateY(-2px);
 	}
 
-	.emblem-stage {
+	/* STAGE */
+	.emblem-preview-stage {
 		position: relative;
-		width: 100%;
-		min-height: 380px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 2.25rem;
-		transition: background-color 0.25s ease;
+		padding: 2.2rem;
+		min-height: 380px;
+		border-bottom: 1px solid var(--border);
+		transition: background 0.3s ease;
 	}
 
-	.emblem-stage.bg-emerald {
-		background: #13371B;
+	.stage--emerald {
+		background: #13371b;
 	}
 
-	.emblem-stage.bg-light {
-		background: #F8FAF8;
+	.stage--light {
+		background: #ffffff;
 	}
 
-	.emblem-stage.bg-dark {
-		background: #0D1610;
+	.stage--dark {
+		background: #141716;
 	}
 
-	.emblem-stage.bg-checker {
-		background-color: #ffffff;
-		background-image: linear-gradient(45deg, #e6ede6 25%, transparent 25%),
-			linear-gradient(-45deg, #e6ede6 25%, transparent 25%),
-			linear-gradient(45deg, transparent 75%, #e6ede6 75%),
-			linear-gradient(-45deg, transparent 75%, #e6ede6 75%);
-		background-size: 18px 18px;
-		background-position: 0 0, 0 9px, 9px -9px, -9px 0px;
+	.stage--checker {
+		background-color: #fafafa;
+		background-image: 
+			linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%),
+			linear-gradient(-45deg, rgba(0,0,0,0.05) 25%, transparent 25%),
+			linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.05) 75%),
+			linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.05) 75%);
+		background-size: 16px 16px;
+		background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
 	}
 
-	.emblem-img {
-		width: 100%;
-		max-width: 320px;
+	:global(.dark) .stage--checker {
+		background-color: #121513;
+		background-image: 
+			linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
+			linear-gradient(-45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
+			linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.05) 75%),
+			linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.05) 75%);
+	}
+
+	.emblem-svg-render {
+		max-width: 92%;
+		max-height: 340px;
+		width: auto;
 		height: auto;
-		aspect-ratio: 1 / 1;
 		object-fit: contain;
-		filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.35));
+		filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.12));
 		transition: transform 0.3s ease;
 	}
 
-	.emblem-card:hover .emblem-img {
+	.emblem-card:hover .emblem-svg-render {
 		transform: scale(1.03);
 	}
 
+	/* BODY */
 	.emblem-card-body {
+		padding: 1.4rem 1.6rem;
 		display: flex;
 		flex-direction: column;
-		gap: 1.15rem;
-		padding: 1.5rem;
+		gap: 1.2rem;
+		background: var(--panel-bg);
+		flex: 1;
 	}
 
-	.emblem-meta-top {
+	.emblem-card-header {
 		display: flex;
-		flex-direction: column;
-		gap: 0.3rem;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
 	}
 
-	.edition-tag {
-		font-size: 0.72rem;
+	.edition-num {
 		font-family: monospace;
+		font-size: 0.76rem;
 		font-weight: 800;
-		letter-spacing: 0.08em;
 		color: var(--brand-leaf);
+		background: rgba(89, 143, 58, 0.12);
+		padding: 0.2rem 0.55rem;
+		border-radius: 6px;
+		letter-spacing: 0.05em;
 	}
 
 	.emblem-card-title {
-		font-size: 1.15rem;
+		font-size: 1.25rem;
 		font-weight: 800;
 		color: var(--fg-primary);
 		margin: 0;
 	}
 
-	.emblem-card-desc {
-		font-size: 0.88rem;
-		line-height: 1.55;
-		color: var(--fg-secondary);
-		margin: 0;
-	}
-
-	.species-bar {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 0.6rem 0.85rem;
-		border-radius: 10px;
-		background: var(--bg-secondary);
-		border: 1px solid var(--border);
-		font-size: 0.78rem;
-	}
-
-	.species-label {
-		font-weight: 700;
-		color: var(--fg-muted);
-	}
-
-	.species-list {
-		font-weight: 700;
-		color: var(--fg-primary);
-	}
-
+	/* ACTIONS: SVG + PNG BUTTONS */
 	.emblem-card-actions {
-		padding-top: 0.5rem;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.75rem;
+		margin-top: auto;
 	}
 
-	.download-hq-btn {
-		width: 100%;
-		display: flex;
+	@media (max-width: 520px) {
+		.emblem-card-actions {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.download-btn {
+		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		gap: 0.55rem;
-		padding: 0.65rem 1rem;
-		border-radius: 12px;
-		background: var(--bg-secondary);
-		border: 1px solid var(--border);
-		color: var(--fg-primary);
-		font-size: 0.82rem;
+		gap: 0.5rem;
+		padding: 0.75rem 1rem;
+		border-radius: 10px;
+		font-size: 0.84rem;
 		font-weight: 700;
 		text-decoration: none;
 		transition: all 0.2s ease;
+		cursor: pointer;
+		text-align: center;
 	}
 
-	.download-hq-btn:hover {
-		background: var(--brand-leaf);
+	.svg-btn {
+		background: var(--brand-emerald);
 		color: #ffffff;
+		border: 1px solid var(--brand-emerald);
+	}
+
+	.svg-btn:hover {
+		background: var(--brand-leaf);
 		border-color: var(--brand-leaf);
 		box-shadow: 0 4px 14px rgba(89, 143, 58, 0.25);
 		transform: translateY(-1px);
 	}
 
-	@media (max-width: 640px) {
-		.emblems-grid {
-			grid-template-columns: 1fr;
-		}
+	.png-btn {
+		background: var(--bg-secondary);
+		color: var(--fg-primary);
+		border: 1px solid var(--border);
+	}
 
-		.emblem-stage {
-			min-height: 280px;
-			padding: 1.5rem;
-		}
+	.png-btn:hover {
+		background: var(--panel-bg);
+		border-color: var(--border-hover);
+		color: var(--brand-leaf);
+		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+		transform: translateY(-1px);
+	}
+
+	:global(.dark) .png-btn:hover {
+		color: var(--brand-gold);
+		border-color: var(--brand-gold);
 	}
 </style>

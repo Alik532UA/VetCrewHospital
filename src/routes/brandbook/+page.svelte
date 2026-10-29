@@ -346,11 +346,11 @@
 					<div class="card-head">
 						<span class="step-num">09</span>
 						<div>
-							<h2 class="card-title">{langStore.current === 'uk' ? 'Фотостиль емблеми з тваринами' : 'Photo Emblems & Wildlife Identity'}</h2>
+							<h2 class="card-title">{langStore.current === 'uk' ? 'Емблема шпиталю з тваринами' : 'Hospital Emblems with Animals'}</h2>
 							<p class="card-desc">
 								{langStore.current === 'uk'
-									? 'Колекційні фотокомпозиції логотипа шпиталю з реальними пацієнтами дикої природи. Векторні майстер-файли 5738×5738 px для друку преміум-носіїв.'
-									: 'Collector photographic emblem compositions featuring real wild and exotic patients. 5738×5738 px master vector files for premium print assets.'}
+									? 'Офіційні векторні композиції емблеми шпиталю з силуетами тварин та повною назвою Центру лікування. Чиста оптимізована векторна графіка для друку та цифрових носіїв.'
+									: 'Official hospital emblem vector compositions featuring wildlife silhouettes and full clinical lettering. Pure optimized vector artwork for print and digital media.'}
 							</p>
 						</div>
 					</div>
