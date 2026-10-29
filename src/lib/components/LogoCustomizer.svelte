@@ -360,11 +360,6 @@
 			<div class="control-row bg-toggle-row">
 				<div class="row-meta">
 					<span class="control-title">{langStore.current === 'uk' ? 'Форма підкладки:' : 'Background Style:'}</span>
-					<span class="control-desc">
-						{langStore.current === 'uk'
-							? 'Кругла емблема, суцільний квадрат або прозоре тло'
-							: 'Circle badge, solid canvas, or transparent'}
-					</span>
 				</div>
 				<div class="toggle-pill-wrap">
 					<button
@@ -777,30 +772,28 @@
 		color: var(--fg-primary);
 	}
 
-	.control-desc {
-		font-size: 0.78rem;
-		color: var(--fg-muted);
-	}
-
 	.toggle-pill-wrap {
 		display: inline-flex;
+		align-items: center;
 		padding: 3px;
 		background: var(--bg-secondary);
 		border-radius: 10px;
 		border: 1px solid var(--border);
+		flex-shrink: 0;
 	}
 
 	.pill-btn {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.35rem;
-		padding: 0.4rem 0.85rem;
+		padding: 0.45rem 0.85rem;
 		border-radius: 8px;
-		font-size: 0.8rem;
+		font-size: 0.82rem;
 		font-weight: 700;
 		color: var(--fg-secondary);
 		background: transparent;
 		cursor: pointer;
+		white-space: nowrap;
 		transition: all 0.15s ease;
 	}
 

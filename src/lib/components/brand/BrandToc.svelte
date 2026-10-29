@@ -6,7 +6,7 @@
 		num: string;
 		titleUk: string;
 		titleEn: string;
-		iconType: 'palette' | 'paw' | 'naming' | 'slogan' | 'animals' | 'qr' | 'typography';
+		iconType: 'palette' | 'paw' | 'naming' | 'slogan' | 'animals' | 'qr' | 'typography' | 'doors' | 'photo';
 	}
 
 	export const SECTIONS: TocSection[] = [
@@ -16,7 +16,9 @@
 		{ id: 'slogan', num: '04', titleUk: 'Слоган та цінності', titleEn: 'Brand Slogan', iconType: 'slogan' },
 		{ id: 'animals', num: '05', titleUk: 'Іконки 24 тварин', titleEn: 'Animal Icons (24)', iconType: 'animals' },
 		{ id: 'qr', num: '06', titleUk: 'QR-таблички', titleEn: 'QR Signage', iconType: 'qr' },
-		{ id: 'typography', num: '07', titleUk: 'Типографіка', titleEn: 'Typography', iconType: 'typography' }
+		{ id: 'typography', num: '07', titleUk: 'Типографіка', titleEn: 'Typography', iconType: 'typography' },
+		{ id: 'door-signs', num: '08', titleUk: 'Таблички відділень', titleEn: 'Clinic Signage', iconType: 'doors' },
+		{ id: 'photo-logos', num: '09', titleUk: 'Фотостиль емблеми', titleEn: 'Photo Emblems', iconType: 'photo' }
 	];
 
 	let activeId = $state<string>('palette');
@@ -121,6 +123,18 @@
 						</svg>
 					{:else if s.iconType === 'typography'}
 						<span class="type-glyph">Aa</span>
+					{:else if s.iconType === 'doors'}
+						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M18 20V6a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v14"/>
+							<path d="M2 20h20"/>
+							<circle cx="14" cy="12" r="1"/>
+						</svg>
+					{:else if s.iconType === 'photo'}
+						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+							<circle cx="8.5" cy="8.5" r="1.5"/>
+							<polyline points="21 15 16 10 5 21"/>
+						</svg>
 					{/if}
 				</span>
 
@@ -305,3 +319,4 @@
 		}
 	}
 </style>
+

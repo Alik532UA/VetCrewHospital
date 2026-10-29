@@ -6,6 +6,9 @@
 	import BrandToc from '$lib/components/brand/BrandToc.svelte';
 	import AnimalGallery from '$lib/components/brand/AnimalGallery.svelte';
 	import QrShowcase from '$lib/components/brand/QrShowcase.svelte';
+	import BrandTypography from '$lib/components/brand/BrandTypography.svelte';
+	import DoorSignage from '$lib/components/brand/DoorSignage.svelte';
+	import PhotoLogos from '$lib/components/brand/PhotoLogos.svelte';
 
 	let copiedVal = $state<string | null>(null);
 
@@ -260,59 +263,99 @@
 							<h2 class="card-title">{langStore.current === 'uk' ? 'Фірмовий слоган та цінності' : 'Brand Slogan & Values'}</h2>
 							<p class="card-desc">
 								{langStore.current === 'uk'
-									? 'Ключовий маніфест та графічна емблема місії шпиталю: «Екзотичні • Дикі • Особливі • Важливі».'
-									: 'The hospital mission manifesto and values emblem: "Exotic • Wild • Special • Important".'}
+									? 'Ключовий маніфест шпиталю «Екзотичні • Дикі • Особливі • Важливі» та окремий графічний символ Метелика.'
+									: 'The hospital mission manifesto "Exotic • Wild • Special • Important" and standalone Butterfly brand symbol.'}
 							</p>
 						</div>
 					</div>
 
-					<div class="slogan-container">
-						<div class="slogan-visual">
-							<img
-								src="{base}/brand/slogan/exotic-wild-special-important.svg"
-								alt="Екзотичні Дикі Особливі Важливі"
-								class="slogan-svg-hero"
-							/>
-						</div>
-
-						<div class="slogan-details">
-							<div class="values-pills">
-								<span class="val-pill">
-									<strong>Екзотичні</strong>
-									<span>(Exotic)</span>
-								</span>
-								<span class="val-pill">
-									<strong>Дикі</strong>
-									<span>(Wild)</span>
-								</span>
-								<span class="val-pill">
-									<strong>Особливі</strong>
-									<span>(Special)</span>
-								</span>
-								<span class="val-pill">
-									<strong>Важливі</strong>
-									<span>(Important)</span>
-								</span>
+					<div class="slogan-showcase-stack">
+						<!-- 1. FULL SLOGAN COMPOSITION -->
+						<div class="slogan-container">
+							<div class="slogan-visual">
+								<img
+									src="{base}/brand/slogan/exotic-wild-special-important.svg"
+									alt="Екзотичні Дикі Особливі Важливі"
+									class="slogan-svg-hero"
+								/>
 							</div>
 
-							<p class="slogan-philosophy">
-								{langStore.current === 'uk'
-									? 'Кожен пацієнт шпиталю — від папуги чи черепахи до сокола чи лева — отримує рівноцінну турботу, найсучасніше реанімаційне обладнання та безкомпромісну любов лікарів.'
-									: 'Every patient, whether a parrot, reptile, predator, or rescue animal, receives equal care, state-of-the-art diagnostics, and unwavering devotion.'}
-							</p>
+							<div class="slogan-details">
+								<div class="values-pills">
+									<span class="val-pill">
+										<strong>Екзотичні</strong>
+										<span>(Exotic)</span>
+									</span>
+									<span class="val-pill">
+										<strong>Дикі</strong>
+										<span>(Wild)</span>
+									</span>
+									<span class="val-pill">
+										<strong>Особливі</strong>
+										<span>(Special)</span>
+									</span>
+									<span class="val-pill">
+										<strong>Важливі</strong>
+										<span>(Important)</span>
+									</span>
+								</div>
 
-							<a
-								href="{base}/brand/slogan/exotic-wild-special-important.svg"
-								download="vet-crew-slogan-values.svg"
-								class="download-brand-btn primary"
-							>
-								<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-									<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-									<polyline points="7 10 12 15 17 10"></polyline>
-									<line x1="12" y1="15" x2="12" y2="3"></line>
-								</svg>
-								<span>{langStore.current === 'uk' ? 'Завантажити векторну емблему слогану (SVG)' : 'Download Slogan Emblem SVG'}</span>
-							</a>
+								<p class="slogan-philosophy">
+									{langStore.current === 'uk'
+										? 'Кожен пацієнт шпиталю — від папуги чи черепахи до сокола чи лева — отримує рівноцінну турботу, найсучасніше реанімаційне обладнання та безкомпромісну любов лікарів.'
+										: 'Every patient, whether a parrot, reptile, predator, or rescue animal, receives equal care, state-of-the-art diagnostics, and unwavering devotion.'}
+								</p>
+
+								<a
+									href="{base}/brand/slogan/exotic-wild-special-important.svg"
+									download="vet-crew-slogan-values.svg"
+									class="download-brand-btn primary"
+								>
+									<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+										<polyline points="7 10 12 15 17 10"></polyline>
+										<line x1="12" y1="15" x2="12" y2="3"></line>
+									</svg>
+									<span>{langStore.current === 'uk' ? 'Завантажити повну емблему слогану (SVG)' : 'Download Slogan Emblem SVG'}</span>
+								</a>
+							</div>
+						</div>
+
+						<!-- 2. STANDALONE BUTTERFLY SYMBOL -->
+						<div class="slogan-container butterfly-box">
+							<div class="slogan-visual butterfly-visual">
+								<img
+									src="{base}/brand/slogan/butterfly.svg"
+									alt="Фірмовий метелик Vet Crew"
+									class="butterfly-svg-hero"
+								/>
+							</div>
+
+							<div class="slogan-details">
+								<div class="butterfly-meta-head">
+									<span class="sub-badge">{langStore.current === 'uk' ? 'Фірмовий графічний символ' : 'Official Brand Symbol'}</span>
+									<h3 class="butterfly-title">{langStore.current === 'uk' ? 'Метелик Vet Crew (Butterfly)' : 'Vet Crew Butterfly Symbol'}</h3>
+								</div>
+
+								<p class="slogan-philosophy">
+									{langStore.current === 'uk'
+										? 'Графічний знак метелика символізує відродження, витонченість та захист крихкого дикого життя. Використовується як автономний декоративний елемент на бейджах, мерчі, уніформі персоналу та рекламних банерах.'
+										: 'The butterfly mark embodies revival, grace, and the fragile beauty of wild nature. Used as a standalone brand icon on uniforms, merchandise, badges, and awareness campaigns.'}
+								</p>
+
+								<a
+									href="{base}/brand/slogan/butterfly.svg"
+									download="vet-crew-butterfly-symbol.svg"
+									class="download-brand-btn"
+								>
+									<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+										<polyline points="7 10 12 15 17 10"></polyline>
+										<line x1="12" y1="15" x2="12" y2="3"></line>
+									</svg>
+									<span>{langStore.current === 'uk' ? 'Завантажити окремо метелик (SVG)' : 'Download Butterfly SVG'}</span>
+								</a>
+							</div>
 						</div>
 					</div>
 				</section>
@@ -359,26 +402,47 @@
 							<h2 class="card-title">{langStore.current === 'uk' ? 'Типографіка' : 'Typography'}</h2>
 							<p class="card-desc">
 								{langStore.current === 'uk'
-									? 'Основна гарнітура інтерфейсу та айдентики — Plus Jakarta Sans із геометричним балансом і високою розбірливістю.'
-									: 'Primary UI and brand typography is Plus Jakarta Sans with geometric precision and crystal-clear legibility.'}
+									? 'Офіційні гарнітури шпиталю: InGlobal Bold (логотип), Montserrat (навігація та поліграфія) та Permanent Marker (рукописні акценти) з інтерактивним тестером.'
+									: 'Official hospital typefaces: InGlobal Bold, Montserrat, and Permanent Marker with an interactive specimen playground.'}
 							</p>
 						</div>
 					</div>
 
-					<div class="type-samples">
-						<div class="type-item">
-							<div class="type-meta">Plus Jakarta Sans — Bold 700 / 800</div>
-							<div class="type-demo bold-demo">Vet Crew Hospital 24/7</div>
-						</div>
-						<div class="type-item">
-							<div class="type-meta">Plus Jakarta Sans — Medium 500 / 600</div>
-							<div class="type-demo medium-demo">Цілодобова невідкладна ветеринарна допомога та турбота про екзотичних улюбленців</div>
-						</div>
-						<div class="type-item">
-							<div class="type-meta">Plus Jakarta Sans — Regular 400</div>
-							<div class="type-demo regular-demo">Абсолютна безпека, сучасні методи діагностики, реанімація, хірургія та терапія. Одеса, вул. Майстрова, 4.</div>
+					<BrandTypography />
+				</section>
+
+				<!-- SECTION 08: CLINIC & DOOR SIGNAGE -->
+				<section class="guide-card" id="door-signs">
+					<div class="card-head">
+						<span class="step-num">08</span>
+						<div>
+							<h2 class="card-title">{langStore.current === 'uk' ? 'Дверні таблички та навігація відділень' : 'Door Signage & Department Navigation'}</h2>
+							<p class="card-desc">
+								{langStore.current === 'uk'
+									? 'Повна система внутрішньої фізичної навігації госпіталю на вул. Майстровій: таблички на двері кабінетів (композитні й текстові) та медичні піктограми відділень у 7 фірмових кольорах.'
+									: 'Complete interior hospital wayfinding system: door plaques (composite & text) and department pictograms in 7 brand colors.'}
+							</p>
 						</div>
 					</div>
+
+					<DoorSignage />
+				</section>
+
+				<!-- SECTION 09: PHOTO EMBLEMS -->
+				<section class="guide-card" id="photo-logos">
+					<div class="card-head">
+						<span class="step-num">09</span>
+						<div>
+							<h2 class="card-title">{langStore.current === 'uk' ? 'Фотостиль емблеми з тваринами' : 'Photo Emblems & Wildlife Identity'}</h2>
+							<p class="card-desc">
+								{langStore.current === 'uk'
+									? 'Колекційні фотокомпозиції логотипа шпиталю з реальними пацієнтами дикої природи. Векторні майстер-файли 5738×5738 px для друку преміум-носіїв.'
+									: 'Collector photographic emblem compositions featuring real wild and exotic patients. 5738×5738 px master vector files for premium print assets.'}
+							</p>
+						</div>
+					</div>
+
+					<PhotoLogos />
 				</section>
 			</div>
 		</div>
@@ -748,6 +812,12 @@
 	}
 
 	/* SECTION 04: SLOGAN */
+	.slogan-showcase-stack {
+		display: flex;
+		flex-direction: column;
+		gap: 1.75rem;
+	}
+
 	.slogan-container {
 		display: grid;
 		grid-template-columns: 320px 1fr;
@@ -757,6 +827,10 @@
 		border-radius: 1.5rem;
 		padding: 1.75rem;
 		border: 1px solid var(--border);
+	}
+
+	.butterfly-box {
+		background: var(--panel-bg);
 	}
 
 	.slogan-visual {
@@ -770,6 +844,11 @@
 		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
 	}
 
+	.butterfly-visual {
+		background: #13371b;
+		box-shadow: 0 10px 28px rgba(19, 55, 27, 0.25);
+	}
+
 	.slogan-svg-hero {
 		max-width: 100%;
 		max-height: 240px;
@@ -777,8 +856,33 @@
 		filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.1));
 	}
 
+	.butterfly-svg-hero {
+		max-width: 100%;
+		max-height: 220px;
+		object-fit: contain;
+		filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.35));
+		transition: transform 0.3s ease;
+	}
+
+	.butterfly-box:hover .butterfly-svg-hero {
+		transform: scale(1.05);
+	}
+
 	:global([data-theme='dark']) .slogan-svg-hero {
 		filter: brightness(1.15) drop-shadow(0 6px 16px rgba(0, 0, 0, 0.5));
+	}
+
+	.butterfly-meta-head {
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+	}
+
+	.butterfly-title {
+		font-size: 1.3rem;
+		font-weight: 800;
+		color: var(--fg-primary);
+		margin: 0;
 	}
 
 	.slogan-details {
@@ -819,58 +923,6 @@
 		line-height: 1.6;
 		color: var(--fg-secondary);
 		margin: 0;
-	}
-
-	/* SECTION 07: TYPOGRAPHY */
-	.type-samples {
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
-	}
-
-	.type-item {
-		display: flex;
-		flex-direction: column;
-		gap: 0.4rem;
-		padding-bottom: 1.5rem;
-		border-bottom: 1px solid var(--border);
-	}
-
-	.type-item:last-child {
-		border-bottom: none;
-		padding-bottom: 0;
-	}
-
-	.type-meta {
-		font-family: monospace;
-		font-size: 0.8rem;
-		font-weight: 700;
-		color: var(--fg-muted);
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-	}
-
-	.type-demo {
-		color: var(--fg-primary);
-	}
-
-	.bold-demo {
-		font-size: 1.75rem;
-		font-weight: 800;
-		letter-spacing: -0.02em;
-	}
-
-	.medium-demo {
-		font-size: 1.25rem;
-		font-weight: 500;
-		line-height: 1.4;
-	}
-
-	.regular-demo {
-		font-size: 1rem;
-		font-weight: 400;
-		color: var(--fg-secondary);
-		line-height: 1.6;
 	}
 
 	/* RESPONSIVE */
