@@ -342,28 +342,41 @@
 	}
 
 	.download-brand-btn:hover {
-		background: var(--brand-emerald);
+		background: var(--brand-emerald, #13371b);
 		color: #ffffff;
-		border-color: var(--brand-emerald);
+		border-color: var(--brand-emerald, #13371b);
 		box-shadow: 0 4px 14px rgba(19, 55, 27, 0.2);
 	}
 
 	:global(.dark) .download-brand-btn:hover {
-		background: var(--brand-gold);
+		background: var(--brand-gold, #ffb327);
 		color: #101e14;
-		border-color: var(--brand-gold);
+		border-color: var(--brand-gold, #ffb327);
 		box-shadow: 0 4px 14px rgba(255, 179, 39, 0.2);
 	}
 
 	.download-brand-btn.primary {
-		background: var(--brand-emerald);
+		background: var(--brand-emerald, #13371b);
 		color: #ffffff;
-		border-color: var(--brand-emerald);
+		border-color: var(--brand-emerald, #13371b);
 	}
 
 	.download-brand-btn.primary:hover {
-		background: var(--brand-leaf);
-		border-color: var(--brand-leaf);
+		background: var(--brand-leaf, #598f3a);
+		border-color: var(--brand-leaf, #598f3a);
+		color: #ffffff;
+	}
+
+	:global(.dark) .download-brand-btn.primary {
+		background: var(--brand-gold, #ffb327);
+		color: #101e14;
+		border-color: var(--brand-gold, #ffb327);
+	}
+
+	:global(.dark) .download-brand-btn.primary:hover {
+		background: #ffa80a;
+		border-color: #ffa80a;
+		color: #101e14;
 	}
 
 	/* BUTTERFLY SECTION */

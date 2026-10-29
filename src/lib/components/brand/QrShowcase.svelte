@@ -612,16 +612,16 @@
 	}
 
 	.sub-pill.is-active {
-		background: var(--brand-emerald);
+		background: var(--brand-emerald, #13371b);
 		color: #ffffff;
-		border-color: var(--brand-emerald);
+		border-color: var(--brand-emerald, #13371b);
 		box-shadow: 0 2px 6px rgba(19, 55, 27, 0.25);
 	}
 
 	:global(.dark) .sub-pill.is-active {
-		background: var(--brand-gold);
+		background: var(--brand-gold, #ffb327);
 		color: #101e14;
-		border-color: var(--brand-gold);
+		border-color: var(--brand-gold, #ffb327);
 		box-shadow: 0 2px 6px rgba(255, 179, 39, 0.25);
 	}
 
@@ -648,16 +648,16 @@
 	}
 
 	.download-qr-btn:hover {
-		background: var(--brand-emerald);
+		background: var(--brand-emerald, #13371b);
 		color: #ffffff;
-		border-color: var(--brand-emerald);
+		border-color: var(--brand-emerald, #13371b);
 		box-shadow: 0 4px 12px rgba(19, 55, 27, 0.2);
 	}
 
 	:global(.dark) .download-qr-btn:hover {
-		background: var(--brand-gold);
+		background: var(--brand-gold, #ffb327);
 		color: #101e14;
-		border-color: var(--brand-gold);
+		border-color: var(--brand-gold, #ffb327);
 		box-shadow: 0 4px 12px rgba(255, 179, 39, 0.2);
 	}
 

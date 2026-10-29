@@ -431,6 +431,12 @@
 		color: var(--brand-leaf);
 	}
 
+	:global(.dark) .filter-chip.is-active {
+		border-color: var(--brand-gold);
+		background: rgba(255, 179, 39, 0.15);
+		color: var(--brand-gold);
+	}
+
 	.chip-count {
 		font-size: 0.72rem;
 		opacity: 0.75;
@@ -589,10 +595,16 @@
 	}
 
 	.download-animal-btn:hover:not(:disabled) {
-		background: var(--brand-leaf);
+		background: var(--brand-leaf, #598f3a);
 		color: #ffffff;
-		border-color: var(--brand-leaf);
+		border-color: var(--brand-leaf, #598f3a);
 		transform: scale(1.04);
+	}
+
+	:global(.dark) .download-animal-btn:hover:not(:disabled) {
+		background: var(--brand-gold, #ffb327);
+		color: #101e14;
+		border-color: var(--brand-gold, #ffb327);
 	}
 
 	.download-animal-btn:disabled {

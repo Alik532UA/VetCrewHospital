@@ -424,16 +424,30 @@
 	}
 
 	.svg-btn {
-		background: var(--brand-emerald);
+		background: var(--brand-emerald, #13371b);
 		color: #ffffff;
-		border: 1px solid var(--brand-emerald);
+		border: 1px solid var(--brand-emerald, #13371b);
 	}
 
 	.svg-btn:hover {
-		background: var(--brand-leaf);
-		border-color: var(--brand-leaf);
+		background: var(--brand-leaf, #598f3a);
+		border-color: var(--brand-leaf, #598f3a);
+		color: #ffffff;
 		box-shadow: 0 4px 14px rgba(89, 143, 58, 0.25);
 		transform: translateY(-1px);
+	}
+
+	:global(.dark) .svg-btn {
+		background: var(--brand-gold, #ffb327);
+		color: #101e14;
+		border-color: var(--brand-gold, #ffb327);
+	}
+
+	:global(.dark) .svg-btn:hover {
+		background: #ffa80a;
+		border-color: #ffa80a;
+		color: #101e14;
+		box-shadow: 0 4px 14px rgba(255, 179, 39, 0.35);
 	}
 
 	.png-btn {

@@ -798,9 +798,15 @@
 	}
 
 	.download-brand-btn:hover {
-		background: var(--brand-leaf);
+		background: var(--brand-leaf, #598f3a);
 		color: #ffffff;
-		border-color: var(--brand-leaf);
+		border-color: var(--brand-leaf, #598f3a);
+	}
+
+	:global(.dark) .download-brand-btn:hover {
+		background: var(--brand-gold, #ffb327);
+		color: #101e14;
+		border-color: var(--brand-gold, #ffb327);
 	}
 
 	/* RESPONSIVE */

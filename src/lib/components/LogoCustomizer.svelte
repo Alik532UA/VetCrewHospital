@@ -692,9 +692,15 @@
 	}
 
 	.grid-btn.is-active {
-		border-color: var(--brand-leaf);
-		background: var(--brand-leaf);
+		border-color: var(--brand-leaf, #598f3a);
+		background: var(--brand-leaf, #598f3a);
 		color: #ffffff;
+	}
+
+	:global(.dark) .grid-btn.is-active {
+		border-color: var(--brand-gold, #ffb327);
+		background: var(--brand-gold, #ffb327);
+		color: #101e14;
 	}
 
 	.download-group {
@@ -724,12 +730,21 @@
 	}
 
 	.action-dl-btn.primary {
-		background: var(--brand-leaf);
+		background: var(--brand-leaf, #598f3a);
 		color: #ffffff;
 	}
 
 	.action-dl-btn.primary:hover {
 		background: #46732c;
+	}
+
+	:global(.dark) .action-dl-btn.primary {
+		background: var(--brand-gold, #ffb327);
+		color: #101e14;
+	}
+
+	:global(.dark) .action-dl-btn.primary:hover {
+		background: #ffa80a;
 	}
 
 	.stage-viewport {
