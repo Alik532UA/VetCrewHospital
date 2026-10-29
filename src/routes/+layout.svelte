@@ -26,6 +26,12 @@
 		flex-direction: column;
 	}
 
+	:global(body:has(.brandbook-page)) .app-root {
+		height: auto !important;
+		min-height: 100vh !important;
+		overflow-y: visible !important;
+	}
+
 	.ambient-glow {
 		position: fixed;
 		inset: 0;
