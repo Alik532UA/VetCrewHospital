@@ -89,12 +89,6 @@
 				</span>
 			</div>
 
-			<p class="slogan-philosophy">
-				{langStore.current === 'uk'
-					? 'Кожен пацієнт шпиталю — від папуги чи черепахи до сокола чи лева — отримує рівноцінну турботу, найсучасніше реанімаційне обладнання та безкомпромісну любов лікарів.'
-					: 'Every patient, whether a parrot, reptile, predator, or rescue animal, receives equal care, state-of-the-art diagnostics, and unwavering devotion.'}
-			</p>
-
 			<div class="slogan-actions">
 				<a
 					href="{base}/brand/slogan/exotic-wild-special-important.svg"
@@ -144,15 +138,8 @@
 
 		<div class="slogan-details">
 			<div class="butterfly-meta-head">
-				<span class="sub-badge">{langStore.current === 'uk' ? 'Фірмовий графічний знак' : 'Official Brand Symbol'}</span>
 				<h3 class="butterfly-title">{langStore.current === 'uk' ? 'Метелик Vet Crew (Butterfly)' : 'Vet Crew Butterfly Symbol'}</h3>
 			</div>
-
-			<p class="slogan-philosophy">
-				{langStore.current === 'uk'
-					? 'Чистий контурний знак без зайвих фонів та обводок. Символізує легкість, відродження та турботу про тендітне життя. Використовується на медичній уніформі, мерчі, бейджах та сувенірній продукції.'
-					: 'Clean standalone butterfly glyph free of backgrounds and strokes. Embodies fragile wildlife protection, grace, and rebirth. Used across merchandise, medical uniforms, and hospital badges.'}
-			</p>
 
 			<!-- Live Color Palette Switcher -->
 			<div class="butterfly-color-bar">

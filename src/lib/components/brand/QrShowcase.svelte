@@ -75,11 +75,6 @@
 	<div class="showcase-toolbar">
 		<div class="mode-meta">
 			<span class="mode-label">{langStore.current === 'uk' ? 'Формат макета:' : 'Signage Format:'}</span>
-			<span class="mode-desc">
-				{langStore.current === 'uk'
-					? 'Оберіть повнорозмірний акриловий контейнер або прозорий векторний QR-код без тла.'
-					: 'Select full acrylic container or clean transparent vector QR artwork.'}
-			</span>
 		</div>
 
 		<div class="toolbar-actions">
@@ -130,11 +125,6 @@
 					<h3 class="qr-title">{langStore.current === 'uk' ? 'Фоновий контейнер' : 'Plaque Background'}</h3>
 					<span class="qr-badge badge--neutral">{langStore.current === 'uk' ? 'Шаблон' : 'Template'}</span>
 				</div>
-				<p class="qr-desc">
-					{langStore.current === 'uk'
-						? 'Чистий фірмовий векторний шаблон підкладки для друку акрилових стійок або верстки нових QR-табличок.'
-						: 'Blank branded plaque container template for acrylic stand manufacturing or laying out new QR signs.'}
-				</p>
 			</div>
 
 			<div class="qr-actions">
@@ -182,11 +172,6 @@
 					<h3 class="qr-title">Wi-Fi</h3>
 					<span class="qr-badge badge--wifi">Wi-Fi</span>
 				</div>
-				<p class="qr-desc">
-					{langStore.current === 'uk'
-						? 'Миттєве підключення відвідувачів до швидкісної бездротової мережі в рецепції та зоні очікування.'
-						: 'Instant visitor Wi-Fi network connection for reception desks and waiting areas.'}
-				</p>
 			</div>
 
 			<div class="qr-actions">
@@ -234,11 +219,6 @@
 					<h3 class="qr-title">Instagram</h3>
 					<span class="qr-badge badge--ig">Social</span>
 				</div>
-				<p class="qr-desc">
-					{langStore.current === 'uk'
-						? 'Офіційна сторінка клініки: щоденні історії порятунку диких пацієнтів, новини шпиталю та фотозвіти.'
-						: 'Official clinic Instagram: daily exotic wildlife rescues, patient recoveries, and news.'}
-				</p>
 			</div>
 
 			<div class="qr-actions">
@@ -286,11 +266,6 @@
 					<h3 class="qr-title">{langStore.current === 'uk' ? 'Відгуки' : 'Reviews'}</h3>
 					<span class="qr-badge badge--reviews">Google Maps</span>
 				</div>
-				<p class="qr-desc">
-					{langStore.current === 'uk'
-						? 'Пряме посилання на картку Vet Crew Hospital у Google Maps для оцінки та відгуків клієнтів (єдиний QR-код у 3 мовних варіантах).'
-						: 'Direct QR code to Vet Crew Hospital on Google Maps for ratings and client reviews (identical QR code across 3 lettering variants).'}
-				</p>
 
 				<!-- Subvariant Switcher -->
 				<div class="subvariant-section">
@@ -359,11 +334,6 @@
 					<h3 class="qr-title">{langStore.current === 'uk' ? 'Офіційний сайт' : 'Official Website'}</h3>
 					<span class="qr-badge badge--web">Web</span>
 				</div>
-				<p class="qr-desc">
-					{langStore.current === 'uk'
-						? 'Цілодобовий онлайн-запис, контакти чергових лікарів, графік прийому та повний перелік медичних послуг.'
-						: '24/7 online appointment booking, emergency contacts, on-call schedules, and medical service directory.'}
-				</p>
 
 				<!-- Subvariant Switcher -->
 				<div class="subvariant-section">

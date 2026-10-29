@@ -142,11 +142,6 @@
 		<div class="control-row format-row">
 			<div class="control-label-group">
 				<span class="control-title">{langStore.current === 'uk' ? 'Формат навігації:' : 'Signage Layout:'}</span>
-				<span class="control-hint">
-					{langStore.current === 'uk'
-						? 'Перемикайте між комбінованою табличкою, чистою піктограмою або текстовою вивіскою'
-						: 'Switch between composite plaque, icon-only or text-only layouts'}
-				</span>
 			</div>
 
 			<div class="format-pill-tabs">
@@ -377,11 +372,6 @@
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 		color: var(--fg-primary);
-	}
-
-	.control-hint {
-		font-size: 0.82rem;
-		color: var(--fg-secondary);
 	}
 
 	/* FORMAT TABS */

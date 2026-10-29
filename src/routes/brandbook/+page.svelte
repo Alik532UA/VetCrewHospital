@@ -127,18 +127,9 @@
 			</div>
 
 			<div class="header-titles">
-				<div class="header-badge">
-					<span class="badge-dot"></span>
-					<span>{langStore.current === 'uk' ? 'Офіційний гайдлайн айдентики' : 'Official Visual Identity Guidelines'}</span>
-				</div>
 				<h1 class="main-title">
 					{langStore.current === 'uk' ? 'Брендбук Vet Crew Hospital' : 'Vet Crew Hospital BrandBook'}
 				</h1>
-				<p class="main-lead">
-					{langStore.current === 'uk'
-						? 'Константи візуального стилю, сертифікована колірна палітра, анатомія інтерактивного логотипа, фірмова іконографіка 24 тварин, QR-навігація та суббренди.'
-						: 'Visual identity constants, certified brand color palette, interactive logo studio, 24 animal icons, QR signage and sub-brand assets.'}
-				</p>
 			</div>
 		</header>
 
@@ -155,11 +146,6 @@
 						<span class="step-num">01</span>
 						<div>
 							<h2 class="card-title">{langStore.current === 'uk' ? 'Фірмова колірна палітра' : 'Brand Color Palette'}</h2>
-							<p class="card-desc">
-								{langStore.current === 'uk'
-									? '6 канонічних відтінків бренду Vet Crew. Натисніть на код для швидкого копіювання.'
-									: '6 canonical brand shades of Vet Crew. Click on any code to copy.'}
-							</p>
 						</div>
 					</div>
 
@@ -260,11 +246,6 @@
 						<span class="step-num">02</span>
 						<div>
 							<h2 class="card-title">{langStore.current === 'uk' ? 'Логотип та генератор кольорів' : 'Logo & Color Studio'}</h2>
-							<p class="card-desc">
-								{langStore.current === 'uk'
-									? 'Налаштовуйте кольори для кожної частини логотипу або виберіть готовий шаблон, вибирайте форму (коло, суцільний квадрат, прозоре тло) та завантажуйте векторний SVG чи PNG (2x).'
-									: 'Customize colors for each logo element, choose background shape (circle badge, solid canvas, transparent) and export ready SVG or PNG (2x).'}
-							</p>
 						</div>
 					</div>
 
@@ -278,11 +259,6 @@
 							<span class="step-num">03</span>
 							<div>
 								<h2 class="card-title">{langStore.current === 'uk' ? 'Офіційна назва та суббренди' : 'Official Naming & Sub-brands'}</h2>
-								<p class="card-desc">
-									{langStore.current === 'uk'
-										? 'Офіційне векторне накреслення назви шпиталю українською мовою та брендинг фірмового магазину Vet Crew Shop.'
-										: 'Official Ukrainian lettering wordmark and Vet Crew Shop sub-brand visual identity.'}
-								</p>
 							</div>
 						</div>
 						<StageBgSwitcher bind:current={namingStage} />
@@ -299,13 +275,6 @@
 								/>
 							</div>
 							<div class="branding-info">
-								<div class="branding-badge">UA LETTERING</div>
-								<h3 class="branding-title">{langStore.current === 'uk' ? 'Назва українською' : 'Ukrainian Wordmark'}</h3>
-								<p class="branding-text">
-									{langStore.current === 'uk'
-										? 'Адаптоване накреслення «ВЕТ КРЮ ХОСПІТАЛ» для внутрішнього ринку, вивісок, бланкової документації та офіційної кореспонденції.'
-										: 'Localized Ukrainian hospital title for domestic signage, legal paperwork, and medical reports.'}
-								</p>
 								<div class="branding-actions">
 									<a
 										href="{base}/brand/naming/vet-crew-hospital-ua.svg"
@@ -345,13 +314,6 @@
 								/>
 							</div>
 							<div class="branding-info">
-								<div class="branding-badge shop-badge">SUB-BRAND</div>
-								<h3 class="branding-title">VET CREW SHOP</h3>
-								<p class="branding-text">
-									{langStore.current === 'uk'
-										? 'Офіційний логотип магазину спеціалізованих зоотоварів, кормів преміум-класу, кліток, тераріумів та медичного мерчу.'
-										: 'Official emblem for veterinary pet-store, medical merchandise, exotic feeds, and professional care gear.'}
-								</p>
 								<div class="branding-actions">
 									<a
 										href="{base}/brand/subbrands/vet-crew-shop.svg"
@@ -389,11 +351,6 @@
 						<span class="step-num">04</span>
 						<div>
 							<h2 class="card-title">{langStore.current === 'uk' ? 'Фірмовий слоган та цінності' : 'Brand Slogan & Values'}</h2>
-							<p class="card-desc">
-								{langStore.current === 'uk'
-									? 'Ключовий маніфест шпиталю «Екзотичні • Дикі • Особливі • Важливі» та окремий графічний символ Метелика.'
-									: 'The hospital mission manifesto "Exotic • Wild • Special • Important" and standalone Butterfly brand symbol.'}
-							</p>
 						</div>
 					</div>
 
@@ -406,11 +363,6 @@
 						<span class="step-num">05</span>
 						<div>
 							<h2 class="card-title">{langStore.current === 'uk' ? 'Фірмова іконографіка (24 тварини)' : 'Animal Iconography (24 Species)'}</h2>
-							<p class="card-desc">
-								{langStore.current === 'uk'
-									? 'Канонічний набір векторних силуетів пацієнтів шпиталю. Доступні для маркування відділень, медичних карток, навігації сайту та друку.'
-									: 'Official icon set representing species treated at Vet Crew. Available for clinical charts, signage, and merchandise.'}
-							</p>
 						</div>
 					</div>
 
@@ -423,11 +375,6 @@
 						<span class="step-num">06</span>
 						<div>
 							<h2 class="card-title">{langStore.current === 'uk' ? 'QR-навігація та таблички сервісів' : 'QR Signage & Service Plaques'}</h2>
-							<p class="card-desc">
-								{langStore.current === 'uk'
-									? 'Готові векторні таблички швидкого доступу для рецепції, зони очікування та цифрових носіїв. Перемикайте варіант із фірмовим контейнером або чистий без фону.'
-									: 'Ready-to-print vector plaques for clinic counters and digital screens. Toggle with background container or pure transparent.'}
-							</p>
 						</div>
 					</div>
 
@@ -440,11 +387,6 @@
 						<span class="step-num">07</span>
 						<div>
 							<h2 class="card-title">{langStore.current === 'uk' ? 'Типографіка' : 'Typography'}</h2>
-							<p class="card-desc">
-								{langStore.current === 'uk'
-									? 'Офіційні гарнітури шпиталю: InGlobal Bold (логотип), Montserrat (навігація та поліграфія) та Permanent Marker (рукописні акценти) з інтерактивним тестером.'
-									: 'Official hospital typefaces: InGlobal Bold, Montserrat, and Permanent Marker with an interactive specimen playground.'}
-							</p>
 						</div>
 					</div>
 
@@ -457,11 +399,6 @@
 						<span class="step-num">08</span>
 						<div>
 							<h2 class="card-title">{langStore.current === 'uk' ? 'Дверні таблички та навігація відділень' : 'Door Signage & Department Navigation'}</h2>
-							<p class="card-desc">
-								{langStore.current === 'uk'
-									? 'Повна система внутрішньої фізичної навігації госпіталю на вул. Майстровій: таблички на двері кабінетів (композитні й текстові) та медичні піктограми відділень у 7 фірмових кольорах.'
-									: 'Complete interior hospital wayfinding system: door plaques (composite & text) and department pictograms in 7 brand colors.'}
-							</p>
 						</div>
 					</div>
 
@@ -474,11 +411,6 @@
 						<span class="step-num">09</span>
 						<div>
 							<h2 class="card-title">{langStore.current === 'uk' ? 'Емблема шпиталю з тваринами' : 'Hospital Emblems with Animals'}</h2>
-							<p class="card-desc">
-								{langStore.current === 'uk'
-									? 'Офіційні векторні композиції емблеми шпиталю з силуетами тварин та повною назвою Центру лікування. Чиста оптимізована векторна графіка для друку та цифрових носіїв.'
-									: 'Official hospital emblem vector compositions featuring wildlife silhouettes and full clinical lettering. Pure optimized vector artwork for print and digital media.'}
-							</p>
 						</div>
 					</div>
 

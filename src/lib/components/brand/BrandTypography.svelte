@@ -88,10 +88,6 @@
 					{f.sampleHead}
 				</div>
 
-				<p class="specimen-desc">
-					{langStore.current === 'uk' ? f.descUk : f.descEn}
-				</p>
-
 				<div class="specimen-charset" style:font-family="var(--ff-{f.id}, '{f.fontFamily}', sans-serif)">
 					<span>ABCDEFGHIJKLMNOPQRSTUVWXYZ</span>
 					<span>АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ</span>
@@ -258,13 +254,6 @@
 		min-height: 4rem;
 		display: flex;
 		align-items: center;
-	}
-
-	.specimen-desc {
-		font-size: 0.86rem;
-		line-height: 1.55;
-		color: var(--fg-secondary);
-		margin: 0;
 	}
 
 	.specimen-charset {

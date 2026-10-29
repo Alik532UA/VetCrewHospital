@@ -42,15 +42,6 @@
 
 <div class="photo-logos-widget">
 	<div class="photo-logos-header">
-		<div class="header-info">
-			<span class="sub-badge">Pure Vector Artwork • Clean SVG & HQ PNG</span>
-			<p class="section-lead">
-				{langStore.current === 'uk'
-					? 'Офіційні векторні композиції емблеми шпиталю з силуетами тварин. Чиста векторна графіка без растрових нашарувань — оптимізована для якісного масштабування та друку будь-якого формату.'
-					: 'Official Vet Crew Hospital vector emblems featuring wildlife silhouettes. Pure vector artwork with no raster bloat, fully scalable for high-resolution print and digital media.'}
-			</p>
-		</div>
-
 		<!-- Global Stage Background Switcher -->
 		<StageBgSwitcher bind:current={stageTheme} />
 	</div>
@@ -120,33 +111,10 @@
 
 	.photo-logos-header {
 		display: flex;
-		align-items: flex-end;
-		justify-content: space-between;
+		align-items: center;
+		justify-content: flex-end;
 		gap: 1.5rem;
 		flex-wrap: wrap;
-	}
-
-	.header-info {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		max-width: 680px;
-	}
-
-	.sub-badge {
-		font-size: 0.74rem;
-		font-family: monospace;
-		font-weight: 700;
-		color: var(--brand-leaf);
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-	}
-
-	.section-lead {
-		font-size: 0.95rem;
-		line-height: 1.6;
-		color: var(--fg-secondary);
-		margin: 0;
 	}
 
 	/* GRID */
