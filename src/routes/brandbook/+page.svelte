@@ -3,6 +3,9 @@
 	import { resolve } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 	import LogoCustomizer from '$lib/components/LogoCustomizer.svelte';
+	import BrandToc from '$lib/components/brand/BrandToc.svelte';
+	import AnimalGallery from '$lib/components/brand/AnimalGallery.svelte';
+	import QrShowcase from '$lib/components/brand/QrShowcase.svelte';
 
 	let copiedVal = $state<string | null>(null);
 
@@ -58,7 +61,7 @@
 
 <svelte:head>
 	<title>{langStore.current === 'uk' ? 'Брендбук — Vet Crew Hospital' : 'BrandBook — Vet Crew Hospital'}</title>
-	<meta name="description" content="Офіційний гайдлайн та брендбук Vet Crew Hospital: колірна палітра, логотип, типографіка та правила візуальної ідентичності." />
+	<meta name="description" content="Офіційний гайдлайн та брендбук Vet Crew Hospital: колірна палітра, логотип, іконки тварин, QR-навігація, слоган та правила візуальної ідентичності." />
 </svelte:head>
 
 <div class="brandbook-page">
@@ -83,113 +86,302 @@
 				</h1>
 				<p class="main-lead">
 					{langStore.current === 'uk'
-						? 'Константи візуального стилю, сертифікована колірна палітра, анатомія інтерактивного логотипа та правила використання фірмових елементів.'
-						: 'Visual identity constants, certified brand color palette, interactive logo anatomy and usage rules.'}
+						? 'Константи візуального стилю, сертифікована колірна палітра, анатомія інтерактивного логотипа, фірмова іконографіка 24 тварин, QR-навігація та суббренди.'
+						: 'Visual identity constants, certified brand color palette, interactive logo studio, 24 animal icons, QR signage and sub-brand assets.'}
 				</p>
 			</div>
 		</header>
 
-		<!-- SECTION 1: COLOR PALETTE -->
-		<section class="guide-card" id="palette">
-			<div class="card-head">
-				<span class="step-num">01</span>
-				<div>
-					<h2 class="card-title">{langStore.current === 'uk' ? 'Фірмова колірна палітра' : 'Brand Color Palette'}</h2>
-					<p class="card-desc">
-						{langStore.current === 'uk'
-							? '6 канонічних відтінків бренду Vet Crew. Натисніть на код для швидкого копіювання.'
-							: '6 canonical brand shades of Vet Crew. Click on any code to copy.'}
-					</p>
-				</div>
-			</div>
+		<!-- MAIN 2-COLUMN LAYOUT WITH STICKY TOC -->
+		<div class="brandbook-layout">
+			<!-- STICKY SIDE NAVIGATION (TOC) -->
+			<BrandToc />
 
-			<div class="palette-grid">
-				{#each colors as c (c.hex)}
-					<div class="color-tile" style="--tile-bg: {c.hex}; --tile-fg: {c.textColor};">
-						<div class="tile-swatch">
-							<span class="tile-hex">{c.hex}</span>
-							<span class="tile-tag">{c.name}</span>
+			<!-- SECTIONS STACK -->
+			<div class="brandbook-sections">
+				<!-- SECTION 01: COLOR PALETTE -->
+				<section class="guide-card" id="palette">
+					<div class="card-head">
+						<span class="step-num">01</span>
+						<div>
+							<h2 class="card-title">{langStore.current === 'uk' ? 'Фірмова колірна палітра' : 'Brand Color Palette'}</h2>
+							<p class="card-desc">
+								{langStore.current === 'uk'
+									? '6 канонічних відтінків бренду Vet Crew. Натисніть на код для швидкого копіювання.'
+									: '6 canonical brand shades of Vet Crew. Click on any code to copy.'}
+							</p>
 						</div>
-						<div class="tile-info">
-							<div class="copy-actions">
-								<button
-									type="button"
-									class="copy-btn"
-									class:is-copied={copiedVal === c.hex}
-									onclick={() => copyToClipboard(c.hex)}
-								>
-									<span>{copiedVal === c.hex ? (langStore.current === 'uk' ? 'Скопійовано!' : 'Copied!') : c.hex}</span>
-									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-										{#if copiedVal === c.hex}
-											<polyline points="20 6 9 17 4 12"></polyline>
-										{:else}
-											<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-											<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-										{/if}
-									</svg>
-								</button>
+					</div>
 
-								<button
-									type="button"
-									class="copy-btn secondary"
-									class:is-copied={copiedVal === `rgb(${c.rgb})`}
-									onclick={() => copyToClipboard(`rgb(${c.rgb})`)}
+					<div class="palette-grid">
+						{#each colors as c (c.hex)}
+							<div class="color-tile" style="--tile-bg: {c.hex}; --tile-fg: {c.textColor};">
+								<div class="tile-swatch">
+									<span class="tile-hex">{c.hex}</span>
+									<span class="tile-tag">{c.name}</span>
+								</div>
+								<div class="tile-info">
+									<div class="copy-actions">
+										<button
+											type="button"
+											class="copy-btn"
+											class:is-copied={copiedVal === c.hex}
+											onclick={() => copyToClipboard(c.hex)}
+										>
+											<span>{copiedVal === c.hex ? (langStore.current === 'uk' ? 'Скопійовано!' : 'Copied!') : c.hex}</span>
+											<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+												{#if copiedVal === c.hex}
+													<polyline points="20 6 9 17 4 12"></polyline>
+												{:else}
+													<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+													<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+												{/if}
+											</svg>
+										</button>
+
+										<button
+											type="button"
+											class="copy-btn secondary"
+											class:is-copied={copiedVal === `rgb(${c.rgb})`}
+											onclick={() => copyToClipboard(`rgb(${c.rgb})`)}
+										>
+											<span>{copiedVal === `rgb(${c.rgb})` ? 'RGB OK' : `RGB: ${c.rgb}`}</span>
+										</button>
+									</div>
+								</div>
+							</div>
+						{/each}
+					</div>
+				</section>
+
+				<!-- SECTION 02: LOGO ANATOMY & STUDIO -->
+				<section class="guide-card" id="logo-studio">
+					<div class="card-head">
+						<span class="step-num">02</span>
+						<div>
+							<h2 class="card-title">{langStore.current === 'uk' ? 'Логотип та генератор кольорів' : 'Logo & Color Studio'}</h2>
+							<p class="card-desc">
+								{langStore.current === 'uk'
+									? 'Налаштовуйте кольори для кожної частини логотипу або виберіть готовий шаблон, вибирайте форму (коло, суцільний квадрат, прозоре тло) та завантажуйте векторний SVG чи PNG (2x).'
+									: 'Customize colors for each logo element, choose background shape (circle badge, solid canvas, transparent) and export ready SVG or PNG (2x).'}
+							</p>
+						</div>
+					</div>
+
+					<LogoCustomizer brandColors={colors} />
+				</section>
+
+				<!-- SECTION 03: UKRAINIAN NAMING & SUB-BRANDS -->
+				<section class="guide-card" id="naming">
+					<div class="card-head">
+						<span class="step-num">03</span>
+						<div>
+							<h2 class="card-title">{langStore.current === 'uk' ? 'Офіційна назва та суббренди' : 'Official Naming & Sub-brands'}</h2>
+							<p class="card-desc">
+								{langStore.current === 'uk'
+									? 'Офіційне векторне накреслення назви шпиталю українською мовою та брендинг фірмового магазину Vet Crew Shop.'
+									: 'Official Ukrainian lettering wordmark and Vet Crew Shop sub-brand visual identity.'}
+							</p>
+						</div>
+					</div>
+
+					<div class="naming-grid">
+						<!-- Ukrainian Wordmark -->
+						<div class="branding-card">
+							<div class="branding-preview-stage">
+								<img
+									src="{base}/brand/naming/vet-crew-hospital-ua.svg"
+									alt="ВЕТ КРЮ ХОСПІТАЛ"
+									class="branding-svg-img"
+								/>
+							</div>
+							<div class="branding-info">
+								<div class="branding-badge">UA LETTERING</div>
+								<h3 class="branding-title">{langStore.current === 'uk' ? 'Назва українською' : 'Ukrainian Wordmark'}</h3>
+								<p class="branding-text">
+									{langStore.current === 'uk'
+										? 'Адаптоване накреслення «ВЕТ КРЮ ХОСПІТАЛ» для внутрішнього ринку, вивісок, бланкової документації та офіційної кореспонденції.'
+										: 'Localized Ukrainian hospital title for domestic signage, legal paperwork, and medical reports.'}
+								</p>
+								<a
+									href="{base}/brand/naming/vet-crew-hospital-ua.svg"
+									download="vet-crew-hospital-ua.svg"
+									class="download-brand-btn"
 								>
-									<span>{copiedVal === `rgb(${c.rgb})` ? 'RGB OK' : `RGB: ${c.rgb}`}</span>
-								</button>
+									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+										<polyline points="7 10 12 15 17 10"></polyline>
+										<line x1="12" y1="15" x2="12" y2="3"></line>
+									</svg>
+									<span>{langStore.current === 'uk' ? 'Завантажити SVG' : 'Download SVG'}</span>
+								</a>
+							</div>
+						</div>
+
+						<!-- Sub-brand: Shop -->
+						<div class="branding-card">
+							<div class="branding-preview-stage">
+								<img
+									src="{base}/brand/subbrands/vet-crew-shop.svg"
+									alt="VET CREW SHOP"
+									class="branding-svg-img"
+								/>
+							</div>
+							<div class="branding-info">
+								<div class="branding-badge shop-badge">SUB-BRAND</div>
+								<h3 class="branding-title">VET CREW SHOP</h3>
+								<p class="branding-text">
+									{langStore.current === 'uk'
+										? 'Офіційний логотип магазину спеціалізованих зоотоварів, кормів преміум-класу, кліток, тераріумів та медичного мерчу.'
+										: 'Official emblem for veterinary pet-store, medical merchandise, exotic feeds, and professional care gear.'}
+								</p>
+								<a
+									href="{base}/brand/subbrands/vet-crew-shop.svg"
+									download="vet-crew-shop.svg"
+									class="download-brand-btn"
+								>
+									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+										<polyline points="7 10 12 15 17 10"></polyline>
+										<line x1="12" y1="15" x2="12" y2="3"></line>
+									</svg>
+									<span>{langStore.current === 'uk' ? 'Завантажити SVG' : 'Download SVG'}</span>
+								</a>
 							</div>
 						</div>
 					</div>
-				{/each}
-			</div>
-		</section>
+				</section>
 
-		<!-- SECTION 2: LOGO ANATOMY & CUSTOMIZER -->
-		<section class="guide-card" id="logo-anatomy">
-			<div class="card-head">
-				<span class="step-num">02</span>
-				<div>
-					<h2 class="card-title">{langStore.current === 'uk' ? 'Логотип та генератор кольорів' : 'Logo & Color Studio'}</h2>
-					<p class="card-desc">
-						{langStore.current === 'uk'
-							? 'Налаштовуйте кольори для кожної частини логотипу або виберіть готовий шаблон, тестуйте на різному тлі та завантажуйте готовий векторний SVG чи PNG.'
-							: 'Customize colors for each logo element or pick a preset, test on light/dark stage and export ready SVG or PNG.'}
-					</p>
-				</div>
-			</div>
+				<!-- SECTION 04: BRAND SLOGAN & MISSION -->
+				<section class="guide-card" id="slogan">
+					<div class="card-head">
+						<span class="step-num">04</span>
+						<div>
+							<h2 class="card-title">{langStore.current === 'uk' ? 'Фірмовий слоган та цінності' : 'Brand Slogan & Values'}</h2>
+							<p class="card-desc">
+								{langStore.current === 'uk'
+									? 'Ключовий маніфест та графічна емблема місії шпиталю: «Екзотичні • Дикі • Особливі • Важливі».'
+									: 'The hospital mission manifesto and values emblem: "Exotic • Wild • Special • Important".'}
+							</p>
+						</div>
+					</div>
 
-			<LogoCustomizer brandColors={colors} />
-		</section>
+					<div class="slogan-container">
+						<div class="slogan-visual">
+							<img
+								src="{base}/brand/slogan/exotic-wild-special-important.svg"
+								alt="Екзотичні Дикі Особливі Важливі"
+								class="slogan-svg-hero"
+							/>
+						</div>
 
-		<!-- SECTION 3: TYPOGRAPHY -->
-		<section class="guide-card" id="typography">
-			<div class="card-head">
-				<span class="step-num">03</span>
-				<div>
-					<h2 class="card-title">{langStore.current === 'uk' ? 'Типографіка' : 'Typography'}</h2>
-					<p class="card-desc">
-						{langStore.current === 'uk'
-							? 'Основна гарнітура інтерфейсу — Plus Jakarta Sans із гуманістичним геометричним накресленням.'
-							: 'Primary UI typography is Plus Jakarta Sans with geometric balance and humanist readability.'}
-					</p>
-				</div>
-			</div>
+						<div class="slogan-details">
+							<div class="values-pills">
+								<span class="val-pill">
+									<strong>Екзотичні</strong>
+									<span>(Exotic)</span>
+								</span>
+								<span class="val-pill">
+									<strong>Дикі</strong>
+									<span>(Wild)</span>
+								</span>
+								<span class="val-pill">
+									<strong>Особливі</strong>
+									<span>(Special)</span>
+								</span>
+								<span class="val-pill">
+									<strong>Важливі</strong>
+									<span>(Important)</span>
+								</span>
+							</div>
 
-			<div class="type-samples">
-				<div class="type-item">
-					<div class="type-meta">Plus Jakarta Sans — Bold 700 / 800</div>
-					<div class="type-demo bold-demo">Vet Crew Hospital 24/7</div>
-				</div>
-				<div class="type-item">
-					<div class="type-meta">Plus Jakarta Sans — Medium 500 / 600</div>
-					<div class="type-demo medium-demo">Цілодобова невідкладна ветеринарна допомога та турбота про улюбленців</div>
-				</div>
-				<div class="type-item">
-					<div class="type-meta">Plus Jakarta Sans — Regular 400</div>
-					<div class="type-demo regular-demo">Абсолютна безпека, сучасні методи діагностики, хірургія та терапія. Одеса, вул. Майстрова, 4.</div>
-				</div>
+							<p class="slogan-philosophy">
+								{langStore.current === 'uk'
+									? 'Кожен пацієнт шпиталю — від папуги чи черепахи до сокола чи лева — отримує рівноцінну турботу, найсучасніше реанімаційне обладнання та безкомпромісну любов лікарів.'
+									: 'Every patient, whether a parrot, reptile, predator, or rescue animal, receives equal care, state-of-the-art diagnostics, and unwavering devotion.'}
+							</p>
+
+							<a
+								href="{base}/brand/slogan/exotic-wild-special-important.svg"
+								download="vet-crew-slogan-values.svg"
+								class="download-brand-btn primary"
+							>
+								<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+									<polyline points="7 10 12 15 17 10"></polyline>
+									<line x1="12" y1="15" x2="12" y2="3"></line>
+								</svg>
+								<span>{langStore.current === 'uk' ? 'Завантажити векторну емблему слогану (SVG)' : 'Download Slogan Emblem SVG'}</span>
+							</a>
+						</div>
+					</div>
+				</section>
+
+				<!-- SECTION 05: ANIMAL ICONOGRAPHY (24) -->
+				<section class="guide-card" id="animals">
+					<div class="card-head">
+						<span class="step-num">05</span>
+						<div>
+							<h2 class="card-title">{langStore.current === 'uk' ? 'Фірмова іконографіка (24 тварини)' : 'Animal Iconography (24 Species)'}</h2>
+							<p class="card-desc">
+								{langStore.current === 'uk'
+									? 'Канонічний набір векторних силуетів пацієнтів шпиталю. Доступні для маркування відділень, медичних карток, навігації сайту та друку.'
+									: 'Official icon set representing species treated at Vet Crew. Available for clinical charts, signage, and merchandise.'}
+							</p>
+						</div>
+					</div>
+
+					<AnimalGallery />
+				</section>
+
+				<!-- SECTION 06: QR SIGNAGE & SERVICING -->
+				<section class="guide-card" id="qr">
+					<div class="card-head">
+						<span class="step-num">06</span>
+						<div>
+							<h2 class="card-title">{langStore.current === 'uk' ? 'QR-навігація та таблички сервісів' : 'QR Signage & Service Plaques'}</h2>
+							<p class="card-desc">
+								{langStore.current === 'uk'
+									? 'Готові векторні таблички швидкого доступу для рецепції, зони очікування та цифрових носіїв. Перемикайте варіант із фірмовим контейнером або чистий без фону.'
+									: 'Ready-to-print vector plaques for clinic counters and digital screens. Toggle with background container or pure transparent.'}
+							</p>
+						</div>
+					</div>
+
+					<QrShowcase />
+				</section>
+
+				<!-- SECTION 07: TYPOGRAPHY -->
+				<section class="guide-card" id="typography">
+					<div class="card-head">
+						<span class="step-num">07</span>
+						<div>
+							<h2 class="card-title">{langStore.current === 'uk' ? 'Типографіка' : 'Typography'}</h2>
+							<p class="card-desc">
+								{langStore.current === 'uk'
+									? 'Основна гарнітура інтерфейсу та айдентики — Plus Jakarta Sans із геометричним балансом і високою розбірливістю.'
+									: 'Primary UI and brand typography is Plus Jakarta Sans with geometric precision and crystal-clear legibility.'}
+							</p>
+						</div>
+					</div>
+
+					<div class="type-samples">
+						<div class="type-item">
+							<div class="type-meta">Plus Jakarta Sans — Bold 700 / 800</div>
+							<div class="type-demo bold-demo">Vet Crew Hospital 24/7</div>
+						</div>
+						<div class="type-item">
+							<div class="type-meta">Plus Jakarta Sans — Medium 500 / 600</div>
+							<div class="type-demo medium-demo">Цілодобова невідкладна ветеринарна допомога та турбота про екзотичних улюбленців</div>
+						</div>
+						<div class="type-item">
+							<div class="type-meta">Plus Jakarta Sans — Regular 400</div>
+							<div class="type-demo regular-demo">Абсолютна безпека, сучасні методи діагностики, реанімація, хірургія та терапія. Одеса, вул. Майстрова, 4.</div>
+						</div>
+					</div>
+				</section>
 			</div>
-		</section>
+		</div>
 	</div>
 </div>
 
@@ -204,23 +396,26 @@
 
 	.brandbook-page {
 		min-height: 100vh;
-		padding: 2.5rem 1.5rem 5rem;
+		padding: 2.5rem 1.5rem 6rem;
 		position: relative;
 		z-index: 10;
 	}
 
 	.brandbook-container {
-		max-width: 1080px;
+		max-width: 1180px;
 		margin: 0 auto;
 		display: flex;
 		flex-direction: column;
 		gap: 2.5rem;
+		min-width: 0;
 	}
 
 	.brandbook-header {
 		display: flex;
 		flex-direction: column;
 		gap: 1.5rem;
+		padding-left: calc(46px + 2rem);
+		transition: padding 0.2s ease;
 	}
 
 	.back-link {
@@ -281,8 +476,24 @@
 	.main-lead {
 		font-size: 1.05rem;
 		color: var(--fg-secondary);
-		max-width: 720px;
+		max-width: 780px;
 		line-height: 1.6;
+	}
+
+	/* 2-COLUMN BRANDBOOK LAYOUT */
+	.brandbook-layout {
+		display: grid;
+		grid-template-columns: 46px minmax(0, 1fr);
+		gap: 2rem;
+		align-items: start;
+		min-width: 0;
+	}
+
+	.brandbook-sections {
+		display: flex;
+		flex-direction: column;
+		gap: 2.75rem;
+		min-width: 0;
 	}
 
 	/* CARDS */
@@ -297,6 +508,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: 2rem;
+		scroll-margin-top: 2rem;
+		min-width: 0;
 	}
 
 	.card-head {
@@ -420,9 +633,282 @@
 		color: var(--fg-secondary);
 	}
 
-	@media (max-width: 860px) {
+	/* SECTION 03: NAMING & SUB-BRANDS */
+	.naming-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 1.5rem;
+	}
+
+	.branding-card {
+		display: flex;
+		flex-direction: column;
+		border-radius: 1.25rem;
+		background: var(--bg-secondary);
+		border: 1px solid var(--border);
+		overflow: hidden;
+		transition: all 0.2s ease;
+	}
+
+	.branding-card:hover {
+		border-color: var(--border-hover);
+		box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+	}
+
+	.branding-preview-stage {
+		height: 180px;
+		background: var(--panel-bg);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 1.5rem;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.branding-svg-img {
+		max-width: 90%;
+		max-height: 90%;
+		object-fit: contain;
+		filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.08));
+	}
+
+	:global([data-theme='dark']) .branding-svg-img {
+		filter: brightness(1.2) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+	}
+
+	.branding-info {
+		padding: 1.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.65rem;
+		flex: 1;
+	}
+
+	.branding-badge {
+		font-size: 0.7rem;
+		font-weight: 800;
+		color: var(--brand-leaf);
+		background: rgba(89, 143, 58, 0.12);
+		padding: 3px 8px;
+		border-radius: 6px;
+		width: fit-content;
+		letter-spacing: 0.04em;
+	}
+
+	.branding-badge.shop-badge {
+		color: #ffb327;
+		background: rgba(255, 179, 39, 0.15);
+	}
+
+	.branding-title {
+		font-size: 1.2rem;
+		font-weight: 800;
+		color: var(--fg-primary);
+		margin: 0;
+	}
+
+	.branding-text {
+		font-size: 0.85rem;
+		line-height: 1.5;
+		color: var(--fg-secondary);
+		margin: 0 0 auto;
+	}
+
+	.download-brand-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.45rem;
+		padding: 0.55rem 1rem;
+		border-radius: 10px;
+		background: var(--panel-bg);
+		border: 1px solid var(--border);
+		color: var(--fg-primary);
+		font-size: 0.82rem;
+		font-weight: 700;
+		text-decoration: none;
+		margin-top: 0.75rem;
+		transition: all 0.2s ease;
+	}
+
+	.download-brand-btn:hover {
+		background: var(--brand-leaf);
+		color: #ffffff;
+		border-color: var(--brand-leaf);
+	}
+
+	.download-brand-btn.primary {
+		background: var(--brand-leaf);
+		color: #ffffff;
+		border-color: var(--brand-leaf);
+	}
+
+	.download-brand-btn.primary:hover {
+		background: #46732c;
+	}
+
+	/* SECTION 04: SLOGAN */
+	.slogan-container {
+		display: grid;
+		grid-template-columns: 320px 1fr;
+		gap: 2rem;
+		align-items: center;
+		background: var(--bg-secondary);
+		border-radius: 1.5rem;
+		padding: 1.75rem;
+		border: 1px solid var(--border);
+	}
+
+	.slogan-visual {
+		background: var(--panel-bg);
+		border-radius: 1.25rem;
+		padding: 1.5rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid var(--border);
+		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+	}
+
+	.slogan-svg-hero {
+		max-width: 100%;
+		max-height: 240px;
+		object-fit: contain;
+		filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.1));
+	}
+
+	:global([data-theme='dark']) .slogan-svg-hero {
+		filter: brightness(1.15) drop-shadow(0 6px 16px rgba(0, 0, 0, 0.5));
+	}
+
+	.slogan-details {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.values-pills {
+		display: flex;
+		gap: 0.65rem;
+		flex-wrap: wrap;
+	}
+
+	.val-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		padding: 0.45rem 0.85rem;
+		border-radius: 10px;
+		background: var(--panel-bg);
+		border: 1px solid var(--border);
+		font-size: 0.85rem;
+		color: var(--fg-primary);
+	}
+
+	.val-pill strong {
+		color: var(--brand-leaf);
+	}
+
+	.val-pill span {
+		font-size: 0.74rem;
+		color: var(--fg-muted);
+	}
+
+	.slogan-philosophy {
+		font-size: 0.95rem;
+		line-height: 1.6;
+		color: var(--fg-secondary);
+		margin: 0;
+	}
+
+	/* SECTION 07: TYPOGRAPHY */
+	.type-samples {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.type-item {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+		padding-bottom: 1.5rem;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.type-item:last-child {
+		border-bottom: none;
+		padding-bottom: 0;
+	}
+
+	.type-meta {
+		font-family: monospace;
+		font-size: 0.8rem;
+		font-weight: 700;
+		color: var(--fg-muted);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.type-demo {
+		color: var(--fg-primary);
+	}
+
+	.bold-demo {
+		font-size: 1.75rem;
+		font-weight: 800;
+		letter-spacing: -0.02em;
+	}
+
+	.medium-demo {
+		font-size: 1.25rem;
+		font-weight: 500;
+		line-height: 1.4;
+	}
+
+	.regular-demo {
+		font-size: 1rem;
+		font-weight: 400;
+		color: var(--fg-secondary);
+		line-height: 1.6;
+	}
+
+	/* RESPONSIVE */
+	@media (max-width: 900px) {
+		.brandbook-page {
+			padding: 1.5rem 1rem calc(4.5rem + 50px);
+		}
+
+		.brandbook-header {
+			padding-left: 0;
+		}
+
+		.brandbook-layout {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 1rem;
+		}
+
+		.brandbook-sections {
+			gap: 1.75rem;
+		}
+
+		.guide-card {
+			padding: 1.5rem;
+			border-radius: 1.25rem;
+			gap: 1.5rem;
+		}
+
 		.palette-grid {
 			grid-template-columns: 1fr;
+		}
+
+		.naming-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.slogan-container {
+			grid-template-columns: 1fr;
+			gap: 1.25rem;
 		}
 	}
 </style>
