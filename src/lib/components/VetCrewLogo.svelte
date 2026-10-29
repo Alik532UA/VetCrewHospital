@@ -424,7 +424,7 @@
 				cx="485.31"
 				cy="485.31"
 				r="461.76"
-				fill="#13371b"
+				fill="var(--logo-bg-circle, #13371b)"
 				stroke="url(#rim-gradient)"
 				stroke-width="5"
 			/>
@@ -441,8 +441,8 @@
 
 			<!-- 3. Logo Content Group -->
 			<g id="logo-content" transform="translate(0, 6.15)">
-				<!-- Paw Print (White) with individual dynamic toes -->
-				<g id="paw" fill="#ffffff" filter="url(#paw-shadow)">
+				<!-- Paw Print with individual dynamic toes -->
+				<g id="paw" fill="var(--logo-paw, #ffffff)" filter="url(#paw-shadow)">
 					{#each toesState as toe (toe.id)}
 						<g
 							transform="translate({toe.currX.toFixed(2)}, {toe.currY.toFixed(2)}) translate({toe.cx}, {toe.cy}) rotate({toe.currRot.toFixed(2)}) scale({toe.currScale.toFixed(3)}) translate(-{toe.cx}, -{toe.cy})"
@@ -459,16 +459,16 @@
 					</g>
 				</g>
 
-				<!-- Text: VET CREW (Gold) -->
+				<!-- Text: VET CREW -->
 				<g
 					transform="translate(0, {textVetCrewState.currY.toFixed(2)}) translate({textVetCrewState.cx}, {textVetCrewState.cy}) scale({textVetCrewState.currScale.toFixed(3)}) translate(-{textVetCrewState.cx}, -{textVetCrewState.cy})"
 				>
-					<path id="text-vet-crew" fill="#ffb327" d={textVetCrewState.d} />
+					<path id="text-vet-crew" fill="var(--logo-vet-crew, #ffb327)" d={textVetCrewState.d} />
 				</g>
 
-				<!-- Text: HOSPITAL (Green arc) -->
+				<!-- Text: HOSPITAL -->
 				<g transform="translate(0, {textHospitalState.currY.toFixed(2)})">
-					<path id="text-hospital" fill="#598f3a" d={textHospitalState.d} />
+					<path id="text-hospital" fill="var(--logo-hospital, #598f3a)" d={textHospitalState.d} />
 				</g>
 			</g>
 		</svg>
@@ -509,6 +509,12 @@
 		filter: drop-shadow(0 18px 45px rgba(0, 0, 0, 0.5))
 			drop-shadow(0 0 25px rgba(89, 143, 58, 0.25));
 		transition: filter 0.5s ease;
+	}
+
+	.vet-crew-svg path,
+	.vet-crew-svg circle,
+	.vet-crew-svg g {
+		transition: fill var(--transition-speed) var(--transition-easing);
 	}
 
 	:global([data-theme='light']) .vet-crew-svg {

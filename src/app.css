@@ -4,15 +4,27 @@
 	--transition-easing: cubic-bezier(0.16, 1, 0.3, 1);
 	color-scheme: light dark;
 
-	/* Core Brand Accents */
+	/* Core Brand Accents - Dark Theme Default */
 	--brand-circle: #13371b;
 	--brand-gold: #ffb327;
 	--brand-gold-glow: rgba(255, 179, 39, 0.45);
 	--brand-leaf: #598f3a;
+
+	/* Dynamic Logo Parts Variables */
+	--logo-bg-circle: #13371b;
+	--logo-paw: #ffffff;
+	--logo-vet-crew: #ffb327;
+	--logo-hospital: #598f3a;
 }
 
 :root,
 [data-theme='light'] {
+	/* Light Theme Custom Palette from User Swatch */
+	--logo-bg-circle: #598F3A;
+	--logo-paw: #FFB327;
+	--logo-vet-crew: #E5E5E5;
+	--logo-hospital: #FFB327;
+
 	--bg-primary: #f5f8f5;
 	--bg-secondary: #e6ede6;
 	--fg-primary: #0c1c10;
@@ -36,6 +48,11 @@
 }
 
 [data-theme='dark'] {
+	--logo-bg-circle: #13371b;
+	--logo-paw: #ffffff;
+	--logo-vet-crew: #ffb327;
+	--logo-hospital: #598f3a;
+
 	--bg-primary: #070e09;
 	--bg-secondary: #0d1a10;
 	--fg-primary: #f5f8f5;
