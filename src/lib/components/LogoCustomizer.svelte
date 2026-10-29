@@ -38,14 +38,14 @@
 			hospital: '#598F3A'
 		},
 		{
-			id: 'light-emblem',
-			nameUk: 'Світла емблема',
-			nameEn: 'Light Emblem',
+			id: 'light-theme',
+			nameUk: 'Світла тема',
+			nameEn: 'Light Theme',
 			bgEnabled: true,
-			bgCircle: '#E5E5E5',
-			paw: '#13371B',
-			vetCrew: '#13371B',
-			hospital: '#598F3A'
+			bgCircle: '#598F3A',
+			paw: '#FFB327',
+			vetCrew: '#E5E5E5',
+			hospital: '#FFB327'
 		},
 		{
 			id: 'monochrome-white',
@@ -209,9 +209,16 @@
 		<span class="bar-label">{langStore.current === 'uk' ? 'Швидкі шаблони:' : 'Presets:'}</span>
 		<div class="presets-list">
 			{#each PRESETS as p (p.id)}
+				{@const isActive =
+					bgEnabled === p.bgEnabled &&
+					(!p.bgEnabled || bgCircleColor.toLowerCase() === p.bgCircle.toLowerCase()) &&
+					pawColor.toLowerCase() === p.paw.toLowerCase() &&
+					vetCrewColor.toLowerCase() === p.vetCrew.toLowerCase() &&
+					hospitalColor.toLowerCase() === p.hospital.toLowerCase()}
 				<button
 					type="button"
 					class="preset-chip"
+					class:is-active={isActive}
 					onclick={() => applyPreset(p)}
 				>
 					<span class="preset-dot" style:background-color={p.bgEnabled ? p.bgCircle : p.paw}></span>
@@ -507,6 +514,12 @@
 	.preset-chip:hover {
 		border-color: var(--brand-leaf);
 		transform: translateY(-1px);
+	}
+
+	.preset-chip.is-active {
+		border-color: var(--brand-leaf);
+		background: rgba(89, 143, 58, 0.12);
+		color: var(--brand-leaf);
 	}
 
 	.preset-dot {
