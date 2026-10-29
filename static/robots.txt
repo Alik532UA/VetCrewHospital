@@ -1,4 +1,8 @@
 User-agent: *
-Allow: /VetCrewHospital/
+Disallow: /brandbook
+Disallow: /brandbook/
+Disallow: /VetCrewHospital/brandbook
+Disallow: /VetCrewHospital/brandbook/
+Allow: /
 
 Sitemap: https://alik532ua.github.io/VetCrewHospital/sitemap.xml

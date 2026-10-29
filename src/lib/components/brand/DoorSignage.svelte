@@ -42,7 +42,7 @@
 		{ id: 'herpetology', num: '04', titleUk: 'Герпетологія (Рептилії)', titleEn: 'Herpetology Department', file: 'herpetology.svg' },
 		{ id: 'ornithology', num: '05', titleUk: 'Орнітологія (Птахи)', titleEn: 'Ornithology Department', file: 'ornithology.svg' },
 		{ id: 'surgery', num: '06', titleUk: 'Хірургічний блок', titleEn: 'Surgical Suite', file: 'surgery.svg' },
-		{ id: 'hospital', num: '07', titleUk: 'Цілодобовий стаціонар', titleEn: '24/7 Inpatient Care', file: 'hospital.svg' },
+		{ id: 'hospital', num: '07', titleUk: 'Ветеринарний стаціонар', titleEn: 'Inpatient Hospital Care', file: 'hospital.svg' },
 		{ id: 'laboratory', num: '08', titleUk: 'Клінічна лабораторія', titleEn: 'Clinical Laboratory', file: 'laboratory.svg' }
 	];
 

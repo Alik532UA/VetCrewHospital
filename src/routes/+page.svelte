@@ -101,21 +101,21 @@
 </script>
 
 <svelte:head>
-	<title>{langStore.t('hospital_name')} — {langStore.current === 'uk' ? 'Цілодобовий ветеринарний госпіталь' : '24/7 Veterinary Hospital'}</title>
+	<title>{langStore.t('hospital_name')} — {langStore.current === 'uk' ? 'Ветеринарний госпіталь в Одесі' : 'Veterinary Hospital in Odesa'}</title>
 	<meta
 		name="description"
 		content="{langStore.current === 'uk'
-			? 'Vet Crew Hospital — цілодобовий ветеринарний госпіталь та невідкладна допомога диким та екзотичним тваринам. Телефон: +380775010101.'
-			: 'Vet Crew Hospital — 24/7 Veterinary Hospital and emergency care for exotic and wild animals. Phone: +380775010101.'}"
+			? 'Vet Crew Hospital — ветеринарний госпіталь та кваліфікована допомога диким, екзотичним і домашнім тваринам в Одесі. Телефон: +380 77 501 01 01.'
+			: 'Vet Crew Hospital — veterinary hospital and specialized care for wild, exotic, and companion animals in Odesa. Phone: +380 77 501 01 01.'}"
 	/>
 	<link rel="canonical" href="https://alik532ua.github.io/VetCrewHospital/" />
 	<meta property="og:url" content="https://alik532ua.github.io/VetCrewHospital/" />
-	<meta property="og:title" content="{langStore.t('hospital_name')}" />
+	<meta property="og:title" content="{langStore.t('hospital_name')} — {langStore.current === 'uk' ? 'Ветеринарний госпіталь' : 'Veterinary Hospital'}" />
 	<meta
 		property="og:description"
 		content="{langStore.current === 'uk'
-			? 'Цілодобова ветеринарна допомога екзотичним та диким тваринам в Одесі. Екстрена лінія: +380775010101.'
-			: '24/7 emergency veterinary care for exotic and wild animals in Odesa. Emergency line: +380775010101.'}"
+			? 'Ветеринарна допомога екзотичним, диким та домашнім тваринам в Одесі. Телефон: +380 77 501 01 01.'
+			: 'Veterinary care for exotic, wild, and companion animals in Odesa. Phone: +380 77 501 01 01.'}"
 	/>
 </svelte:head>
 

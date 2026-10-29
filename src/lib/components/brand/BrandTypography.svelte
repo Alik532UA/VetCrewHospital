@@ -28,7 +28,7 @@
 			descEn: 'Exclusive display typeface of the "VET CREW HOSPITAL" wordmark with sharp aerodynamic terminals.',
 			weights: 'Bold 700',
 			file: 'inglobalb.ttf',
-			sampleHead: 'VET CREW HOSPITAL 24/7'
+			sampleHead: 'VET CREW HOSPITAL'
 		},
 		{
 			id: 'montserrat',
@@ -62,8 +62,8 @@
 		{
 			labelUk: 'Заголовок',
 			labelEn: 'Headline',
-			textUk: 'VET CREW HOSPITAL — Цілодобова турбота',
-			textEn: 'VET CREW HOSPITAL — 24/7 Animal Care'
+			textUk: 'VET CREW HOSPITAL — Професійна турбота',
+			textEn: 'VET CREW HOSPITAL — Specialized Animal Care'
 		},
 		{
 			labelUk: 'Панграма (А–Я)',
@@ -80,8 +80,8 @@
 		{
 			labelUk: 'Цифри та знаки',
 			labelEn: 'Numbers & Info',
-			textUk: '0123456789 — +380 (44) 123-45-67 · vetcrew.org @ 24/7',
-			textEn: '0123456789 — +1 (800) 555-0199 · vetcrew.org @ 24/7'
+			textUk: '0123456789 — +380 77 501 01 01 · vetcrew.org',
+			textEn: '0123456789 — +380 77 501 01 01 · vetcrew.org'
 		}
 	];
 
@@ -94,8 +94,8 @@
 
 	let defaultText = $derived(
 		langStore.current === 'uk'
-			? 'Vet Crew Hospital — Цілодобова допомога екзотичним та диким тваринам'
-			: 'Vet Crew Hospital — 24/7 Care for Exotic, Wild and Companion Animals'
+			? 'Vet Crew Hospital — Ветеринарна допомога екзотичним та диким тваринам'
+			: 'Vet Crew Hospital — Specialized Care for Exotic, Wild and Companion Animals'
 	);
 
 	let displayTestText = $derived(customText.trim() ? customText : defaultText);

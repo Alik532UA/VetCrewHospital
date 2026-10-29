@@ -70,20 +70,12 @@
 
 <svelte:head>
 	<title>{langStore.current === 'uk' ? 'Офіційний брендбук — Vet Crew Hospital' : 'Official BrandBook — Vet Crew Hospital'}</title>
+	<meta name="robots" content="noindex, nofollow" />
 	<meta
 		name="description"
 		content="{langStore.current === 'uk'
-			? 'Офіційний гайдлайн та брендбук Vet Crew Hospital: колірна палітра, 3D конструктор логотипу, іконки тварин, QR-навігація, слогани та типографіка.'
-			: 'Official guideline and brandbook for Vet Crew Hospital: color palette, 3D logo customizer, animal emblems, QR signage, slogans, and typography.'}"
-	/>
-	<link rel="canonical" href="https://alik532ua.github.io/VetCrewHospital/brandbook" />
-	<meta property="og:url" content="https://alik532ua.github.io/VetCrewHospital/brandbook" />
-	<meta property="og:title" content="{langStore.current === 'uk' ? 'Брендбук — Vet Crew Hospital' : 'BrandBook — Vet Crew Hospital'}" />
-	<meta
-		property="og:description"
-		content="{langStore.current === 'uk'
-			? 'Гайдлайн візуального стилю Vet Crew Hospital. Завантаження векторних SVG, PNG та шрифтів.'
-			: 'Visual identity guideline for Vet Crew Hospital. Download vector SVGs, PNGs, and font assets.'}"
+			? 'Внутрішній гайдлайн та брендбук Vet Crew Hospital: колірна палітра, 3D конструктор логотипу, іконки тварин, навігація, слогани та типографіка.'
+			: 'Internal guideline and brandbook for Vet Crew Hospital: color palette, 3D logo customizer, animal emblems, signage, slogans, and typography.'}"
 	/>
 </svelte:head>
 

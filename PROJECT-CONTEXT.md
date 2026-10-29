@@ -3,7 +3,7 @@
 ## 1. Загальні відомості
 
 - **Назва**: Vet Crew Hospital
-- **Опис**: Офіційний інтерактивний веб-портал ветеринарного госпіталю Vet Crew (динамічне 3D лого, інтерактивні контакти невідкладної допомоги, двостадійний скрол-інтерфейс, підтримка темної та світлої тем, багатомовність UA/EN).
+- **Опис**: Офіційний інтерактивний веб-портал ветеринарного госпіталю Vet Crew (динамічне 3D лого, інтерактивні контакти ветеринарного госпіталю, двостадійний скрол-інтерфейс, підтримка темної та світлої тем, багатомовність UA/EN).
 - **Стек**: SvelteKit 2 + Svelte 5 (Runes), TypeScript, adapter-static, Lucide Svelte, CSS Variables.
 - **Хостинг**: GitHub Pages (`https://alik532ua.github.io/VetCrewHospital/`).
 - **Гілка деплою**: `main`.
@@ -44,11 +44,15 @@
 
 ## 6. Пошукова оптимізація та метадані (SEO-v10)
 
-- **Single Ownership метаданих (SEO-v10 § 4.1 & § 4.4)**: `app.html` містить лише глобальні OG/Theming теги, а `<title>`, `<meta name="description">`, `canonical`, `og:url`, `og:title`, `og:description` керуються суворо на рівні сторінок через `<svelte:head>` у `src/routes/+page.svelte` та `src/routes/brandbook/+page.svelte`.
+- **Single Ownership метаданих (SEO-v10 § 4.1 & § 4.4)**: `app.html` містить лише глобальні OG/Theming теги, а `<title>`, `<meta name="description">`, `canonical`, `og:url`, `og:title`, `og:description` керуються суворо на рівні сторінки `src/routes/+page.svelte`.
+- **Захист внутрішнього брендбука від індексації**:
+  - `src/routes/brandbook/+page.svelte` містить `<meta name="robots" content="noindex, nofollow" />`.
+  - `static/robots.txt` блокує сканування шляхів `/brandbook` та `/VetCrewHospital/brandbook`.
+  - `static/sitemap.xml` містить виключно публічну головну сторінку госпіталю.
 - **Файли індексації та AI-сумісності**:
-  - `static/robots.txt`: дозволяє повну індексацію для всіх ботів та вказує шлях до `sitemap.xml`.
-  - `static/sitemap.xml`: містить повні абсолютні посилання на головну сторінку та брендбук із пріоритетами й датами модифікації.
-  - `static/llms.txt`: стандартизований маніфест вмісту сайту для AI пошукових агентів (контакти, посилання, опис структури).
+  - `static/robots.txt`: керує правами ботів та вказує шлях до `sitemap.xml`.
+  - `static/sitemap.xml`: індексує виключно публічний головний портал госпіталю.
+  - `static/llms.txt`: стандартизований маніфест вмісту сайту для AI пошукових агентів (реальні контакти, посилання, послуги без згадки 24/7).
 
 ## 7. Стандарти якості коду та CI/CD (CODE-QUALITY-v10 & CI-CD-AND-TOOLS-v10)
 
