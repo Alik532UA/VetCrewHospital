@@ -13,7 +13,8 @@ const base = /** @type {'' | `/${string}`} */ (rawBase);
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	compilerOptions: {
-		runes: true
+		// CODE-QUALITY § 1.1.1: руни для коду проєкту; бібліотеки з node_modules — у власному режимі
+		runes: ({ filename }) => (filename.split(/[/\\]/).includes('node_modules') ? undefined : true)
 	},
 	kit: {
 		adapter: adapter({

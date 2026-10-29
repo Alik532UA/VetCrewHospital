@@ -36,6 +36,9 @@ jobs:
       - name: Check types & code
         run: npm run check
 
+      - name: Run unit tests
+        run: npm run test:unit
+
       - name: Resolve base path and origin
         id: site
         run: |

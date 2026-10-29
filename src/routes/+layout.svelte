@@ -8,6 +8,11 @@
 	}
 
 	let { children }: Props = $props();
+
+	// CODE-QUALITY § 5.3: сигнал гідратації — лише в браузері після монтування
+	$effect(() => {
+		document.documentElement.dataset.hydrated = '';
+	});
 </script>
 
 <div class="app-root">
