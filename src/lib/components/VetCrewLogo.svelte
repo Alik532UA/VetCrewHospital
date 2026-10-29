@@ -217,8 +217,7 @@
 				}
 
 				// Idle floating waves for elements
-				for (let i = 0; i < toesState.length; i++) {
-					const el = toesState[i];
+				for (const el of toesState) {
 					const wave = Math.sin(time * 0.0022 + el.phase) * 3.2;
 					const rot = Math.cos(time * 0.0018 + el.phase) * 1.0;
 					el.targetX = hasOrientation ? tiltNormX * 2.5 : 0;
@@ -266,8 +265,7 @@
 				targetTiltY = targetNormX * 11;
 
 				// Update toes with cursor physics
-				for (let i = 0; i < toesState.length; i++) {
-					const el = toesState[i];
+				for (const el of toesState) {
 					const radius = 320;
 					const dx = activeSvgX - el.cx;
 					const dy = activeSvgY - el.cy;

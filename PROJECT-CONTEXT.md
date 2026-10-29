@@ -42,3 +42,20 @@
 - **Стан 1 (State 1: Hero Logo)**: Центральний акцент на динамічному 3D логотипі з відстеженням миші та гіроскопа, компактний док дій внизу.
 - **Стан 2 (State 2: Actions Focus)**: Логотип плавно зменшується й підіймається вгору, відкриваючи великі інтерактивні картки дій (дзвінок, інстаграм, навігація на мапі).
 
+## 6. Пошукова оптимізація та метадані (SEO-v10)
+
+- **Single Ownership метаданих (SEO-v10 § 4.1 & § 4.4)**: `app.html` містить лише глобальні OG/Theming теги, а `<title>`, `<meta name="description">`, `canonical`, `og:url`, `og:title`, `og:description` керуються суворо на рівні сторінок через `<svelte:head>` у `src/routes/+page.svelte` та `src/routes/brandbook/+page.svelte`.
+- **Файли індексації та AI-сумісності**:
+  - `static/robots.txt`: дозволяє повну індексацію для всіх ботів та вказує шлях до `sitemap.xml`.
+  - `static/sitemap.xml`: містить повні абсолютні посилання на головну сторінку та брендбук із пріоритетами й датами модифікації.
+  - `static/llms.txt`: стандартизований маніфест вмісту сайту для AI пошукових агентів (контакти, посилання, опис структури).
+
+## 7. Стандарти якості коду та CI/CD (CODE-QUALITY-v10 & CI-CD-AND-TOOLS-v10)
+
+- **TypeScript Strictness (CODE-QUALITY-v10 § 1.1)**:
+  - `"strict": true`
+  - `"noUncheckedIndexedAccess": true` (захист від runtime помилок доступу до невизначених індексів масивів)
+  - `"noImplicitReturns": true`
+- **CI/CD Автоматизація**:
+  - GitHub Actions Workflow (`.github/workflows/deploy.yml`) запускається при `push` та `pull_request` до гілки `main`.
+  - Обов'язкові кроки перевірки: `npm run audit:ci` (перевірка вразливостей з порогами high/critical), `npm run check` (типізація Svelte/TypeScript), `npm run build` (статична генерація adapter-static).

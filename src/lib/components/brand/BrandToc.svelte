@@ -41,7 +41,9 @@
 				if (t.getBoundingClientRect().top > line) break;
 				current = t;
 			}
-			activeId = current.id;
+			if (current) {
+				activeId = current.id;
+			}
 		};
 
 		let queued = false;

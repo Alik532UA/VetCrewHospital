@@ -89,7 +89,8 @@
 	let fontSize = $state<number>(36);
 	let customText = $state<string>('');
 
-	let activeFontObj = $derived(FONTS.find((f) => f.id === activeTesterFont) ?? FONTS[0]);
+	const DEFAULT_FONT: FontInfo = FONTS[0]!;
+	let activeFontObj = $derived(FONTS.find((f) => f.id === activeTesterFont) ?? DEFAULT_FONT);
 
 	let defaultText = $derived(
 		langStore.current === 'uk'
