@@ -168,21 +168,39 @@
 </script>
 
 <svelte:head>
-	<title>{langStore.t('hospital_name')} — {langStore.current === 'uk' ? 'Ветеринарний госпіталь в Одесі' : 'Veterinary Hospital in Odesa'}</title>
+	<title>{langStore.current === 'uk' ? 'Vet Crew Hospital — Центр лікування екзотичних та диких тварин в Одесі' : 'Vet Crew Hospital — Care Center for Exotic and Wild Animals in Odesa'}</title>
 	<meta
 		name="description"
 		content="{langStore.current === 'uk'
-			? 'Vet Crew Hospital — ветеринарний госпіталь та кваліфікована допомога диким, екзотичним і домашнім тваринам в Одесі. Телефон: +380 77 501 01 01.'
-			: 'Vet Crew Hospital — veterinary hospital and specialized care for wild, exotic, and companion animals in Odesa. Phone: +380 77 501 01 01.'}"
+			? 'Vet Crew Hospital — Центр лікування екзотичних та диких тварин. м. Одеса, вул. Майстрова, буд. 4. Телефон: +380 77 501 01 01.'
+			: 'Vet Crew Hospital — Care Center for Exotic and Wild Animals. Odesa, Maystrova St, 4. Phone: +380 77 501 01 01.'}"
 	/>
 	<link rel="canonical" href="https://alik532ua.github.io/VetCrewHospital/" />
 	<meta property="og:url" content="https://alik532ua.github.io/VetCrewHospital/" />
-	<meta property="og:title" content="{langStore.t('hospital_name')} — {langStore.current === 'uk' ? 'Ветеринарний госпіталь' : 'Veterinary Hospital'}" />
+	<meta
+		property="og:title"
+		content="{langStore.current === 'uk'
+			? 'Vet Crew Hospital — Центр лікування екзотичних та диких тварин'
+			: 'Vet Crew Hospital — Care Center for Exotic and Wild Animals'}"
+	/>
 	<meta
 		property="og:description"
+		content={langStore.current === 'uk'
+			? `м. Одеса, вул. Майстрова, буд. 4\n+380 77 501 01 01`
+			: `Odesa, Maystrova St, 4\n+380 77 501 01 01`}
+	/>
+	<meta name="twitter:card" content="summary" />
+	<meta
+		name="twitter:title"
 		content="{langStore.current === 'uk'
-			? 'Ветеринарна допомога екзотичним, диким та домашнім тваринам в Одесі. Телефон: +380 77 501 01 01.'
-			: 'Veterinary care for exotic, wild, and companion animals in Odesa. Phone: +380 77 501 01 01.'}"
+			? 'Vet Crew Hospital — Центр лікування екзотичних та диких тварин'
+			: 'Vet Crew Hospital — Care Center for Exotic and Wild Animals'}"
+	/>
+	<meta
+		name="twitter:description"
+		content={langStore.current === 'uk'
+			? `м. Одеса, вул. Майстрова, буд. 4\n+380 77 501 01 01`
+			: `Odesa, Maystrova St, 4\n+380 77 501 01 01`}
 	/>
 </svelte:head>
 
