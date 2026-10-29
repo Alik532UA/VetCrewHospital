@@ -422,7 +422,7 @@
 					<div class="card-head">
 						<span class="step-num">09</span>
 						<div>
-							<h2 class="card-title">{langStore.current === 'uk' ? 'Емблема шпиталю з тваринами' : 'Hospital Emblems with Animals'}</h2>
+							<h2 class="card-title">{langStore.current === 'uk' ? 'Комплексний логотип з тваринами' : 'Composite Logos with Animals'}</h2>
 						</div>
 					</div>
 

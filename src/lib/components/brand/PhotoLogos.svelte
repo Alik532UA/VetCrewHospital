@@ -6,6 +6,8 @@
 	interface EmblemItem {
 		id: string;
 		num: string;
+		nameUk: string;
+		nameEn: string;
 		svgFile: string;
 		pngFile: string;
 	}
@@ -14,24 +16,32 @@
 		{
 			id: 'emblem-01',
 			num: '01',
+			nameUk: 'вхід',
+			nameEn: 'entrance',
 			svgFile: 'emblem-animals-01.svg',
 			pngFile: 'emblem-animals-01.png'
 		},
 		{
 			id: 'emblem-02',
 			num: '02',
+			nameUk: 'приймальна',
+			nameEn: 'reception',
 			svgFile: 'emblem-animals-02.svg',
 			pngFile: 'emblem-animals-02.png'
 		},
 		{
 			id: 'emblem-03',
 			num: '03',
+			nameUk: 'стаціонар',
+			nameEn: 'inpatient',
 			svgFile: 'emblem-animals-03.svg',
 			pngFile: 'emblem-animals-03.png'
 		},
 		{
 			id: 'emblem-04',
 			num: '04',
+			nameUk: 'сходи',
+			nameEn: 'stairs',
 			svgFile: 'emblem-animals-04.svg',
 			pngFile: 'emblem-animals-04.png'
 		}
@@ -53,7 +63,7 @@
 				<div class="emblem-preview-stage stage--{stageTheme}">
 					<img
 						src="{base}/brand/emblems/{item.svgFile}"
-						alt="Емблема шпиталю з тваринами (Варіант {item.num})"
+						alt={langStore.current === 'uk' ? `Комплексний логотип з тваринами (${item.num} ${item.nameUk})` : `Composite logo with animals (${item.num} ${item.nameEn})`}
 						class="emblem-svg-render"
 						loading="lazy"
 					/>
@@ -61,9 +71,9 @@
 
 				<div class="emblem-card-body">
 					<div class="emblem-card-header">
-						<span class="edition-num">EDITION #{item.num}</span>
+						<span class="edition-num">{item.num}</span>
 						<h3 class="emblem-card-title">
-							{langStore.current === 'uk' ? `Варіант ${item.num}` : `Option ${item.num}`}
+							{langStore.current === 'uk' ? item.nameUk : item.nameEn}
 						</h3>
 					</div>
 
@@ -71,9 +81,9 @@
 					<div class="emblem-card-actions">
 						<a
 							href="{base}/brand/emblems/{item.svgFile}"
-							download="vet-crew-emblem-{item.num}.svg"
+							download="vet-crew-{item.num}-{item.nameUk}.svg"
 							class="download-btn svg-btn"
-							title="{langStore.current === 'uk' ? `Завантажити векторний SVG (Варіант ${item.num})` : `Download vector SVG (Option ${item.num})`}"
+							title="{langStore.current === 'uk' ? `Завантажити векторний SVG (${item.num} ${item.nameUk})` : `Download vector SVG (${item.num} ${item.nameEn})`}"
 						>
 							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -85,9 +95,9 @@
 
 						<a
 							href="{base}/brand/emblems/{item.pngFile}"
-							download="vet-crew-emblem-{item.num}.png"
+							download="vet-crew-{item.num}-{item.nameUk}.png"
 							class="download-btn png-btn"
-							title="{langStore.current === 'uk' ? `Завантажити PNG (2000 px) — Варіант ${item.num}` : `Download PNG (2000 px) — Option ${item.num}`}"
+							title="{langStore.current === 'uk' ? `Завантажити PNG (2000 px) — ${item.num} ${item.nameUk}` : `Download PNG (2000 px) — ${item.num} ${item.nameEn}`}"
 						>
 							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -220,13 +230,12 @@
 	.emblem-card-header {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
-		gap: 0.5rem;
+		gap: 0.65rem;
 	}
 
 	.edition-num {
 		font-family: monospace;
-		font-size: 0.76rem;
+		font-size: 0.82rem;
 		font-weight: 800;
 		color: var(--brand-leaf);
 		background: rgba(89, 143, 58, 0.12);

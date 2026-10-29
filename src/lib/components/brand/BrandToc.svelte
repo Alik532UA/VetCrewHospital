@@ -20,7 +20,7 @@
 		{ id: 'qr', num: '06', titleUk: 'QR-таблички', titleEn: 'QR Signage', iconType: 'qr' },
 		{ id: 'typography', num: '07', titleUk: 'Типографіка', titleEn: 'Typography', iconType: 'typography' },
 		{ id: 'door-signs', num: '08', titleUk: 'Таблички відділень', titleEn: 'Clinic Signage', iconType: 'doors' },
-		{ id: 'photo-logos', num: '09', titleUk: 'Емблеми з тваринами', titleEn: 'Animal Emblems', iconType: 'photo' }
+		{ id: 'photo-logos', num: '09', titleUk: 'Комплексний логотип з тваринами', titleEn: 'Composite Logos with Animals', iconType: 'photo' }
 	];
 
 	let activeId = $state<string>('palette');
