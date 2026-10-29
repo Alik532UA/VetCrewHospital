@@ -990,12 +990,16 @@
 
 	/* Custom Picker Button */
 	.custom-picker-btn {
-		background: conic-gradient(from 180deg at 50% 50%, #FF0000 0deg, #FFA500 51deg, #FFFF00 102deg, #008000 153deg, #0000FF 204deg, #4B0082 255deg, #EE82EE 306deg, #FF0000 360deg);
+		background: conic-gradient(from 0deg at 50% 50%, #FF0000 0deg, #FFA500 51deg, #FFFF00 102deg, #008000 153deg, #0000FF 204deg, #4B0082 255deg, #EE82EE 306deg, #FF0000 360deg);
 		background-clip: padding-box;
 		color: #ffffff;
 		cursor: pointer;
 		overflow: hidden;
-		text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+		text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+	}
+
+	.custom-picker-btn svg {
+		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.85));
 	}
 
 	.custom-picker-btn input[type='color'] {
