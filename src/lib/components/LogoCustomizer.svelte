@@ -223,6 +223,11 @@
 			isExportingPng = false;
 		}
 	}
+
+	function isCustomColor(hex: string): boolean {
+		const norm = hex.toLowerCase();
+		return !brandColors.some((c) => c.hex.toLowerCase() === norm) && norm !== '#ffffff';
+	}
 </script>
 
 <div class="logo-customizer">
@@ -533,13 +538,26 @@
 					</button>
 
 					<!-- Custom Color Picker -->
-					<label class="color-swatch-btn custom-picker-btn" title="Кастомний колір">
+					<label
+						class="color-swatch-btn custom-picker-btn"
+						class:is-active={isCustomColor(getCurrentColor(activeGroup))}
+						title={langStore.current === 'uk' ? 'Кастомний колір (палітра)' : 'Custom color picker'}
+					>
 						<input
 							type="color"
 							value={getCurrentColor(activeGroup)}
 							oninput={(e) => setCurrentColor(activeGroup, (e.target as HTMLInputElement).value.toUpperCase())}
 						/>
-						<span class="swatch-name">{langStore.current === 'uk' ? 'Кастом' : 'Custom'}</span>
+						<span class="swatch-name">
+							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block; vertical-align:-2px; margin-right:4px;">
+								<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+								<circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+								<circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+								<circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+								<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+							</svg>
+							{langStore.current === 'uk' ? 'Кастом' : 'Custom'}
+						</span>
 						<code class="swatch-code">{getCurrentColor(activeGroup)}</code>
 					</label>
 				</div>
@@ -953,10 +971,11 @@
 
 	/* Custom Picker Button */
 	.custom-picker-btn {
-		background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+		background: conic-gradient(from 180deg at 50% 50%, #FFB327 0deg, #93C84A 72deg, #598F3A 144deg, #13371B 216deg, #FFB327 360deg);
 		color: #ffffff;
 		cursor: pointer;
 		overflow: hidden;
+		text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
 	}
 
 	.custom-picker-btn input[type='color'] {

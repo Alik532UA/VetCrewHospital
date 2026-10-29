@@ -199,7 +199,11 @@
 					{/each}
 
 					<!-- Custom HTML5 Color Picker -->
-					<label class="color-pill-btn custom-picker-pill" title={langStore.current === 'uk' ? 'Кастомний колір' : 'Custom color'}>
+					<label
+						class="color-pill-btn custom-picker-pill"
+						class:is-active={!BRAND_COLORS.some((c) => c.hex.toUpperCase() === signColor.toUpperCase())}
+						title={langStore.current === 'uk' ? 'Кастомний колір (палітра)' : 'Custom color'}
+					>
 						<input
 							type="color"
 							value={signColor}
@@ -505,8 +509,23 @@
 	}
 
 	.custom-picker-pill {
-		background: conic-gradient(from 0deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+		position: relative;
+		border-radius: 50%;
 		overflow: hidden;
+		isolation: isolate;
+		-webkit-mask-image: -webkit-radial-gradient(white, black);
+		mask-image: radial-gradient(circle, #fff 100%, #000 100%);
+		background: transparent;
+	}
+
+	.custom-picker-pill::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: 50%;
+		clip-path: circle(50% at 50% 50%);
+		background: conic-gradient(from 180deg at 50% 50%, #FFB327 0deg, #93C84A 72deg, #598F3A 144deg, #13371B 216deg, #FFB327 360deg);
+		z-index: 0;
 	}
 
 	.custom-picker-pill input[type="color"] {
@@ -516,12 +535,15 @@
 		cursor: pointer;
 		width: 100%;
 		height: 100%;
+		z-index: 2;
 	}
 
 	.picker-icon {
+		position: relative;
+		z-index: 1;
 		font-size: 0.75rem;
 		pointer-events: none;
-		filter: drop-shadow(0 1px 2px rgba(0,0,0,0.6));
+		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.65));
 	}
 
 	/* STAGE BG SWITCHER */

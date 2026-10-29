@@ -128,7 +128,11 @@
 				{/each}
 
 				<!-- Custom color picker -->
-				<label class="color-pill-btn custom-picker-pill" title={langStore.current === 'uk' ? 'Кастомний колір' : 'Custom color'}>
+				<label
+					class="color-pill-btn custom-picker-pill"
+					class:is-active={!brandColors.some((c) => c.hex.toUpperCase() === animalColor.toUpperCase())}
+					title={langStore.current === 'uk' ? 'Кастомний колір (палітра)' : 'Custom color'}
+				>
 					<input
 						type="color"
 						value={animalColor}
@@ -349,22 +353,40 @@
 
 	.custom-picker-pill {
 		position: relative;
-		background: conic-gradient(from 180deg at 50% 50%, #FFB327 0deg, #93C84A 72deg, #598F3A 144deg, #13371B 216deg, #FFB327 360deg);
+		border-radius: 50%;
 		overflow: hidden;
+		isolation: isolate;
+		-webkit-mask-image: -webkit-radial-gradient(white, black);
+		mask-image: radial-gradient(circle, #fff 100%, #000 100%);
+		background: transparent;
+	}
+
+	.custom-picker-pill::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: 50%;
+		clip-path: circle(50% at 50% 50%);
+		background: conic-gradient(from 180deg at 50% 50%, #FFB327 0deg, #93C84A 72deg, #598F3A 144deg, #13371B 216deg, #FFB327 360deg);
+		z-index: 0;
 	}
 
 	.custom-picker-pill input[type="color"] {
 		position: absolute;
-		inset: -10px;
-		width: 200%;
-		height: 200%;
+		inset: 0;
+		width: 100%;
+		height: 100%;
 		opacity: 0;
 		cursor: pointer;
+		z-index: 2;
 	}
 
 	.picker-icon {
+		position: relative;
+		z-index: 1;
 		font-size: 0.9rem;
 		pointer-events: none;
+		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.65));
 	}
 
 	/* TOOLBAR */
