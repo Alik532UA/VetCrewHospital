@@ -4,6 +4,7 @@
 	import HiddenPanel from '../lib/components/HiddenPanel.svelte';
 	import ScrollIndicator from '../lib/components/ScrollIndicator.svelte';
 	import { langStore } from '../lib/lang.svelte';
+	import JsonLd from '../lib/components/JsonLd.svelte';
 
 	// 3 Scroll States (matching DeviantBlaze architecture):
 	// 1: Standard default (centered logo, clean borderless buttons, labels on hover)
@@ -98,6 +99,40 @@
 			if (wheelClearTimer) clearTimeout(wheelClearTimer);
 		};
 	});
+
+	const hospitalSchema = $derived({
+		'@context': 'https://schema.org',
+		'@type': 'VeterinaryCare',
+		name: 'Vet Crew Hospital',
+		alternateName: 'Vet Crew',
+		url: 'https://alik532ua.github.io/VetCrewHospital/',
+		logo: 'https://alik532ua.github.io/VetCrewHospital/logo.svg',
+		image: 'https://alik532ua.github.io/VetCrewHospital/logo.svg',
+		telephone: '+380775010101',
+		priceRange: '$',
+		address: {
+			'@type': 'PostalAddress',
+			streetAddress: 'вул. Майстрова, 4',
+			addressLocality: 'Одеса',
+			addressRegion: 'Одеська область',
+			postalCode: '65000',
+			addressCountry: 'UA'
+		},
+		geo: {
+			'@type': 'GeoCoordinates',
+			latitude: 46.4775,
+			longitude: 30.7326
+		},
+		sameAs: [
+			'https://www.instagram.com/vet.crew.hospital',
+			'https://maps.app.goo.gl/sTe5ePLTwwwQEZQz6'
+		],
+		description:
+			langStore.current === 'uk'
+				? 'Ветеринарний госпіталь та кваліфікована допомога диким, екзотичним і домашнім тваринам в Одесі.'
+				: 'Veterinary hospital and specialized care for wild, exotic, and companion animals in Odesa.',
+		hasMap: 'https://maps.app.goo.gl/sTe5ePLTwwwQEZQz6'
+	});
 </script>
 
 <svelte:head>
@@ -118,6 +153,8 @@
 			: 'Veterinary care for exotic, wild, and companion animals in Odesa. Phone: +380 77 501 01 01.'}"
 	/>
 </svelte:head>
+
+<JsonLd schema={hospitalSchema} />
 
 <main class="page-container state-{scrollState}">
 	<!-- Central Hero SVG Logo with dynamic cursor reactivity -->

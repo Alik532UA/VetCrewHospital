@@ -189,6 +189,16 @@
 		window.addEventListener('pointerleave', onPointerLeave);
 
 		function loop(time: number) {
+			const reducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+			if (reducedMotion) {
+				smoothTiltX = 0;
+				smoothTiltY = 0;
+				glowX = 50;
+				glowY = 50;
+				animId = requestAnimationFrame(loop);
+				return;
+			}
+
 			const dt = Math.min(time - lastTime, 50);
 			lastTime = time;
 			const idleT = time * 0.001;
