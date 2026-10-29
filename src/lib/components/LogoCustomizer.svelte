@@ -2,6 +2,7 @@
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 	import logoPaths from '$lib/assets/logo-paths.json';
+	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 
 	interface ColorOption {
 		hex: string;
@@ -92,8 +93,8 @@
 	type TargetGroup = 'bgCircle' | 'paw' | 'vetCrew' | 'hospital';
 	let activeGroup = $state<TargetGroup>('bgCircle');
 
-	// Preview checkerboard background toggle
-	let previewGrid = $state<'subtle' | 'dark' | 'light'>('subtle');
+	// Preview background switcher (defaults to transparent checkerboard)
+	let previewGrid = $state<StageTheme>('checker');
 
 	function applyPreset(p: (typeof PRESETS)[0]) {
 		bgShape = p.bgShape;
@@ -264,51 +265,11 @@
 		<!-- Left: Visual Preview Stage -->
 		<div class="preview-stage-wrap">
 			<div class="stage-toolbar">
-				<div class="grid-toggles">
-					<span class="toolbar-sublabel">{langStore.current === 'uk' ? 'Тло прев\'ю:' : 'Stage:'}</span>
-					<button
-						type="button"
-						class="grid-btn"
-						class:is-active={previewGrid === 'subtle'}
-						onclick={() => (previewGrid = 'subtle')}
-						title={langStore.current === 'uk' ? 'Прозоре тло (сітка)' : 'Transparent checkerboard'}
-						aria-label={langStore.current === 'uk' ? 'Прозоре тло (сітка)' : 'Transparent checkerboard'}
-					>
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<rect width="18" height="18" x="3" y="3" rx="2"/>
-							<path d="M3 12h18M12 3v18"/>
-						</svg>
-					</button>
-					<button
-						type="button"
-						class="grid-btn grid-btn--light"
-						class:is-active={previewGrid === 'light'}
-						onclick={() => (previewGrid = 'light')}
-						title={langStore.current === 'uk' ? 'Світле тло' : 'Light background'}
-						aria-label={langStore.current === 'uk' ? 'Світле тло' : 'Light background'}
-					>
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<circle cx="12" cy="12" r="4"/>
-							<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
-						</svg>
-					</button>
-					<button
-						type="button"
-						class="grid-btn grid-btn--dark"
-						class:is-active={previewGrid === 'dark'}
-						onclick={() => (previewGrid = 'dark')}
-						title={langStore.current === 'uk' ? 'Темне тло' : 'Dark background'}
-						aria-label={langStore.current === 'uk' ? 'Темне тло' : 'Dark background'}
-					>
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
-						</svg>
-					</button>
-				</div>
+				<StageBgSwitcher bind:current={previewGrid} />
 			</div>
 
 			<!-- Live SVG Viewport -->
-			<div class="stage-viewport" class:grid--subtle={previewGrid === 'subtle'} class:grid--dark={previewGrid === 'dark'} class:grid--light={previewGrid === 'light'}>
+			<div class="stage-viewport stage--{previewGrid}">
 				<svg
 					id="interactive-custom-logo"
 					viewBox="0 0 970.62 970.62"

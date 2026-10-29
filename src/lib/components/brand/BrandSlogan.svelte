@@ -2,6 +2,7 @@
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 	import { downloadSvgAsPng, downloadUrlAsPng } from '$lib/utils/exportPng';
+	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 
 	interface BrandColor {
 		hex: string;
@@ -23,7 +24,8 @@
 		'M145.67,128.27c6.5-8.68,11.89-18.24,19.03-26.47,14.64-16.9,46.38-45.5,70.29-32.34,21.57,11.87,12.85,54.35,5.17,72.8-10.58,25.4-26.93,49.67-55.04,56.97-.63,6.11,2.1,10.89,1.59,17.59-.29,3.84-3.37,12.35-6.64,14.35-2.63,1.6-6.24.41-7.93,2.07-1.17,1.15-5.19,15.08-6.61,18.39-6.7,15.57-25.58,41.91-45.75,32.03-11.96-5.86-12.52-22.52-12.15-33.93.1-3.09,2.45-6.35-.45-8.43-18.62,9.62-42.88,17.49-64.05,16.01-58.05-4.04-25.68-72.76,12.06-85.03.64-.21,2.27.36,1.47-1.49-.41-.94-12.57-11.2-14.96-14.04-20.46-24.34-32.56-69.39-29.9-100.84,4.33-51.24,45.32-52.67,75.38-18.64,29.34,33.22,47,84.97,47.48,129.02l-3.08-.6c-15.61-36.43-31.12-82.64-59.84-110.96-6.37-6.28-22.93-20.67-30.51-10.39-8.45,11.46-2.9,53.1.72,67.16,5.54,21.46,12.66,36,28.7,51.3,2.59,2.47,11.15,7.62,11,11.03-.12,2.74-9.23,5.66-11.83,7.11-13.05,7.23-26.65,17.45-31.91,32.09-14.82,41.28,52.18,19.82,70.43,12.43,5.7-2.31,10.76-7.11,17.33-6.18,1.07,11.75-4.35,23.84-3,35.5,1.69,14.65,13.74,6.48,19.96,0,8.26-8.59,23.58-32.86,20.83-44.8-.68-2.96-3.7-4.87-3.83-9.24-.45-14.69,15.02-13.6,24.09-17.92,17.84-8.49,36.02-41.6,39.5-60.5,1.39-7.54,4.9-30.69-7.02-30.1-14.5.71-45.65,32.06-56.05,43.04-2.91,3.08-14.9,19.02-17.98,19.03-5.49-9.13-3.3-21.16-4.53-31.5-1.3-10.96-5.9-19.75-7.75-29.26-1.4-7.21,3.3-8.09,7.65-3.64,3.27,3.34,8.12,18.4,8.12,22.88v15.5Z';
 
 	let butterflyColor = $state('#FFB327');
-	let stageTheme = $state<'subtle' | 'dark' | 'light'>('subtle');
+	let sloganStage = $state<StageTheme>('checker');
+	let butterflyStage = $state<StageTheme>('checker');
 
 	function downloadCustomButterfly() {
 		const svgCode = `<?xml version="1.0" encoding="UTF-8"?>
@@ -55,7 +57,10 @@
 <div class="slogan-showcase-stack">
 	<!-- 1. FULL SLOGAN COMPOSITION -->
 	<div class="slogan-container">
-		<div class="slogan-visual">
+		<div class="slogan-visual stage--{sloganStage}">
+			<div class="slogan-stage-toolbar">
+				<StageBgSwitcher bind:current={sloganStage} compact />
+			</div>
 			<img
 				src="{base}/brand/slogan/exotic-wild-special-important.svg"
 				alt="Екзотичні Дикі Особливі Важливі"
@@ -122,46 +127,9 @@
 
 	<!-- 2. STANDALONE BUTTERFLY SYMBOL (Pure vector without background or stroke) -->
 	<div class="slogan-container butterfly-box">
-		<div class="slogan-visual butterfly-visual" class:grid--subtle={stageTheme === 'subtle'} class:grid--dark={stageTheme === 'dark'} class:grid--light={stageTheme === 'light'}>
-			<div class="butterfly-stage-toolbar">
-				<button
-					type="button"
-					class="stage-btn"
-					class:is-active={stageTheme === 'subtle'}
-					onclick={() => (stageTheme = 'subtle')}
-					title={langStore.current === 'uk' ? "Прозоре тло (сітка)" : "Checkerboard"}
-					aria-label={langStore.current === 'uk' ? "Прозоре тло (сітка)" : "Checkerboard"}
-				>
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<rect width="18" height="18" x="3" y="3" rx="2"/>
-						<path d="M3 12h18M12 3v18"/>
-					</svg>
-				</button>
-				<button
-					type="button"
-					class="stage-btn"
-					class:is-active={stageTheme === 'light'}
-					onclick={() => (stageTheme = 'light')}
-					title={langStore.current === 'uk' ? "Світле тло" : "Light background"}
-					aria-label={langStore.current === 'uk' ? "Світле тло" : "Light background"}
-				>
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<circle cx="12" cy="12" r="4"/>
-						<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
-					</svg>
-				</button>
-				<button
-					type="button"
-					class="stage-btn"
-					class:is-active={stageTheme === 'dark'}
-					onclick={() => (stageTheme = 'dark')}
-					title={langStore.current === 'uk' ? "Темне тло" : "Dark background"}
-					aria-label={langStore.current === 'uk' ? "Темне тло" : "Dark background"}
-				>
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
-					</svg>
-				</button>
+		<div class="slogan-visual butterfly-visual stage--{butterflyStage}">
+			<div class="slogan-stage-toolbar">
+				<StageBgSwitcher bind:current={butterflyStage} compact />
 			</div>
 
 			<!-- Live SVG Viewport: pure butterfly vector -->
@@ -484,15 +452,10 @@
 		background: #141716 !important;
 	}
 
-	.butterfly-stage-toolbar {
+	.slogan-stage-toolbar {
 		position: absolute;
 		top: 0.8rem;
 		right: 0.8rem;
-		display: flex;
-		gap: 0.3rem;
-		background: rgba(0, 0, 0, 0.05);
-		padding: 0.25rem;
-		border-radius: 8px;
 		z-index: 5;
 	}
 

@@ -12,8 +12,10 @@
 	import BrandTypography from '$lib/components/brand/BrandTypography.svelte';
 	import DoorSignage from '$lib/components/brand/DoorSignage.svelte';
 	import PhotoLogos from '$lib/components/brand/PhotoLogos.svelte';
+	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 
 	let copiedVal = $state<string | null>(null);
+	let namingStage = $state<StageTheme>('checker');
 
 	const colors = [
 		{
@@ -271,22 +273,25 @@
 
 				<!-- SECTION 03: UKRAINIAN NAMING & SUB-BRANDS -->
 				<section class="guide-card" id="naming">
-					<div class="card-head">
-						<span class="step-num">03</span>
-						<div>
-							<h2 class="card-title">{langStore.current === 'uk' ? 'Офіційна назва та суббренди' : 'Official Naming & Sub-brands'}</h2>
-							<p class="card-desc">
-								{langStore.current === 'uk'
-									? 'Офіційне векторне накреслення назви шпиталю українською мовою та брендинг фірмового магазину Vet Crew Shop.'
-									: 'Official Ukrainian lettering wordmark and Vet Crew Shop sub-brand visual identity.'}
-							</p>
+					<div class="card-head card-head--with-action">
+						<div class="card-head-title-wrap">
+							<span class="step-num">03</span>
+							<div>
+								<h2 class="card-title">{langStore.current === 'uk' ? 'Офіційна назва та суббренди' : 'Official Naming & Sub-brands'}</h2>
+								<p class="card-desc">
+									{langStore.current === 'uk'
+										? 'Офіційне векторне накреслення назви шпиталю українською мовою та брендинг фірмового магазину Vet Crew Shop.'
+										: 'Official Ukrainian lettering wordmark and Vet Crew Shop sub-brand visual identity.'}
+								</p>
+							</div>
 						</div>
+						<StageBgSwitcher bind:current={namingStage} />
 					</div>
 
 					<div class="naming-grid">
 						<!-- Ukrainian Wordmark -->
 						<div class="branding-card">
-							<div class="branding-preview-stage">
+							<div class="branding-preview-stage stage--{namingStage}">
 								<img
 									src="{base}/brand/naming/vet-crew-hospital-ua.svg"
 									alt="ВЕТ КРЮ ХОСПІТАЛ"
@@ -332,7 +337,7 @@
 
 						<!-- Sub-brand: Shop -->
 						<div class="branding-card">
-							<div class="branding-preview-stage">
+							<div class="branding-preview-stage stage--{namingStage}">
 								<img
 									src="{base}/brand/subbrands/vet-crew-shop.svg"
 									alt="VET CREW SHOP"
@@ -661,6 +666,20 @@
 		display: flex;
 		align-items: flex-start;
 		gap: 1.25rem;
+	}
+
+	.card-head--with-action {
+		justify-content: space-between;
+		align-items: flex-end;
+		flex-wrap: wrap;
+		gap: 1.25rem;
+	}
+
+	.card-head-title-wrap {
+		display: flex;
+		align-items: flex-start;
+		gap: 1.25rem;
+		max-width: 680px;
 	}
 
 	.step-num {

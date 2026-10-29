@@ -2,9 +2,11 @@
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 	import { downloadUrlAsPng } from '$lib/utils/exportPng';
+	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 
 	// Global format toggle: with background container vs transparent without background
 	let withBg = $state(true);
+	let stageTheme = $state<StageTheme>('checker');
 
 	// Subvariant selections
 	type ReviewVariant = 'vidhuk' | 'google-reviews' | 'reviews';
@@ -80,29 +82,33 @@
 			</span>
 		</div>
 
-		<div class="toggle-pill-wrap">
-			<button
-				type="button"
-				class="pill-btn"
-				class:is-active={withBg}
-				onclick={() => (withBg = true)}
-			>
-				<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" class="pill-icon" aria-hidden="true">
-					<rect x="4" y="2.5" width="16" height="19" rx="3.5"/>
-				</svg>
-				<span>{langStore.current === 'uk' ? 'З фірмовим контейнером' : 'With Background Plaque'}</span>
-			</button>
-			<button
-				type="button"
-				class="pill-btn"
-				class:is-active={!withBg}
-				onclick={() => (withBg = false)}
-			>
-				<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-dasharray="3.5 2.5" stroke-linecap="round" class="pill-icon" aria-hidden="true">
-					<rect x="4" y="2.5" width="16" height="19" rx="3.5"/>
-				</svg>
-				<span>{langStore.current === 'uk' ? 'Чистий без фону (прозорий)' : 'Transparent (No Background)'}</span>
-			</button>
+		<div class="toolbar-actions">
+			<div class="toggle-pill-wrap">
+				<button
+					type="button"
+					class="pill-btn"
+					class:is-active={withBg}
+					onclick={() => (withBg = true)}
+				>
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" class="pill-icon" aria-hidden="true">
+						<rect x="4" y="2.5" width="16" height="19" rx="3.5"/>
+					</svg>
+					<span>{langStore.current === 'uk' ? 'З фірмовим контейнером' : 'With Background Plaque'}</span>
+				</button>
+				<button
+					type="button"
+					class="pill-btn"
+					class:is-active={!withBg}
+					onclick={() => (withBg = false)}
+				>
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-dasharray="3.5 2.5" stroke-linecap="round" class="pill-icon" aria-hidden="true">
+						<rect x="4" y="2.5" width="16" height="19" rx="3.5"/>
+					</svg>
+					<span>{langStore.current === 'uk' ? 'Чистий без фону (прозорий)' : 'Transparent (No Background)'}</span>
+				</button>
+			</div>
+
+			<StageBgSwitcher bind:current={stageTheme} />
 		</div>
 	</div>
 
@@ -110,7 +116,7 @@
 	<div class="qr-cards-grid">
 		<!-- 1. Master Background Plaque Template -->
 		<div class="qr-card template-card">
-			<div class="qr-preview-stage">
+			<div class="qr-preview-stage stage--{stageTheme}">
 				<img
 					src="{base}/brand/qr/background.svg"
 					alt="Фоновий контейнер (Підкладка)"
@@ -162,7 +168,7 @@
 
 		<!-- 2. Wi-Fi Signage -->
 		<div class="qr-card">
-			<div class="qr-preview-stage" class:is-nobg={!withBg}>
+			<div class="qr-preview-stage stage--{stageTheme}" class:is-nobg={!withBg}>
 				<img
 					src="{base}/brand/qr/{wifiFile}"
 					alt="Wi-Fi"
@@ -214,7 +220,7 @@
 
 		<!-- 3. Instagram Signage -->
 		<div class="qr-card">
-			<div class="qr-preview-stage" class:is-nobg={!withBg}>
+			<div class="qr-preview-stage stage--{stageTheme}" class:is-nobg={!withBg}>
 				<img
 					src="{base}/brand/qr/{igFile}"
 					alt="Instagram"
@@ -266,7 +272,7 @@
 
 		<!-- 4. Google Reviews Signage (Master Card with 3 subvariants) -->
 		<div class="qr-card">
-			<div class="qr-preview-stage" class:is-nobg={!withBg}>
+			<div class="qr-preview-stage stage--{stageTheme}" class:is-nobg={!withBg}>
 				<img
 					src="{base}/brand/qr/{activeReviewFile}"
 					alt="Google Reviews"
@@ -339,7 +345,7 @@
 
 		<!-- 5. Official Website Signage (Master Card with v2 / v1 subvariants) -->
 		<div class="qr-card">
-			<div class="qr-preview-stage" class:is-nobg={!withBg}>
+			<div class="qr-preview-stage stage--{stageTheme}" class:is-nobg={!withBg}>
 				<img
 					src="{base}/brand/qr/{activeWebsiteFile}"
 					alt="Офіційний сайт"
@@ -448,6 +454,13 @@
 	.mode-desc {
 		font-size: 0.85rem;
 		color: var(--fg-secondary);
+	}
+
+	.toolbar-actions {
+		display: flex;
+		align-items: center;
+		gap: 0.85rem;
+		flex-wrap: wrap;
 	}
 
 	.toggle-pill-wrap {
@@ -798,7 +811,14 @@
 			align-items: flex-start;
 		}
 
-		.toggle-pill-wrap {
+		.toolbar-actions {
+		display: flex;
+		align-items: center;
+		gap: 0.85rem;
+		flex-wrap: wrap;
+	}
+
+	.toggle-pill-wrap {
 			width: 100%;
 		}
 

@@ -2,6 +2,7 @@
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 	import { downloadUrlAsPng } from '$lib/utils/exportPng';
+	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 
 	interface AnimalItem {
 		id: string;
@@ -51,6 +52,7 @@
 
 	// Default color is #13371B as requested
 	let animalColor = $state<string>('#13371B');
+	let stageTheme = $state<StageTheme>('checker');
 	let searchQuery = $state('');
 	let selectedCategory = $state<'all' | 'birds' | 'reptiles' | 'mammals' | 'exotics'>('all');
 	let isDownloading = $state<string | null>(null);
@@ -127,50 +129,56 @@
 	<div class="gallery-controls-card">
 		<!-- 1. Color Picker Row -->
 		<div class="color-picker-row">
-			<div class="color-picker-label">
-				<span class="label-title">{langStore.current === 'uk' ? 'Колір іконок:' : 'Icon Color:'}</span>
-				<code class="active-hex-badge">{animalColor}</code>
+			<div class="color-picker-left">
+				<div class="color-picker-label">
+					<span class="label-title">{langStore.current === 'uk' ? 'Колір іконок:' : 'Icon Color:'}</span>
+					<code class="active-hex-badge">{animalColor}</code>
+				</div>
+
+				<div class="colors-palette-wrap">
+					{#each brandColors as c (c.hex)}
+						<button
+							type="button"
+							class="color-pill-btn"
+							class:is-active={animalColor.toUpperCase() === c.hex.toUpperCase()}
+							style:background-color={c.hex}
+							onclick={() => (animalColor = c.hex)}
+							title="{c.name} ({c.hex})"
+							aria-label="{c.name} ({c.hex})"
+						>
+							{#if animalColor.toUpperCase() === c.hex.toUpperCase()}
+								<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c.textColor} stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<polyline points="20 6 9 17 4 12"/>
+								</svg>
+							{/if}
+						</button>
+					{/each}
+
+					<!-- Custom color picker -->
+					<label
+						class="color-pill-btn custom-picker-pill"
+						class:is-active={!brandColors.some((c) => c.hex.toUpperCase() === animalColor.toUpperCase())}
+						title={langStore.current === 'uk' ? 'Кастомний колір (палітра)' : 'Custom color'}
+					>
+						<input
+							type="color"
+							value={animalColor}
+							oninput={(e) => (animalColor = (e.target as HTMLInputElement).value.toUpperCase())}
+							aria-label="Custom color picker"
+						/>
+						<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="picker-icon" aria-hidden="true">
+							<circle cx="13.5" cy="6.5" r=".5" fill="#ffffff"/>
+							<circle cx="17.5" cy="10.5" r=".5" fill="#ffffff"/>
+							<circle cx="8.5" cy="7.5" r=".5" fill="#ffffff"/>
+							<circle cx="6.5" cy="12.5" r=".5" fill="#ffffff"/>
+							<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+						</svg>
+					</label>
+				</div>
 			</div>
 
-			<div class="colors-palette-wrap">
-				{#each brandColors as c (c.hex)}
-					<button
-						type="button"
-						class="color-pill-btn"
-						class:is-active={animalColor.toUpperCase() === c.hex.toUpperCase()}
-						style:background-color={c.hex}
-						onclick={() => (animalColor = c.hex)}
-						title="{c.name} ({c.hex})"
-						aria-label="{c.name} ({c.hex})"
-					>
-						{#if animalColor.toUpperCase() === c.hex.toUpperCase()}
-							<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c.textColor} stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-								<polyline points="20 6 9 17 4 12"/>
-							</svg>
-						{/if}
-					</button>
-				{/each}
-
-				<!-- Custom color picker -->
-				<label
-					class="color-pill-btn custom-picker-pill"
-					class:is-active={!brandColors.some((c) => c.hex.toUpperCase() === animalColor.toUpperCase())}
-					title={langStore.current === 'uk' ? 'Кастомний колір (палітра)' : 'Custom color'}
-				>
-					<input
-						type="color"
-						value={animalColor}
-						oninput={(e) => (animalColor = (e.target as HTMLInputElement).value.toUpperCase())}
-						aria-label="Custom color picker"
-					/>
-					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="picker-icon" aria-hidden="true">
-						<circle cx="13.5" cy="6.5" r=".5" fill="#ffffff"/>
-						<circle cx="17.5" cy="10.5" r=".5" fill="#ffffff"/>
-						<circle cx="8.5" cy="7.5" r=".5" fill="#ffffff"/>
-						<circle cx="6.5" cy="12.5" r=".5" fill="#ffffff"/>
-						<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
-					</svg>
-				</label>
+			<div class="color-picker-right">
+				<StageBgSwitcher bind:current={stageTheme} />
 			</div>
 		</div>
 
@@ -253,7 +261,7 @@
 			<div class="animal-card">
 				<div class="card-badge">#{a.num}</div>
 
-				<div class="icon-stage">
+				<div class="icon-stage stage--{stageTheme}">
 					<div
 						class="animal-svg-mask"
 						style:background-color={animalColor}
@@ -336,6 +344,18 @@
 		flex-wrap: wrap;
 		padding-bottom: 1rem;
 		border-bottom: 1px solid var(--border);
+	}
+
+	.color-picker-left {
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+		flex-wrap: wrap;
+	}
+
+	.color-picker-right {
+		display: flex;
+		align-items: center;
 	}
 
 	.color-picker-label {

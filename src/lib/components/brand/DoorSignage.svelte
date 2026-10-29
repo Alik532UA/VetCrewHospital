@@ -2,6 +2,7 @@
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 	import { downloadUrlAsPng } from '$lib/utils/exportPng';
+	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 
 	type SignFormat = 'composite' | 'icon' | 'text';
 
@@ -57,7 +58,7 @@
 	// Unified controls state
 	let currentFormat = $state<SignFormat>('composite');
 	let signColor = $state<string>('#13371B');
-	let stageTheme = $state<'light' | 'emerald' | 'dark' | 'checker'>('light');
+	let stageTheme = $state<StageTheme>('checker');
 	let isDownloading = $state<string | null>(null);
 
 	let currentList = $derived(
@@ -247,59 +248,7 @@
 			</div>
 
 			<!-- Stage Background Switcher -->
-			<div class="stage-bg-box">
-				<span class="control-title">{langStore.current === 'uk' ? 'Тло прев\'ю:' : 'Stage:'}</span>
-				<div class="stage-toggle-btns">
-					<button
-						type="button"
-						class="stage-btn"
-						class:is-active={stageTheme === 'light'}
-						onclick={() => (stageTheme = 'light')}
-						title={langStore.current === 'uk' ? 'Світле тло' : 'Light background'}
-						aria-label={langStore.current === 'uk' ? 'Світле тло' : 'Light background'}
-					>
-						<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<circle cx="12" cy="12" r="4"/>
-							<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
-						</svg>
-					</button>
-					<button
-						type="button"
-						class="stage-btn"
-						class:is-active={stageTheme === 'emerald'}
-						onclick={() => (stageTheme = 'emerald')}
-						title="Фірмовий смарагд #13371B"
-						aria-label="Фірмовий смарагд #13371B"
-					>
-						<span class="emerald-dot"></span>
-					</button>
-					<button
-						type="button"
-						class="stage-btn"
-						class:is-active={stageTheme === 'dark'}
-						onclick={() => (stageTheme = 'dark')}
-						title={langStore.current === 'uk' ? 'Темне тло' : 'Dark background'}
-						aria-label={langStore.current === 'uk' ? 'Темне тло' : 'Dark background'}
-					>
-						<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
-						</svg>
-					</button>
-					<button
-						type="button"
-						class="stage-btn"
-						class:is-active={stageTheme === 'checker'}
-						onclick={() => (stageTheme = 'checker')}
-						title={langStore.current === 'uk' ? 'Прозоре тло (сітка)' : 'Transparent checkerboard'}
-						aria-label={langStore.current === 'uk' ? 'Прозоре тло (сітка)' : 'Transparent checkerboard'}
-					>
-						<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<rect width="18" height="18" x="3" y="3" rx="2"/>
-							<path d="M3 12h18M12 3v18"/>
-						</svg>
-					</button>
-				</div>
-			</div>
+			<StageBgSwitcher bind:current={stageTheme} />
 		</div>
 	</div>
 
@@ -589,64 +538,6 @@
 		font-size: 0.75rem;
 		pointer-events: none;
 		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.65));
-	}
-
-	/* STAGE BG SWITCHER */
-	.stage-bg-box {
-		display: flex;
-		align-items: center;
-		gap: 0.6rem;
-	}
-
-	.stage-toggle-btns {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.25rem;
-		background: var(--panel-bg);
-		padding: 0.25rem;
-		border-radius: 8px;
-		border: 1px solid var(--border);
-	}
-
-	.stage-btn {
-		width: 28px;
-		height: 28px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: 6px;
-		border: 1px solid transparent;
-		background: transparent;
-		color: var(--fg-secondary);
-		cursor: pointer;
-		font-size: 0.8rem;
-		transition: all 0.15s ease;
-	}
-
-	.stage-btn svg {
-		opacity: 0.75;
-		transition: opacity 0.15s ease, transform 0.15s ease;
-	}
-
-	.stage-btn:hover svg,
-	.stage-btn.is-active svg {
-		opacity: 1;
-		transform: scale(1.08);
-	}
-
-	.stage-btn.is-active {
-		background: var(--bg-secondary);
-		color: var(--fg-primary);
-		border-color: var(--border-hover);
-		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-	}
-
-	.emerald-dot {
-		width: 12px;
-		height: 12px;
-		border-radius: 50%;
-		background: #13371b;
-		border: 1px solid rgba(255, 255, 255, 0.4);
 	}
 
 	/* SIGNS GRID */

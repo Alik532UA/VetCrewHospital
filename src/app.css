@@ -185,3 +185,40 @@ a {
 	color: inherit;
 	text-decoration: none;
 }
+
+/* ==========================================================================
+   UNIFIED BRANDBOOK PREVIEW STAGE BACKGROUNDS
+   ========================================================================== */
+.stage--checker {
+	background-color: #fafafa !important;
+	background-image: 
+		linear-gradient(45deg, rgba(0, 0, 0, 0.06) 25%, transparent 25%),
+		linear-gradient(-45deg, rgba(0, 0, 0, 0.06) 25%, transparent 25%),
+		linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.06) 75%),
+		linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.06) 75%) !important;
+	background-size: 16px 16px !important;
+	background-position: 0 0, 0 8px, 8px -8px, -8px 0px !important;
+}
+
+:root[data-theme='dark'] .stage--checker,
+.dark .stage--checker {
+	background-color: #121513 !important;
+	background-image: 
+		linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+		linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+		linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%),
+		linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%) !important;
+}
+
+.stage--light {
+	background: #ffffff !important;
+}
+
+.stage--emerald {
+	background: #13371b !important;
+}
+
+.stage--dark {
+	background: #141716 !important;
+}
+

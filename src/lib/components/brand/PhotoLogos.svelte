@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
+	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 
 	interface EmblemItem {
 		id: string;
@@ -36,7 +37,7 @@
 		}
 	];
 
-	let stageTheme = $state<'light' | 'emerald' | 'dark' | 'checker'>('light');
+	let stageTheme = $state<StageTheme>('checker');
 </script>
 
 <div class="photo-logos-widget">
@@ -51,51 +52,7 @@
 		</div>
 
 		<!-- Global Stage Background Switcher -->
-		<div class="bg-switch-pill">
-			<span class="bg-switch-label">{langStore.current === 'uk' ? 'Тло прев’ю:' : 'Preview Bg:'}</span>
-			<div class="bg-switch-btns">
-				<button
-					type="button"
-					class="theme-btn"
-					class:is-active={stageTheme === 'light'}
-					onclick={() => (stageTheme = 'light')}
-					title="Світле тло"
-				>
-					<span class="color-dot dot-light"></span>
-					<span>{langStore.current === 'uk' ? 'Світле' : 'Light'}</span>
-				</button>
-				<button
-					type="button"
-					class="theme-btn"
-					class:is-active={stageTheme === 'emerald'}
-					onclick={() => (stageTheme = 'emerald')}
-					title="Фірмовий смарагд #13371B"
-				>
-					<span class="color-dot dot-emerald"></span>
-					<span>{langStore.current === 'uk' ? 'Смарагд' : 'Emerald'}</span>
-				</button>
-				<button
-					type="button"
-					class="theme-btn"
-					class:is-active={stageTheme === 'dark'}
-					onclick={() => (stageTheme = 'dark')}
-					title="Темне тло"
-				>
-					<span class="color-dot dot-dark"></span>
-					<span>{langStore.current === 'uk' ? 'Темне' : 'Dark'}</span>
-				</button>
-				<button
-					type="button"
-					class="theme-btn"
-					class:is-active={stageTheme === 'checker'}
-					onclick={() => (stageTheme = 'checker')}
-					title="Шахматка (прозоре тло)"
-				>
-					<span class="color-dot dot-checker"></span>
-					<span>{langStore.current === 'uk' ? 'Сітка' : 'Grid'}</span>
-				</button>
-			</div>
-		</div>
+		<StageBgSwitcher bind:current={stageTheme} />
 	</div>
 
 	<!-- Emblem Cards Grid -->
@@ -190,85 +147,6 @@
 		line-height: 1.6;
 		color: var(--fg-secondary);
 		margin: 0;
-	}
-
-	.bg-switch-pill {
-		display: flex;
-		align-items: center;
-		gap: 0.65rem;
-		padding: 4px 6px 4px 12px;
-		background: var(--bg-secondary);
-		border: 1px solid var(--border);
-		border-radius: 9999px;
-	}
-
-	.bg-switch-label {
-		font-size: 0.78rem;
-		font-weight: 700;
-		color: var(--fg-muted);
-	}
-
-	.bg-switch-btns {
-		display: inline-flex;
-		align-items: center;
-		gap: 3px;
-	}
-
-	.theme-btn {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.35rem;
-		padding: 0.35rem 0.65rem;
-		border-radius: 9999px;
-		font-size: 0.76rem;
-		font-weight: 700;
-		color: var(--fg-secondary);
-		background: transparent;
-		cursor: pointer;
-		border: 1px solid transparent;
-		transition: all 0.2s ease;
-	}
-
-	.theme-btn:hover {
-		color: var(--fg-primary);
-		background: var(--panel-bg);
-	}
-
-	.theme-btn.is-active {
-		background: var(--panel-bg);
-		color: var(--fg-primary);
-		border-color: var(--border-hover);
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-	}
-
-	.color-dot {
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-	}
-
-	.dot-emerald {
-		background: #13371b;
-	}
-
-	.dot-light {
-		background: #ffffff;
-		border: 1px solid #d1d5db;
-	}
-
-	.dot-dark {
-		background: #181c19;
-		border: 1px solid #374151;
-	}
-
-	.dot-checker {
-		background-image: 
-			linear-gradient(45deg, #bbb 25%, transparent 25%),
-			linear-gradient(-45deg, #bbb 25%, transparent 25%),
-			linear-gradient(45deg, transparent 75%, #bbb 75%),
-			linear-gradient(-45deg, transparent 75%, #bbb 75%);
-		background-size: 6px 6px;
-		background-position: 0 0, 0 3px, 3px -3px, -3px 0px;
 	}
 
 	/* GRID */
