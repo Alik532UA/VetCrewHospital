@@ -1,3 +1,4 @@
+import { browser } from '$app/environment';
 import { safeLocalStorage } from '../services/storage';
 
 export type Theme = 'dark' | 'light';
@@ -6,7 +7,7 @@ class ThemeStore {
 	current = $state<Theme>('light');
 
 	constructor() {
-		if (typeof window !== 'undefined') {
+		if (browser) {
 			const saved = safeLocalStorage.get('theme') as Theme | null;
 			// ALWAYS default to 'light' regardless of browser or system prefers-color-scheme
 			if (saved === 'dark' || saved === 'light') {
@@ -31,7 +32,7 @@ class ThemeStore {
 	}
 
 	apply() {
-		if (typeof window === 'undefined') return;
+		if (!browser) return;
 		document.documentElement.setAttribute('data-theme', this.current);
 		document.documentElement.classList.toggle('dark', this.current === 'dark');
 		document.documentElement.classList.toggle('light', this.current === 'light');

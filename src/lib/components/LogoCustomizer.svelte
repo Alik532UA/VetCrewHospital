@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 	import logoPaths from '$lib/assets/logo-paths.json';
@@ -15,6 +16,7 @@
 	}
 
 	let { brandColors }: Props = $props();
+	const baseId = $props.id();
 
 	type BgShape = 'circle' | 'solid' | 'transparent';
 
@@ -176,7 +178,7 @@
 	let isExportingPng = $state(false);
 
 	async function downloadPng() {
-		if (typeof window === 'undefined') return;
+		if (!browser) return;
 		isExportingPng = true;
 
 		try {
@@ -519,13 +521,16 @@
 
 					<!-- Custom Color Picker -->
 					<label
+						for="{baseId}-custom-color"
 						class="color-swatch-btn custom-picker-btn"
 						class:is-active={isCustomColor(getCurrentColor(activeGroup))}
 						title={langStore.current === 'uk' ? 'Власний колір (палітра)' : 'Custom color picker'}
 					>
 						<input
+							id="{baseId}-custom-color"
 							type="color"
 							value={getCurrentColor(activeGroup)}
+							aria-label={langStore.current === 'uk' ? 'Власний колір (палітра)' : 'Custom color picker'}
 							oninput={(e) => setCurrentColor(activeGroup, (e.target as HTMLInputElement).value.toUpperCase())}
 						/>
 						<span class="swatch-name">

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import VetCrewLogo from '../lib/components/VetCrewLogo.svelte';
 	import ContactLinks from '../lib/components/ContactLinks.svelte';
 	import HiddenPanel from '../lib/components/HiddenPanel.svelte';
@@ -25,7 +26,7 @@
 	}
 
 	$effect(() => {
-		if (typeof window === 'undefined') return;
+		if (!browser) return;
 
 		let wheelAccumulator = 0;
 		let lastStepTime = 0;

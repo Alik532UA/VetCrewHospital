@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
+	import { MediaQuery } from 'svelte/reactivity';
 	import logoPaths from '../assets/logo-paths.json';
 
 	interface Props {
@@ -8,6 +10,10 @@
 	}
 
 	let { compact = false, onclick }: Props = $props();
+
+	// Reactive media query abstractions (§ 1.5)
+	const isMobile = new MediaQuery('(max-width: 768px), (pointer: coarse)');
+	const prefersReducedMotion = new MediaQuery('(prefers-reduced-motion: reduce)');
 
 	let svgElement = $state<SVGSVGElement | null>(null);
 
@@ -28,24 +34,7 @@
 	let targetGlowX = $state(50);
 	let targetGlowY = $state(50);
 
-	// Interactive elements state
-	interface LogoElementState {
-		id: string;
-		cx: number;
-		cy: number;
-		phase: number;
-		fill?: string;
-		d: string;
-		currX: number;
-		currY: number;
-		currRot: number;
-		currScale: number;
-		targetX: number;
-		targetY: number;
-		targetRot: number;
-		targetScale: number;
-	}
-
+	// Static logo geometry and definitions (§ 1.3 - separated from dynamic transform state)
 	const pawToes = [
 		logoPaths['paw-toe-left'],
 		logoPaths['paw-toe-center-left'],
@@ -57,9 +46,33 @@
 	const textVetCrew = logoPaths['text-vet-crew'];
 	const textHospital = logoPaths['text-hospital'];
 
-	let toesState = $state<LogoElementState[]>(
-		pawToes.map((p) => ({
-			...p,
+	// Lightweight numeric transform state for high-FPS animation
+	interface AnimTransform {
+		currX: number;
+		currY: number;
+		currRot: number;
+		currScale: number;
+		targetX: number;
+		targetY: number;
+		targetRot: number;
+		targetScale: number;
+	}
+
+	interface ToeItem {
+		def: (typeof pawToes)[number];
+		currX: number;
+		currY: number;
+		currRot: number;
+		currScale: number;
+		targetX: number;
+		targetY: number;
+		targetRot: number;
+		targetScale: number;
+	}
+
+	let toes = $state<ToeItem[]>(
+		pawToes.map((def) => ({
+			def,
 			currX: 0,
 			currY: 0,
 			currRot: 0,
@@ -71,8 +84,7 @@
 		}))
 	);
 
-	let padState = $state<LogoElementState>({
-		...pawPad,
+	let padTransform = $state<AnimTransform>({
 		currX: 0,
 		currY: 0,
 		currRot: 0,
@@ -83,8 +95,7 @@
 		targetScale: 1
 	});
 
-	let textVetCrewState = $state<LogoElementState>({
-		...textVetCrew,
+	let textVetCrewTransform = $state<AnimTransform>({
 		currX: 0,
 		currY: 0,
 		currRot: 0,
@@ -95,8 +106,7 @@
 		targetScale: 1
 	});
 
-	let textHospitalState = $state<LogoElementState>({
-		...textHospital,
+	let textHospitalTransform = $state<AnimTransform>({
 		currX: 0,
 		currY: 0,
 		currRot: 0,
@@ -110,14 +120,6 @@
 	onMount(() => {
 		let animId: number;
 		let lastTime = performance.now();
-
-		const mql = window.matchMedia('(max-width: 768px), (pointer: coarse)');
-		let isMobile = mql.matches;
-		const onMqlChange = (e: MediaQueryListEvent) => {
-			isMobile = e.matches;
-			if (isMobile) isHovering = false;
-		};
-		mql.addEventListener('change', onMqlChange);
 
 		let hasOrientation = false;
 		let tiltNormX = 0; // -1 to +1
@@ -133,7 +135,7 @@
 		}
 
 		// Device orientation setup
-		const DeviceOrientation = typeof window !== 'undefined' ? (window as unknown as { DeviceOrientationEvent?: { requestPermission?: () => Promise<string> } }).DeviceOrientationEvent : null;
+		const DeviceOrientation = browser ? (window as unknown as { DeviceOrientationEvent?: { requestPermission?: () => Promise<string> } }).DeviceOrientationEvent : null;
 		if (DeviceOrientation && typeof DeviceOrientation.requestPermission !== 'function') {
 			window.addEventListener('deviceorientation', handleOrientation, { passive: true });
 		}
@@ -155,7 +157,7 @@
 		window.addEventListener('touchstart', requestGyroOnce, { passive: true });
 
 		function onPointerMove(e: PointerEvent) {
-			if (isMobile || e.pointerType === 'touch') {
+			if (isMobile.current || e.pointerType === 'touch') {
 				isHovering = false;
 				return;
 			}
@@ -189,8 +191,7 @@
 		window.addEventListener('pointerleave', onPointerLeave);
 
 		function loop(time: number) {
-			const reducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-			if (reducedMotion) {
+			if (prefersReducedMotion.current) {
 				smoothTiltX = 0;
 				smoothTiltY = 0;
 				glowX = 50;
@@ -206,7 +207,7 @@
 			let targetTiltX = 0;
 			let targetTiltY = 0;
 
-			if (isMobile) {
+			if (isMobile.current) {
 				// MOBILE MODE:
 				// Autonomous breathing wave and gyro tilt
 				targetGlowX = 50 + Math.sin(idleT * 0.8) * 22;
@@ -227,9 +228,9 @@
 				}
 
 				// Idle floating waves for elements
-				for (const el of toesState) {
-					const wave = Math.sin(time * 0.0022 + el.phase) * 3.2;
-					const rot = Math.cos(time * 0.0018 + el.phase) * 1.0;
+				for (const el of toes) {
+					const wave = Math.sin(time * 0.0022 + el.def.phase) * 3.2;
+					const rot = Math.cos(time * 0.0018 + el.def.phase) * 1.0;
 					el.targetX = hasOrientation ? tiltNormX * 2.5 : 0;
 					el.targetY = wave + (hasOrientation ? -tiltNormY * 2.5 : 0);
 					el.targetRot = rot;
@@ -242,19 +243,19 @@
 				}
 
 				// Paw pad
-				const padWave = Math.sin(time * 0.002 + padState.phase) * 2.5;
-				padState.targetY = padWave;
-				padState.currY += (padState.targetY - padState.currY) * 0.08;
+				const padWave = Math.sin(time * 0.002 + pawPad.phase) * 2.5;
+				padTransform.targetY = padWave;
+				padTransform.currY += (padTransform.targetY - padTransform.currY) * 0.08;
 
 				// Vet Crew text
-				const textWave = Math.sin(time * 0.0018 + textVetCrewState.phase) * 2.0;
-				textVetCrewState.targetY = textWave;
-				textVetCrewState.currY += (textVetCrewState.targetY - textVetCrewState.currY) * 0.08;
+				const textWave = Math.sin(time * 0.0018 + textVetCrew.phase) * 2.0;
+				textVetCrewTransform.targetY = textWave;
+				textVetCrewTransform.currY += (textVetCrewTransform.targetY - textVetCrewTransform.currY) * 0.08;
 
 				// Hospital text
-				const hospWave = Math.sin(time * 0.0016 + textHospitalState.phase) * 1.5;
-				textHospitalState.targetY = hospWave;
-				textHospitalState.currY += (textHospitalState.targetY - textHospitalState.currY) * 0.08;
+				const hospWave = Math.sin(time * 0.0016 + textHospital.phase) * 1.5;
+				textHospitalTransform.targetY = hospWave;
+				textHospitalTransform.currY += (textHospitalTransform.targetY - textHospitalTransform.currY) * 0.08;
 			} else {
 				// DESKTOP MODE:
 				let targetNormX = normX;
@@ -275,12 +276,12 @@
 				targetTiltY = targetNormX * 11;
 
 				// Update toes with cursor physics
-				for (const el of toesState) {
+				for (const el of toes) {
 					const radius = 320;
-					const dx = activeSvgX - el.cx;
-					const dy = activeSvgY - el.cy;
+					const dx = activeSvgX - el.def.cx;
+					const dy = activeSvgY - defToPad(el.def.cy);
 					const dist = Math.sqrt(dx * dx + dy * dy);
-					const idleWave = Math.sin(time * 0.0022 + el.phase) * 3.0;
+					const idleWave = Math.sin(time * 0.0022 + el.def.phase) * 3.0;
 
 					if (dist < radius) {
 						const t = 1 - dist / radius;
@@ -307,52 +308,52 @@
 
 				// Update paw pad
 				{
-					const dx = activeSvgX - padState.cx;
-					const dy = activeSvgY - padState.cy;
+					const dx = activeSvgX - pawPad.cx;
+					const dy = activeSvgY - pawPad.cy;
 					const dist = Math.sqrt(dx * dx + dy * dy);
-					const idleWave = Math.sin(time * 0.002 + padState.phase) * 2.5;
+					const idleWave = Math.sin(time * 0.002 + pawPad.phase) * 2.5;
 
 					if (dist < 360) {
 						const t = 1 - dist / 360;
 						const ease = t * t * (3 - 2 * t);
 						const nx = dx / (dist || 1);
 						const ny = dy / (dist || 1);
-						padState.targetX = -nx * ease * 20;
-						padState.targetY = -ny * ease * 20 + idleWave;
-						padState.targetScale = 1 + ease * 0.06;
+						padTransform.targetX = -nx * ease * 20;
+						padTransform.targetY = -ny * ease * 20 + idleWave;
+						padTransform.targetScale = 1 + ease * 0.06;
 					} else {
-						padState.targetX = 0;
-						padState.targetY = idleWave;
-						padState.targetScale = 1;
+						padTransform.targetX = 0;
+						padTransform.targetY = idleWave;
+						padTransform.targetScale = 1;
 					}
-					padState.currX += (padState.targetX - padState.currX) * 0.1;
-					padState.currY += (padState.targetY - padState.currY) * 0.1;
-					padState.currScale += (padState.targetScale - padState.currScale) * 0.1;
+					padTransform.currX += (padTransform.targetX - padTransform.currX) * 0.1;
+					padTransform.currY += (padTransform.targetY - padTransform.currY) * 0.1;
+					padTransform.currScale += (padTransform.targetScale - padTransform.currScale) * 0.1;
 				}
 
 				// Vet Crew text subtle lift
 				{
-					const dx = activeSvgX - textVetCrewState.cx;
-					const dy = activeSvgY - textVetCrewState.cy;
+					const dx = activeSvgX - textVetCrew.cx;
+					const dy = activeSvgY - textVetCrew.cy;
 					const dist = Math.sqrt(dx * dx + dy * dy);
-					const idleWave = Math.sin(time * 0.0018 + textVetCrewState.phase) * 2.0;
+					const idleWave = Math.sin(time * 0.0018 + textVetCrew.phase) * 2.0;
 					if (dist < 380) {
 						const ease = Math.max(0, 1 - dist / 380);
-						textVetCrewState.targetScale = 1 + ease * 0.05;
-						textVetCrewState.targetY = idleWave - ease * 8;
+						textVetCrewTransform.targetScale = 1 + ease * 0.05;
+						textVetCrewTransform.targetY = idleWave - ease * 8;
 					} else {
-						textVetCrewState.targetScale = 1;
-						textVetCrewState.targetY = idleWave;
+						textVetCrewTransform.targetScale = 1;
+						textVetCrewTransform.targetY = idleWave;
 					}
-					textVetCrewState.currScale += (textVetCrewState.targetScale - textVetCrewState.currScale) * 0.1;
-					textVetCrewState.currY += (textVetCrewState.targetY - textVetCrewState.currY) * 0.1;
+					textVetCrewTransform.currScale += (textVetCrewTransform.targetScale - textVetCrewTransform.currScale) * 0.1;
+					textVetCrewTransform.currY += (textVetCrewTransform.targetY - textVetCrewTransform.currY) * 0.1;
 				}
 
 				// Hospital text subtle lift
 				{
-					const idleWave = Math.sin(time * 0.0016 + textHospitalState.phase) * 1.5;
-					textHospitalState.targetY = idleWave;
-					textHospitalState.currY += (textHospitalState.targetY - textHospitalState.currY) * 0.08;
+					const idleWave = Math.sin(time * 0.0016 + textHospital.phase) * 1.5;
+					textHospitalTransform.targetY = idleWave;
+					textHospitalTransform.currY += (textHospitalTransform.targetY - textHospitalTransform.currY) * 0.08;
 				}
 			}
 
@@ -367,11 +368,14 @@
 			animId = requestAnimationFrame(loop);
 		}
 
+		function defToPad(cy: number) {
+			return cy;
+		}
+
 		animId = requestAnimationFrame(loop);
 
 		return () => {
 			cancelAnimationFrame(animId);
-			mql.removeEventListener('change', onMqlChange);
 			window.removeEventListener('deviceorientation', handleOrientation);
 			window.removeEventListener('pointerdown', requestGyroOnce);
 			window.removeEventListener('touchstart', requestGyroOnce);
@@ -457,32 +461,32 @@
 			<g id="logo-content" transform="translate(0, 6.15)">
 				<!-- Paw Print with individual dynamic toes -->
 				<g id="paw" fill="var(--logo-paw, #ffffff)" filter="url(#paw-shadow)">
-					{#each toesState as toe (toe.id)}
+					{#each toes as toe (toe.def.id)}
 						<g
-							transform="translate({toe.currX.toFixed(2)}, {toe.currY.toFixed(2)}) translate({toe.cx}, {toe.cy}) rotate({toe.currRot.toFixed(2)}) scale({toe.currScale.toFixed(3)}) translate(-{toe.cx}, -{toe.cy})"
+							transform="translate({toe.currX.toFixed(2)}, {toe.currY.toFixed(2)}) translate({toe.def.cx}, {toe.def.cy}) rotate({toe.currRot.toFixed(2)}) scale({toe.currScale.toFixed(3)}) translate(-{toe.def.cx}, -{toe.def.cy})"
 						>
-							<path id={toe.id} d={toe.d} />
+							<path id={toe.def.id} d={toe.def.d} />
 						</g>
 					{/each}
 
 					<!-- Paw Pad -->
 					<g
-						transform="translate({padState.currX.toFixed(2)}, {padState.currY.toFixed(2)}) translate({padState.cx}, {padState.cy}) scale({padState.currScale.toFixed(3)}) translate(-{padState.cx}, -{padState.cy})"
+						transform="translate({padTransform.currX.toFixed(2)}, {padTransform.currY.toFixed(2)}) translate({pawPad.cx}, {pawPad.cy}) scale({padTransform.currScale.toFixed(3)}) translate(-{pawPad.cx}, -{pawPad.cy})"
 					>
-						<path id={padState.id} d={padState.d} />
+						<path id={pawPad.id} d={pawPad.d} />
 					</g>
 				</g>
 
 				<!-- Text: VET CREW -->
 				<g
-					transform="translate(0, {textVetCrewState.currY.toFixed(2)}) translate({textVetCrewState.cx}, {textVetCrewState.cy}) scale({textVetCrewState.currScale.toFixed(3)}) translate(-{textVetCrewState.cx}, -{textVetCrewState.cy})"
+					transform="translate(0, {textVetCrewTransform.currY.toFixed(2)}) translate({textVetCrew.cx}, {textVetCrew.cy}) scale({textVetCrewTransform.currScale.toFixed(3)}) translate(-{textVetCrew.cx}, -{textVetCrew.cy})"
 				>
-					<path id="text-vet-crew" fill="var(--logo-vet-crew, #ffb327)" d={textVetCrewState.d} />
+					<path id="text-vet-crew" fill="var(--logo-vet-crew, #ffb327)" d={textVetCrew.d} />
 				</g>
 
 				<!-- Text: HOSPITAL -->
-				<g transform="translate(0, {textHospitalState.currY.toFixed(2)})">
-					<path id="text-hospital" fill="var(--logo-hospital, #598f3a)" d={textHospitalState.d} />
+				<g transform="translate(0, {textHospitalTransform.currY.toFixed(2)})">
+					<path id="text-hospital" fill="var(--logo-hospital, #598f3a)" d={textHospital.d} />
 				</g>
 			</g>
 		</svg>

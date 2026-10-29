@@ -1,3 +1,4 @@
+import { browser } from '$app/environment';
 /**
  * Utility to convert SVG code or SVG files into crisp, high-resolution PNG images in the browser.
  */
@@ -7,7 +8,7 @@ export async function downloadSvgAsPng(
 	filename: string,
 	maxDimension: number = 2000
 ): Promise<void> {
-	if (typeof window === 'undefined') return;
+	if (!browser) return;
 
 	// 1. Determine aspect ratio from viewBox or width/height
 	let width = maxDimension;

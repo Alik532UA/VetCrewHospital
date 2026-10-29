@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { langStore } from '$lib/lang.svelte';
 	import { themeStore } from '$lib/theme.svelte';
 
@@ -26,7 +27,7 @@
 	let host = $state<HTMLElement | null>(null);
 
 	$effect(() => {
-		if (typeof window === 'undefined') return;
+		if (!browser) return;
 
 		const targets = SECTIONS
 			.map((s) => document.getElementById(s.id))

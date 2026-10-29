@@ -2,6 +2,7 @@
  * Safe Storage Facade (STORAGE-NAMESPACE-v10 § 2 & § 5)
  * Never throws on SecurityError/QuotaExceededError. Namespaces keys with STORAGE_PREFIX.
  */
+import { browser } from '$app/environment';
 import { STORAGE_PREFIX } from './storagePrefix';
 
 export { STORAGE_PREFIX };
@@ -10,7 +11,7 @@ function createStore(area: 'localStorage' | 'sessionStorage') {
 	let available = true;
 
 	function open(): Storage | null {
-		if (typeof window === 'undefined' || !available) return null;
+		if (!browser || !available) return null;
 		try {
 			return window[area];
 		} catch (error) {

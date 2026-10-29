@@ -1,7 +1,7 @@
-const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined';
+import { browser } from '$app/environment';
 
 export function canFullscreen(): boolean {
-	if (!isBrowser) return false;
+	if (!browser) return false;
 	const doc = document as unknown as {
 		fullscreenEnabled?: boolean;
 		webkitFullscreenEnabled?: boolean;
@@ -29,7 +29,7 @@ export function canFullscreen(): boolean {
 }
 
 export function isFullscreenActive(): boolean {
-	if (!isBrowser) return false;
+	if (!browser) return false;
 	const doc = document as unknown as {
 		fullscreenElement?: Element;
 		webkitFullscreenElement?: Element;

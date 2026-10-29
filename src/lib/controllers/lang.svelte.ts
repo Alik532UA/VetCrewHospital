@@ -1,3 +1,4 @@
+import { browser } from '$app/environment';
 import { safeLocalStorage } from '../services/storage';
 
 export type Lang = 'uk' | 'en';
@@ -47,7 +48,7 @@ class LangStore {
 	current = $state<Lang>('uk');
 
 	constructor() {
-		if (typeof window !== 'undefined') {
+		if (browser) {
 			const saved = safeLocalStorage.get('lang') as Lang | null;
 			if (saved === 'uk' || saved === 'en') {
 				this.current = saved;
@@ -72,7 +73,7 @@ class LangStore {
 	}
 
 	apply() {
-		if (typeof window === 'undefined') return;
+		if (!browser) return;
 		document.documentElement.setAttribute('lang', this.current);
 		safeLocalStorage.set('lang', this.current);
 	}
