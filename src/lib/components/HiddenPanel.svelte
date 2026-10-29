@@ -2,6 +2,7 @@
 	import { themeStore } from '../theme.svelte';
 	import { langStore } from '../lang.svelte';
 	import { canFullscreen, toggleFullscreen, isFullscreenActive } from '../services/fullscreen';
+	import { APP_VERSION } from '../version';
 
 	interface Props {
 		isVisible?: boolean;
@@ -112,6 +113,10 @@
 				<span class="action-title">{isFullscreen ? langStore.t('fullscreen_exit') : langStore.t('fullscreen')}</span>
 			</button>
 		{/if}
+
+		<div class="version-badge" title="Версія: v${APP_VERSION}">
+			<span>v{APP_VERSION}</span>
+		</div>
 	</div>
 </nav>
 
@@ -242,4 +247,21 @@
 			font-size: 0.68rem;
 		}
 	}
+
+	.version-badge {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 4px 10px;
+		font-family: 'InGlobal', monospace, sans-serif;
+		font-size: 0.72rem;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		color: var(--text-muted);
+		opacity: 0.65;
+		border-left: 1px solid var(--border);
+		margin-left: 4px;
+		user-select: none;
+	}
+
 </style>

@@ -92,7 +92,7 @@
 			<!-- Emergency Callout -->
 			<div class="emergency-box">
 				<div class="emergency-badge">
-					{langStore.current === 'uk' ? 'Термінова допомога лікаря' : 'Need urgent veterinary care?'}
+					{langStore.current === 'uk' ? 'Контакти клініки' : 'Hospital Contacts'}
 				</div>
 				<div class="emergency-links">
 					<a href="tel:+380775010101" class="emergency-btn phone-call-btn">
@@ -392,3 +392,4 @@
 		}
 	}
 </style>
+

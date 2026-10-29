@@ -1,0 +1,25 @@
+{
+	"name": "Vet Crew Hospital",
+	"short_name": "Vet Crew",
+	"description": "Ветеринарний госпіталь та допомога диким, екзотичним і домашнім тваринам в Одесі",
+	"start_url": "./",
+	"scope": "./",
+	"display": "standalone",
+	"orientation": "portrait-primary",
+	"background_color": "#070e09",
+	"theme_color": "#598f3a",
+	"icons": [
+		{
+			"src": "favicon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any maskable"
+		},
+		{
+			"src": "logo.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any"
+		}
+	]
+}

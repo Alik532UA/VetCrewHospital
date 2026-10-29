@@ -12,3 +12,4 @@
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	{@html jsonLdScript(schema)}
 </svelte:head>
+

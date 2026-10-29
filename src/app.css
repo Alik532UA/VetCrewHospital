@@ -234,3 +234,15 @@ a {
 	}
 }
 
+/* Accessibility: WCAG 2.2 AA Visible Focus Rings */
+:focus-visible {
+	outline: 2px solid var(--brand-gold);
+	outline-offset: 3px;
+}
+
+button:focus-visible,
+a:focus-visible {
+	outline: 2px solid var(--brand-gold);
+	outline-offset: 3px;
+}
+
