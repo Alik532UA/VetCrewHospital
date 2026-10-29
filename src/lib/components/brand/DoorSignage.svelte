@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
+	import { downloadUrlAsPng } from '$lib/utils/exportPng';
 
 	type SignFormat = 'composite' | 'icon' | 'text';
 
@@ -103,6 +104,30 @@
 			URL.revokeObjectURL(downloadUrl);
 		} catch (err) {
 			console.error('Download error:', err);
+		} finally {
+			isDownloading = null;
+		}
+	}
+
+	async function downloadColoredSignPng(e: MouseEvent, item: SignItem) {
+		e.preventDefault();
+		isDownloading = `${item.id}-png`;
+		try {
+			const url = getAssetUrl(item);
+			const formatLabel =
+				currentFormat === 'composite' ? 'Іконка+Напис' : currentFormat === 'text' ? 'Тільки напис' : 'Іконка';
+			await downloadUrlAsPng(
+				url,
+				`${item.num} - ${item.titleUk} (${formatLabel}, ${signColor}).png`,
+				2000,
+				(svgText) => {
+					svgText = svgText.replace(/fill:\s*#[0-9a-fA-F]{6}/g, `fill: ${signColor}`);
+					svgText = svgText.replace(/fill="(?!(?:none))#[0-9a-fA-F]{6}"/g, `fill="${signColor}"`);
+					return svgText;
+				}
+			);
+		} catch (err) {
+			console.error('Download PNG error:', err);
 		} finally {
 			isDownloading = null;
 		}
@@ -315,11 +340,12 @@
 				<div class="sign-card-footer">
 					<button
 						type="button"
-						class="download-sign-btn"
+						class="download-sign-btn svg-btn"
 						onclick={(e) => downloadColoredSignSvg(e, item)}
 						disabled={isDownloading === item.id}
+						title="{langStore.current === 'uk' ? `Завантажити SVG у кольорі ${signColor}` : `Download SVG in ${signColor}`}"
 					>
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 							<polyline points="7 10 12 15 17 10"></polyline>
 							<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -328,8 +354,27 @@
 							{isDownloading === item.id
 								? '...'
 								: langStore.current === 'uk'
-								? `Завантажити SVG (${signColor})`
-								: `Download SVG (${signColor})`}
+								? `SVG (${signColor})`
+								: `SVG (${signColor})`}
+						</span>
+					</button>
+
+					<button
+						type="button"
+						class="download-sign-btn png-btn"
+						onclick={(e) => downloadColoredSignPng(e, item)}
+						disabled={isDownloading === `${item.id}-png`}
+						title="{langStore.current === 'uk' ? `Завантажити PNG (2000 px) у кольорі ${signColor}` : `Download PNG (2000 px) in ${signColor}`}"
+					>
+						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+							<polyline points="7 10 12 15 17 10"></polyline>
+							<line x1="12" y1="15" x2="12" y2="3"></line>
+						</svg>
+						<span>
+							{isDownloading === `${item.id}-png`
+								? '...'
+								: 'PNG (2000 px)'}
 						</span>
 					</button>
 				</div>
@@ -771,7 +816,10 @@
 
 	/* FOOTER ACTION */
 	.sign-card-footer {
-		padding: 0.9rem 1.25rem;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.5rem;
+		padding: 0.85rem 1rem;
 		background: var(--bg-secondary);
 		border-top: 1px solid var(--border);
 		margin-top: auto;
@@ -781,35 +829,62 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		gap: 0.5rem;
+		gap: 0.35rem;
 		width: 100%;
-		padding: 0.65rem 1rem;
+		padding: 0.6rem 0.5rem;
 		border-radius: 9px;
-		background: var(--panel-bg);
-		border: 1px solid var(--border);
-		color: var(--fg-primary);
-		font-size: 0.82rem;
+		font-size: 0.76rem;
 		font-weight: 700;
 		cursor: pointer;
 		transition: all 0.2s ease;
+		text-align: center;
 	}
 
-	.download-sign-btn:hover:not(:disabled) {
+	.download-sign-btn.svg-btn {
 		background: var(--brand-emerald, #13371b);
 		color: #ffffff;
-		border-color: var(--brand-emerald, #13371b);
-		box-shadow: 0 4px 12px rgba(19, 55, 27, 0.2);
+		border: 1px solid var(--brand-emerald, #13371b);
 	}
 
-	:global(.dark) .download-sign-btn:hover:not(:disabled) {
+	.download-sign-btn.svg-btn:hover:not(:disabled) {
+		background: var(--brand-leaf, #598f3a);
+		border-color: var(--brand-leaf, #598f3a);
+		color: #ffffff;
+		box-shadow: 0 4px 12px rgba(89, 143, 58, 0.25);
+		transform: translateY(-1px);
+	}
+
+	:global(.dark) .download-sign-btn.svg-btn {
 		background: var(--brand-gold, #ffb327);
 		color: #101e14;
 		border-color: var(--brand-gold, #ffb327);
-		box-shadow: 0 4px 12px rgba(255, 179, 39, 0.2);
+	}
+
+	:global(.dark) .download-sign-btn.svg-btn:hover:not(:disabled) {
+		background: #ffa80a;
+		border-color: #ffa80a;
+		color: #101e14;
+	}
+
+	.download-sign-btn.png-btn {
+		background: var(--bg-secondary);
+		border: 1px solid var(--border);
+		color: var(--fg-primary);
+	}
+
+	.download-sign-btn.png-btn:hover:not(:disabled) {
+		background: var(--panel-bg);
+		border-color: var(--border-hover);
+		color: var(--brand-leaf, #598f3a);
+		transform: translateY(-1px);
+	}
+
+	:global(.dark) .download-sign-btn.png-btn:hover:not(:disabled) {
+		color: var(--brand-gold, #ffb327);
 	}
 
 	.download-sign-btn:disabled {
 		opacity: 0.6;
-		cursor: not-allowed;
+		cursor: wait;
 	}
 </style>

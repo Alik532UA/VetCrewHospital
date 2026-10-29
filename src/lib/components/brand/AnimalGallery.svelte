@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
+	import { downloadUrlAsPng } from '$lib/utils/exportPng';
 
 	interface AnimalItem {
 		id: string;
@@ -92,6 +93,29 @@
 			URL.revokeObjectURL(url);
 		} catch (err) {
 			console.error('Download error:', err);
+		} finally {
+			isDownloading = null;
+		}
+	}
+
+	async function downloadColoredPng(e: MouseEvent, animal: AnimalItem) {
+		e.preventDefault();
+		isDownloading = `${animal.id}-png`;
+		try {
+			await downloadUrlAsPng(
+				`${base}/brand/animals/${encodeURIComponent(animal.file)}`,
+				`${animal.num} - ${animal.nameUk} (${animalColor}).png`,
+				2000,
+				(svgText) => {
+					if (svgText.includes('fill=')) {
+						return svgText.replace(/fill="[^"]*"/g, `fill="${animalColor}"`);
+					} else {
+						return svgText.replace('<svg ', `<svg fill="${animalColor}" `);
+					}
+				}
+			);
+		} catch (err) {
+			console.error('PNG download error:', err);
 		} finally {
 			isDownloading = null;
 		}
@@ -247,20 +271,37 @@
 					</span>
 				</div>
 
-				<button
-					type="button"
-					class="download-animal-btn"
-					onclick={(e) => downloadColoredSvg(e, a)}
-					disabled={isDownloading === a.id}
-					title="{langStore.current === 'uk' ? 'Завантажити векторний SVG у вибраному кольорі' : 'Download SVG in selected color'}"
-				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-						<polyline points="7 10 12 15 17 10"></polyline>
-						<line x1="12" y1="15" x2="12" y2="3"></line>
-					</svg>
-					<span>{isDownloading === a.id ? '...' : 'SVG'}</span>
-				</button>
+				<div class="animal-card-actions">
+					<button
+						type="button"
+						class="download-animal-btn svg-btn"
+						onclick={(e) => downloadColoredSvg(e, a)}
+						disabled={isDownloading === a.id}
+						title="{langStore.current === 'uk' ? `Завантажити SVG у кольорі ${animalColor}` : `Download SVG in ${animalColor}`}"
+					>
+						<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+							<polyline points="7 10 12 15 17 10"></polyline>
+							<line x1="12" y1="15" x2="12" y2="3"></line>
+						</svg>
+						<span>{isDownloading === a.id ? '...' : 'SVG'}</span>
+					</button>
+
+					<button
+						type="button"
+						class="download-animal-btn png-btn"
+						onclick={(e) => downloadColoredPng(e, a)}
+						disabled={isDownloading === `${a.id}-png`}
+						title="{langStore.current === 'uk' ? `Завантажити PNG (2000 px) у кольорі ${animalColor}` : `Download PNG (2000 px) in ${animalColor}`}"
+					>
+						<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+							<polyline points="7 10 12 15 17 10"></polyline>
+							<line x1="12" y1="15" x2="12" y2="3"></line>
+						</svg>
+						<span>{isDownloading === `${a.id}-png` ? '...' : 'PNG'}</span>
+					</button>
+				</div>
 			</div>
 		{/each}
 	</div>
@@ -579,32 +620,68 @@
 		text-overflow: ellipsis;
 	}
 
+	.animal-card-actions {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.35rem;
+		width: 100%;
+		margin-top: 0.35rem;
+	}
+
 	.download-animal-btn {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.35rem;
-		padding: 0.32rem 0.75rem;
+		justify-content: center;
+		gap: 0.25rem;
+		padding: 0.35rem 0.45rem;
 		border-radius: 8px;
-		background: var(--bg-secondary);
-		border: 1px solid var(--border);
-		color: var(--fg-secondary);
-		font-size: 0.74rem;
+		font-size: 0.72rem;
 		font-weight: 700;
 		cursor: pointer;
 		transition: all 0.15s ease;
+		text-align: center;
 	}
 
-	.download-animal-btn:hover:not(:disabled) {
-		background: var(--brand-leaf, #598f3a);
+	.download-animal-btn.svg-btn {
+		background: var(--brand-emerald, #13371b);
 		color: #ffffff;
-		border-color: var(--brand-leaf, #598f3a);
-		transform: scale(1.04);
+		border: 1px solid var(--brand-emerald, #13371b);
 	}
 
-	:global(.dark) .download-animal-btn:hover:not(:disabled) {
+	.download-animal-btn.svg-btn:hover:not(:disabled) {
+		background: var(--brand-leaf, #598f3a);
+		border-color: var(--brand-leaf, #598f3a);
+		color: #ffffff;
+		transform: scale(1.03);
+	}
+
+	:global(.dark) .download-animal-btn.svg-btn {
 		background: var(--brand-gold, #ffb327);
 		color: #101e14;
 		border-color: var(--brand-gold, #ffb327);
+	}
+
+	:global(.dark) .download-animal-btn.svg-btn:hover:not(:disabled) {
+		background: #ffa80a;
+		border-color: #ffa80a;
+		color: #101e14;
+	}
+
+	.download-animal-btn.png-btn {
+		background: var(--bg-secondary);
+		border: 1px solid var(--border);
+		color: var(--fg-secondary);
+	}
+
+	.download-animal-btn.png-btn:hover:not(:disabled) {
+		background: var(--panel-bg);
+		border-color: var(--border-hover);
+		color: var(--brand-leaf, #598f3a);
+		transform: scale(1.03);
+	}
+
+	:global(.dark) .download-animal-btn.png-btn:hover:not(:disabled) {
+		color: var(--brand-gold, #ffb327);
 	}
 
 	.download-animal-btn:disabled {

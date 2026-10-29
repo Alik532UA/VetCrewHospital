@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
+	import { downloadSvgAsPng, downloadUrlAsPng } from '$lib/utils/exportPng';
 
 	interface BrandColor {
 		hex: string;
@@ -39,6 +40,15 @@
 		link.click();
 		document.body.removeChild(link);
 		URL.revokeObjectURL(url);
+	}
+
+	function downloadButterflyPng() {
+		const svgCode = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 300" width="2000" height="2308">
+  <title>Фірмовий метелик Vet Crew (${butterflyColor})</title>
+  <path fill="${butterflyColor}" d="${BUTTERFLY_PATH_D}"/>
+</svg>`;
+		downloadSvgAsPng(svgCode, `vet-crew-butterfly-${butterflyColor.replace('#', '')}.png`, 2000);
 	}
 </script>
 
@@ -80,18 +90,33 @@
 					: 'Every patient, whether a parrot, reptile, predator, or rescue animal, receives equal care, state-of-the-art diagnostics, and unwavering devotion.'}
 			</p>
 
-			<a
-				href="{base}/brand/slogan/exotic-wild-special-important.svg"
-				download="vet-crew-slogan-values.svg"
-				class="download-brand-btn primary"
-			>
-				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-					<polyline points="7 10 12 15 17 10"></polyline>
-					<line x1="12" y1="15" x2="12" y2="3"></line>
-				</svg>
-				<span>{langStore.current === 'uk' ? 'Завантажити повну емблему слогану (SVG)' : 'Download Slogan Emblem SVG'}</span>
-			</a>
+			<div class="slogan-actions">
+				<a
+					href="{base}/brand/slogan/exotic-wild-special-important.svg"
+					download="vet-crew-slogan-values.svg"
+					class="download-brand-btn primary"
+				>
+					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="7 10 12 15 17 10"></polyline>
+						<line x1="12" y1="15" x2="12" y2="3"></line>
+					</svg>
+					<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
+				</a>
+
+				<button
+					type="button"
+					class="download-brand-btn secondary"
+					onclick={() => downloadUrlAsPng(`${base}/brand/slogan/exotic-wild-special-important.svg`, 'vet-crew-slogan-values-2000px.png', 2000)}
+				>
+					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="7 10 12 15 17 10"></polyline>
+						<line x1="12" y1="15" x2="12" y2="3"></line>
+					</svg>
+					<span>{langStore.current === 'uk' ? 'PNG (2000 px)' : 'PNG (2000 px)'}</span>
+				</button>
+			</div>
 		</div>
 	</div>
 
@@ -208,22 +233,37 @@
 				</div>
 			</div>
 
-			<button
-				type="button"
-				class="download-brand-btn"
-				onclick={downloadCustomButterfly}
-			>
-				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-					<polyline points="7 10 12 15 17 10"></polyline>
-					<line x1="12" y1="15" x2="12" y2="3"></line>
-				</svg>
-				<span>
-					{langStore.current === 'uk'
-						? `Завантажити метелик у кольорі ${butterflyColor} (SVG)`
-						: `Download Butterfly in ${butterflyColor} (SVG)`}
-				</span>
-			</button>
+			<div class="slogan-actions">
+				<button
+					type="button"
+					class="download-brand-btn primary"
+					onclick={downloadCustomButterfly}
+				>
+					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="7 10 12 15 17 10"></polyline>
+						<line x1="12" y1="15" x2="12" y2="3"></line>
+					</svg>
+					<span>
+						{langStore.current === 'uk'
+							? `SVG (${butterflyColor})`
+							: `SVG (${butterflyColor})`}
+					</span>
+				</button>
+
+				<button
+					type="button"
+					class="download-brand-btn secondary"
+					onclick={downloadButterflyPng}
+				>
+					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="7 10 12 15 17 10"></polyline>
+						<line x1="12" y1="15" x2="12" y2="3"></line>
+					</svg>
+					<span>{langStore.current === 'uk' ? 'PNG (2000 px)' : 'PNG (2000 px)'}</span>
+				</button>
+			</div>
 		</div>
 	</div>
 </div>
@@ -323,18 +363,25 @@
 		margin: 0;
 	}
 
+	.slogan-actions {
+		display: flex;
+		gap: 0.75rem;
+		flex-wrap: wrap;
+		align-items: center;
+	}
+
 	.download-brand-btn {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		gap: 0.6rem;
-		padding: 0.8rem 1.4rem;
+		padding: 0.75rem 1.25rem;
 		border-radius: 10px;
 		background: var(--panel-bg);
 		border: 1px solid var(--border);
 		color: var(--fg-primary);
 		font-size: 0.88rem;
-		font-weight: 600;
+		font-weight: 700;
 		text-decoration: none;
 		transition: all 0.2s ease;
 		width: fit-content;
@@ -377,6 +424,26 @@
 		background: #ffa80a;
 		border-color: #ffa80a;
 		color: #101e14;
+	}
+
+	.download-brand-btn.secondary {
+		background: var(--panel-bg);
+		border: 1px solid var(--border);
+		color: var(--fg-primary);
+	}
+
+	.download-brand-btn.secondary:hover {
+		background: var(--brand-leaf, #598f3a);
+		border-color: var(--brand-leaf, #598f3a);
+		color: #ffffff;
+		box-shadow: 0 4px 14px rgba(89, 143, 58, 0.25);
+	}
+
+	:global(.dark) .download-brand-btn.secondary:hover {
+		background: var(--brand-gold, #ffb327);
+		border-color: var(--brand-gold, #ffb327);
+		color: #101e14;
+		box-shadow: 0 4px 14px rgba(255, 179, 39, 0.25);
 	}
 
 	/* BUTTERFLY SECTION */

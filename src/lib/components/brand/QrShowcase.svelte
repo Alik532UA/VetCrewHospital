@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
+	import { downloadUrlAsPng } from '$lib/utils/exportPng';
 
 	// Global format toggle: with background container vs transparent without background
 	let withBg = $state(true);
@@ -52,6 +53,19 @@
 	let activeWebsiteFile = $derived(withBg ? WEBSITE_FILES[websiteVariant].bg : WEBSITE_FILES[websiteVariant].nobg);
 	let wifiFile = $derived(withBg ? 'wifi.svg' : 'wifi-nobg.svg');
 	let igFile = $derived(withBg ? 'instagram.svg' : 'instagram-nobg.svg');
+
+	let isExporting = $state<string | null>(null);
+
+	async function exportQrPng(relativeFile: string, baseFilename: string) {
+		isExporting = relativeFile;
+		try {
+			await downloadUrlAsPng(`${base}/brand/qr/${relativeFile}`, `${baseFilename}-2000px.png`, 2000);
+		} catch (err) {
+			console.error('PNG export failed', err);
+		} finally {
+			isExporting = null;
+		}
+	}
 </script>
 
 <div class="qr-showcase-widget">
@@ -117,15 +131,28 @@
 				<a
 					href="{base}/brand/qr/background.svg"
 					download="vet-crew-qr-plaque-background.svg"
-					class="download-qr-btn"
+					class="download-qr-btn svg-btn"
 				>
 					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
 					</svg>
-					<span>{langStore.current === 'uk' ? 'Завантажити шаблон SVG' : 'Download Template SVG'}</span>
+					<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
 				</a>
+				<button
+					type="button"
+					class="download-qr-btn png-btn"
+					onclick={() => exportQrPng('background.svg', 'vet-crew-qr-plaque-background')}
+					disabled={isExporting === 'background.svg'}
+				>
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="7 10 12 15 17 10"></polyline>
+						<line x1="12" y1="15" x2="12" y2="3"></line>
+					</svg>
+					<span>{isExporting === 'background.svg' ? '...' : 'PNG (2000 px)'}</span>
+				</button>
 			</div>
 		</div>
 
@@ -156,15 +183,28 @@
 				<a
 					href="{base}/brand/qr/{wifiFile}"
 					download="vet-crew-wifi{withBg ? '' : '-nobg'}.svg"
-					class="download-qr-btn"
+					class="download-qr-btn svg-btn"
 				>
 					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
 					</svg>
-					<span>{langStore.current === 'uk' ? 'Завантажити SVG' : 'Download SVG'}</span>
+					<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
 				</a>
+				<button
+					type="button"
+					class="download-qr-btn png-btn"
+					onclick={() => exportQrPng(wifiFile, `vet-crew-wifi${withBg ? '' : '-nobg'}`)}
+					disabled={isExporting === wifiFile}
+				>
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="7 10 12 15 17 10"></polyline>
+						<line x1="12" y1="15" x2="12" y2="3"></line>
+					</svg>
+					<span>{isExporting === wifiFile ? '...' : 'PNG (2000 px)'}</span>
+				</button>
 			</div>
 		</div>
 
@@ -195,15 +235,28 @@
 				<a
 					href="{base}/brand/qr/{igFile}"
 					download="vet-crew-instagram{withBg ? '' : '-nobg'}.svg"
-					class="download-qr-btn"
+					class="download-qr-btn svg-btn"
 				>
 					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
 					</svg>
-					<span>{langStore.current === 'uk' ? 'Завантажити SVG' : 'Download SVG'}</span>
+					<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
 				</a>
+				<button
+					type="button"
+					class="download-qr-btn png-btn"
+					onclick={() => exportQrPng(igFile, `vet-crew-instagram${withBg ? '' : '-nobg'}`)}
+					disabled={isExporting === igFile}
+				>
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="7 10 12 15 17 10"></polyline>
+						<line x1="12" y1="15" x2="12" y2="3"></line>
+					</svg>
+					<span>{isExporting === igFile ? '...' : 'PNG (2000 px)'}</span>
+				</button>
 			</div>
 		</div>
 
@@ -251,7 +304,7 @@
 				<a
 					href="{base}/brand/qr/{activeReviewFile}"
 					download="vet-crew-{reviewVariant}{withBg ? '' : '-nobg'}.svg"
-					class="download-qr-btn"
+					class="download-qr-btn svg-btn"
 				>
 					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -260,10 +313,23 @@
 					</svg>
 					<span>
 						{langStore.current === 'uk'
-							? `Завантажити ${REVIEW_FILES[reviewVariant].labelUk} (SVG)`
-							: `Download ${REVIEW_FILES[reviewVariant].labelEn} (SVG)`}
+							? `SVG (${REVIEW_FILES[reviewVariant].labelUk})`
+							: `SVG (${REVIEW_FILES[reviewVariant].labelEn})`}
 					</span>
 				</a>
+				<button
+					type="button"
+					class="download-qr-btn png-btn"
+					onclick={() => exportQrPng(activeReviewFile, `vet-crew-${reviewVariant}${withBg ? '' : '-nobg'}`)}
+					disabled={isExporting === activeReviewFile}
+				>
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="7 10 12 15 17 10"></polyline>
+						<line x1="12" y1="15" x2="12" y2="3"></line>
+					</svg>
+					<span>{isExporting === activeReviewFile ? '...' : 'PNG (2000 px)'}</span>
+				</button>
 			</div>
 		</div>
 
@@ -311,7 +377,7 @@
 				<a
 					href="{base}/brand/qr/{activeWebsiteFile}"
 					download="vet-crew-{websiteVariant === 'v2' ? 'website-v2' : 'website'}{withBg ? '' : '-nobg'}.svg"
-					class="download-qr-btn"
+					class="download-qr-btn svg-btn"
 				>
 					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -320,10 +386,23 @@
 					</svg>
 					<span>
 						{langStore.current === 'uk'
-							? `Завантажити ${WEBSITE_FILES[websiteVariant].labelUk} (SVG)`
-							: `Download ${WEBSITE_FILES[websiteVariant].labelEn} (SVG)`}
+							? `SVG (${WEBSITE_FILES[websiteVariant].labelUk})`
+							: `SVG (${WEBSITE_FILES[websiteVariant].labelEn})`}
 					</span>
 				</a>
+				<button
+					type="button"
+					class="download-qr-btn png-btn"
+					onclick={() => exportQrPng(activeWebsiteFile, `vet-crew-${websiteVariant === 'v2' ? 'website-v2' : 'website'}${withBg ? '' : '-nobg'}`)}
+					disabled={isExporting === activeWebsiteFile}
+				>
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="7 10 12 15 17 10"></polyline>
+						<line x1="12" y1="15" x2="12" y2="3"></line>
+					</svg>
+					<span>{isExporting === activeWebsiteFile ? '...' : 'PNG (2000 px)'}</span>
+				</button>
 			</div>
 		</div>
 	</div>
@@ -627,38 +706,74 @@
 
 	/* ACTIONS */
 	.qr-actions {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.6rem;
 		padding: 0 1.4rem 1.4rem;
 	}
 
 	.download-qr-btn {
-		display: flex;
+		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		gap: 0.5rem;
+		gap: 0.45rem;
 		width: 100%;
-		padding: 0.7rem 1rem;
+		padding: 0.65rem 0.85rem;
 		border-radius: 10px;
-		background: var(--bg-secondary);
-		border: 1px solid var(--border);
-		color: var(--fg-primary);
-		font-size: 0.84rem;
-		font-weight: 600;
+		font-size: 0.8rem;
+		font-weight: 700;
 		text-decoration: none;
 		transition: all 0.2s ease;
+		cursor: pointer;
+		text-align: center;
 	}
 
-	.download-qr-btn:hover {
+	.download-qr-btn.svg-btn {
 		background: var(--brand-emerald, #13371b);
 		color: #ffffff;
-		border-color: var(--brand-emerald, #13371b);
-		box-shadow: 0 4px 12px rgba(19, 55, 27, 0.2);
+		border: 1px solid var(--brand-emerald, #13371b);
 	}
 
-	:global(.dark) .download-qr-btn:hover {
+	.download-qr-btn.svg-btn:hover:not(:disabled) {
+		background: var(--brand-leaf, #598f3a);
+		border-color: var(--brand-leaf, #598f3a);
+		color: #ffffff;
+		box-shadow: 0 4px 12px rgba(89, 143, 58, 0.25);
+		transform: translateY(-1px);
+	}
+
+	:global(.dark) .download-qr-btn.svg-btn {
 		background: var(--brand-gold, #ffb327);
 		color: #101e14;
 		border-color: var(--brand-gold, #ffb327);
-		box-shadow: 0 4px 12px rgba(255, 179, 39, 0.2);
+	}
+
+	:global(.dark) .download-qr-btn.svg-btn:hover:not(:disabled) {
+		background: #ffa80a;
+		border-color: #ffa80a;
+		color: #101e14;
+	}
+
+	.download-qr-btn.png-btn {
+		background: var(--bg-secondary);
+		border: 1px solid var(--border);
+		color: var(--fg-primary);
+	}
+
+	.download-qr-btn.png-btn:hover:not(:disabled) {
+		background: var(--panel-bg);
+		border-color: var(--border-hover);
+		color: var(--brand-leaf, #598f3a);
+		transform: translateY(-1px);
+	}
+
+	:global(.dark) .download-qr-btn.png-btn:hover:not(:disabled) {
+		color: var(--brand-gold, #ffb327);
+	}
+
+	.download-qr-btn:disabled {
+		opacity: 0.6;
+		cursor: wait;
 	}
 
 	@media (max-width: 640px) {

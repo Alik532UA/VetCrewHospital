@@ -4,6 +4,7 @@
 	import { langStore } from '$lib/lang.svelte';
 	import { themeStore } from '$lib/theme.svelte';
 	import LogoCustomizer from '$lib/components/LogoCustomizer.svelte';
+	import { downloadUrlAsPng } from '$lib/utils/exportPng';
 	import BrandToc from '$lib/components/brand/BrandToc.svelte';
 	import BrandSlogan from '$lib/components/brand/BrandSlogan.svelte';
 	import AnimalGallery from '$lib/components/brand/AnimalGallery.svelte';
@@ -250,18 +251,32 @@
 										? 'Адаптоване накреслення «ВЕТ КРЮ ХОСПІТАЛ» для внутрішнього ринку, вивісок, бланкової документації та офіційної кореспонденції.'
 										: 'Localized Ukrainian hospital title for domestic signage, legal paperwork, and medical reports.'}
 								</p>
-								<a
-									href="{base}/brand/naming/vet-crew-hospital-ua.svg"
-									download="vet-crew-hospital-ua.svg"
-									class="download-brand-btn"
-								>
-									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-										<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-										<polyline points="7 10 12 15 17 10"></polyline>
-										<line x1="12" y1="15" x2="12" y2="3"></line>
-									</svg>
-									<span>{langStore.current === 'uk' ? 'Завантажити SVG' : 'Download SVG'}</span>
-								</a>
+								<div class="branding-actions">
+									<a
+										href="{base}/brand/naming/vet-crew-hospital-ua.svg"
+										download="vet-crew-hospital-ua.svg"
+										class="download-brand-btn svg-btn"
+									>
+										<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+											<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+											<polyline points="7 10 12 15 17 10"></polyline>
+											<line x1="12" y1="15" x2="12" y2="3"></line>
+										</svg>
+										<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
+									</a>
+									<button
+										type="button"
+										class="download-brand-btn png-btn"
+										onclick={() => downloadUrlAsPng(`${base}/brand/naming/vet-crew-hospital-ua.svg`, 'vet-crew-hospital-ua-2000px.png', 2000)}
+									>
+										<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+											<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+											<polyline points="7 10 12 15 17 10"></polyline>
+											<line x1="12" y1="15" x2="12" y2="3"></line>
+										</svg>
+										<span>{langStore.current === 'uk' ? 'PNG (2000 px)' : 'PNG (2000 px)'}</span>
+									</button>
+								</div>
 							</div>
 						</div>
 
@@ -282,18 +297,32 @@
 										? 'Офіційний логотип магазину спеціалізованих зоотоварів, кормів преміум-класу, кліток, тераріумів та медичного мерчу.'
 										: 'Official emblem for veterinary pet-store, medical merchandise, exotic feeds, and professional care gear.'}
 								</p>
-								<a
-									href="{base}/brand/subbrands/vet-crew-shop.svg"
-									download="vet-crew-shop.svg"
-									class="download-brand-btn"
-								>
-									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-										<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-										<polyline points="7 10 12 15 17 10"></polyline>
-										<line x1="12" y1="15" x2="12" y2="3"></line>
-									</svg>
-									<span>{langStore.current === 'uk' ? 'Завантажити SVG' : 'Download SVG'}</span>
-								</a>
+								<div class="branding-actions">
+									<a
+										href="{base}/brand/subbrands/vet-crew-shop.svg"
+										download="vet-crew-shop.svg"
+										class="download-brand-btn svg-btn"
+									>
+										<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+											<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+											<polyline points="7 10 12 15 17 10"></polyline>
+											<line x1="12" y1="15" x2="12" y2="3"></line>
+										</svg>
+										<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
+									</a>
+									<button
+										type="button"
+										class="download-brand-btn png-btn"
+										onclick={() => downloadUrlAsPng(`${base}/brand/subbrands/vet-crew-shop.svg`, 'vet-crew-shop-2000px.png', 2000)}
+									>
+										<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+											<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+											<polyline points="7 10 12 15 17 10"></polyline>
+											<line x1="12" y1="15" x2="12" y2="3"></line>
+										</svg>
+										<span>{langStore.current === 'uk' ? 'PNG (2000 px)' : 'PNG (2000 px)'}</span>
+									</button>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -780,33 +809,76 @@
 		margin: 0 0 auto;
 	}
 
+	.branding-actions {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.6rem;
+		margin-top: 0.85rem;
+	}
+
+	@media (max-width: 520px) {
+		.branding-actions {
+			grid-template-columns: 1fr;
+		}
+	}
+
 	.download-brand-btn {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		gap: 0.45rem;
-		padding: 0.55rem 1rem;
+		padding: 0.6rem 0.85rem;
 		border-radius: 10px;
-		background: var(--panel-bg);
-		border: 1px solid var(--border);
-		color: var(--fg-primary);
-		font-size: 0.82rem;
+		font-size: 0.8rem;
 		font-weight: 700;
 		text-decoration: none;
-		margin-top: 0.75rem;
 		transition: all 0.2s ease;
+		cursor: pointer;
+		text-align: center;
 	}
 
-	.download-brand-btn:hover {
-		background: var(--brand-leaf, #598f3a);
+	.download-brand-btn.svg-btn {
+		background: var(--brand-emerald, #13371b);
 		color: #ffffff;
-		border-color: var(--brand-leaf, #598f3a);
+		border: 1px solid var(--brand-emerald, #13371b);
 	}
 
-	:global(.dark) .download-brand-btn:hover {
+	.download-brand-btn.svg-btn:hover {
+		background: var(--brand-leaf, #598f3a);
+		border-color: var(--brand-leaf, #598f3a);
+		color: #ffffff;
+		box-shadow: 0 4px 12px rgba(89, 143, 58, 0.25);
+		transform: translateY(-1px);
+	}
+
+	:global(.dark) .download-brand-btn.svg-btn {
 		background: var(--brand-gold, #ffb327);
 		color: #101e14;
 		border-color: var(--brand-gold, #ffb327);
+	}
+
+	:global(.dark) .download-brand-btn.svg-btn:hover {
+		background: #ffa80a;
+		border-color: #ffa80a;
+		color: #101e14;
+		box-shadow: 0 4px 12px rgba(255, 179, 39, 0.35);
+	}
+
+	.download-brand-btn.png-btn {
+		background: var(--bg-secondary);
+		color: var(--fg-primary);
+		border: 1px solid var(--border);
+	}
+
+	.download-brand-btn.png-btn:hover {
+		background: var(--panel-bg);
+		border-color: var(--border-hover);
+		color: var(--brand-leaf, #598f3a);
+		transform: translateY(-1px);
+	}
+
+	:global(.dark) .download-brand-btn.png-btn:hover {
+		color: var(--brand-gold, #ffb327);
 	}
 
 	/* RESPONSIVE */
