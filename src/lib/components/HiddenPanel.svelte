@@ -45,7 +45,8 @@
 			class="action-item"
 			onclick={() => themeStore.toggle()}
 			aria-label="{langStore.t('theme_btn')} ({isDark ? 'Dark' : 'Light'})"
-			title="{langStore.t('theme_btn')}"
+			aria-keyshortcuts="t"
+			title="{langStore.t('theme_btn')} (T)"
 		>
 			<span class="action-icon-box">
 				{#if isDark}
@@ -77,7 +78,8 @@
 			class="action-item lang-toggle-item"
 			onclick={() => langStore.toggle()}
 			aria-label="Language: {langStore.t('lang_name')}"
-			title="{langStore.t('lang_btn')}"
+			aria-keyshortcuts="l"
+			title="{langStore.t('lang_btn')} (L)"
 		>
 			<span class="action-icon-box">
 				<svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -96,7 +98,8 @@
 				class="action-item fullscreen-item"
 				onclick={toggleFullscreen}
 				aria-label={isFullscreen ? langStore.t('fullscreen_exit') : langStore.t('fullscreen')}
-				title={isFullscreen ? langStore.t('fullscreen_exit') : langStore.t('fullscreen')}
+				aria-keyshortcuts="f"
+				title="{isFullscreen ? langStore.t('fullscreen_exit') : langStore.t('fullscreen')} (F)"
 			>
 				<span class="action-icon-box">
 					{#if isFullscreen}

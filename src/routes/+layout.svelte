@@ -1,7 +1,10 @@
 <script lang="ts">
 	import '../app.css';
+	import { setContext } from 'svelte';
 	import { themeStore } from '$lib/theme.svelte';
 	import { langStore } from '$lib/lang.svelte';
+	import { toggleFullscreen } from '$lib/services/fullscreen';
+	import { HotkeyService } from '$lib/hotkeys/hotkeys';
 	import ServiceBadge from '$lib/components/ServiceBadge.svelte';
 	import type { Snippet } from 'svelte';
 
@@ -11,9 +14,27 @@
 
 	let { children }: Props = $props();
 
+	const hotkeys = new HotkeyService({
+		theme: () => {
+			themeStore.toggle();
+			return true;
+		},
+		language: () => {
+			langStore.toggle();
+			return true;
+		},
+		fullscreen: () => {
+			toggleFullscreen();
+			return true;
+		}
+	});
+
+	setContext('hotkeys', hotkeys);
+
 	// CODE-QUALITY § 5.3: сигнал гідратації — лише в браузері після монтування
 	$effect(() => {
 		document.documentElement.dataset.hydrated = '';
+		return hotkeys.init(document);
 	});
 </script>
 

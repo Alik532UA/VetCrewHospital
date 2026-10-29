@@ -1,11 +1,15 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { getContext } from 'svelte';
 	import VetCrewLogo from '../lib/components/VetCrewLogo.svelte';
 	import ContactLinks from '../lib/components/ContactLinks.svelte';
 	import HiddenPanel from '../lib/components/HiddenPanel.svelte';
 	import ScrollIndicator from '../lib/components/ScrollIndicator.svelte';
 	import { langStore } from '../lib/lang.svelte';
 	import JsonLd from '../lib/components/JsonLd.svelte';
+	import { HotkeyService, shortcutLetter } from '$lib/hotkeys/hotkeys';
+
+	const hotkeys = getContext<HotkeyService | undefined>('hotkeys');
 
 	// 3 Scroll States (matching DeviantBlaze architecture):
 	// 1: Standard default (centered logo, clean borderless buttons, labels on hover)
@@ -24,6 +28,49 @@
 	function goToState(state: 1 | 2 | 3) {
 		scrollState = state;
 	}
+
+	$effect(() => {
+		if (!browser || !hotkeys) return;
+
+		const popLayer = hotkeys.pushLayer({
+			handle(e) {
+				if (e.code === 'Escape') {
+					if (scrollState !== 1) {
+						goToState(1);
+						return true;
+					}
+					return false;
+				}
+				if (e.code === 'Digit1' || e.code === 'Numpad1') {
+					goToState(1);
+					return true;
+				}
+				if (e.code === 'Digit2' || e.code === 'Numpad2') {
+					goToState(2);
+					return true;
+				}
+				if (e.code === 'Digit3' || e.code === 'Numpad3') {
+					goToState(3);
+					return true;
+				}
+				if (shortcutLetter(e) === 'h') {
+					goToState(1);
+					return true;
+				}
+				if (e.code === 'Space' || e.code === 'ArrowDown' || e.code === 'PageDown') {
+					stepScroll(1);
+					return true;
+				}
+				if (e.code === 'ArrowUp' || e.code === 'PageUp') {
+					stepScroll(-1);
+					return true;
+				}
+				return false;
+			}
+		});
+
+		return () => popLayer();
+	});
 
 	$effect(() => {
 		if (!browser) return;
@@ -73,30 +120,14 @@
 			}
 		}
 
-		function handleKeyDown(e: KeyboardEvent) {
-			const target = e.target as HTMLElement | null;
-			const tag = target?.tagName?.toLowerCase();
-			if (tag === 'input' || tag === 'textarea' || target?.isContentEditable) return;
-
-			if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
-				e.preventDefault();
-				stepScroll(1);
-			} else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-				e.preventDefault();
-				stepScroll(-1);
-			}
-		}
-
 		window.addEventListener('wheel', handleWheel, { passive: false });
 		window.addEventListener('touchstart', handleTouchStart, { passive: true });
 		window.addEventListener('touchend', handleTouchEnd, { passive: true });
-		window.addEventListener('keydown', handleKeyDown);
 
 		return () => {
 			window.removeEventListener('wheel', handleWheel);
 			window.removeEventListener('touchstart', handleTouchStart);
 			window.removeEventListener('touchend', handleTouchEnd);
-			window.removeEventListener('keydown', handleKeyDown);
 			if (wheelClearTimer) clearTimeout(wheelClearTimer);
 		};
 	});
