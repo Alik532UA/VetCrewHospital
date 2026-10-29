@@ -87,7 +87,9 @@
 				class:is-active={withBg}
 				onclick={() => (withBg = true)}
 			>
-				<span class="pill-glyph">■</span>
+				<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" class="pill-icon" aria-hidden="true">
+					<rect x="4" y="2.5" width="16" height="19" rx="3.5"/>
+				</svg>
 				<span>{langStore.current === 'uk' ? 'З фірмовим контейнером' : 'With Background Plaque'}</span>
 			</button>
 			<button
@@ -96,7 +98,9 @@
 				class:is-active={!withBg}
 				onclick={() => (withBg = false)}
 			>
-				<span class="pill-glyph">◌</span>
+				<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-dasharray="3.5 2.5" stroke-linecap="round" class="pill-icon" aria-hidden="true">
+					<rect x="4" y="2.5" width="16" height="19" rx="3.5"/>
+				</svg>
 				<span>{langStore.current === 'uk' ? 'Чистий без фону (прозорий)' : 'Transparent (No Background)'}</span>
 			</button>
 		</div>
@@ -488,9 +492,21 @@
 		box-shadow: 0 2px 8px rgba(255, 179, 39, 0.15);
 	}
 
-	.pill-glyph {
-		font-size: 1rem;
-		line-height: 1;
+	.pill-icon {
+		display: inline-block;
+		vertical-align: middle;
+		flex-shrink: 0;
+		opacity: 0.75;
+		transition: all 0.15s ease;
+	}
+
+	.pill-btn.is-active .pill-icon {
+		color: var(--brand-emerald, #13371b);
+		opacity: 1;
+	}
+
+	:global(.dark) .pill-btn.is-active .pill-icon {
+		color: var(--brand-gold, #ffb327);
 	}
 
 	/* CARDS GRID */

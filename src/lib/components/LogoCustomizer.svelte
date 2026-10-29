@@ -401,7 +401,9 @@
 						}}
 						title={langStore.current === 'uk' ? 'Канонічна кругла емблема' : 'Round emblem badge'}
 					>
-						<span class="pill-glyph">●</span>
+						<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" class="pill-icon" aria-hidden="true">
+							<circle cx="12" cy="12" r="9"/>
+						</svg>
 						<span>{langStore.current === 'uk' ? 'Кругла' : 'Circle'}</span>
 					</button>
 					<button
@@ -414,7 +416,9 @@
 						}}
 						title={langStore.current === 'uk' ? 'Суцільна заливка артборду' : 'Full solid canvas fill'}
 					>
-						<span class="pill-glyph">■</span>
+						<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" class="pill-icon" aria-hidden="true">
+							<rect x="3" y="3" width="18" height="18" rx="4"/>
+						</svg>
 						<span>{langStore.current === 'uk' ? 'Суцільна' : 'Solid'}</span>
 					</button>
 					<button
@@ -424,7 +428,9 @@
 						onclick={() => (bgShape = 'transparent')}
 						title={langStore.current === 'uk' ? 'Без підкладки (прозорий фон)' : 'Transparent without fill'}
 					>
-						<span class="pill-glyph">◌</span>
+						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-dasharray="3.5 2.5" stroke-linecap="round" class="pill-icon" aria-hidden="true">
+							<circle cx="12" cy="12" r="8.75"/>
+						</svg>
 						<span>{langStore.current === 'uk' ? 'Без фону' : 'No Fill'}</span>
 					</button>
 				</div>
@@ -889,10 +895,12 @@
 		transition: all 0.15s ease;
 	}
 
-	.pill-glyph {
-		font-size: 0.75rem;
-		line-height: 1;
-		opacity: 0.85;
+	.pill-icon {
+		display: inline-block;
+		vertical-align: middle;
+		flex-shrink: 0;
+		opacity: 0.75;
+		transition: all 0.15s ease;
 	}
 
 	.pill-btn.is-active {
@@ -901,9 +909,13 @@
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 	}
 
-	.pill-btn.is-active .pill-glyph {
-		color: var(--brand-leaf);
+	.pill-btn.is-active .pill-icon {
+		color: var(--brand-emerald, #13371b);
 		opacity: 1;
+	}
+
+	:global(.dark) .pill-btn.is-active .pill-icon {
+		color: var(--brand-gold, #ffb327);
 	}
 
 	/* ELEMENT TABS */
