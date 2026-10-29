@@ -552,6 +552,14 @@
 			linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.04) 75%);
 	}
 
+	/* High contrast filter for transparent QR codes on dark stages */
+	:global([data-theme='dark']) .qr-preview-stage.is-nobg.stage--checker .qr-svg-render,
+	:global(.dark) .qr-preview-stage.is-nobg.stage--checker .qr-svg-render,
+	.qr-preview-stage.is-nobg.stage--dark .qr-svg-render,
+	.qr-preview-stage.is-nobg.stage--emerald .qr-svg-render {
+		filter: brightness(0) invert(1) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.45));
+	}
+
 	.qr-svg-render {
 		max-width: 100%;
 		max-height: 230px;
@@ -573,6 +581,7 @@
 		flex-direction: column;
 		gap: 0.65rem;
 		flex: 1;
+		min-height: 105px;
 	}
 
 	.qr-title-row {
@@ -696,11 +705,12 @@
 		box-shadow: 0 2px 6px rgba(19, 55, 27, 0.25);
 	}
 
+	:global([data-theme='dark']) .sub-pill.is-active,
 	:global(.dark) .sub-pill.is-active {
-		background: var(--brand-gold, #ffb327);
-		color: #101e14;
-		border-color: var(--brand-gold, #ffb327);
-		box-shadow: 0 2px 6px rgba(255, 179, 39, 0.25);
+		background: var(--brand-emerald, #13371b);
+		color: #ffffff;
+		border-color: var(--brand-leaf, #598f3a);
+		box-shadow: 0 2px 6px rgba(89, 143, 58, 0.25);
 	}
 
 	/* ACTIONS */
@@ -715,43 +725,35 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		gap: 0.45rem;
+		gap: 0.35rem;
 		width: 100%;
-		padding: 0.65rem 0.85rem;
-		border-radius: 10px;
-		font-size: 0.8rem;
+		padding: 0.55rem 0.65rem;
+		border-radius: 8px;
+		font-size: 0.76rem;
 		font-weight: 700;
 		text-decoration: none;
-		transition: all 0.2s ease;
 		cursor: pointer;
+		transition: all 0.18s ease;
 		text-align: center;
-	}
-
-	.download-qr-btn {
-		background: var(--brand-emerald, #13371b);
-		color: #ffffff;
-		border: 1px solid var(--brand-emerald, #13371b);
+		background: var(--panel-bg);
+		border: 1px solid var(--border);
+		color: var(--fg-secondary);
 	}
 
 	.download-qr-btn:hover:not(:disabled) {
-		background: var(--brand-leaf, #598f3a);
-		border-color: var(--brand-leaf, #598f3a);
+		background: var(--brand-emerald, #13371b);
+		border-color: var(--brand-emerald, #13371b);
 		color: #ffffff;
-		box-shadow: 0 4px 12px rgba(89, 143, 58, 0.25);
 		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba(19, 55, 27, 0.2);
 	}
 
-	:global(.dark) .download-qr-btn {
-		background: var(--brand-gold, #ffb327);
-		color: #101e14;
-		border-color: var(--brand-gold, #ffb327);
-	}
-
+	:global([data-theme='dark']) .download-qr-btn:hover:not(:disabled),
 	:global(.dark) .download-qr-btn:hover:not(:disabled) {
-		background: #ffa80a;
-		border-color: #ffa80a;
+		background: var(--brand-gold, #ffb327);
+		border-color: var(--brand-gold, #ffb327);
 		color: #101e14;
-		box-shadow: 0 4px 12px rgba(255, 179, 39, 0.35);
+		box-shadow: 0 4px 12px rgba(255, 179, 39, 0.25);
 	}
 
 	.download-qr-btn:disabled {
