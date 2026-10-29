@@ -2,6 +2,7 @@
 	import { base } from '$app/paths';
 	import { resolve } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
+	import { themeStore } from '$lib/theme.svelte';
 	import LogoCustomizer from '$lib/components/LogoCustomizer.svelte';
 	import BrandToc from '$lib/components/brand/BrandToc.svelte';
 	import BrandSlogan from '$lib/components/brand/BrandSlogan.svelte';
@@ -72,13 +73,55 @@
 	<div class="brandbook-container">
 		<!-- HEADER -->
 		<header class="brandbook-header">
-			<a href={resolve('/')} class="back-link">
-				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-					<line x1="19" y1="12" x2="5" y2="12"></line>
-					<polyline points="12 19 5 12 12 5"></polyline>
-				</svg>
-				<span>{langStore.current === 'uk' ? 'На головну' : 'Back to Home'}</span>
-			</a>
+			<div class="top-nav-bar">
+				<a href={resolve('/')} class="back-link">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<line x1="19" y1="12" x2="5" y2="12"></line>
+						<polyline points="12 19 5 12 12 5"></polyline>
+					</svg>
+					<span>{langStore.current === 'uk' ? 'На головну' : 'Back to Home'}</span>
+				</a>
+
+				<div class="header-actions">
+					<!-- Theme Toggle Button -->
+					<button
+						type="button"
+						class="header-action-btn theme-switch-btn"
+						onclick={() => themeStore.toggle()}
+						aria-label={themeStore.current === 'dark' ? (langStore.current === 'uk' ? 'Увімкнути світлу тему' : 'Switch to Light Mode') : (langStore.current === 'uk' ? 'Увімкнути темну тему' : 'Switch to Dark Mode')}
+						title={themeStore.current === 'dark' ? (langStore.current === 'uk' ? 'Увімкнути світлу тему' : 'Switch to Light Mode') : (langStore.current === 'uk' ? 'Увімкнути темну тему' : 'Switch to Dark Mode')}
+					>
+						{#if themeStore.current === 'dark'}
+							<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<circle cx="12" cy="12" r="4"/>
+								<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+							</svg>
+							<span>{langStore.current === 'uk' ? 'Світла тема' : 'Light'}</span>
+						{:else}
+							<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+							</svg>
+							<span>{langStore.current === 'uk' ? 'Темна тема' : 'Dark'}</span>
+						{/if}
+					</button>
+
+					<!-- Language Toggle Button -->
+					<button
+						type="button"
+						class="header-action-btn lang-switch-btn"
+						onclick={() => langStore.toggle()}
+						aria-label={langStore.current === 'uk' ? 'Switch to English' : 'Перемкнути на українську'}
+						title={langStore.current === 'uk' ? 'Switch to English' : 'Перемкнути на українську'}
+					>
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<circle cx="12" cy="12" r="10"/>
+							<line x1="2" y1="12" x2="22" y2="12"/>
+							<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+						</svg>
+						<span>{langStore.current === 'uk' ? 'UA' : 'EN'}</span>
+					</button>
+				</div>
+			</div>
 
 			<div class="header-titles">
 				<div class="header-badge">
@@ -393,6 +436,52 @@
 		gap: 1.5rem;
 		padding-left: calc(64px + 2rem);
 		transition: padding 0.2s ease;
+	}
+
+	.top-nav-bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		width: 100%;
+		flex-wrap: wrap;
+	}
+
+	.header-actions {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+	}
+
+	.header-action-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.42rem 0.95rem;
+		border-radius: 9999px;
+		background: var(--panel-bg);
+		border: 1px solid var(--border);
+		color: var(--fg-primary);
+		font-size: 0.85rem;
+		font-weight: 700;
+		cursor: pointer;
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+		transition: all 0.2s ease;
+	}
+
+	.header-action-btn:hover {
+		border-color: var(--border-hover);
+		color: var(--brand-leaf);
+		transform: translateY(-1px);
+		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+	}
+
+	:global([data-theme='dark']) .header-action-btn:hover,
+	:global(.dark) .header-action-btn:hover {
+		color: var(--brand-gold);
+		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 	}
 
 	.back-link {

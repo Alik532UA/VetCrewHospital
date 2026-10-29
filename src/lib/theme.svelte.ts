@@ -33,6 +33,8 @@ class ThemeStore {
 	apply() {
 		if (typeof window === 'undefined') return;
 		document.documentElement.setAttribute('data-theme', this.current);
+		document.documentElement.classList.toggle('dark', this.current === 'dark');
+		document.documentElement.classList.toggle('light', this.current === 'light');
 		safeLocalStorage.set('theme', this.current);
 		try {
 			const metaTheme = document.querySelector('meta[name="theme-color"]');

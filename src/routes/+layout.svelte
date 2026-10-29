@@ -1,5 +1,6 @@
 <script lang="ts">
 	import '../app.css';
+	import { themeStore } from '$lib/theme.svelte';
 	import type { Snippet } from 'svelte';
 
 	interface Props {

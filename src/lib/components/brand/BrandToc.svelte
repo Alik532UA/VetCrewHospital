@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { langStore } from '$lib/lang.svelte';
+	import { themeStore } from '$lib/theme.svelte';
 
 	interface TocSection {
 		id: string;
@@ -144,6 +145,34 @@
 				</span>
 			</a>
 		{/each}
+
+		<div class="toc-divider" aria-hidden="true"></div>
+
+		<!-- THEME TOGGLE BUTTON -->
+		<button
+			type="button"
+			class="toc-btn toc-theme-btn"
+			onclick={() => themeStore.toggle()}
+			aria-label={themeStore.current === 'dark' ? (langStore.current === 'uk' ? 'Увімкнути світлу тему' : 'Switch to Light Mode') : (langStore.current === 'uk' ? 'Увімкнути темну тему' : 'Switch to Dark Mode')}
+			title={themeStore.current === 'dark' ? (langStore.current === 'uk' ? 'Увімкнути світлу тему' : 'Switch to Light Mode') : (langStore.current === 'uk' ? 'Увімкнути темну тему' : 'Switch to Dark Mode')}
+		>
+			<span class="toc-icon-wrap">
+				{#if themeStore.current === 'dark'}
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<circle cx="12" cy="12" r="4"/>
+						<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+					</svg>
+				{:else}
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+					</svg>
+				{/if}
+			</span>
+
+			<span class="toc-tooltip" role="tooltip">
+				<span class="tooltip-text">{themeStore.current === 'dark' ? (langStore.current === 'uk' ? 'Світла тема' : 'Light Mode') : (langStore.current === 'uk' ? 'Темна тема' : 'Dark Mode')}</span>
+			</span>
+		</button>
 	</div>
 </nav>
 
@@ -260,6 +289,13 @@
 		z-index: 50;
 	}
 
+	:global([data-theme='dark']) .toc-tooltip,
+	:global(.dark) .toc-tooltip {
+		background: #182b1d;
+		border: 1px solid rgba(255, 255, 255, 0.15);
+		color: #f5f8f5;
+	}
+
 	.toc-tooltip::before {
 		content: '';
 		position: absolute;
@@ -268,6 +304,11 @@
 		transform: translateY(-50%);
 		border: 5px solid transparent;
 		border-right-color: #13371b;
+	}
+
+	:global([data-theme='dark']) .toc-tooltip::before,
+	:global(.dark) .toc-tooltip::before {
+		border-right-color: #182b1d;
 	}
 
 	.tooltip-num {
@@ -282,6 +323,33 @@
 		transform: translateY(-50%) translateX(0);
 	}
 
+	.toc-divider {
+		height: 1px;
+		width: 100%;
+		background: var(--border);
+		margin: 2px 0;
+	}
+
+	.toc-theme-btn {
+		color: var(--fg-secondary);
+	}
+
+	.toc-theme-btn:hover {
+		color: var(--brand-leaf);
+	}
+
+	:global([data-theme='dark']) .toc-theme-btn:hover,
+	:global(.dark) .toc-theme-btn:hover {
+		color: var(--brand-gold);
+	}
+
+	:global([data-theme='dark']) .toc-btn.is-active,
+	:global(.dark) .toc-btn.is-active {
+		border-color: var(--brand-gold);
+		box-shadow: 0 0 0 3px rgba(255, 179, 39, 0.25);
+		color: var(--brand-gold);
+	}
+
 	/* MOBILE DOCK */
 	@media (max-width: 900px) {
 		.brand-toc {
@@ -291,7 +359,7 @@
 			left: 50%;
 			transform: translateX(-50%);
 			width: calc(100% - 1.5rem);
-			max-width: 440px;
+			max-width: 480px;
 			z-index: 45;
 			pointer-events: none;
 		}
@@ -307,9 +375,16 @@
 			box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 		}
 
+		.toc-divider {
+			width: 1px;
+			height: 28px;
+			align-self: center;
+			margin: 0 2px;
+		}
+
 		.toc-btn {
-			width: clamp(34px, 10vw, 42px);
-			height: clamp(34px, 10vw, 42px);
+			width: clamp(32px, 8.5vw, 40px);
+			height: clamp(32px, 8.5vw, 40px);
 			border-radius: 9px;
 			flex-shrink: 1;
 		}
