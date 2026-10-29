@@ -736,6 +736,7 @@
 		cursor: pointer;
 		transition: all 0.18s ease;
 		text-align: center;
+		white-space: nowrap;
 		background: var(--panel-bg);
 		border: 1px solid var(--border);
 		color: var(--fg-secondary);

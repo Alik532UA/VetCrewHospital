@@ -73,26 +73,28 @@
 							href="{base}/brand/emblems/{item.svgFile}"
 							download="vet-crew-emblem-{item.num}.svg"
 							class="download-btn svg-btn"
+							title="{langStore.current === 'uk' ? `Завантажити векторний SVG (Варіант ${item.num})` : `Download vector SVG (Option ${item.num})`}"
 						>
-							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 								<polyline points="7 10 12 15 17 10"></polyline>
 								<line x1="12" y1="15" x2="12" y2="3"></line>
 							</svg>
-							<span>{langStore.current === 'uk' ? 'Завантажити SVG (Вектор)' : 'Download Vector (SVG)'}</span>
+							<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
 						</a>
 
 						<a
 							href="{base}/brand/emblems/{item.pngFile}"
 							download="vet-crew-emblem-{item.num}.png"
 							class="download-btn png-btn"
+							title="{langStore.current === 'uk' ? `Завантажити PNG (2000 px) — Варіант ${item.num}` : `Download PNG (2000 px) — Option ${item.num}`}"
 						>
-							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 								<polyline points="7 10 12 15 17 10"></polyline>
 								<line x1="12" y1="15" x2="12" y2="3"></line>
 							</svg>
-							<span>{langStore.current === 'uk' ? 'Завантажити PNG (2000 px)' : 'Download PNG (2000 px)'}</span>
+							<span>PNG (2000 px)</span>
 						</a>
 					</div>
 				</div>
@@ -258,46 +260,40 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		gap: 0.5rem;
-		padding: 0.75rem 1rem;
-		border-radius: 10px;
-		font-size: 0.84rem;
+		gap: 0.35rem;
+		width: 100%;
+		padding: 0.55rem 0.65rem;
+		border-radius: 8px;
+		font-size: 0.76rem;
 		font-weight: 700;
 		text-decoration: none;
-		transition: all 0.2s ease;
 		cursor: pointer;
+		transition: all 0.18s ease;
 		text-align: center;
+		white-space: nowrap;
+		background: var(--panel-bg);
+		border: 1px solid var(--border);
+		color: var(--fg-secondary);
 	}
 
-	.download-btn {
+	.download-btn:hover:not(:disabled) {
 		background: var(--brand-emerald, #13371b);
+		border-color: var(--brand-emerald, #13371b);
 		color: #ffffff;
-		border: 1px solid var(--brand-emerald, #13371b);
-	}
-
-	.download-btn:hover {
-		background: var(--brand-leaf, #598f3a);
-		border-color: var(--brand-leaf, #598f3a);
-		color: #ffffff;
-		box-shadow: 0 4px 14px rgba(89, 143, 58, 0.25);
 		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba(19, 55, 27, 0.2);
 	}
 
-	:global(.dark) .download-btn {
+	:global([data-theme='dark']) .download-btn:hover:not(:disabled),
+	:global(.dark) .download-btn:hover:not(:disabled) {
 		background: var(--brand-gold, #ffb327);
-		color: #101e14;
 		border-color: var(--brand-gold, #ffb327);
-	}
-
-	:global(.dark) .download-btn:hover {
-		background: #ffa80a;
-		border-color: #ffa80a;
 		color: #101e14;
-		box-shadow: 0 4px 14px rgba(255, 179, 39, 0.35);
+		box-shadow: 0 4px 12px rgba(255, 179, 39, 0.25);
 	}
 
-	:global(.dark) .png-btn:hover {
-		color: var(--brand-gold);
-		border-color: var(--brand-gold);
+	.download-btn:disabled {
+		opacity: 0.6;
+		cursor: wait;
 	}
 </style>

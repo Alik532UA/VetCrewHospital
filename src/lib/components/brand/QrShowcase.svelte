@@ -133,7 +133,7 @@
 					download="vet-crew-qr-plaque-background.svg"
 					class="download-qr-btn svg-btn"
 				>
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -146,7 +146,7 @@
 					onclick={() => exportQrPng('background.svg', 'vet-crew-qr-plaque-background')}
 					disabled={isExporting === 'background.svg'}
 				>
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -180,7 +180,7 @@
 					download="vet-crew-wifi{withBg ? '' : '-nobg'}.svg"
 					class="download-qr-btn svg-btn"
 				>
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -193,7 +193,7 @@
 					onclick={() => exportQrPng(wifiFile, `vet-crew-wifi${withBg ? '' : '-nobg'}`)}
 					disabled={isExporting === wifiFile}
 				>
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -227,7 +227,7 @@
 					download="vet-crew-instagram{withBg ? '' : '-nobg'}.svg"
 					class="download-qr-btn svg-btn"
 				>
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -240,7 +240,7 @@
 					onclick={() => exportQrPng(igFile, `vet-crew-instagram${withBg ? '' : '-nobg'}`)}
 					disabled={isExporting === igFile}
 				>
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -290,17 +290,14 @@
 					href="{base}/brand/qr/{activeReviewFile}"
 					download="vet-crew-{reviewVariant}{withBg ? '' : '-nobg'}.svg"
 					class="download-qr-btn svg-btn"
+					title="{langStore.current === 'uk' ? `Завантажити SVG (${REVIEW_FILES[reviewVariant].labelUk})` : `Download SVG (${REVIEW_FILES[reviewVariant].labelEn})`}"
 				>
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
 					</svg>
-					<span>
-						{langStore.current === 'uk'
-							? `SVG (${REVIEW_FILES[reviewVariant].labelUk})`
-							: `SVG (${REVIEW_FILES[reviewVariant].labelEn})`}
-					</span>
+					<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
 				</a>
 				<button
 					type="button"
@@ -308,7 +305,7 @@
 					onclick={() => exportQrPng(activeReviewFile, `vet-crew-${reviewVariant}${withBg ? '' : '-nobg'}`)}
 					disabled={isExporting === activeReviewFile}
 				>
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -358,17 +355,14 @@
 					href="{base}/brand/qr/{activeWebsiteFile}"
 					download="vet-crew-website-{websiteVariant === 'v2' ? 'valentyna' : 'alik'}{withBg ? '' : '-nobg'}.svg"
 					class="download-qr-btn svg-btn"
+					title="{langStore.current === 'uk' ? `Завантажити SVG (${WEBSITE_FILES[websiteVariant].labelUk})` : `Download SVG (${WEBSITE_FILES[websiteVariant].labelEn})`}"
 				>
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
 					</svg>
-					<span>
-						{langStore.current === 'uk'
-							? `SVG (${WEBSITE_FILES[websiteVariant].labelUk})`
-							: `SVG (${WEBSITE_FILES[websiteVariant].labelEn})`}
-					</span>
+					<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
 				</a>
 				<button
 					type="button"
@@ -376,7 +370,7 @@
 					onclick={() => exportQrPng(activeWebsiteFile, `vet-crew-website-${websiteVariant === 'v2' ? 'valentyna' : 'alik'}${withBg ? '' : '-nobg'}`)}
 					disabled={isExporting === activeWebsiteFile}
 				>
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -735,6 +729,7 @@
 		cursor: pointer;
 		transition: all 0.18s ease;
 		text-align: center;
+		white-space: nowrap;
 		background: var(--panel-bg);
 		border: 1px solid var(--border);
 		color: var(--fg-secondary);
