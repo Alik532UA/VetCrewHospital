@@ -40,14 +40,14 @@
 		v2: {
 			bg: 'website-v2.svg',
 			nobg: 'website-v2-nobg.svg',
-			labelUk: 'Нова іконка (v2)',
-			labelEn: 'New Icon (v2)'
+			labelUk: 'Валентина',
+			labelEn: 'Valentyna'
 		},
 		v1: {
 			bg: 'website.svg',
 			nobg: 'website-nobg.svg',
-			labelUk: 'Класична (v1)',
-			labelEn: 'Classic (v1)'
+			labelUk: 'Алік',
+			labelEn: 'Alik'
 		}
 	};
 
@@ -386,7 +386,7 @@
 			<div class="qr-actions">
 				<a
 					href="{base}/brand/qr/{activeWebsiteFile}"
-					download="vet-crew-{websiteVariant === 'v2' ? 'website-v2' : 'website'}{withBg ? '' : '-nobg'}.svg"
+					download="vet-crew-website-{websiteVariant === 'v2' ? 'valentyna' : 'alik'}{withBg ? '' : '-nobg'}.svg"
 					class="download-qr-btn svg-btn"
 				>
 					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -403,7 +403,7 @@
 				<button
 					type="button"
 					class="download-qr-btn png-btn"
-					onclick={() => exportQrPng(activeWebsiteFile, `vet-crew-${websiteVariant === 'v2' ? 'website-v2' : 'website'}${withBg ? '' : '-nobg'}`)}
+					onclick={() => exportQrPng(activeWebsiteFile, `vet-crew-website-${websiteVariant === 'v2' ? 'valentyna' : 'alik'}${withBg ? '' : '-nobg'}`)}
 					disabled={isExporting === activeWebsiteFile}
 				>
 					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
