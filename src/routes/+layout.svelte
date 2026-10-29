@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { themeStore } from '$lib/theme.svelte';
+	import { langStore } from '$lib/lang.svelte';
 	import ServiceBadge from '$lib/components/ServiceBadge.svelte';
 	import type { Snippet } from 'svelte';
 
@@ -16,6 +17,8 @@
 	});
 </script>
 
+<a href="#main-content" class="skip-link">{langStore.t('skip_to_content')}</a>
+
 <div class="app-root">
 	<!-- Dynamic ambient glow background -->
 	<div class="ambient-glow"></div>
@@ -26,6 +29,27 @@
 </div>
 
 <style>
+	.skip-link {
+		position: fixed;
+		top: -9999px;
+		left: 16px;
+		z-index: 10001;
+		padding: 8px 16px;
+		background: var(--panel-bg, #1a1a1a);
+		color: var(--text-primary, #ffffff);
+		border: 2px solid var(--accent, #93C84A);
+		border-radius: 8px;
+		font-weight: 700;
+		font-size: 0.85rem;
+		text-decoration: none;
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+		transition: top 0.2s ease;
+	}
+
+	.skip-link:focus {
+		top: 16px;
+	}
+
 	.app-root {
 		position: relative;
 		width: 100%;

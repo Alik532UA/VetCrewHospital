@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { browser, dev } from '$app/environment';
 	import { page } from '$app/state';
-	import { Check, Copy } from 'lucide-svelte';
+	import { Check, Copy, RefreshCw } from 'lucide-svelte';
 	import { APP_VERSION } from '../config/version';
 	import { logService } from '../services/logService.svelte';
 	import { debugMode } from '../debug/debugMode.svelte';
+	import { hardReset } from '../debug/hardReset';
+	import { createKeySequence, listenForSequences } from '../debug/keySequence';
+	import { fetchServedVersion } from '../services/servedVersion';
 
 	let copied = $state(false);
 	let fallbackReport = $state<string | null>(null);
@@ -13,9 +16,45 @@
 	const urlDebug = $derived(browser && page.url.searchParams.get('debug') === '1');
 	const isVisible = $derived(dev || urlDebug || debugMode.enabled || logService.errorCount > 0);
 	const errors = $derived(logService.errorCount);
+	const hasUpdate = $derived(
+		Boolean(logService.servedVersion && logService.servedVersion !== APP_VERSION)
+	);
 
-	$effect(() => () => {
-		if (copyTimer) clearTimeout(copyTimer);
+	$effect(() => {
+		if (!browser) return;
+
+		// 1. Перевірка версії на сервері
+		void fetchServedVersion().then((served) => {
+			if (served) logService.servedVersion = served;
+		});
+
+		// 2. Службові жести клавіатури: V — показати/сховати табло, R — скидання
+		const vThreshold = () => (debugMode.enabled ? 5 : dev ? 5 : 55);
+		const rThreshold = () => (dev ? 5 : 25);
+
+		const cleanup = listenForSequences(
+			createKeySequence({
+				letter: 'v',
+				threshold: vThreshold,
+				onComplete: () => {
+					debugMode.set(!debugMode.enabled);
+					logService.info('ui', `ServiceBadge visibility toggled: ${debugMode.enabled}`);
+				}
+			}),
+			createKeySequence({
+				letter: 'r',
+				threshold: rThreshold,
+				onComplete: () => {
+					const ok = confirm('Скинути всі збережені дані та кеші застосунку?');
+					if (ok) void hardReset();
+				}
+			})
+		);
+
+		return () => {
+			cleanup();
+			if (copyTimer) clearTimeout(copyTimer);
+		};
 	});
 
 	async function copyReport() {
@@ -48,20 +87,26 @@
 		type="button"
 		class="service-badge"
 		class:has-errors={errors > 0}
+		class:has-update={hasUpdate}
 		class:copied
 		onclick={copyReport}
 		aria-label="Копіювати звіт діагностики — v{APP_VERSION}"
-		title="Скопіювати звіт діагностики (v{APP_VERSION})"
+		title="Скопіювати звіт діагностики (v{APP_VERSION}){hasUpdate ? ` — доступна нова версія v${logService.servedVersion}` : ''}"
 		data-testid="service-badge-btn"
 	>
 		{#if copied}
 			<Check size={14} class="badge-icon" aria-hidden="true" />
 		{:else if errors > 0}
 			<span class="error-count">{errors > 99 ? '99+' : errors}</span>
+		{:else if hasUpdate}
+			<RefreshCw size={12} class="badge-icon update-icon" aria-hidden="true" />
 		{:else}
 			<Copy size={12} class="badge-icon" aria-hidden="true" />
 		{/if}
 		<span class="version-text">v{APP_VERSION}</span>
+		{#if hasUpdate}
+			<span class="update-badge" title="Доступна нова версія: v{logService.servedVersion}">upd</span>
+		{/if}
 	</button>
 {/if}
 
@@ -140,6 +185,17 @@
 		line-height: 1;
 	}
 
+	.update-badge {
+		font-size: 0.6rem;
+		font-weight: 800;
+		text-transform: uppercase;
+		padding: 1px 5px;
+		border-radius: 6px;
+		background: #2563eb;
+		color: #ffffff;
+		margin-left: 2px;
+	}
+
 	.service-report-fallback-wrapper {
 		position: fixed;
 		bottom: 56px;
@@ -190,4 +246,3 @@
 		resize: vertical;
 	}
 </style>
-

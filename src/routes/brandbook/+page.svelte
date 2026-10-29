@@ -79,7 +79,7 @@
 	/>
 </svelte:head>
 
-<div class="brandbook-page">
+<main id="main-content" class="brandbook-page">
 	<div class="brandbook-container">
 		<!-- HEADER -->
 		<header class="brandbook-header">
@@ -431,7 +431,7 @@
 			</div>
 		</div>
 	</div>
-</div>
+</main>
 
 <style>
 	:global(body:has(.brandbook-page)) {

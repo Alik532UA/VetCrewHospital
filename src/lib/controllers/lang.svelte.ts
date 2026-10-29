@@ -20,7 +20,8 @@ const TRANSLATIONS = {
 		fullscreen: 'Екран',
 		fullscreen_exit: 'Згорнути',
 		scroll_hero: 'Головна',
-		scroll_contacts: 'Контакти'
+		scroll_contacts: 'Контакти',
+		skip_to_content: 'До основного вмісту'
 	},
 	en: {
 		hospital_name: 'Vet Crew Hospital',
@@ -38,7 +39,8 @@ const TRANSLATIONS = {
 		fullscreen: 'Fullscreen',
 		fullscreen_exit: 'Exit',
 		scroll_hero: 'Hero',
-		scroll_contacts: 'Contacts'
+		scroll_contacts: 'Contacts',
+		skip_to_content: 'Skip to content'
 	}
 } as const;
 
