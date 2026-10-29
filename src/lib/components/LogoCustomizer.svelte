@@ -179,7 +179,7 @@
 		isExportingPng = true;
 
 		try {
-			const size = 1940; // High resolution 2x
+			const size = 2000; // High resolution 2000px
 			const canvas = document.createElement('canvas');
 			canvas.width = size;
 			canvas.height = size;
@@ -211,7 +211,7 @@
 				const link = document.createElement('a');
 				link.href = pngUrl;
 				const suffix = bgShape === 'circle' ? 'badge' : bgShape === 'solid' ? 'solid' : 'transparent';
-				link.download = `VetCrewHospital-${suffix}-2x.png`;
+				link.download = `VetCrewHospital-${suffix}-2000px.png`;
 				document.body.appendChild(link);
 				link.click();
 				document.body.removeChild(link);
@@ -305,25 +305,6 @@
 						</svg>
 					</button>
 				</div>
-
-				<div class="download-group">
-					<button type="button" class="action-dl-btn" onclick={downloadSvg}>
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-							<polyline points="7 10 12 15 17 10"></polyline>
-							<line x1="12" y1="15" x2="12" y2="3"></line>
-						</svg>
-						<span>SVG</span>
-					</button>
-					<button type="button" class="action-dl-btn primary" onclick={downloadPng} disabled={isExportingPng}>
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-							<polyline points="7 10 12 15 17 10"></polyline>
-							<line x1="12" y1="15" x2="12" y2="3"></line>
-						</svg>
-						<span>{isExportingPng ? '...' : 'PNG (2x)'}</span>
-					</button>
-				</div>
 			</div>
 
 			<!-- Live SVG Viewport -->
@@ -367,6 +348,38 @@
 						<path id="live-text-hospital" fill={hospitalColor} d={logoPaths['text-hospital'].d} />
 					</g>
 				</svg>
+			</div>
+
+			<!-- Bottom Download Action Buttons -->
+			<div class="stage-actions">
+				<button
+					type="button"
+					class="action-dl-btn svg-btn"
+					onclick={downloadSvg}
+					title={langStore.current === 'uk' ? 'Завантажити векторний SVG' : 'Download SVG'}
+				>
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="7 10 12 15 17 10"></polyline>
+						<line x1="12" y1="15" x2="12" y2="3"></line>
+					</svg>
+					<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
+				</button>
+
+				<button
+					type="button"
+					class="action-dl-btn png-btn"
+					onclick={downloadPng}
+					disabled={isExportingPng}
+					title={langStore.current === 'uk' ? 'Завантажити растровий PNG (2000 px)' : 'Download PNG (2000 px)'}
+				>
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="7 10 12 15 17 10"></polyline>
+						<line x1="12" y1="15" x2="12" y2="3"></line>
+					</svg>
+					<span>{isExportingPng ? '...' : (langStore.current === 'uk' ? 'PNG (2000 px)' : 'PNG (2000 px)')}</span>
+				</button>
 			</div>
 		</div>
 
@@ -660,29 +673,30 @@
 	.stage-toolbar {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
+		justify-content: flex-start;
 		gap: 0.5rem;
 	}
 
 	.grid-toggles {
 		display: flex;
 		align-items: center;
-		gap: 0.3rem;
+		gap: 0.35rem;
 	}
 
 	.toolbar-sublabel {
-		font-size: 0.75rem;
-		font-weight: 600;
+		font-size: 0.78rem;
+		font-weight: 700;
 		color: var(--fg-muted);
-		margin-right: 0.2rem;
+		margin-right: 0.35rem;
 	}
 
 	.grid-btn {
-		width: 28px;
-		height: 28px;
-		border-radius: 6px;
+		width: 32px;
+		height: 32px;
+		border-radius: 8px;
 		border: 1px solid var(--border);
 		background: var(--bg-secondary);
+		color: var(--fg-secondary);
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -691,60 +705,94 @@
 		transition: all 0.15s ease;
 	}
 
+	.grid-btn:hover {
+		background: var(--panel-bg);
+		color: var(--fg-primary);
+		border-color: var(--border-hover);
+	}
+
 	.grid-btn.is-active {
-		border-color: var(--brand-leaf, #598f3a);
-		background: var(--brand-leaf, #598f3a);
+		border-color: var(--brand-emerald, #13371b);
+		background: var(--brand-emerald, #13371b);
 		color: #ffffff;
+		box-shadow: 0 2px 6px rgba(19, 55, 27, 0.2);
 	}
 
 	:global(.dark) .grid-btn.is-active {
 		border-color: var(--brand-gold, #ffb327);
 		background: var(--brand-gold, #ffb327);
 		color: #101e14;
+		box-shadow: 0 2px 6px rgba(255, 179, 39, 0.25);
 	}
 
-	.download-group {
-		display: flex;
-		align-items: center;
-		gap: 0.4rem;
+	.stage-actions {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.65rem;
+		margin-top: 0.25rem;
 	}
 
 	.action-dl-btn {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.35rem;
-		padding: 0.35rem 0.65rem;
-		border-radius: 8px;
-		background: var(--border);
-		color: var(--fg-primary);
-		font-size: 0.76rem;
+		justify-content: center;
+		gap: 0.45rem;
+		padding: 0.7rem 1rem;
+		border-radius: 10px;
+		font-size: 0.82rem;
 		font-weight: 700;
 		cursor: pointer;
-		border: 1px solid transparent;
 		transition: all 0.2s ease;
+		text-align: center;
 	}
 
-	.action-dl-btn:hover {
-		background: var(--panel-bg);
-		border-color: var(--border-hover);
-	}
-
-	.action-dl-btn.primary {
-		background: var(--brand-leaf, #598f3a);
+	.action-dl-btn.svg-btn {
+		background: var(--brand-emerald, #13371b);
 		color: #ffffff;
+		border: 1px solid var(--brand-emerald, #13371b);
 	}
 
-	.action-dl-btn.primary:hover {
-		background: #46732c;
+	.action-dl-btn.svg-btn:hover:not(:disabled) {
+		background: var(--brand-leaf, #598f3a);
+		border-color: var(--brand-leaf, #598f3a);
+		color: #ffffff;
+		box-shadow: 0 4px 12px rgba(89, 143, 58, 0.25);
+		transform: translateY(-1px);
 	}
 
-	:global(.dark) .action-dl-btn.primary {
+	:global(.dark) .action-dl-btn.svg-btn {
 		background: var(--brand-gold, #ffb327);
 		color: #101e14;
+		border-color: var(--brand-gold, #ffb327);
 	}
 
-	:global(.dark) .action-dl-btn.primary:hover {
+	:global(.dark) .action-dl-btn.svg-btn:hover:not(:disabled) {
 		background: #ffa80a;
+		border-color: #ffa80a;
+		color: #101e14;
+		box-shadow: 0 4px 12px rgba(255, 179, 39, 0.35);
+	}
+
+	.action-dl-btn.png-btn {
+		background: var(--bg-secondary);
+		border: 1px solid var(--border);
+		color: var(--fg-primary);
+	}
+
+	.action-dl-btn.png-btn:hover:not(:disabled) {
+		background: var(--panel-bg);
+		border-color: var(--border-hover);
+		color: var(--brand-leaf, #598f3a);
+		transform: translateY(-1px);
+	}
+
+	:global(.dark) .action-dl-btn.png-btn:hover:not(:disabled) {
+		color: var(--brand-gold, #ffb327);
+	}
+
+	.action-dl-btn:disabled {
+		opacity: 0.6;
+		cursor: wait;
 	}
 
 	.stage-viewport {

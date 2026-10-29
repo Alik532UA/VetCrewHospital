@@ -113,3 +113,4 @@ export async function downloadUrlAsPng(
 	}
 	await downloadSvgAsPng(svgText, filename, maxDimension);
 }
+
