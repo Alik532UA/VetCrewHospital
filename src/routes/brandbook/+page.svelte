@@ -163,9 +163,43 @@
 
 					<div class="palette-grid">
 						{#each colors as c (c.hex)}
-							<div class="color-tile" style="--tile-bg: {c.hex}; --tile-fg: {c.textColor};">
+							<!-- svelte-ignore a11y_click_events_have_key_events -->
+							<div
+								class="color-tile"
+								role="button"
+								tabindex="0"
+								style="--tile-bg: {c.hex}; --tile-fg: {c.textColor};"
+								onclick={() => copyToClipboard(c.hex)}
+								onkeydown={(e) => {
+									if (e.key === 'Enter' || e.key === ' ') {
+										e.preventDefault();
+										copyToClipboard(c.hex);
+									}
+								}}
+								title="{langStore.current === 'uk' ? `Натисніть для копіювання ${c.hex}` : `Click to copy ${c.hex}`}"
+							>
 								<div class="tile-swatch">
-									<span class="tile-hex">{c.hex}</span>
+									<div class="swatch-top-row">
+										<span class="tile-hex">{c.hex}</span>
+										<span class="swatch-copy-hint">
+											{#if copiedVal === c.hex}
+												<span class="copied-badge">
+													<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+														<polyline points="20 6 9 17 4 12"></polyline>
+													</svg>
+													<span>{langStore.current === 'uk' ? 'Скопійовано!' : 'Copied!'}</span>
+												</span>
+											{:else}
+												<span class="click-hint">
+													<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+														<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+														<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+													</svg>
+													<span>{langStore.current === 'uk' ? 'Копіювати' : 'Copy'}</span>
+												</span>
+											{/if}
+										</span>
+									</div>
 									<span class="tile-tag">{c.name}</span>
 								</div>
 								<div class="tile-info">
@@ -174,7 +208,10 @@
 											type="button"
 											class="copy-btn"
 											class:is-copied={copiedVal === c.hex}
-											onclick={() => copyToClipboard(c.hex)}
+											onclick={(e) => {
+												e.stopPropagation();
+												copyToClipboard(c.hex);
+											}}
 										>
 											<span>{copiedVal === c.hex ? (langStore.current === 'uk' ? 'Скопійовано!' : 'Copied!') : c.hex}</span>
 											<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -191,7 +228,11 @@
 											type="button"
 											class="copy-btn secondary"
 											class:is-copied={copiedVal === `rgb(${c.rgb})`}
-											onclick={() => copyToClipboard(`rgb(${c.rgb})`)}
+											onclick={(e) => {
+												e.stopPropagation();
+												copyToClipboard(`rgb(${c.rgb})`);
+											}}
+											title="{langStore.current === 'uk' ? `Скопіювати RGB: ${c.rgb}` : `Copy RGB: ${c.rgb}`}"
 										>
 											<span>{copiedVal === `rgb(${c.rgb})` ? 'RGB OK' : `RGB: ${c.rgb}`}</span>
 										</button>
@@ -649,12 +690,17 @@
 		background: var(--panel-bg);
 		display: flex;
 		flex-direction: column;
-		transition: transform 0.25s ease, box-shadow 0.25s ease;
+		cursor: pointer;
+		outline: none;
+		user-select: none;
+		transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.2s ease;
 	}
 
-	.color-tile:hover {
+	.color-tile:hover,
+	.color-tile:focus-visible {
 		transform: translateY(-4px);
 		box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+		border-color: var(--border-hover);
 	}
 
 	.tile-swatch {
@@ -665,6 +711,48 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
+		position: relative;
+	}
+
+	.swatch-top-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+	}
+
+	.swatch-copy-hint {
+		font-size: 0.7rem;
+		font-weight: 700;
+		padding: 0.2rem 0.55rem;
+		border-radius: 9999px;
+		background: rgba(0, 0, 0, 0.15);
+		color: var(--tile-fg);
+		backdrop-filter: blur(4px);
+		transition: all 0.2s ease;
+	}
+
+	.color-tile:hover .swatch-copy-hint {
+		background: rgba(0, 0, 0, 0.25);
+	}
+
+	.copied-badge,
+	.click-hint {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+	}
+
+	.copied-badge {
+		font-weight: 800;
+	}
+
+	.click-hint {
+		opacity: 0.85;
+	}
+
+	.color-tile:hover .click-hint {
+		opacity: 1;
 	}
 
 	.tile-hex {
@@ -718,8 +806,15 @@
 	}
 
 	.copy-btn.is-copied {
-		background: var(--brand-leaf);
+		background: var(--brand-leaf, #598f3a);
 		color: #ffffff;
+		border-color: var(--brand-leaf, #598f3a);
+	}
+
+	:global(.dark) .copy-btn.is-copied {
+		background: var(--brand-gold, #ffb327);
+		color: #101e14;
+		border-color: var(--brand-gold, #ffb327);
 	}
 
 	.copy-btn.secondary {
