@@ -5,6 +5,7 @@
 		<link rel="icon" href="%sveltekit.assets%/favicon.svg" type="image/svg+xml" />
 		<link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
 		<link rel="apple-touch-icon" href="%sveltekit.assets%/favicon.svg" />
+		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 		<meta name="apple-mobile-web-app-title" content="Vet Crew" />
@@ -36,6 +37,10 @@
 				const meta = document.querySelector('meta[name="theme-color"]');
 				if (meta) {
 					meta.setAttribute('content', theme === 'dark' ? '#070e09' : '#f5f8f5');
+				}
+				const metaScheme = document.querySelector('meta[name="color-scheme"]');
+				if (metaScheme) {
+					metaScheme.setAttribute('content', theme === 'dark' ? 'dark' : 'only light');
 				}
 			} catch {}
 		</script>

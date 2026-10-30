@@ -1,11 +1,16 @@
 <script lang="ts">
 	import '../app.css';
 	import { setContext } from 'svelte';
+	import { updated } from '$app/state';
+	import { beforeNavigate } from '$app/navigation';
 	import { themeStore } from '$lib/theme.svelte';
 	import { langStore } from '$lib/lang.svelte';
 	import { toggleFullscreen } from '$lib/services/fullscreen';
+	import { logService } from '$lib/services/logService.svelte';
+	import { freshLoad } from '$lib/utils/staleBuild';
 	import { HotkeyService } from '$lib/hotkeys/hotkeys';
 	import ServiceBadge from '$lib/components/ServiceBadge.svelte';
+	import ErrorFallback from '$lib/components/ErrorFallback.svelte';
 	import type { Snippet } from 'svelte';
 
 	interface Props {
@@ -13,6 +18,17 @@
 	}
 
 	let { children }: Props = $props();
+
+	/**
+	 * Автоматичне перезавантаження на свіжу версію при навігації, якщо на сервері
+	 * опубліковано новий деплой (VERSIONING-v10 § 6).
+	 */
+	beforeNavigate((navigation) => {
+		if (!updated.current || navigation.willUnload || !navigation.to?.url) return;
+		logService.info('app', 'new build - full navigation', { to: navigation.to.url.pathname });
+		navigation.cancel();
+		void freshLoad(navigation.to.url.href);
+	});
 
 	const hotkeys = new HotkeyService({
 		theme: () => {
@@ -44,7 +60,16 @@
 	<!-- Dynamic ambient glow background -->
 	<div class="ambient-glow"></div>
 
-	{@render children?.()}
+	<svelte:boundary
+		onerror={(error) =>
+			logService.error('app', 'Render boundary caught error', { error: String(error) })}
+	>
+		{@render children?.()}
+
+		{#snippet failed(_, reset)}
+			<ErrorFallback onretry={reset} />
+		{/snippet}
+	</svelte:boundary>
 
 	<ServiceBadge />
 </div>

@@ -51,8 +51,14 @@ class LangStore {
 
 	constructor() {
 		if (browser) {
+			const queryLang =
+				typeof window !== 'undefined' && window.location
+					? (new URLSearchParams(window.location.search).get('lang') as Lang | null)
+					: null;
 			const saved = safeLocalStorage.get('lang') as Lang | null;
-			if (saved === 'uk' || saved === 'en') {
+			if (queryLang === 'uk' || queryLang === 'en') {
+				this.current = queryLang;
+			} else if (saved === 'uk' || saved === 'en') {
 				this.current = saved;
 			} else {
 				const navLang = typeof navigator !== 'undefined' ? navigator.language.toLowerCase() : 'uk';
@@ -86,4 +92,3 @@ class LangStore {
 }
 
 export const langStore = new LangStore();
-
