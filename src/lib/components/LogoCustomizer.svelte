@@ -3,6 +3,7 @@
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 	import logoPaths from '$lib/assets/logo-paths.json';
+	import vetcrewLogoPaths from '$lib/assets/vetcrew-logo-paths.json';
 	import { logService } from '$lib/services/logService.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 
@@ -19,10 +20,14 @@
 	let { brandColors }: Props = $props();
 	const baseId = $props.id();
 
+	type LogoVariant = 'hospital' | 'vetcrew';
 	type BgShape = 'circle' | 'solid' | 'transparent';
 
-	// Presets
-	const PRESETS = [
+	// Active logo variant state
+	let activeVariant = $state<LogoVariant>('hospital');
+
+	// Presets for Hospital Logo
+	const PRESETS_HOSPITAL = [
 		{
 			id: 'canonical',
 			nameUk: 'Канонічний',
@@ -85,12 +90,72 @@
 		}
 	];
 
+	// Presets for Core VetCrew Logo (without Hospital)
+	const PRESETS_VETCREW = [
+		{
+			id: 'canonical',
+			nameUk: 'Канонічний',
+			nameEn: 'Canonical',
+			bgShape: 'circle' as BgShape,
+			bgCircle: '#13371B',
+			paw: '#FFFFFF',
+			vetCrew: '#FFB327'
+		},
+		{
+			id: 'solid-emerald',
+			nameUk: 'Суцільний смарагд',
+			nameEn: 'Solid Emerald',
+			bgShape: 'solid' as BgShape,
+			bgCircle: '#13371B',
+			paw: '#FFFFFF',
+			vetCrew: '#FFB327'
+		},
+		{
+			id: 'transparent-gold',
+			nameUk: 'Без тла (Золотий)',
+			nameEn: 'Transparent (Gold)',
+			bgShape: 'transparent' as BgShape,
+			bgCircle: '#13371B',
+			paw: '#13371B',
+			vetCrew: '#FFB327'
+		},
+		{
+			id: 'light-theme',
+			nameUk: 'Світла емблема',
+			nameEn: 'Light Emblem',
+			bgShape: 'circle' as BgShape,
+			bgCircle: '#598F3A',
+			paw: '#FFB327',
+			vetCrew: '#E5E5E5'
+		},
+		{
+			id: 'monochrome-white',
+			nameUk: 'Монохром (Білий)',
+			nameEn: 'Monochrome (White)',
+			bgShape: 'transparent' as BgShape,
+			bgCircle: '#13371B',
+			paw: '#FFFFFF',
+			vetCrew: '#FFFFFF'
+		},
+		{
+			id: 'monochrome-dark',
+			nameUk: 'Монохром (Темний)',
+			nameEn: 'Monochrome (Dark)',
+			bgShape: 'transparent' as BgShape,
+			bgCircle: '#13371B',
+			paw: '#262626',
+			vetCrew: '#262626'
+		}
+	];
+
 	// Active configuration state
 	let bgShape = $state<BgShape>('circle');
 	let bgCircleColor = $state('#13371B');
 	let pawColor = $state('#FFFFFF');
 	let vetCrewColor = $state('#FFB327');
 	let hospitalColor = $state('#598F3A');
+
+	let currentPresets = $derived(activeVariant === 'hospital' ? PRESETS_HOSPITAL : PRESETS_VETCREW);
 
 	// Active group for color palette selection
 	type TargetGroup = 'bgCircle' | 'paw' | 'vetCrew' | 'hospital';
@@ -99,12 +164,32 @@
 	// Preview background switcher (defaults to transparent checkerboard)
 	let previewGrid = $state<StageTheme>('checker');
 
-	function applyPreset(p: (typeof PRESETS)[0]) {
+	function setVariant(v: LogoVariant) {
+		activeVariant = v;
+		if (v === 'vetcrew' && activeGroup === 'hospital') {
+			activeGroup = 'paw';
+		}
+	}
+
+	function applyPreset(p: (typeof PRESETS_HOSPITAL)[0] | (typeof PRESETS_VETCREW)[0]) {
 		bgShape = p.bgShape;
 		bgCircleColor = p.bgCircle;
 		pawColor = p.paw;
 		vetCrewColor = p.vetCrew;
-		hospitalColor = p.hospital;
+		if ('hospital' in p) {
+			hospitalColor = p.hospital;
+		}
+	}
+
+	function isPresetActive(p: (typeof PRESETS_HOSPITAL)[0] | (typeof PRESETS_VETCREW)[0]): boolean {
+		if (bgShape !== p.bgShape) return false;
+		if (p.bgShape !== 'transparent' && bgCircleColor.toLowerCase() !== p.bgCircle.toLowerCase()) return false;
+		if (pawColor.toLowerCase() !== p.paw.toLowerCase()) return false;
+		if (vetCrewColor.toLowerCase() !== p.vetCrew.toLowerCase()) return false;
+		if (activeVariant === 'hospital' && 'hospital' in p) {
+			if (hospitalColor.toLowerCase() !== p.hospital.toLowerCase()) return false;
+		}
+		return true;
 	}
 
 	function getCurrentColor(group: TargetGroup): string {
@@ -139,14 +224,15 @@
 
 	// Dynamic SVG string generation for download and canvas export
 	let svgString = $derived.by(() => {
-		const bgElement =
-			bgShape === 'circle'
-				? `<circle id="bg-circle" cx="485.31" cy="485.31" r="461.76" fill="${bgCircleColor}"/>`
-				: bgShape === 'solid'
-				? `<rect id="bg-solid" x="0" y="0" width="970.62" height="970.62" fill="${bgCircleColor}"/>`
-				: '';
+		if (activeVariant === 'hospital') {
+			const bgElement =
+				bgShape === 'circle'
+					? `<circle id="bg-circle" cx="485.31" cy="485.31" r="461.76" fill="${bgCircleColor}"/>`
+					: bgShape === 'solid'
+					? `<rect id="bg-solid" x="0" y="0" width="970.62" height="970.62" rx="36" fill="${bgCircleColor}"/>`
+					: '';
 
-		return `<svg id="vet-crew-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 970.62 970.62" width="970.62" height="970.62">
+			return `<svg id="vet-crew-hospital-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 970.62 970.62" width="970.62" height="970.62">
   <title>Vet Crew Hospital Logo</title>
   ${bgElement}
   <g id="logo-content" transform="translate(0, 6.15)">
@@ -161,6 +247,29 @@
     <path id="text-hospital" fill="${hospitalColor}" d="${logoPaths['text-hospital'].d}"/>
   </g>
 </svg>`;
+		} else {
+			const bgElement =
+				bgShape === 'circle'
+					? `<circle id="bg-circle" cx="2048" cy="2048" r="1948.6" fill="${bgCircleColor}"/>`
+					: bgShape === 'solid'
+					? `<rect id="bg-solid" x="0" y="0" width="4096" height="4096" rx="152" fill="${bgCircleColor}"/>`
+					: '';
+
+			return `<svg id="vet-crew-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4096 4096" width="4096" height="4096">
+  <title>Vet Crew Logo</title>
+  ${bgElement}
+  <g id="vet-crew-content">
+    <g id="paw" fill="${pawColor}">
+      <path id="paw-toe-left" fill-rule="evenodd" d="${vetcrewLogoPaths.paths['paw-toe-left']}"/>
+      <path id="paw-toe-center-left" fill-rule="evenodd" d="${vetcrewLogoPaths.paths['paw-toe-center-left']}"/>
+      <path id="paw-toe-center-right" fill-rule="evenodd" d="${vetcrewLogoPaths.paths['paw-toe-center-right']}"/>
+      <path id="paw-toe-right" fill-rule="evenodd" d="${vetcrewLogoPaths.paths['paw-toe-right']}"/>
+      <path id="paw-pad" fill-rule="evenodd" d="${vetcrewLogoPaths.paths['paw-pad']}"/>
+    </g>
+    <path id="text-vet-crew" fill-rule="evenodd" fill="${vetCrewColor}" d="${vetcrewLogoPaths.paths['text-vet-crew']}"/>
+  </g>
+</svg>`;
+		}
 	});
 
 	function downloadSvg() {
@@ -168,8 +277,9 @@
 		const url = URL.createObjectURL(blob);
 		const link = document.createElement('a');
 		link.href = url;
+		const prefix = activeVariant === 'hospital' ? 'VetCrewHospital' : 'VetCrew';
 		const suffix = bgShape === 'circle' ? 'badge' : bgShape === 'solid' ? 'solid' : 'transparent';
-		link.download = `VetCrewHospital-${suffix}.svg`;
+		link.download = `${prefix}-${suffix}.svg`;
 		document.body.appendChild(link);
 		link.click();
 		document.body.removeChild(link);
@@ -214,8 +324,9 @@
 				const pngUrl = URL.createObjectURL(pngBlob);
 				const link = document.createElement('a');
 				link.href = pngUrl;
+				const prefix = activeVariant === 'hospital' ? 'VetCrewHospital' : 'VetCrew';
 				const suffix = bgShape === 'circle' ? 'badge' : bgShape === 'solid' ? 'solid' : 'transparent';
-				link.download = `VetCrewHospital-${suffix}-2000px.png`;
+				link.download = `${prefix}-${suffix}-2000px.png`;
 				document.body.appendChild(link);
 				link.click();
 				document.body.removeChild(link);
@@ -235,17 +346,52 @@
 </script>
 
 <div class="logo-customizer">
+	<!-- 0. Brand Logo Variant Switcher -->
+	<div class="variant-bar">
+		<div class="variant-meta">
+			<span class="variant-label">{langStore.current === 'uk' ? 'Версія логотипу:' : 'Logo Version:'}</span>
+		</div>
+		<div class="variant-toggle-pills" role="tablist" aria-label={langStore.current === 'uk' ? 'Вибір логотипу' : 'Choose Logo Variant'}>
+			<button
+				type="button"
+				role="tab"
+				aria-selected={activeVariant === 'hospital'}
+				class="variant-pill"
+				class:is-active={activeVariant === 'hospital'}
+				onclick={() => setVariant('hospital')}
+			>
+				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+					<path d="M12 9v4"/>
+					<path d="M10 11h4"/>
+				</svg>
+				<span>Vet Crew Hospital</span>
+				<span class="variant-badge">{langStore.current === 'uk' ? 'Шпиталь' : 'Hospital'}</span>
+			</button>
+
+			<button
+				type="button"
+				role="tab"
+				aria-selected={activeVariant === 'vetcrew'}
+				class="variant-pill"
+				class:is-active={activeVariant === 'vetcrew'}
+				onclick={() => setVariant('vetcrew')}
+			>
+				<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+					<path d="M12 10.5c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-5.5-1c1.38 0 2.5-1.12 2.5-2.5s-1.12-2.5-2.5-2.5-2.5 1.12-2.5 2.5 1.12 2.5 2.5 2.5zm11 0c1.38 0 2.5-1.12 2.5-2.5s-1.12-2.5-2.5-2.5-2.5 1.12-2.5 2.5 1.12 2.5 2.5 2.5zm-8.8 6.5c-.75-.62-1.7-1-2.7-1-2.21 0-4 1.79-4 4 0 2.5 3 5 7 5 1.15 0 2.18-.32 3-.88-.82-.56-1.85-.88-3-.88-.28 0-.55.03-.82.08-.34-.73-.48-1.55-.48-2.32 0-1.53.5-2.88 1-4zm10.6 0c.5 1.12 1 2.47 1 4 0 .77-.14 1.59-.48 2.32-.27-.05-.54-.08-.82-.08-1.15 0-2.18.32-3 .88 4 0 7-2.5 7-5 0-2.21-1.79-4-4-4-1 0-1.95.38-2.7 1z"/>
+				</svg>
+				<span>{langStore.current === 'uk' ? 'Vet Crew (Основний)' : 'Vet Crew (Primary)'}</span>
+				<span class="variant-badge">{langStore.current === 'uk' ? 'Бренд' : 'Brand'}</span>
+			</button>
+		</div>
+	</div>
+
 	<!-- Top: Presets Toolbar -->
 	<div class="presets-bar">
 		<span class="bar-label">{langStore.current === 'uk' ? 'Швидкі шаблони:' : 'Presets:'}</span>
 		<div class="presets-list">
-			{#each PRESETS as p (p.id)}
-				{@const isActive =
-					bgShape === p.bgShape &&
-					(p.bgShape === 'transparent' || bgCircleColor.toLowerCase() === p.bgCircle.toLowerCase()) &&
-					pawColor.toLowerCase() === p.paw.toLowerCase() &&
-					vetCrewColor.toLowerCase() === p.vetCrew.toLowerCase() &&
-					hospitalColor.toLowerCase() === p.hospital.toLowerCase()}
+			{#each currentPresets as p (p.id)}
+				{@const isActive = isPresetActive(p)}
 				<button
 					type="button"
 					class="preset-chip"
@@ -273,45 +419,86 @@
 
 			<!-- Live SVG Viewport -->
 			<div class="stage-viewport stage--{previewGrid}">
-				<svg
-					id="interactive-custom-logo"
-					viewBox="0 0 970.62 970.62"
-					class="custom-svg-render"
-					width="280"
-					height="280"
-				>
-					{#if bgShape === 'circle'}
-						<circle
-							id="live-bg-circle"
-							cx="485.31"
-							cy="485.31"
-							r="461.76"
-							fill={bgCircleColor}
-						/>
-					{:else if bgShape === 'solid'}
-						<rect
-							id="live-bg-solid"
-							x="0"
-							y="0"
-							width="970.62"
-							height="970.62"
-							rx="36"
-							fill={bgCircleColor}
-						/>
-					{/if}
+				{#if activeVariant === 'hospital'}
+					<svg
+						id="interactive-custom-logo-hospital"
+						viewBox="0 0 970.62 970.62"
+						class="custom-svg-render"
+						width="280"
+						height="280"
+					>
+						{#if bgShape === 'circle'}
+							<circle
+								id="live-bg-circle"
+								cx="485.31"
+								cy="485.31"
+								r="461.76"
+								fill={bgCircleColor}
+							/>
+						{:else if bgShape === 'solid'}
+							<rect
+								id="live-bg-solid"
+								x="0"
+								y="0"
+								width="970.62"
+								height="970.62"
+								rx="36"
+								fill={bgCircleColor}
+							/>
+						{/if}
 
-					<g id="live-logo-content" transform="translate(0, 6.15)">
-						<g id="live-paw" fill={pawColor}>
-							<path id="live-paw-toe-right" d={logoPaths['paw-toe-right'].d} />
-							<path id="live-paw-toe-center-right" d={logoPaths['paw-toe-center-right'].d} />
-							<path id="live-paw-toe-center-left" d={logoPaths['paw-toe-center-left'].d} />
-							<path id="live-paw-toe-left" d={logoPaths['paw-toe-left'].d} />
-							<path id="live-paw-pad" d={logoPaths['paw-pad'].d} />
+						<g id="live-logo-content" transform="translate(0, 6.15)">
+							<g id="live-paw" fill={pawColor}>
+								<path id="live-paw-toe-right" d={logoPaths['paw-toe-right'].d} />
+								<path id="live-paw-toe-center-right" d={logoPaths['paw-toe-center-right'].d} />
+								<path id="live-paw-toe-center-left" d={logoPaths['paw-toe-center-left'].d} />
+								<path id="live-paw-toe-left" d={logoPaths['paw-toe-left'].d} />
+								<path id="live-paw-pad" d={logoPaths['paw-pad'].d} />
+							</g>
+							<path id="live-text-vet-crew" fill={vetCrewColor} d={logoPaths['text-vet-crew'].d} />
+							<path id="live-text-hospital" fill={hospitalColor} d={logoPaths['text-hospital'].d} />
 						</g>
-						<path id="live-text-vet-crew" fill={vetCrewColor} d={logoPaths['text-vet-crew'].d} />
-						<path id="live-text-hospital" fill={hospitalColor} d={logoPaths['text-hospital'].d} />
-					</g>
-				</svg>
+					</svg>
+				{:else}
+					<svg
+						id="interactive-custom-logo-vetcrew"
+						viewBox="0 0 4096 4096"
+						class="custom-svg-render"
+						width="280"
+						height="280"
+					>
+						{#if bgShape === 'circle'}
+							<circle
+								id="live-bg-circle-vc"
+								cx="2048"
+								cy="2048"
+								r="1948.6"
+								fill={bgCircleColor}
+							/>
+						{:else if bgShape === 'solid'}
+							<rect
+								id="live-bg-solid-vc"
+								x="0"
+								y="0"
+								width="4096"
+								height="4096"
+								rx="152"
+								fill={bgCircleColor}
+							/>
+						{/if}
+
+						<g id="live-vetcrew-content">
+							<g id="live-paw-vc" fill={pawColor}>
+								<path id="live-paw-toe-left-vc" fill-rule="evenodd" d={vetcrewLogoPaths.paths['paw-toe-left']} />
+								<path id="live-paw-toe-center-left-vc" fill-rule="evenodd" d={vetcrewLogoPaths.paths['paw-toe-center-left']} />
+								<path id="live-paw-toe-center-right-vc" fill-rule="evenodd" d={vetcrewLogoPaths.paths['paw-toe-center-right']} />
+								<path id="live-paw-toe-right-vc" fill-rule="evenodd" d={vetcrewLogoPaths.paths['paw-toe-right']} />
+								<path id="live-paw-pad-vc" fill-rule="evenodd" d={vetcrewLogoPaths.paths['paw-pad']} />
+							</g>
+							<path id="live-text-vet-crew-vc" fill-rule="evenodd" fill={vetCrewColor} d={vetcrewLogoPaths.paths['text-vet-crew']} />
+						</g>
+					</svg>
+				{/if}
 			</div>
 
 			<!-- Bottom Download Action Buttons -->
@@ -401,7 +588,10 @@
 			</div>
 
 			<!-- 2. Target Element Selector Tabs -->
-			<div class="element-tabs">
+			<div
+				class="element-tabs"
+				class:element-tabs--three={activeVariant === 'vetcrew'}
+			>
 				<button
 					type="button"
 					class="element-tab"
@@ -455,18 +645,20 @@
 					</div>
 				</button>
 
-				<button
-					type="button"
-					class="element-tab"
-					class:is-selected={activeGroup === 'hospital'}
-					onclick={() => (activeGroup = 'hospital')}
-				>
-					<span class="tab-indicator" style:background-color={hospitalColor}></span>
-					<div class="tab-text">
-						<span class="tab-name">HOSPITAL</span>
-						<code class="tab-hex">{hospitalColor}</code>
-					</div>
-				</button>
+				{#if activeVariant === 'hospital'}
+					<button
+						type="button"
+						class="element-tab"
+						class:is-selected={activeGroup === 'hospital'}
+						onclick={() => (activeGroup = 'hospital')}
+					>
+						<span class="tab-indicator" style:background-color={hospitalColor}></span>
+						<div class="tab-text">
+							<span class="tab-name">HOSPITAL</span>
+							<code class="tab-hex">{hospitalColor}</code>
+						</div>
+					</button>
+				{/if}
 			</div>
 
 			<!-- 3. Color Picker Area for Selected Element -->
@@ -556,8 +748,99 @@
 	.logo-customizer {
 		display: flex;
 		flex-direction: column;
-		gap: 1.5rem;
+		gap: 1.25rem;
 		width: 100%;
+	}
+
+	/* VARIANT SWITCHER BAR */
+	.variant-bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.75rem 1.25rem;
+		background: var(--bg-secondary);
+		border-radius: 14px;
+		border: 1px solid var(--border);
+		flex-wrap: wrap;
+	}
+
+	.variant-meta {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.variant-label {
+		font-size: 0.82rem;
+		font-weight: 700;
+		color: var(--fg-secondary);
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+
+	.variant-toggle-pills {
+		display: inline-flex;
+		align-items: center;
+		padding: 4px;
+		background: var(--panel-bg);
+		border-radius: 12px;
+		border: 1px solid var(--border);
+		gap: 4px;
+		flex-wrap: wrap;
+	}
+
+	.variant-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.45rem 0.95rem;
+		border-radius: 9px;
+		font-size: 0.82rem;
+		font-weight: 700;
+		color: var(--fg-secondary);
+		background: transparent;
+		border: 1px solid transparent;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		white-space: nowrap;
+	}
+
+	.variant-pill:hover {
+		color: var(--fg-primary);
+		background: rgba(89, 143, 58, 0.08);
+	}
+
+	.variant-pill.is-active {
+		background: var(--brand-emerald, #13371b);
+		color: #ffffff;
+		border-color: var(--brand-emerald, #13371b);
+		box-shadow: 0 2px 8px rgba(19, 55, 27, 0.22);
+	}
+
+	:global(.dark) .variant-pill.is-active {
+		background: var(--brand-gold, #ffb327);
+		color: #101e14;
+		border-color: var(--brand-gold, #ffb327);
+		box-shadow: 0 2px 8px rgba(255, 179, 39, 0.25);
+	}
+
+	.variant-badge {
+		font-size: 0.68rem;
+		padding: 0.12rem 0.4rem;
+		border-radius: 6px;
+		background: rgba(0, 0, 0, 0.08);
+		color: inherit;
+		font-weight: 600;
+		letter-spacing: 0.02em;
+	}
+
+	.variant-pill.is-active .variant-badge {
+		background: rgba(255, 255, 255, 0.22);
+	}
+
+	:global(.dark) .variant-pill.is-active .variant-badge {
+		background: rgba(16, 30, 20, 0.18);
 	}
 
 	/* PRESETS BAR */
@@ -650,54 +933,6 @@
 		gap: 0.5rem;
 	}
 
-	.grid-toggles {
-		display: flex;
-		align-items: center;
-		gap: 0.35rem;
-	}
-
-	.toolbar-sublabel {
-		font-size: 0.78rem;
-		font-weight: 700;
-		color: var(--fg-muted);
-		margin-right: 0.35rem;
-	}
-
-	.grid-btn {
-		width: 32px;
-		height: 32px;
-		border-radius: 8px;
-		border: 1px solid var(--border);
-		background: var(--bg-secondary);
-		color: var(--fg-secondary);
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 0.75rem;
-		cursor: pointer;
-		transition: all 0.15s ease;
-	}
-
-	.grid-btn:hover {
-		background: var(--panel-bg);
-		color: var(--fg-primary);
-		border-color: var(--border-hover);
-	}
-
-	.grid-btn.is-active {
-		border-color: var(--brand-emerald, #13371b);
-		background: var(--brand-emerald, #13371b);
-		color: #ffffff;
-		box-shadow: 0 2px 6px rgba(19, 55, 27, 0.2);
-	}
-
-	:global(.dark) .grid-btn.is-active {
-		border-color: var(--brand-gold, #ffb327);
-		background: var(--brand-gold, #ffb327);
-		color: #101e14;
-		box-shadow: 0 2px 6px rgba(255, 179, 39, 0.25);
-	}
-
 	.stage-actions {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
@@ -760,24 +995,6 @@
 		justify-content: center;
 		overflow: hidden;
 		transition: background 0.25s ease;
-	}
-
-	.stage-viewport.grid--subtle {
-		background-color: var(--bg-secondary);
-		background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.04) 25%, transparent 25%),
-			linear-gradient(-45deg, rgba(0, 0, 0, 0.04) 25%, transparent 25%),
-			linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.04) 75%),
-			linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.04) 75%);
-		background-size: 20px 20px;
-		background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-	}
-
-	.stage-viewport.grid--light {
-		background: #ffffff;
-	}
-
-	.stage-viewport.grid--dark {
-		background: #101511;
 	}
 
 	.custom-svg-render {
@@ -873,6 +1090,11 @@
 		display: grid;
 		grid-template-columns: repeat(4, 1fr);
 		gap: 0.65rem;
+		transition: grid-template-columns 0.2s ease;
+	}
+
+	.element-tabs--three {
+		grid-template-columns: repeat(3, 1fr);
 	}
 
 	.element-tab {
@@ -1026,12 +1248,33 @@
 			grid-template-columns: repeat(2, 1fr);
 		}
 
+		.element-tabs--three {
+			grid-template-columns: repeat(3, 1fr);
+		}
+
 		.swatches-grid {
 			grid-template-columns: repeat(2, 1fr);
 		}
 	}
 
 	@media (max-width: 640px) {
+		.variant-bar {
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.variant-toggle-pills {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			width: 100%;
+		}
+
+		.variant-pill {
+			justify-content: center;
+			padding: 0.45rem 0.5rem;
+			font-size: 0.75rem;
+		}
+
 		.control-row.bg-toggle-row {
 			flex-direction: column;
 			align-items: stretch;
@@ -1051,6 +1294,9 @@
 			text-align: center;
 			gap: 0.2rem;
 		}
+
+		.element-tabs--three {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>
-
