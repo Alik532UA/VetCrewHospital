@@ -8,7 +8,7 @@ const load = async () => (await import('./logService.svelte')).logService;
 
 beforeEach(() => {
 	vi.resetModules();
-	vi.stubGlobal('location', { href: 'https://alik532ua.github.io/VetCrewHospital/?tab=2' });
+	vi.stubGlobal('location', { href: 'https://vet-crew-hospital.org/?tab=2' });
 	vi.stubGlobal('window', {
 		sessionStorage: {
 			getItem: () => null,

@@ -58,6 +58,7 @@ const config = {
 			}
 		},
 		prerender: {
+			origin: process.env.SITE_ORIGIN ?? 'https://vet-crew-hospital.org',
 			entries: ['*'],
 			handleUnseenRoutes: 'warn'
 		},

@@ -5,18 +5,23 @@
 - **Назва**: Vet Crew Hospital
 - **Опис**: Офіційний інтерактивний веб-портал ветеринарного госпіталю Vet Crew (динамічне 3D лого, інтерактивні контакти ветеринарного госпіталю, двостадійний скрол-інтерфейс, підтримка темної та світлої тем, багатомовність UA/EN).
 - **Стек**: SvelteKit 2 + Svelte 5 (Runes), TypeScript, adapter-static, Lucide Svelte, CSS Variables.
-- **Хостинг**: GitHub Pages (`https://alik532ua.github.io/VetCrewHospital/`).
+- **Хостинг**: GitHub Pages (власний домен `https://vet-crew-hospital.org/`).
 - **Гілка деплою**: `main`.
 
-## 2. Конфігурація адресації та базового шляху (SEO-v10 § 1.2)
+## 2. Конфігурація адресації та базового шляху (SEO-v10 § 1.2, CUSTOM-DOMAIN-v10)
 
-- **SITE_ORIGIN**: `https://alik532ua.github.io`
-- **SITE_BASE**: `/VetCrewHospital` (у production-збірці; порожній рядок у локальній розробці)
+| Поле | Значення |
+| --- | --- |
+| Основна адреса | https://vet-crew-hospital.org/ |
+| Переадресована адреса | https://alik532ua.github.io/VetCrewHospital/ (301 redirect) |
+
+- **SITE_ORIGIN**: `https://vet-crew-hospital.org`
+- **SITE_BASE**: `''` (порожній рядок — сайт розташовано у корені власного домену)
 - **paths.relative**: `false` (гарантує абсолютні шляхи при гідрації)
 
 ## 3. Реєстр префіксів сховища (STORAGE-NAMESPACE-v10 § 1)
 
-Сайт розміщено на спільному домені `alik532ua.github.io`, тому всі ключі веб-сховища мають суворий унікальний префікс.
+Сайт розміщено на власному домені `vet-crew-hospital.org`, усі ключі веб-сховища мають суворий унікальний префікс.
 
 | Поле                      | Значення                 |
 | ------------------------- | ------------------------ |
@@ -47,7 +52,7 @@
 - **Single Ownership метаданих (SEO-v10 § 4.1 & § 4.4)**: `app.html` містить лише глобальні OG/Theming теги, а `<title>`, `<meta name="description">`, `canonical`, `og:url`, `og:title`, `og:description` керуються суворо на рівні сторінки `src/routes/+page.svelte`.
 - **Захист внутрішнього брендбука від індексації**:
   - `src/routes/brandbook/+page.svelte` містить `<meta name="robots" content="noindex, nofollow" />`.
-  - `static/robots.txt` блокує сканування шляхів `/brandbook` та `/VetCrewHospital/brandbook`.
+  - `static/robots.txt` блокує сканування шляхів `/brandbook` та `/brandbook/`.
   - `static/sitemap.xml` містить виключно публічну головну сторінку госпіталю.
 - **Файли індексації та AI-сумісності**:
   - `static/robots.txt`: керує правами ботів та вказує шлях до `sitemap.xml`.

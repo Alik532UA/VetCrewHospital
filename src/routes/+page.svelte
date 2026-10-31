@@ -8,6 +8,7 @@
 	import { langStore } from '../lib/lang.svelte';
 	import JsonLd from '../lib/components/JsonLd.svelte';
 	import { HotkeyService, shortcutLetter } from '$lib/hotkeys/hotkeys';
+	import { siteUrl } from '$lib/config/site';
 
 	const hotkeys = getContext<HotkeyService | undefined>('hotkeys');
 
@@ -137,9 +138,9 @@
 		'@type': 'VeterinaryCare',
 		name: 'Vet Crew Hospital',
 		alternateName: 'Vet Crew',
-		url: 'https://alik532ua.github.io/VetCrewHospital/',
-		logo: 'https://alik532ua.github.io/VetCrewHospital/logo.svg',
-		image: 'https://alik532ua.github.io/VetCrewHospital/logo.svg',
+		url: siteUrl('/'),
+		logo: siteUrl('/logo.svg'),
+		image: siteUrl('/logo.svg'),
 		telephone: '+380775010101',
 		priceRange: '$',
 		address: {
@@ -175,8 +176,8 @@
 			? 'Vet Crew Hospital — Центр лікування екзотичних та диких тварин. м. Одеса, вул. Майстрова, буд. 4. Телефон: +380 77 501 01 01.'
 			: 'Vet Crew Hospital — Care Center for Exotic and Wild Animals. Odesa, Maystrova St, 4. Phone: +380 77 501 01 01.'}"
 	/>
-	<link rel="canonical" href="https://alik532ua.github.io/VetCrewHospital/" />
-	<meta property="og:url" content="https://alik532ua.github.io/VetCrewHospital/" />
+	<link rel="canonical" href="{siteUrl('/')}" />
+	<meta property="og:url" content="{siteUrl('/')}" />
 	<meta
 		property="og:title"
 		content="{langStore.current === 'uk'

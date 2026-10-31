@@ -52,8 +52,8 @@ export const SIBLINGS = {
 		trailingSlash: true
 	},
 	vetcrewhospital: {
-		origin: 'https://alik532ua.github.io',
-		base: '/VetCrewHospital',
+		origin: 'https://vet-crew-hospital.org',
+		base: '',
 		locales: ['uk', 'en'],
 		defaultLocale: 'uk',
 		transport: 'query',
