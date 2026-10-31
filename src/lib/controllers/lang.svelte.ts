@@ -21,7 +21,9 @@ const TRANSLATIONS = {
 		fullscreen_exit: 'Згорнути',
 		scroll_hero: 'Головна',
 		scroll_contacts: 'Контакти',
-		skip_to_content: 'До основного вмісту'
+		skip_to_content: 'До основного вмісту',
+		dev_btn: 'У розробці',
+		dev_status_text: 'Цей сайт знаходиться в процесі розробки'
 	},
 	en: {
 		hospital_name: 'Vet Crew Hospital',
@@ -40,7 +42,9 @@ const TRANSLATIONS = {
 		fullscreen_exit: 'Exit',
 		scroll_hero: 'Hero',
 		scroll_contacts: 'Contacts',
-		skip_to_content: 'Skip to content'
+		skip_to_content: 'Skip to content',
+		dev_btn: 'In Progress',
+		dev_status_text: 'This website is currently under development'
 	}
 } as const;
 

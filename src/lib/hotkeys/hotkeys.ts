@@ -4,7 +4,8 @@ export const KEYMAP: Readonly<Record<string, string>> = {
 	t: 'theme',
 	l: 'language',
 	f: 'fullscreen',
-	h: 'home'
+	h: 'home',
+	i: 'info'
 };
 
 export const POSITIONAL: Readonly<Record<string, string>> = {
