@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import config from '../svelte.config.js';
 import { SITE_BASE, SITE_ORIGIN, siteUrl } from '$lib/config/site';
-import { domainProblems, mainAddress } from '../scripts/check-build/domain.mjs';
+import { domainProblems, mainAddress, readConst } from '../scripts/check-build/domain.mjs';
 
 describe('CUSTOM-DOMAIN-v10 — переїзд на власний домен vet-crew-hospital.org', () => {
 	it('SITE_ORIGIN та SITE_BASE у src/lib/config/site.ts налаштовані на новий домен', () => {
@@ -52,15 +52,25 @@ describe('CUSTOM-DOMAIN-v10 — переїзд на власний домен ve
 		expect(config.kit?.prerender?.origin).toBe('https://vet-crew-hospital.org');
 	});
 
-	it('domainProblems повертає нуль знахідок над build/, якщо збірка присутня', () => {
-		if (!existsSync('build')) return;
+	it('readConst успішно зчитує константу з джерела або кидає помилку', () => {
+		const origin = readConst('src/lib/config/site.ts', /export const SITE_ORIGIN\s*=\s*['"]([^'"]+)['"]/, 'SITE_ORIGIN');
+		expect(origin).toBe('https://vet-crew-hospital.org');
+		expect(() => readConst('src/lib/config/site.ts', /NOT_FOUND/, 'NOT_FOUND')).toThrow('NOT_FOUND not found');
+	});
+
+	it('domainProblems валідує конфігурацію політики переїзду домену', () => {
 		const policy = {
 			origin: config.kit?.prerender?.origin ?? SITE_ORIGIN,
 			base: config.kit?.paths?.base ?? '',
 			mainAddress: mainAddress('PROJECT-CONTEXT.md')
 		};
-		const problems = domainProblems('build', policy);
-		expect(problems).toEqual([]);
+		expect(policy.origin).toBe('https://vet-crew-hospital.org');
+		expect(policy.base).toBe('');
+		expect(policy.mainAddress).toBe('https://vet-crew-hospital.org/');
+
+		if (existsSync('build')) {
+			const problems = domainProblems('build', policy);
+			expect(problems).toEqual([]);
+		}
 	});
 });
-
