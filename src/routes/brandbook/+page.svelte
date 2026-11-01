@@ -12,6 +12,7 @@
 	import BrandTypography from '$lib/components/brand/BrandTypography.svelte';
 	import DoorSignage from '$lib/components/brand/DoorSignage.svelte';
 	import PhotoLogos from '$lib/components/brand/PhotoLogos.svelte';
+	import WallpaperStudio from '$lib/components/brand/WallpaperStudio.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 
 	let copiedVal = $state<string | null>(null);
@@ -427,6 +428,18 @@
 					</div>
 
 					<PhotoLogos />
+				</section>
+
+				<!-- SECTION 10: WALLPAPER STUDIO -->
+				<section class="guide-card" id="wallpapers">
+					<div class="card-head">
+						<span class="step-num">10</span>
+						<div>
+							<h2 class="card-title">{langStore.current === 'uk' ? 'Генератор шпалер для ПК та смартфонів' : 'Wallpaper Studio (PC & Mobile)'}</h2>
+						</div>
+					</div>
+
+					<WallpaperStudio brandColors={colors} />
 				</section>
 			</div>
 		</div>

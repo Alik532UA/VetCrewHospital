@@ -8,7 +8,7 @@
 		num: string;
 		titleUk: string;
 		titleEn: string;
-		iconType: 'palette' | 'paw' | 'naming' | 'slogan' | 'animals' | 'qr' | 'typography' | 'doors' | 'photo';
+		iconType: 'palette' | 'paw' | 'naming' | 'slogan' | 'animals' | 'qr' | 'typography' | 'doors' | 'photo' | 'wallpaper';
 	}
 
 	export const SECTIONS: TocSection[] = [
@@ -20,7 +20,8 @@
 		{ id: 'qr', num: '06', titleUk: 'QR-таблички', titleEn: 'QR Signage', iconType: 'qr' },
 		{ id: 'typography', num: '07', titleUk: 'Типографіка', titleEn: 'Typography', iconType: 'typography' },
 		{ id: 'door-signs', num: '08', titleUk: 'Таблички відділень', titleEn: 'Clinic Signage', iconType: 'doors' },
-		{ id: 'photo-logos', num: '09', titleUk: 'Комплексний логотип з тваринами', titleEn: 'Composite Logos with Animals', iconType: 'photo' }
+		{ id: 'photo-logos', num: '09', titleUk: 'Комплексний логотип з тваринами', titleEn: 'Composite Logos with Animals', iconType: 'photo' },
+		{ id: 'wallpapers', num: '10', titleUk: 'Генератор шпалер', titleEn: 'Wallpaper Studio', iconType: 'wallpaper' }
 	];
 
 	let activeId = $state<string>('palette');
@@ -152,6 +153,12 @@
 						<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 							<circle cx="12" cy="8" r="6"/>
 							<path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+						</svg>
+					{:else if s.iconType === 'wallpaper'}
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<rect width="20" height="14" x="2" y="3" rx="2"/>
+							<line x1="8" x2="16" y1="21" y2="21"/>
+							<line x1="12" x2="12" y1="17" y2="21"/>
 						</svg>
 					{/if}
 				</span>
@@ -370,6 +377,8 @@
 			padding: 0.35rem 0.45rem;
 			border-radius: 16px;
 			box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+			overflow-x: auto;
+			scrollbar-width: none;
 		}
 
 		.toc-divider {
