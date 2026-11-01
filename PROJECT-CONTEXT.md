@@ -10,9 +10,9 @@
 
 ## 2. Конфігурація адресації та базового шляху (SEO-v10 § 1.2, CUSTOM-DOMAIN-v10)
 
-| Поле | Значення |
-| --- | --- |
-| Основна адреса | https://vet-crew-hospital.org/ |
+| Поле                  | Значення                                                    |
+| --------------------- | ----------------------------------------------------------- |
+| Основна адреса        | https://vet-crew-hospital.org/                              |
 | Переадресована адреса | https://alik532ua.github.io/VetCrewHospital/ (301 redirect) |
 
 - **SITE_ORIGIN**: `https://vet-crew-hospital.org`
@@ -23,18 +23,18 @@
 
 Сайт розміщено на власному домені `vet-crew-hospital.org`, усі ключі веб-сховища мають суворий унікальний префікс.
 
-| Поле                      | Значення                 |
-| ------------------------- | ------------------------ |
-| **PROJECT_PREFIX**        | `vetcrewhospital_`       |
-| **STORAGE_PREFIX (prod)** | `vetcrewhospital_`       |
-| **STORAGE_PREFIX (dev)**  | `vetcrewhospital-dev_`   |
+| Поле                      | Значення               |
+| ------------------------- | ---------------------- |
+| **PROJECT_PREFIX**        | `vetcrewhospital_`     |
+| **STORAGE_PREFIX (prod)** | `vetcrewhospital_`     |
+| **STORAGE_PREFIX (dev)**  | `vetcrewhospital-dev_` |
 
 ### Реєстр ключів сховища
 
-| Ключ (без префікса) | Повний ключ у сховищі    | Призначення                | Дозволені значення   |
-| ------------------- | ------------------------ | -------------------------- | -------------------- |
-| `theme`             | `vetcrewhospital_theme`  | Тема оформлення інтерфейсу | `'dark'`, `'light'`  |
-| `lang`              | `vetcrewhospital_lang`   | Мова інтерфейсу            | `'uk'`, `'en'`       |
+| Ключ (без префікса) | Повний ключ у сховищі   | Призначення                | Дозволені значення  |
+| ------------------- | ----------------------- | -------------------------- | ------------------- |
+| `theme`             | `vetcrewhospital_theme` | Тема оформлення інтерфейсу | `'dark'`, `'light'` |
+| `lang`              | `vetcrewhospital_lang`  | Мова інтерфейсу            | `'uk'`, `'en'`      |
 
 ## 4. Контактні канали
 
@@ -71,9 +71,21 @@
   - `"strict": true`
   - `"noUncheckedIndexedAccess": true` (захист від runtime помилок доступу до невизначених індексів масивів)
   - `"noImplicitReturns": true`
+- **Лінтинг та форматування (CODE-QUALITY-v10 § 1.2)**:
+  - ESLint 9+ Flat Config (`eslint.config.js`) із плагінами `typescript-eslint`, `eslint-plugin-svelte`, `eslint-config-prettier`.
+  - Prettier (`.prettierrc`) із підтримкою форматування синтаксису Svelte 5 (`prettier-plugin-svelte`).
+  - Команди перевірки: `npm run lint` (`lint:format` + `lint:code`), `npm run format`.
+- **Архітектурні рішення (ADR)**:
+  - `docs/adr/0001-two-stage-scroll-and-3d-logo.md` (фізика 3D-лого, стани скролу, prefers-reduced-motion).
+  - `docs/adr/0002-brandbook-and-wallpaper-studio.md` (внутрішній брендбук, захист від ботів, 4K Canvas студія).
 - **CI/CD Автоматизація**:
   - GitHub Actions Workflow (`.github/workflows/deploy.yml`) запускається при `push` та `pull_request` до гілки `main`.
-  - Обов'язкові кроки перевірки: `npm run audit:ci` (перевірка вразливостей з порогами high/critical), `npm run check` (типізація Svelte/TypeScript), `npm run test:unit` (юніт-тести), `npm run build` (статична генерація adapter-static).
+  - Розділені завдання найменших привілеїв: `build` (`permissions: contents: read`) та `deploy` (`permissions: pages: write, id-token: write`).
+  - Обов'язкові кроки перевірки: `npm run audit:ci`, `npm run check`, `npm run lint`, `npm run test:unit`, `npm run build`.
+  - Автоматичне оновлення залежностей через Dependabot (`.github/dependabot.yml`).
+- **Тестування та надійність**:
+  - Юніт-тести Vitest (`npm run test:unit`): 13 файлів, 74 тести (перевірка CSP, доменів, сховища, hotkeys, logService).
+  - End-to-end та доступність: Playwright (`playwright.config.ts`, `tests/hospital.spec.ts`) з інтеграцією `@axe-core/playwright` для верифікації WCAG 2.2 AA.
 
 ## 8. Обробка помилок та Error Boundaries (ERROR-HANDLING-v10 § 2.2)
 

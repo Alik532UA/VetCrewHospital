@@ -20,8 +20,12 @@
 	let reviewVariant = $state<ReviewVariant>('vidhuk');
 	let websiteVariant = $state<WebsiteVariant>('v2');
 
-	let activeReviewFile = $derived(withBg ? REVIEW_FILES[reviewVariant].bg : REVIEW_FILES[reviewVariant].nobg);
-	let activeWebsiteFile = $derived(withBg ? WEBSITE_FILES[websiteVariant].bg : WEBSITE_FILES[websiteVariant].nobg);
+	let activeReviewFile = $derived(
+		withBg ? REVIEW_FILES[reviewVariant].bg : REVIEW_FILES[reviewVariant].nobg
+	);
+	let activeWebsiteFile = $derived(
+		withBg ? WEBSITE_FILES[websiteVariant].bg : WEBSITE_FILES[websiteVariant].nobg
+	);
 	let wifiFile = $derived(withBg ? 'wifi.svg' : 'wifi-nobg.svg');
 	let igFile = $derived(withBg ? 'instagram.svg' : 'instagram-nobg.svg');
 
@@ -30,7 +34,11 @@
 	async function exportQrPng(relativeFile: string, baseFilename: string) {
 		isExporting = relativeFile;
 		try {
-			await downloadUrlAsPng(`${base}/brand/qr/${relativeFile}`, `${baseFilename}-2000px.png`, 2000);
+			await downloadUrlAsPng(
+				`${base}/brand/qr/${relativeFile}`,
+				`${baseFilename}-2000px.png`,
+				2000
+			);
 		} catch (err) {
 			logService.error('brand', 'PNG export failed', err);
 		} finally {
@@ -43,7 +51,9 @@
 	<!-- Control Bar: Mode Toggle -->
 	<div class="showcase-toolbar">
 		<div class="mode-meta">
-			<span class="mode-label">{langStore.current === 'uk' ? 'Формат макета:' : 'Signage Format:'}</span>
+			<span class="mode-label"
+				>{langStore.current === 'uk' ? 'Формат макета:' : 'Signage Format:'}</span
+			>
 		</div>
 
 		<div class="toolbar-actions">
@@ -54,10 +64,21 @@
 					class:is-active={withBg}
 					onclick={() => (withBg = true)}
 				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" class="pill-icon" aria-hidden="true">
-						<rect x="4" y="2.5" width="16" height="19" rx="3.5"/>
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="currentColor"
+						class="pill-icon"
+						aria-hidden="true"
+					>
+						<rect x="4" y="2.5" width="16" height="19" rx="3.5" />
 					</svg>
-					<span>{langStore.current === 'uk' ? 'З фірмовим контейнером' : 'With Background Plaque'}</span>
+					<span
+						>{langStore.current === 'uk'
+							? 'З фірмовим контейнером'
+							: 'With Background Plaque'}</span
+					>
 				</button>
 				<button
 					type="button"
@@ -65,10 +86,25 @@
 					class:is-active={!withBg}
 					onclick={() => (withBg = false)}
 				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-dasharray="3.5 2.5" stroke-linecap="round" class="pill-icon" aria-hidden="true">
-						<rect x="4" y="2.5" width="16" height="19" rx="3.5"/>
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.5"
+						stroke-dasharray="3.5 2.5"
+						stroke-linecap="round"
+						class="pill-icon"
+						aria-hidden="true"
+					>
+						<rect x="4" y="2.5" width="16" height="19" rx="3.5" />
 					</svg>
-					<span>{langStore.current === 'uk' ? 'Чистий без фону (прозорий)' : 'Transparent (No Background)'}</span>
+					<span
+						>{langStore.current === 'uk'
+							? 'Чистий без фону (прозорий)'
+							: 'Transparent (No Background)'}</span
+					>
 				</button>
 			</div>
 
@@ -91,8 +127,12 @@
 
 			<div class="qr-meta">
 				<div class="qr-title-row">
-					<h3 class="qr-title">{langStore.current === 'uk' ? 'Фоновий контейнер' : 'Plaque Background'}</h3>
-					<span class="qr-badge badge--neutral">{langStore.current === 'uk' ? 'Шаблон' : 'Template'}</span>
+					<h3 class="qr-title">
+						{langStore.current === 'uk' ? 'Фоновий контейнер' : 'Plaque Background'}
+					</h3>
+					<span class="qr-badge badge--neutral"
+						>{langStore.current === 'uk' ? 'Шаблон' : 'Template'}</span
+					>
 				</div>
 			</div>
 
@@ -102,7 +142,14 @@
 					download="vet-crew-qr-plaque-background.svg"
 					class="download-qr-btn svg-btn"
 				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -115,7 +162,14 @@
 					onclick={() => exportQrPng('background.svg', 'vet-crew-qr-plaque-background')}
 					disabled={isExporting === 'background.svg'}
 				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -128,12 +182,7 @@
 		<!-- 2. Wi-Fi Signage -->
 		<div class="qr-card">
 			<div class="qr-preview-stage stage--{stageTheme}" class:is-nobg={!withBg}>
-				<img
-					src="{base}/brand/qr/{wifiFile}"
-					alt="Wi-Fi"
-					class="qr-svg-render"
-					loading="lazy"
-				/>
+				<img src="{base}/brand/qr/{wifiFile}" alt="Wi-Fi" class="qr-svg-render" loading="lazy" />
 			</div>
 
 			<div class="qr-meta">
@@ -149,7 +198,14 @@
 					download="vet-crew-wifi{withBg ? '' : '-nobg'}.svg"
 					class="download-qr-btn svg-btn"
 				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -162,7 +218,14 @@
 					onclick={() => exportQrPng(wifiFile, `vet-crew-wifi${withBg ? '' : '-nobg'}`)}
 					disabled={isExporting === wifiFile}
 				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -175,12 +238,7 @@
 		<!-- 3. Instagram Signage -->
 		<div class="qr-card">
 			<div class="qr-preview-stage stage--{stageTheme}" class:is-nobg={!withBg}>
-				<img
-					src="{base}/brand/qr/{igFile}"
-					alt="Instagram"
-					class="qr-svg-render"
-					loading="lazy"
-				/>
+				<img src="{base}/brand/qr/{igFile}" alt="Instagram" class="qr-svg-render" loading="lazy" />
 			</div>
 
 			<div class="qr-meta">
@@ -196,7 +254,14 @@
 					download="vet-crew-instagram{withBg ? '' : '-nobg'}.svg"
 					class="download-qr-btn svg-btn"
 				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -209,7 +274,14 @@
 					onclick={() => exportQrPng(igFile, `vet-crew-instagram${withBg ? '' : '-nobg'}`)}
 					disabled={isExporting === igFile}
 				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -238,9 +310,11 @@
 
 				<!-- Subvariant Switcher -->
 				<div class="subvariant-section">
-					<span class="subvariant-title">{langStore.current === 'uk' ? 'Варіант напису:' : 'Variant:'}</span>
+					<span class="subvariant-title"
+						>{langStore.current === 'uk' ? 'Варіант напису:' : 'Variant:'}</span
+					>
 					<div class="subvariant-pills">
-						{#each (['vidhuk', 'google-reviews', 'reviews'] as const) as v}
+						{#each ['vidhuk', 'google-reviews', 'reviews'] as const as v (v)}
 							<button
 								type="button"
 								class="sub-pill"
@@ -259,9 +333,18 @@
 					href="{base}/brand/qr/{activeReviewFile}"
 					download="vet-crew-{reviewVariant}{withBg ? '' : '-nobg'}.svg"
 					class="download-qr-btn svg-btn"
-					title="{langStore.current === 'uk' ? `Завантажити SVG (${REVIEW_FILES[reviewVariant].labelUk})` : `Download SVG (${REVIEW_FILES[reviewVariant].labelEn})`}"
+					title={langStore.current === 'uk'
+						? `Завантажити SVG (${REVIEW_FILES[reviewVariant].labelUk})`
+						: `Download SVG (${REVIEW_FILES[reviewVariant].labelEn})`}
 				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -271,10 +354,18 @@
 				<button
 					type="button"
 					class="download-qr-btn png-btn"
-					onclick={() => exportQrPng(activeReviewFile, `vet-crew-${reviewVariant}${withBg ? '' : '-nobg'}`)}
+					onclick={() =>
+						exportQrPng(activeReviewFile, `vet-crew-${reviewVariant}${withBg ? '' : '-nobg'}`)}
 					disabled={isExporting === activeReviewFile}
 				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -297,15 +388,19 @@
 
 			<div class="qr-meta">
 				<div class="qr-title-row">
-					<h3 class="qr-title">{langStore.current === 'uk' ? 'Офіційний сайт' : 'Official Website'}</h3>
+					<h3 class="qr-title">
+						{langStore.current === 'uk' ? 'Офіційний сайт' : 'Official Website'}
+					</h3>
 					<span class="qr-badge badge--web">Web</span>
 				</div>
 
 				<!-- Subvariant Switcher -->
 				<div class="subvariant-section">
-					<span class="subvariant-title">{langStore.current === 'uk' ? 'Версія іконки:' : 'Icon Version:'}</span>
+					<span class="subvariant-title"
+						>{langStore.current === 'uk' ? 'Версія іконки:' : 'Icon Version:'}</span
+					>
 					<div class="subvariant-pills">
-						{#each (['v2', 'v1'] as const) as v}
+						{#each ['v2', 'v1'] as const as v (v)}
 							<button
 								type="button"
 								class="sub-pill"
@@ -322,11 +417,22 @@
 			<div class="qr-actions">
 				<a
 					href="{base}/brand/qr/{activeWebsiteFile}"
-					download="vet-crew-website-{websiteVariant === 'v2' ? 'valentyna' : 'alik'}{withBg ? '' : '-nobg'}.svg"
+					download="vet-crew-website-{websiteVariant === 'v2' ? 'valentyna' : 'alik'}{withBg
+						? ''
+						: '-nobg'}.svg"
 					class="download-qr-btn svg-btn"
-					title="{langStore.current === 'uk' ? `Завантажити SVG (${WEBSITE_FILES[websiteVariant].labelUk})` : `Download SVG (${WEBSITE_FILES[websiteVariant].labelEn})`}"
+					title={langStore.current === 'uk'
+						? `Завантажити SVG (${WEBSITE_FILES[websiteVariant].labelUk})`
+						: `Download SVG (${WEBSITE_FILES[websiteVariant].labelEn})`}
 				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -336,10 +442,21 @@
 				<button
 					type="button"
 					class="download-qr-btn png-btn"
-					onclick={() => exportQrPng(activeWebsiteFile, `vet-crew-website-${websiteVariant === 'v2' ? 'valentyna' : 'alik'}${withBg ? '' : '-nobg'}`)}
+					onclick={() =>
+						exportQrPng(
+							activeWebsiteFile,
+							`vet-crew-website-${websiteVariant === 'v2' ? 'valentyna' : 'alik'}${withBg ? '' : '-nobg'}`
+						)}
 					disabled={isExporting === activeWebsiteFile}
 				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -498,21 +615,25 @@
 	}
 
 	.qr-preview-stage.is-nobg {
-		background-image: 
-			linear-gradient(45deg, rgba(0,0,0,0.04) 25%, transparent 25%),
-			linear-gradient(-45deg, rgba(0,0,0,0.04) 25%, transparent 25%),
-			linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.04) 75%),
-			linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.04) 75%);
+		background-image:
+			linear-gradient(45deg, rgba(0, 0, 0, 0.04) 25%, transparent 25%),
+			linear-gradient(-45deg, rgba(0, 0, 0, 0.04) 25%, transparent 25%),
+			linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.04) 75%),
+			linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.04) 75%);
 		background-size: 16px 16px;
-		background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+		background-position:
+			0 0,
+			0 8px,
+			8px -8px,
+			-8px 0px;
 	}
 
 	:global(.dark) .qr-preview-stage.is-nobg {
-		background-image: 
-			linear-gradient(45deg, rgba(255,255,255,0.04) 25%, transparent 25%),
-			linear-gradient(-45deg, rgba(255,255,255,0.04) 25%, transparent 25%),
-			linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.04) 75%),
-			linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.04) 75%);
+		background-image:
+			linear-gradient(45deg, rgba(255, 255, 255, 0.04) 25%, transparent 25%),
+			linear-gradient(-45deg, rgba(255, 255, 255, 0.04) 25%, transparent 25%),
+			linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.04) 75%),
+			linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.04) 75%);
 	}
 
 	/* High contrast filter for transparent QR codes on dark stages */
@@ -739,13 +860,13 @@
 		}
 
 		.toolbar-actions {
-		display: flex;
-		align-items: center;
-		gap: 0.85rem;
-		flex-wrap: wrap;
-	}
+			display: flex;
+			align-items: center;
+			gap: 0.85rem;
+			flex-wrap: wrap;
+		}
 
-	.toggle-pill-wrap {
+		.toggle-pill-wrap {
 			width: 100%;
 		}
 

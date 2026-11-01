@@ -86,7 +86,9 @@ describe('аварійне скидання (DEBUGGING § 3.4)', () => {
 		expect(local.getItem(OWN_KEY)).toBeNull();
 		expect(local.getItem('neighbour_theme')).toBe('light');
 		expect(local.getItem(PREVIEW_KEY), 'дані превʼю — чужі').toBe('x');
-		expect(cookieWrites).toEqual([`${STORAGE_PREFIX}lang=; path=/VetCrewHospital/; max-age=0; SameSite=Lax`]);
+		expect(cookieWrites).toEqual([
+			`${STORAGE_PREFIX}lang=; path=/VetCrewHospital/; max-age=0; SameSite=Lax`
+		]);
 		expect(deletedCaches).toEqual([`workbox-precache-v2-${HOST}/VetCrewHospital/`]);
 		expect(unregistered).toEqual(['/VetCrewHospital/']);
 	});
@@ -94,8 +96,9 @@ describe('аварійне скидання (DEBUGGING § 3.4)', () => {
 	it('збій складника не скасовує решту, і скидання не кидає', async () => {
 		const { hardReset } = await import('./hardReset');
 		await expect(hardReset()).resolves.toBeUndefined();
-		expect(unregistered, 'IndexedDB кинув, а реєстрацію однаково знято').toEqual(['/VetCrewHospital/']);
+		expect(unregistered, 'IndexedDB кинув, а реєстрацію однаково знято').toEqual([
+			'/VetCrewHospital/'
+		]);
 		expect(reload).toHaveBeenCalledOnce();
 	});
 });
-

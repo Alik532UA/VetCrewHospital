@@ -2,11 +2,10 @@
 	import { browser } from '$app/environment';
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
-	import { themeStore } from '$lib/theme.svelte';
 	import { logService } from '$lib/services/logService.svelte';
 	import logoPaths from '$lib/assets/logo-paths.json';
 	import vetcrewLogoPaths from '$lib/assets/vetcrew-logo-paths.json';
-	import { ANIMALS, type AnimalItem } from '$lib/data/animals';
+	import { ANIMALS } from '$lib/data/animals';
 
 	interface ColorOption {
 		hex: string;
@@ -48,7 +47,6 @@
 	let animalCategory = $state<'all' | 'birds' | 'reptiles' | 'mammals' | 'exotics'>('all');
 	let animalSearch = $state<string>('');
 	let animalSvgCache = $state<Record<string, string>>({});
-	let isAnimalPickerOpen = $state<boolean>(false);
 
 	// Export state
 	let isExporting = $state<boolean>(false);
@@ -216,9 +214,7 @@
 		});
 	});
 
-	let selectedAnimal = $derived(
-		ANIMALS.find((a) => a.id === selectedAnimalId) ?? ANIMALS[0]!
-	);
+	let selectedAnimal = $derived(ANIMALS.find((a) => a.id === selectedAnimalId) ?? ANIMALS[0]!);
 
 	// Fetch animal SVG content on demand and cache it
 	$effect(() => {
@@ -414,7 +410,9 @@
 	<div class="studio-header-card">
 		<!-- Device Segmented Control -->
 		<div class="control-group">
-			<span class="control-label">{langStore.current === 'uk' ? 'Пристрій та формат:' : 'Device & Format:'}</span>
+			<span class="control-label"
+				>{langStore.current === 'uk' ? 'Пристрій та формат:' : 'Device & Format:'}</span
+			>
 			<div class="pill-group" role="tablist">
 				<button
 					type="button"
@@ -423,10 +421,20 @@
 					class:is-active={device === 'pc'}
 					onclick={() => (device = 'pc')}
 				>
-					<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<rect width="20" height="14" x="2" y="3" rx="2"/>
-						<line x1="8" x2="16" y1="21" y2="21"/>
-						<line x1="12" x2="12" y1="17" y2="21"/>
+					<svg
+						width="17"
+						height="17"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<rect width="20" height="14" x="2" y="3" rx="2" />
+						<line x1="8" x2="16" y1="21" y2="21" />
+						<line x1="12" x2="12" y1="17" y2="21" />
 					</svg>
 					<span>ПК / Монітор (16:9)</span>
 				</button>
@@ -438,9 +446,19 @@
 					class:is-active={device === 'phone'}
 					onclick={() => (device = 'phone')}
 				>
-					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<rect width="14" height="20" x="5" y="2" rx="3"/>
-						<line x1="12" x2="12.01" y1="18" y2="18"/>
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<rect width="14" height="20" x="5" y="2" rx="3" />
+						<line x1="12" x2="12.01" y1="18" y2="18" />
 					</svg>
 					<span>Смартфон (9:16)</span>
 				</button>
@@ -449,7 +467,9 @@
 
 		<!-- Resolution Selector -->
 		<div class="control-group">
-			<span class="control-label">{langStore.current === 'uk' ? 'Роздільна здатність:' : 'Resolution:'}</span>
+			<span class="control-label"
+				>{langStore.current === 'uk' ? 'Роздільна здатність:' : 'Resolution:'}</span
+			>
 			<div class="pill-group">
 				<button
 					type="button"
@@ -485,7 +505,9 @@
 
 		<!-- Symbol Type Selector -->
 		<div class="control-group">
-			<span class="control-label">{langStore.current === 'uk' ? 'Символ на шпалерах:' : 'Emblem on Wallpaper:'}</span>
+			<span class="control-label"
+				>{langStore.current === 'uk' ? 'Символ на шпалерах:' : 'Emblem on Wallpaper:'}</span
+			>
 			<div class="pill-group wrap-pills">
 				<button
 					type="button"
@@ -494,11 +516,13 @@
 					onclick={() => (symbolType = 'vetcrew')}
 				>
 					<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-						<circle cx="4.5" cy="9.5" r="2.2"/>
-						<circle cx="9.2" cy="5.5" r="2.2"/>
-						<circle cx="14.8" cy="5.5" r="2.2"/>
-						<circle cx="19.5" cy="9.5" r="2.2"/>
-						<path d="M17.34 14.86c-.87-1.02-1.6-1.89-2.48-2.49-1.68-1.15-4.04-1.15-5.72 0-.88.6-1.61 1.47-2.48 2.49-1.22 1.43-2.16 3.16-1.44 4.88.75 1.78 2.71 2.26 4.3 1.95.8-.16 1.63-.69 2.48-.69s1.69.53 2.48.69c1.59.31 3.55-.17 4.3-1.95.72-1.72-.22-3.45-1.44-4.88z"/>
+						<circle cx="4.5" cy="9.5" r="2.2" />
+						<circle cx="9.2" cy="5.5" r="2.2" />
+						<circle cx="14.8" cy="5.5" r="2.2" />
+						<circle cx="19.5" cy="9.5" r="2.2" />
+						<path
+							d="M17.34 14.86c-.87-1.02-1.6-1.89-2.48-2.49-1.68-1.15-4.04-1.15-5.72 0-.88.6-1.61 1.47-2.48 2.49-1.22 1.43-2.16 3.16-1.44 4.88.75 1.78 2.71 2.26 4.3 1.95.8-.16 1.63-.69 2.48-.69s1.69.53 2.48.69c1.59.31 3.55-.17 4.3-1.95.72-1.72-.22-3.45-1.44-4.88z"
+						/>
 					</svg>
 					<span>Vet Crew</span>
 				</button>
@@ -509,10 +533,22 @@
 					class:is-active={symbolType === 'hospital'}
 					onclick={() => (symbolType = 'hospital')}
 				>
-					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
-						<path d="M12 9v4"/>
-						<path d="M10 11h4"/>
+					<svg
+						width="15"
+						height="15"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<path
+							d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
+						/>
+						<path d="M12 9v4" />
+						<path d="M10 11h4" />
 					</svg>
 					<span>Vet Crew Hospital</span>
 				</button>
@@ -535,13 +571,27 @@
 					class:is-active={symbolType === 'animal'}
 					onclick={() => (symbolType = 'animal')}
 				>
-					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<circle cx="11" cy="4" r="2"/>
-						<circle cx="18" cy="8" r="2"/>
-						<circle cx="20" cy="16" r="2"/>
-						<path d="M9 10a5 5 0 0 1 5 5v4a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-4a5 5 0 0 1 5-5z"/>
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<circle cx="11" cy="4" r="2" />
+						<circle cx="18" cy="8" r="2" />
+						<circle cx="20" cy="16" r="2" />
+						<path d="M9 10a5 5 0 0 1 5 5v4a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-4a5 5 0 0 1 5-5z" />
 					</svg>
-					<span>{langStore.current === 'uk' ? `Тварина: ${selectedAnimal.nameUk}` : `Animal: ${selectedAnimal.nameEn}`}</span>
+					<span
+						>{langStore.current === 'uk'
+							? `Тварина: ${selectedAnimal.nameUk}`
+							: `Animal: ${selectedAnimal.nameEn}`}</span
+					>
 				</button>
 			</div>
 		</div>
@@ -620,7 +670,9 @@
 
 	<!-- 2. QUICK ONE-CLICK PRESETS -->
 	<div class="presets-bar">
-		<span class="presets-title">{langStore.current === 'uk' ? 'Швидкі пресети ролей:' : 'Quick Role Presets:'}</span>
+		<span class="presets-title"
+			>{langStore.current === 'uk' ? 'Швидкі пресети ролей:' : 'Quick Role Presets:'}</span
+		>
 		<div class="presets-scroll">
 			{#each PRESETS as p (p.id)}
 				<button
@@ -653,11 +705,9 @@
 					{/if}
 
 					<!-- REAL-TIME SCALABLE VECTOR CANVAS PREVIEW -->
-					<div
-						class="screen-canvas"
-						style:aspect-ratio={device === 'pc' ? '16 / 9' : '9 / 16'}
-					>
+					<div class="screen-canvas" style:aspect-ratio={device === 'pc' ? '16 / 9' : '9 / 16'}>
 						<!-- Safe SVG embedding for crisp GPU preview -->
+						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 						{@html wallpaperSvgString}
 					</div>
 
@@ -671,13 +721,27 @@
 			<div class="scale-bar">
 				<div class="scale-label-row">
 					<span class="scale-title">
-						<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<circle cx="11" cy="11" r="8"/>
-							<line x1="21" x2="16.65" y1="21" y2="16.65"/>
-							<line x1="11" x2="11" y1="8" y2="14"/>
-							<line x1="8" x2="14" y1="11" y2="11"/>
+						<svg
+							width="15"
+							height="15"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<circle cx="11" cy="11" r="8" />
+							<line x1="21" x2="16.65" y1="21" y2="16.65" />
+							<line x1="11" x2="11" y1="8" y2="14" />
+							<line x1="8" x2="14" y1="11" y2="11" />
 						</svg>
-						<span>{langStore.current === 'uk' ? 'Розмір символу на екрані:' : 'Emblem Scale on Screen:'}</span>
+						<span
+							>{langStore.current === 'uk'
+								? 'Розмір символу на екрані:'
+								: 'Emblem Scale on Screen:'}</span
+						>
 					</span>
 					<span class="scale-val-badge">{logoScale}%</span>
 				</div>
@@ -693,16 +757,33 @@
 						aria-label={langStore.current === 'uk' ? 'Розмір логотипу' : 'Emblem scale'}
 					/>
 					<div class="scale-quick-chips">
-						<button type="button" class="scale-chip" class:is-active={logoScale === 25} onclick={() => (logoScale = 25)}>25% (Міні)</button>
-						<button type="button" class="scale-chip" class:is-active={logoScale === 38} onclick={() => (logoScale = 38)}>38% (Баланс)</button>
-						<button type="button" class="scale-chip" class:is-active={logoScale === 55} onclick={() => (logoScale = 55)}>55% (Акцент)</button>
+						<button
+							type="button"
+							class="scale-chip"
+							class:is-active={logoScale === 25}
+							onclick={() => (logoScale = 25)}>25% (Міні)</button
+						>
+						<button
+							type="button"
+							class="scale-chip"
+							class:is-active={logoScale === 38}
+							onclick={() => (logoScale = 38)}>38% (Баланс)</button
+						>
+						<button
+							type="button"
+							class="scale-chip"
+							class:is-active={logoScale === 55}
+							onclick={() => (logoScale = 55)}>55% (Акцент)</button
+						>
 					</div>
 				</div>
 			</div>
 
 			<!-- Shape / Badge options -->
 			<div class="badge-option-bar">
-				<span class="badge-opt-label">{langStore.current === 'uk' ? 'Форма підкладки:' : 'Emblem Badge:'}</span>
+				<span class="badge-opt-label"
+					>{langStore.current === 'uk' ? 'Форма підкладки:' : 'Emblem Badge:'}</span
+				>
 				<div class="pill-group">
 					<button
 						type="button"
@@ -741,8 +822,12 @@
 			<!-- 1. Background Color -->
 			<div class="color-section-box">
 				<div class="color-header">
-					<span class="color-target-name">{langStore.current === 'uk' ? '1. Колір тла шпалер' : '1. Wallpaper Background'}</span>
-					<span class="current-hex-tag" style="background-color: {bgWallpaperColor};">{bgWallpaperColor}</span>
+					<span class="color-target-name"
+						>{langStore.current === 'uk' ? '1. Колір тла шпалер' : '1. Wallpaper Background'}</span
+					>
+					<span class="current-hex-tag" style="background-color: {bgWallpaperColor};"
+						>{bgWallpaperColor}</span
+					>
 				</div>
 				<div class="swatches-grid">
 					{#each brandColors as c (c.hex)}
@@ -755,13 +840,23 @@
 							title="{c.name} ({c.hex})"
 						>
 							{#if bgWallpaperColor.toLowerCase() === c.hex.toLowerCase()}
-								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c.textColor} stroke-width="3.5">
+								<svg
+									width="14"
+									height="14"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke={c.textColor}
+									stroke-width="3.5"
+								>
 									<polyline points="20 6 9 17 4 12"></polyline>
 								</svg>
 							{/if}
 						</button>
 					{/each}
-					<label class="custom-color-picker-label" title={langStore.current === 'uk' ? 'Власний колір' : 'Custom Color'}>
+					<label
+						class="custom-color-picker-label"
+						title={langStore.current === 'uk' ? 'Власний колір' : 'Custom Color'}
+					>
 						<input type="color" bind:value={bgWallpaperColor} class="native-color-input" />
 						<span class="picker-icon">🎨</span>
 					</label>
@@ -772,8 +867,14 @@
 			{#if badgeShape !== 'none'}
 				<div class="color-section-box">
 					<div class="color-header">
-						<span class="color-target-name">{langStore.current === 'uk' ? '2. Колір підкладки знака' : '2. Badge Background'}</span>
-						<span class="current-hex-tag" style="background-color: {badgeBgColor};">{badgeBgColor}</span>
+						<span class="color-target-name"
+							>{langStore.current === 'uk'
+								? '2. Колір підкладки знака'
+								: '2. Badge Background'}</span
+						>
+						<span class="current-hex-tag" style="background-color: {badgeBgColor};"
+							>{badgeBgColor}</span
+						>
 					</div>
 					<div class="swatches-grid">
 						{#each brandColors as c (c.hex)}
@@ -786,13 +887,23 @@
 								title="{c.name} ({c.hex})"
 							>
 								{#if badgeBgColor.toLowerCase() === c.hex.toLowerCase()}
-									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c.textColor} stroke-width="3.5">
+									<svg
+										width="14"
+										height="14"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke={c.textColor}
+										stroke-width="3.5"
+									>
 										<polyline points="20 6 9 17 4 12"></polyline>
 									</svg>
 								{/if}
 							</button>
 						{/each}
-						<label class="custom-color-picker-label" title={langStore.current === 'uk' ? 'Власний колір' : 'Custom Color'}>
+						<label
+							class="custom-color-picker-label"
+							title={langStore.current === 'uk' ? 'Власний колір' : 'Custom Color'}
+						>
 							<input type="color" bind:value={badgeBgColor} class="native-color-input" />
 							<span class="picker-icon">🎨</span>
 						</label>
@@ -805,8 +916,12 @@
 				<!-- Paw Toes -->
 				<div class="color-section-box">
 					<div class="color-header">
-						<span class="color-target-name">{langStore.current === 'uk' ? 'Пальці лапи (4 елементи)' : 'Paw Toes (4 toes)'}</span>
-						<span class="current-hex-tag" style="background-color: {pawToesColor};">{pawToesColor}</span>
+						<span class="color-target-name"
+							>{langStore.current === 'uk' ? 'Пальці лапи (4 елементи)' : 'Paw Toes (4 toes)'}</span
+						>
+						<span class="current-hex-tag" style="background-color: {pawToesColor};"
+							>{pawToesColor}</span
+						>
 					</div>
 					<div class="swatches-grid">
 						{#each brandColors as c (c.hex)}
@@ -819,7 +934,14 @@
 								title="{c.name} ({c.hex})"
 							>
 								{#if pawToesColor.toLowerCase() === c.hex.toLowerCase()}
-									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c.textColor} stroke-width="3.5">
+									<svg
+										width="14"
+										height="14"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke={c.textColor}
+										stroke-width="3.5"
+									>
 										<polyline points="20 6 9 17 4 12"></polyline>
 									</svg>
 								{/if}
@@ -835,8 +957,12 @@
 				<!-- Paw Pad -->
 				<div class="color-section-box">
 					<div class="color-header">
-						<span class="color-target-name">{langStore.current === 'uk' ? 'Подушечка лапи' : 'Paw Center Pad'}</span>
-						<span class="current-hex-tag" style="background-color: {pawPadColor};">{pawPadColor}</span>
+						<span class="color-target-name"
+							>{langStore.current === 'uk' ? 'Подушечка лапи' : 'Paw Center Pad'}</span
+						>
+						<span class="current-hex-tag" style="background-color: {pawPadColor};"
+							>{pawPadColor}</span
+						>
 					</div>
 					<div class="swatches-grid">
 						{#each brandColors as c (c.hex)}
@@ -849,7 +975,14 @@
 								title="{c.name} ({c.hex})"
 							>
 								{#if pawPadColor.toLowerCase() === c.hex.toLowerCase()}
-									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c.textColor} stroke-width="3.5">
+									<svg
+										width="14"
+										height="14"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke={c.textColor}
+										stroke-width="3.5"
+									>
 										<polyline points="20 6 9 17 4 12"></polyline>
 									</svg>
 								{/if}
@@ -865,8 +998,12 @@
 				<!-- Text VET CREW -->
 				<div class="color-section-box">
 					<div class="color-header">
-						<span class="color-target-name">{langStore.current === 'uk' ? 'Напис «VET CREW»' : 'Text «VET CREW»'}</span>
-						<span class="current-hex-tag" style="background-color: {vetCrewColor};">{vetCrewColor}</span>
+						<span class="color-target-name"
+							>{langStore.current === 'uk' ? 'Напис «VET CREW»' : 'Text «VET CREW»'}</span
+						>
+						<span class="current-hex-tag" style="background-color: {vetCrewColor};"
+							>{vetCrewColor}</span
+						>
 					</div>
 					<div class="swatches-grid">
 						{#each brandColors as c (c.hex)}
@@ -879,7 +1016,14 @@
 								title="{c.name} ({c.hex})"
 							>
 								{#if vetCrewColor.toLowerCase() === c.hex.toLowerCase()}
-									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c.textColor} stroke-width="3.5">
+									<svg
+										width="14"
+										height="14"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke={c.textColor}
+										stroke-width="3.5"
+									>
 										<polyline points="20 6 9 17 4 12"></polyline>
 									</svg>
 								{/if}
@@ -896,8 +1040,12 @@
 				{#if symbolType === 'hospital'}
 					<div class="color-section-box">
 						<div class="color-header">
-							<span class="color-target-name">{langStore.current === 'uk' ? 'Напис «HOSPITAL»' : 'Text «HOSPITAL»'}</span>
-							<span class="current-hex-tag" style="background-color: {hospitalColor};">{hospitalColor}</span>
+							<span class="color-target-name"
+								>{langStore.current === 'uk' ? 'Напис «HOSPITAL»' : 'Text «HOSPITAL»'}</span
+							>
+							<span class="current-hex-tag" style="background-color: {hospitalColor};"
+								>{hospitalColor}</span
+							>
 						</div>
 						<div class="swatches-grid">
 							{#each brandColors as c (c.hex)}
@@ -910,7 +1058,14 @@
 									title="{c.name} ({c.hex})"
 								>
 									{#if hospitalColor.toLowerCase() === c.hex.toLowerCase()}
-										<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c.textColor} stroke-width="3.5">
+										<svg
+											width="14"
+											height="14"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke={c.textColor}
+											stroke-width="3.5"
+										>
 											<polyline points="20 6 9 17 4 12"></polyline>
 										</svg>
 									{/if}
@@ -927,8 +1082,12 @@
 				<!-- Butterfly Color -->
 				<div class="color-section-box">
 					<div class="color-header">
-						<span class="color-target-name">{langStore.current === 'uk' ? 'Колір метелика' : 'Butterfly Color'}</span>
-						<span class="current-hex-tag" style="background-color: {butterflyColor};">{butterflyColor}</span>
+						<span class="color-target-name"
+							>{langStore.current === 'uk' ? 'Колір метелика' : 'Butterfly Color'}</span
+						>
+						<span class="current-hex-tag" style="background-color: {butterflyColor};"
+							>{butterflyColor}</span
+						>
 					</div>
 					<div class="swatches-grid">
 						{#each brandColors as c (c.hex)}
@@ -941,7 +1100,14 @@
 								title="{c.name} ({c.hex})"
 							>
 								{#if butterflyColor.toLowerCase() === c.hex.toLowerCase()}
-									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c.textColor} stroke-width="3.5">
+									<svg
+										width="14"
+										height="14"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke={c.textColor}
+										stroke-width="3.5"
+									>
 										<polyline points="20 6 9 17 4 12"></polyline>
 									</svg>
 								{/if}
@@ -957,8 +1123,14 @@
 				<!-- Animal Color -->
 				<div class="color-section-box">
 					<div class="color-header">
-						<span class="color-target-name">{langStore.current === 'uk' ? `Колір тварини (${selectedAnimal.nameUk})` : `Animal Color (${selectedAnimal.nameEn})`}</span>
-						<span class="current-hex-tag" style="background-color: {animalColor};">{animalColor}</span>
+						<span class="color-target-name"
+							>{langStore.current === 'uk'
+								? `Колір тварини (${selectedAnimal.nameUk})`
+								: `Animal Color (${selectedAnimal.nameEn})`}</span
+						>
+						<span class="current-hex-tag" style="background-color: {animalColor};"
+							>{animalColor}</span
+						>
 					</div>
 					<div class="swatches-grid">
 						{#each brandColors as c (c.hex)}
@@ -971,7 +1143,14 @@
 								title="{c.name} ({c.hex})"
 							>
 								{#if animalColor.toLowerCase() === c.hex.toLowerCase()}
-									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c.textColor} stroke-width="3.5">
+									<svg
+										width="14"
+										height="14"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke={c.textColor}
+										stroke-width="3.5"
+									>
 										<polyline points="20 6 9 17 4 12"></polyline>
 									</svg>
 								{/if}
@@ -991,10 +1170,20 @@
 	<div class="download-action-bar">
 		<div class="file-summary">
 			<div class="summary-icon">
-				<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-					<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-					<polyline points="7 10 12 15 17 10"/>
-					<line x1="12" x2="12" y1="15" y2="3"/>
+				<svg
+					width="22"
+					height="22"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+					<polyline points="7 10 12 15 17 10" />
+					<line x1="12" x2="12" y1="15" y2="3" />
 				</svg>
 			</div>
 			<div class="summary-meta">
@@ -1010,11 +1199,23 @@
 				type="button"
 				class="export-btn btn-secondary"
 				onclick={downloadSvg}
-				title={langStore.current === 'uk' ? 'Завантажити векторний файл SVG' : 'Download vector SVG file'}
+				title={langStore.current === 'uk'
+					? 'Завантажити векторний файл SVG'
+					: 'Download vector SVG file'}
 			>
-				<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-					<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-					<polyline points="14 2 14 8 20 8"/>
+				<svg
+					width="17"
+					height="17"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+					<polyline points="14 2 14 8 20 8" />
 				</svg>
 				<span>SVG (Вектор)</span>
 			</button>
@@ -1029,17 +1230,41 @@
 					<span class="spinner-dot"></span>
 					<span>{langStore.current === 'uk' ? 'Генерація PNG...' : 'Rendering PNG...'}</span>
 				{:else if exportSuccess}
-					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<svg
+						width="18"
+						height="18"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="3"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
 						<polyline points="20 6 9 17 4 12"></polyline>
 					</svg>
 					<span>{langStore.current === 'uk' ? 'Завантажено!' : 'Downloaded!'}</span>
 				{:else}
-					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-						<polyline points="7 10 12 15 17 10"/>
-						<line x1="12" x2="12" y1="15" y2="3"/>
+					<svg
+						width="18"
+						height="18"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+						<polyline points="7 10 12 15 17 10" />
+						<line x1="12" x2="12" y1="15" y2="3" />
 					</svg>
-					<span>{langStore.current === 'uk' ? `Завантажити PNG (${resolution.toUpperCase()})` : `Download PNG (${resolution.toUpperCase()})`}</span>
+					<span
+						>{langStore.current === 'uk'
+							? `Завантажити PNG (${resolution.toUpperCase()})`
+							: `Download PNG (${resolution.toUpperCase()})`}</span
+					>
 				{/if}
 			</button>
 		</div>
@@ -1316,7 +1541,9 @@
 	.device-bezel {
 		position: relative;
 		background: #181c19;
-		box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08);
+		box-shadow:
+			0 20px 50px rgba(0, 0, 0, 0.4),
+			0 0 0 1px rgba(255, 255, 255, 0.08);
 		display: flex;
 		flex-direction: column;
 		transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -1356,7 +1583,9 @@
 		width: 250px;
 		border-radius: 36px;
 		padding: 10px;
-		box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 0 2px #2d3830;
+		box-shadow:
+			0 25px 60px rgba(0, 0, 0, 0.5),
+			0 0 0 2px #2d3830;
 	}
 
 	.phone-dynamic-island {
@@ -1732,4 +1961,3 @@
 		}
 	}
 </style>
-

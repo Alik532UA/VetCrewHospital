@@ -43,4 +43,3 @@ export const WEBSITE_FILES: Record<WebsiteVariant, QrFileVariant> = {
 		labelEn: 'Alik'
 	}
 };
-

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { langStore } from '../lang.svelte';
-
 	interface Props {
 		state: 1 | 2 | 3;
 		onGoToState: (state: 1 | 2 | 3) => void;

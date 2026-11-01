@@ -169,20 +169,24 @@
 </script>
 
 <svelte:head>
-	<title>{langStore.current === 'uk' ? 'Vet Crew Hospital — Центр лікування екзотичних та диких тварин в Одесі' : 'Vet Crew Hospital — Care Center for Exotic and Wild Animals in Odesa'}</title>
+	<title
+		>{langStore.current === 'uk'
+			? 'Vet Crew Hospital — Центр лікування екзотичних та диких тварин в Одесі'
+			: 'Vet Crew Hospital — Care Center for Exotic and Wild Animals in Odesa'}</title
+	>
 	<meta
 		name="description"
-		content="{langStore.current === 'uk'
+		content={langStore.current === 'uk'
 			? 'Vet Crew Hospital — Центр лікування екзотичних та диких тварин. м. Одеса, вул. Майстрова, буд. 4. Телефон: +380 77 501 01 01.'
-			: 'Vet Crew Hospital — Care Center for Exotic and Wild Animals. Odesa, Maystrova St, 4. Phone: +380 77 501 01 01.'}"
+			: 'Vet Crew Hospital — Care Center for Exotic and Wild Animals. Odesa, Maystrova St, 4. Phone: +380 77 501 01 01.'}
 	/>
-	<link rel="canonical" href="{siteUrl('/')}" />
-	<meta property="og:url" content="{siteUrl('/')}" />
+	<link rel="canonical" href={siteUrl('/')} />
+	<meta property="og:url" content={siteUrl('/')} />
 	<meta
 		property="og:title"
-		content="{langStore.current === 'uk'
+		content={langStore.current === 'uk'
 			? 'Центр лікування екзотичних та диких тварин'
-			: 'Care Center for Exotic and Wild Animals'}"
+			: 'Care Center for Exotic and Wild Animals'}
 	/>
 	<meta
 		property="og:description"
@@ -193,9 +197,9 @@
 	<meta name="twitter:card" content="summary" />
 	<meta
 		name="twitter:title"
-		content="{langStore.current === 'uk'
+		content={langStore.current === 'uk'
 			? 'Центр лікування екзотичних та диких тварин'
-			: 'Care Center for Exotic and Wild Animals'}"
+			: 'Care Center for Exotic and Wild Animals'}
 	/>
 	<meta
 		name="twitter:description"
@@ -209,27 +213,18 @@
 
 <main id="main-content" tabindex="-1" class="page-container state-{scrollState}">
 	<!-- Central Hero SVG Logo with dynamic cursor reactivity -->
-	<section
-		class="hero-center state-{scrollState}"
-		aria-label="Vet Crew Hospital"
-	>
+	<section class="hero-center state-{scrollState}" aria-label="Vet Crew Hospital">
 		<VetCrewLogo />
 	</section>
 
 	<!-- Bottom Center Contact Channels: Phone, Instagram, Map -->
-	<ContactLinks
-		isExpanded={scrollState === 2}
-		isShiftedUp={scrollState === 3}
-	/>
+	<ContactLinks isExpanded={scrollState === 2} isShiftedUp={scrollState === 3} />
 
 	<!-- Hidden Actions Panel ONLY in State 3 (Theme, Lang, Fullscreen) -->
 	<HiddenPanel isVisible={scrollState === 3} />
 
 	<!-- 3-State Cyclic Scroll Indicator on Right Edge -->
-	<ScrollIndicator
-		state={scrollState}
-		onGoToState={goToState}
-	/>
+	<ScrollIndicator state={scrollState} onGoToState={goToState} />
 </main>
 
 <style>

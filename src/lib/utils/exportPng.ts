@@ -14,7 +14,9 @@ export async function downloadSvgAsPng(
 	let width = maxDimension;
 	let height = maxDimension;
 
-	const viewBoxMatch = svgText.match(/viewBox=["']\s*([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s*["']/i);
+	const viewBoxMatch = svgText.match(
+		/viewBox=["']\s*([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s*["']/i
+	);
 	if (viewBoxMatch && viewBoxMatch[3] !== undefined && viewBoxMatch[4] !== undefined) {
 		const vbW = parseFloat(viewBoxMatch[3]);
 		const vbH = parseFloat(viewBoxMatch[4]);
@@ -114,4 +116,3 @@ export async function downloadUrlAsPng(
 	}
 	await downloadSvgAsPng(svgText, filename, maxDimension);
 }
-

@@ -42,11 +42,7 @@
 	];
 </script>
 
-<div
-	class="contact-container"
-	class:is-expanded={isExpanded}
-	class:is-shifted-up={isShiftedUp}
->
+<div class="contact-container" class:is-expanded={isExpanded} class:is-shifted-up={isShiftedUp}>
 	<nav class="contact-links" aria-label="Hospital Contacts">
 		{#each channels as item (item.id)}
 			<a
@@ -68,6 +64,8 @@
 						stroke-linejoin="round"
 						aria-hidden="true"
 					>
+						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+						<!-- svelte-ignore svelte/no-at-html-tags -->
 						{@html item.svg}
 					</svg>
 				</div>

@@ -28,8 +28,8 @@
 		currentFormat === 'composite'
 			? COMPOSITE_PLAQUES
 			: currentFormat === 'text'
-			? TEXT_PLAQUES
-			: ICON_PLAQUES
+				? TEXT_PLAQUES
+				: ICON_PLAQUES
 	);
 
 	function getAssetUrl(item: SignItem): string {
@@ -60,7 +60,11 @@
 			const link = document.createElement('a');
 			link.href = downloadUrl;
 			const formatLabel =
-				currentFormat === 'composite' ? 'Іконка+Напис' : currentFormat === 'text' ? 'Тільки напис' : 'Іконка';
+				currentFormat === 'composite'
+					? 'Іконка+Напис'
+					: currentFormat === 'text'
+						? 'Тільки напис'
+						: 'Іконка';
 			link.download = `${item.num} - ${item.titleUk} (${formatLabel}, ${signColor}).svg`;
 			document.body.appendChild(link);
 			link.click();
@@ -79,7 +83,11 @@
 		try {
 			const url = getAssetUrl(item);
 			const formatLabel =
-				currentFormat === 'composite' ? 'Іконка+Напис' : currentFormat === 'text' ? 'Тільки напис' : 'Іконка';
+				currentFormat === 'composite'
+					? 'Іконка+Напис'
+					: currentFormat === 'text'
+						? 'Тільки напис'
+						: 'Іконка';
 			await downloadUrlAsPng(
 				url,
 				`${item.num} - ${item.titleUk} (${formatLabel}, ${signColor}).png`,
@@ -104,7 +112,9 @@
 		<!-- ROW 1: Format Selector -->
 		<div class="control-row format-row">
 			<div class="control-label-group">
-				<span class="control-title">{langStore.current === 'uk' ? 'Формат навігації:' : 'Signage Layout:'}</span>
+				<span class="control-title"
+					>{langStore.current === 'uk' ? 'Формат навігації:' : 'Signage Layout:'}</span
+				>
 			</div>
 
 			<div class="format-pill-tabs">
@@ -114,10 +124,20 @@
 					class:is-active={currentFormat === 'composite'}
 					onclick={() => (currentFormat = 'composite')}
 				>
-					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<path d="M18 20V6a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v14"/>
-						<path d="M2 20h20"/>
-						<path d="M14 12v.01"/>
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<path d="M18 20V6a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v14" />
+						<path d="M2 20h20" />
+						<path d="M14 12v.01" />
 					</svg>
 					<span>{langStore.current === 'uk' ? 'Іконка + напис' : 'Icon + Text'}</span>
 				</button>
@@ -127,14 +147,24 @@
 					class:is-active={currentFormat === 'icon'}
 					onclick={() => (currentFormat = 'icon')}
 				>
-					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<path d="M12 6v4"/>
-						<path d="M14 14h-4"/>
-						<path d="M14 18h-4"/>
-						<path d="M14 8h-4"/>
-						<path d="M18 12h-4"/>
-						<rect width="16" height="20" x="4" y="2" rx="2"/>
-						<path d="M10 22v-4h4v4"/>
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<path d="M12 6v4" />
+						<path d="M14 14h-4" />
+						<path d="M14 18h-4" />
+						<path d="M14 8h-4" />
+						<path d="M18 12h-4" />
+						<rect width="16" height="20" x="4" y="2" rx="2" />
+						<path d="M10 22v-4h4v4" />
 					</svg>
 					<span>{langStore.current === 'uk' ? 'Тільки іконка' : 'Icon Only'}</span>
 				</button>
@@ -144,10 +174,20 @@
 					class:is-active={currentFormat === 'text'}
 					onclick={() => (currentFormat = 'text')}
 				>
-					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<polyline points="4 7 4 4 20 4 20 7"/>
-						<line x1="9" x2="15" y1="20" y2="20"/>
-						<line x1="12" x2="12" y1="4" y2="20"/>
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<polyline points="4 7 4 4 20 4 20 7" />
+						<line x1="9" x2="15" y1="20" y2="20" />
+						<line x1="12" x2="12" y1="4" y2="20" />
 					</svg>
 					<span>{langStore.current === 'uk' ? 'Тільки напис' : 'Text Only'}</span>
 				</button>
@@ -159,7 +199,9 @@
 			<!-- Color Picker (as in 24 Animals) -->
 			<div class="color-picker-box">
 				<div class="color-label-wrap">
-					<span class="control-title">{langStore.current === 'uk' ? 'Колір табличок:' : 'Sign Color:'}</span>
+					<span class="control-title"
+						>{langStore.current === 'uk' ? 'Колір табличок:' : 'Sign Color:'}</span
+					>
 					<code class="active-hex-badge">{signColor}</code>
 				</div>
 
@@ -175,8 +217,18 @@
 							aria-label="{c.name} ({c.hex})"
 						>
 							{#if signColor.toUpperCase() === c.hex.toUpperCase()}
-								<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c.textColor} stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-									<polyline points="20 6 9 17 4 12"/>
+								<svg
+									width="12"
+									height="12"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke={c.textColor}
+									stroke-width="3"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									aria-hidden="true"
+								>
+									<polyline points="20 6 9 17 4 12" />
 								</svg>
 							{/if}
 						</button>
@@ -185,21 +237,37 @@
 					<!-- Custom HTML5 Color Picker -->
 					<label
 						class="color-pill-btn custom-picker-pill"
-						class:is-active={!BRAND_COLORS.some((c) => c.hex.toUpperCase() === signColor.toUpperCase())}
+						class:is-active={!BRAND_COLORS.some(
+							(c) => c.hex.toUpperCase() === signColor.toUpperCase()
+						)}
 						title={langStore.current === 'uk' ? 'Власний колір (палітра)' : 'Custom color'}
 					>
 						<input
 							type="color"
 							value={signColor}
-							oninput={(e) => (customSelectedColor = (e.target as HTMLInputElement).value.toUpperCase())}
+							oninput={(e) =>
+								(customSelectedColor = (e.target as HTMLInputElement).value.toUpperCase())}
 							aria-label="Custom color picker"
 						/>
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="picker-icon" aria-hidden="true">
-							<circle cx="13.5" cy="6.5" r=".5" fill="#ffffff"/>
-							<circle cx="17.5" cy="10.5" r=".5" fill="#ffffff"/>
-							<circle cx="8.5" cy="7.5" r=".5" fill="#ffffff"/>
-							<circle cx="6.5" cy="12.5" r=".5" fill="#ffffff"/>
-							<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+						<svg
+							width="14"
+							height="14"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="#ffffff"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="picker-icon"
+							aria-hidden="true"
+						>
+							<circle cx="13.5" cy="6.5" r=".5" fill="#ffffff" />
+							<circle cx="17.5" cy="10.5" r=".5" fill="#ffffff" />
+							<circle cx="8.5" cy="7.5" r=".5" fill="#ffffff" />
+							<circle cx="6.5" cy="12.5" r=".5" fill="#ffffff" />
+							<path
+								d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"
+							/>
 						</svg>
 					</label>
 				</div>
@@ -239,7 +307,7 @@
 						class="sign-svg-mask"
 						style:background-color={signColor}
 						style:--mask-url="url('{assetUrl}')"
-						aria-label="{item.titleUk}"
+						aria-label={item.titleUk}
 					></div>
 				</div>
 
@@ -250,9 +318,18 @@
 						class="download-sign-btn svg-btn"
 						onclick={(e) => downloadColoredSignSvg(e, item)}
 						disabled={isDownloading === item.id}
-						title="{langStore.current === 'uk' ? `Завантажити SVG у кольорі ${signColor}` : `Download SVG in ${signColor}`}"
+						title={langStore.current === 'uk'
+							? `Завантажити SVG у кольорі ${signColor}`
+							: `Download SVG in ${signColor}`}
 					>
-						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<svg
+							width="13"
+							height="13"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+						>
 							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 							<polyline points="7 10 12 15 17 10"></polyline>
 							<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -261,8 +338,8 @@
 							{isDownloading === item.id
 								? '...'
 								: langStore.current === 'uk'
-								? `SVG (${signColor})`
-								: `SVG (${signColor})`}
+									? `SVG (${signColor})`
+									: `SVG (${signColor})`}
 						</span>
 					</button>
 
@@ -271,17 +348,24 @@
 						class="download-sign-btn png-btn"
 						onclick={(e) => downloadColoredSignPng(e, item)}
 						disabled={isDownloading === `${item.id}-png`}
-						title="{langStore.current === 'uk' ? `Завантажити PNG (2000 px) у кольорі ${signColor}` : `Download PNG (2000 px) in ${signColor}`}"
+						title={langStore.current === 'uk'
+							? `Завантажити PNG (2000 px) у кольорі ${signColor}`
+							: `Download PNG (2000 px) in ${signColor}`}
 					>
-						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<svg
+							width="13"
+							height="13"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+						>
 							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 							<polyline points="7 10 12 15 17 10"></polyline>
 							<line x1="12" y1="15" x2="12" y2="3"></line>
 						</svg>
 						<span>
-							{isDownloading === `${item.id}-png`
-								? '...'
-								: 'PNG (2000 px)'}
+							{isDownloading === `${item.id}-png` ? '...' : 'PNG (2000 px)'}
 						</span>
 					</button>
 				</div>
@@ -444,7 +528,9 @@
 		align-items: center;
 		justify-content: center;
 		padding: 0;
-		transition: transform 0.15s ease, box-shadow 0.15s ease;
+		transition:
+			transform 0.15s ease,
+			box-shadow 0.15s ease;
 	}
 
 	:global([data-theme='dark']) .color-pill-btn,
@@ -484,11 +570,21 @@
 		inset: 0;
 		border-radius: 50%;
 		clip-path: circle(50% at 50% 50%);
-		background: conic-gradient(from 0deg at 50% 50%, #FF0000 0deg, #FFA500 51deg, #FFFF00 102deg, #008000 153deg, #0000FF 204deg, #4B0082 255deg, #EE82EE 306deg, #FF0000 360deg);
+		background: conic-gradient(
+			from 0deg at 50% 50%,
+			#ff0000 0deg,
+			#ffa500 51deg,
+			#ffff00 102deg,
+			#008000 153deg,
+			#0000ff 204deg,
+			#4b0082 255deg,
+			#ee82ee 306deg,
+			#ff0000 360deg
+		);
 		z-index: 0;
 	}
 
-	.custom-picker-pill input[type="color"] {
+	.custom-picker-pill input[type='color'] {
 		position: absolute;
 		inset: 0;
 		opacity: 0;
@@ -635,22 +731,26 @@
 
 	.stage--checker {
 		background-color: #fafafa;
-		background-image: 
-			linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%),
-			linear-gradient(-45deg, rgba(0,0,0,0.05) 25%, transparent 25%),
-			linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.05) 75%),
-			linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.05) 75%);
+		background-image:
+			linear-gradient(45deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%),
+			linear-gradient(-45deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%),
+			linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.05) 75%),
+			linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.05) 75%);
 		background-size: 16px 16px;
-		background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+		background-position:
+			0 0,
+			0 8px,
+			8px -8px,
+			-8px 0px;
 	}
 
 	:global(.dark) .stage--checker {
 		background-color: #121513;
-		background-image: 
-			linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
-			linear-gradient(-45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
-			linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.05) 75%),
-			linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.05) 75%);
+		background-image:
+			linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+			linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+			linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%),
+			linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%);
 	}
 
 	.sign-svg-mask {
@@ -660,7 +760,9 @@
 		max-height: 140px;
 		-webkit-mask: var(--mask-url) no-repeat center / contain;
 		mask: var(--mask-url) no-repeat center / contain;
-		transition: background-color 0.2s ease, transform 0.2s ease;
+		transition:
+			background-color 0.2s ease,
+			transform 0.2s ease;
 	}
 
 	.stage--square .sign-svg-mask {

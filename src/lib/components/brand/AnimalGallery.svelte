@@ -6,12 +6,7 @@
 	import { logService } from '$lib/services/logService.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 
-	import {
-		ANIMALS,
-		ANIMAL_BRAND_COLORS as brandColors,
-		type AnimalItem,
-		type AnimalCategory
-	} from '$lib/data/animals';
+	import { ANIMALS, ANIMAL_BRAND_COLORS as brandColors, type AnimalItem } from '$lib/data/animals';
 
 	let customSelectedColor = $state<string | null>(null);
 	let animalColor = $derived(
@@ -42,7 +37,7 @@
 		try {
 			const res = await fetch(`${base}/brand/animals/${encodeURIComponent(animal.file)}`);
 			let text = await res.text();
-			
+
 			// Inject color attribute
 			if (text.includes('fill=')) {
 				text = text.replace(/fill="[^"]*"/g, `fill="${animalColor}"`);
@@ -97,7 +92,9 @@
 		<div class="color-picker-row">
 			<div class="color-picker-left">
 				<div class="color-picker-label">
-					<span class="label-title">{langStore.current === 'uk' ? 'Колір іконок:' : 'Icon Color:'}</span>
+					<span class="label-title"
+						>{langStore.current === 'uk' ? 'Колір іконок:' : 'Icon Color:'}</span
+					>
 					<code class="active-hex-badge">{animalColor}</code>
 				</div>
 
@@ -113,8 +110,18 @@
 							aria-label="{c.name} ({c.hex})"
 						>
 							{#if animalColor.toUpperCase() === c.hex.toUpperCase()}
-								<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c.textColor} stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-									<polyline points="20 6 9 17 4 12"/>
+								<svg
+									width="12"
+									height="12"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke={c.textColor}
+									stroke-width="3"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									aria-hidden="true"
+								>
+									<polyline points="20 6 9 17 4 12" />
 								</svg>
 							{/if}
 						</button>
@@ -123,21 +130,37 @@
 					<!-- Custom color picker -->
 					<label
 						class="color-pill-btn custom-picker-pill"
-						class:is-active={!brandColors.some((c) => c.hex.toUpperCase() === animalColor.toUpperCase())}
+						class:is-active={!brandColors.some(
+							(c) => c.hex.toUpperCase() === animalColor.toUpperCase()
+						)}
 						title={langStore.current === 'uk' ? 'Власний колір (палітра)' : 'Custom color'}
 					>
 						<input
 							type="color"
 							value={animalColor}
-							oninput={(e) => (customSelectedColor = (e.target as HTMLInputElement).value.toUpperCase())}
+							oninput={(e) =>
+								(customSelectedColor = (e.target as HTMLInputElement).value.toUpperCase())}
 							aria-label="Custom color picker"
 						/>
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="picker-icon" aria-hidden="true">
-							<circle cx="13.5" cy="6.5" r=".5" fill="#ffffff"/>
-							<circle cx="17.5" cy="10.5" r=".5" fill="#ffffff"/>
-							<circle cx="8.5" cy="7.5" r=".5" fill="#ffffff"/>
-							<circle cx="6.5" cy="12.5" r=".5" fill="#ffffff"/>
-							<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+						<svg
+							width="14"
+							height="14"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="#ffffff"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="picker-icon"
+							aria-hidden="true"
+						>
+							<circle cx="13.5" cy="6.5" r=".5" fill="#ffffff" />
+							<circle cx="17.5" cy="10.5" r=".5" fill="#ffffff" />
+							<circle cx="8.5" cy="7.5" r=".5" fill="#ffffff" />
+							<circle cx="6.5" cy="12.5" r=".5" fill="#ffffff" />
+							<path
+								d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"
+							/>
 						</svg>
 					</label>
 				</div>
@@ -199,9 +222,17 @@
 			</div>
 
 			<div class="search-wrap">
-				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
-					<circle cx="11" cy="11" r="8"/>
-					<line x1="21" y1="21" x2="16.65" y2="16.65"/>
+				<svg
+					width="14"
+					height="14"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					class="search-icon"
+				>
+					<circle cx="11" cy="11" r="8" />
+					<line x1="21" y1="21" x2="16.65" y2="16.65" />
 				</svg>
 				<input
 					type="text"
@@ -210,10 +241,25 @@
 					bind:value={searchQuery}
 				/>
 				{#if searchQuery}
-					<button type="button" class="clear-btn" onclick={() => (searchQuery = '')} aria-label="Clear">
-						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<line x1="18" y1="6" x2="6" y2="18"/>
-							<line x1="6" y1="6" x2="18" y2="18"/>
+					<button
+						type="button"
+						class="clear-btn"
+						onclick={() => (searchQuery = '')}
+						aria-label="Clear"
+					>
+						<svg
+							width="13"
+							height="13"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<line x1="18" y1="6" x2="6" y2="18" />
+							<line x1="6" y1="6" x2="18" y2="18" />
 						</svg>
 					</button>
 				{/if}
@@ -248,9 +294,18 @@
 						class="download-animal-btn"
 						onclick={(e) => downloadColoredSvg(e, a)}
 						disabled={isDownloading === a.id}
-						title="{langStore.current === 'uk' ? `Завантажити SVG (${animalColor})` : `Download SVG (${animalColor})`}"
+						title={langStore.current === 'uk'
+							? `Завантажити SVG (${animalColor})`
+							: `Download SVG (${animalColor})`}
 					>
-						<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<svg
+							width="11"
+							height="11"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+						>
 							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 							<polyline points="7 10 12 15 17 10"></polyline>
 							<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -263,9 +318,18 @@
 						class="download-animal-btn"
 						onclick={(e) => downloadColoredPng(e, a)}
 						disabled={isDownloading === `${a.id}-png`}
-						title="{langStore.current === 'uk' ? `Завантажити PNG (${animalColor})` : `Download PNG (${animalColor})`}"
+						title={langStore.current === 'uk'
+							? `Завантажити PNG (${animalColor})`
+							: `Download PNG (${animalColor})`}
 					>
-						<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<svg
+							width="11"
+							height="11"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+						>
 							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 							<polyline points="7 10 12 15 17 10"></polyline>
 							<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -397,11 +461,21 @@
 		inset: 0;
 		border-radius: 50%;
 		clip-path: circle(50% at 50% 50%);
-		background: conic-gradient(from 0deg at 50% 50%, #FF0000 0deg, #FFA500 51deg, #FFFF00 102deg, #008000 153deg, #0000FF 204deg, #4B0082 255deg, #EE82EE 306deg, #FF0000 360deg);
+		background: conic-gradient(
+			from 0deg at 50% 50%,
+			#ff0000 0deg,
+			#ffa500 51deg,
+			#ffff00 102deg,
+			#008000 153deg,
+			#0000ff 204deg,
+			#4b0082 255deg,
+			#ee82ee 306deg,
+			#ff0000 360deg
+		);
 		z-index: 0;
 	}
 
-	.custom-picker-pill input[type="color"] {
+	.custom-picker-pill input[type='color'] {
 		position: absolute;
 		inset: 0;
 		width: 100%;

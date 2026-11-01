@@ -1,0 +1,11 @@
+# VetCrewHospital — Інструкції для AI
+
+Див. повний канонічний контекст у [PROJECT-CONTEXT.md](PROJECT-CONTEXT.md) та практичні правила для агентів у [AGENTS.md](AGENTS.md).
+
+## Швидкі команди
+
+- Розробка: `npm run dev`
+- Перевірка типів: `npm run check`
+- Юніт-тести: `npm run test:unit`
+- Аудит безпеки: `npm run audit:ci`
+- Збірка: `npm run build`

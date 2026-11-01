@@ -63,7 +63,9 @@
 				<div class="emblem-preview-stage stage--{stageTheme}">
 					<img
 						src="{base}/brand/emblems/{item.svgFile}"
-						alt={langStore.current === 'uk' ? `Комплексний логотип з тваринами (${item.num} ${item.nameUk})` : `Composite logo with animals (${item.num} ${item.nameEn})`}
+						alt={langStore.current === 'uk'
+							? `Комплексний логотип з тваринами (${item.num} ${item.nameUk})`
+							: `Composite logo with animals (${item.num} ${item.nameEn})`}
 						class="emblem-svg-render"
 						loading="lazy"
 					/>
@@ -83,9 +85,18 @@
 							href="{base}/brand/emblems/{item.svgFile}"
 							download="vet-crew-{item.num}-{item.nameUk}.svg"
 							class="download-btn svg-btn"
-							title="{langStore.current === 'uk' ? `Завантажити векторний SVG (${item.num} ${item.nameUk})` : `Download vector SVG (${item.num} ${item.nameEn})`}"
+							title={langStore.current === 'uk'
+								? `Завантажити векторний SVG (${item.num} ${item.nameUk})`
+								: `Download vector SVG (${item.num} ${item.nameEn})`}
 						>
-							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<svg
+								width="13"
+								height="13"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+							>
 								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 								<polyline points="7 10 12 15 17 10"></polyline>
 								<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -97,9 +108,18 @@
 							href="{base}/brand/emblems/{item.pngFile}"
 							download="vet-crew-{item.num}-{item.nameUk}.png"
 							class="download-btn png-btn"
-							title="{langStore.current === 'uk' ? `Завантажити PNG (2000 px) — ${item.num} ${item.nameUk}` : `Download PNG (2000 px) — ${item.num} ${item.nameEn}`}"
+							title={langStore.current === 'uk'
+								? `Завантажити PNG (2000 px) — ${item.num} ${item.nameUk}`
+								: `Download PNG (2000 px) — ${item.num} ${item.nameEn}`}
 						>
-							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<svg
+								width="13"
+								height="13"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+							>
 								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 								<polyline points="7 10 12 15 17 10"></polyline>
 								<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -185,22 +205,26 @@
 
 	.stage--checker {
 		background-color: #fafafa;
-		background-image: 
-			linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%),
-			linear-gradient(-45deg, rgba(0,0,0,0.05) 25%, transparent 25%),
-			linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.05) 75%),
-			linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.05) 75%);
+		background-image:
+			linear-gradient(45deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%),
+			linear-gradient(-45deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%),
+			linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.05) 75%),
+			linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.05) 75%);
 		background-size: 16px 16px;
-		background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+		background-position:
+			0 0,
+			0 8px,
+			8px -8px,
+			-8px 0px;
 	}
 
 	:global(.dark) .stage--checker {
 		background-color: #121513;
-		background-image: 
-			linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
-			linear-gradient(-45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
-			linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.05) 75%),
-			linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.05) 75%);
+		background-image:
+			linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+			linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+			linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%),
+			linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%);
 	}
 
 	.emblem-svg-render {

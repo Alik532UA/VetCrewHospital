@@ -53,9 +53,15 @@ describe('CUSTOM-DOMAIN-v10 — переїзд на власний домен ve
 	});
 
 	it('readConst успішно зчитує константу з джерела або кидає помилку', () => {
-		const origin = readConst('src/lib/config/site.ts', /export const SITE_ORIGIN\s*=\s*['"]([^'"]+)['"]/, 'SITE_ORIGIN');
+		const origin = readConst(
+			'src/lib/config/site.ts',
+			/export const SITE_ORIGIN\s*=\s*['"]([^'"]+)['"]/,
+			'SITE_ORIGIN'
+		);
 		expect(origin).toBe('https://vet-crew-hospital.org');
-		expect(() => readConst('src/lib/config/site.ts', /NOT_FOUND/, 'NOT_FOUND')).toThrow('NOT_FOUND not found');
+		expect(() => readConst('src/lib/config/site.ts', /NOT_FOUND/, 'NOT_FOUND')).toThrow(
+			'NOT_FOUND not found'
+		);
 	});
 
 	it('domainProblems валідує конфігурацію політики переїзду домену', () => {

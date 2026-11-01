@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 	import logoPaths from '$lib/assets/logo-paths.json';
 	import vetcrewLogoPaths from '$lib/assets/vetcrew-logo-paths.json';
@@ -183,7 +182,8 @@
 
 	function isPresetActive(p: (typeof PRESETS_HOSPITAL)[0] | (typeof PRESETS_VETCREW)[0]): boolean {
 		if (bgShape !== p.bgShape) return false;
-		if (p.bgShape !== 'transparent' && bgCircleColor.toLowerCase() !== p.bgCircle.toLowerCase()) return false;
+		if (p.bgShape !== 'transparent' && bgCircleColor.toLowerCase() !== p.bgCircle.toLowerCase())
+			return false;
 		if (pawColor.toLowerCase() !== p.paw.toLowerCase()) return false;
 		if (vetCrewColor.toLowerCase() !== p.vetCrew.toLowerCase()) return false;
 		if (activeVariant === 'hospital' && 'hospital' in p) {
@@ -229,8 +229,8 @@
 				bgShape === 'circle'
 					? `<circle id="bg-circle" cx="485.31" cy="485.31" r="461.76" fill="${bgCircleColor}"/>`
 					: bgShape === 'solid'
-					? `<rect id="bg-solid" x="0" y="0" width="970.62" height="970.62" rx="36" fill="${bgCircleColor}"/>`
-					: '';
+						? `<rect id="bg-solid" x="0" y="0" width="970.62" height="970.62" rx="36" fill="${bgCircleColor}"/>`
+						: '';
 
 			return `<svg id="vet-crew-hospital-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 970.62 970.62" width="970.62" height="970.62">
   <title>Vet Crew Hospital Logo</title>
@@ -252,8 +252,8 @@
 				bgShape === 'circle'
 					? `<circle id="bg-circle" cx="2048" cy="2048" r="1948.6" fill="${bgCircleColor}"/>`
 					: bgShape === 'solid'
-					? `<rect id="bg-solid" x="0" y="0" width="4096" height="4096" rx="152" fill="${bgCircleColor}"/>`
-					: '';
+						? `<rect id="bg-solid" x="0" y="0" width="4096" height="4096" rx="152" fill="${bgCircleColor}"/>`
+						: '';
 
 			return `<svg id="vet-crew-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4096 4096" width="4096" height="4096">
   <title>Vet Crew Logo</title>
@@ -325,7 +325,8 @@
 				const link = document.createElement('a');
 				link.href = pngUrl;
 				const prefix = activeVariant === 'hospital' ? 'VetCrewHospital' : 'VetCrew';
-				const suffix = bgShape === 'circle' ? 'badge' : bgShape === 'solid' ? 'solid' : 'transparent';
+				const suffix =
+					bgShape === 'circle' ? 'badge' : bgShape === 'solid' ? 'solid' : 'transparent';
 				link.download = `${prefix}-${suffix}-2000px.png`;
 				document.body.appendChild(link);
 				link.click();
@@ -349,9 +350,15 @@
 	<!-- 0. Brand Logo Variant Switcher -->
 	<div class="variant-bar">
 		<div class="variant-meta">
-			<span class="variant-label">{langStore.current === 'uk' ? 'Версія логотипу:' : 'Logo Version:'}</span>
+			<span class="variant-label"
+				>{langStore.current === 'uk' ? 'Версія логотипу:' : 'Logo Version:'}</span
+			>
 		</div>
-		<div class="variant-toggle-pills" role="tablist" aria-label={langStore.current === 'uk' ? 'Вибір логотипу' : 'Choose Logo Variant'}>
+		<div
+			class="variant-toggle-pills"
+			role="tablist"
+			aria-label={langStore.current === 'uk' ? 'Вибір логотипу' : 'Choose Logo Variant'}
+		>
 			<button
 				type="button"
 				role="tab"
@@ -360,10 +367,22 @@
 				class:is-active={activeVariant === 'hospital'}
 				onclick={() => setVariant('hospital')}
 			>
-				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-					<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
-					<path d="M12 9v4"/>
-					<path d="M10 11h4"/>
+				<svg
+					width="15"
+					height="15"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2.2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<path
+						d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
+					/>
+					<path d="M12 9v4" />
+					<path d="M10 11h4" />
 				</svg>
 				<span>Vet Crew Hospital</span>
 				<span class="variant-badge">{langStore.current === 'uk' ? 'Шпиталь' : 'Hospital'}</span>
@@ -378,7 +397,9 @@
 				onclick={() => setVariant('vetcrew')}
 			>
 				<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-					<path d="M12 10.5c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-5.5-1c1.38 0 2.5-1.12 2.5-2.5s-1.12-2.5-2.5-2.5-2.5 1.12-2.5 2.5 1.12 2.5 2.5 2.5zm11 0c1.38 0 2.5-1.12 2.5-2.5s-1.12-2.5-2.5-2.5-2.5 1.12-2.5 2.5 1.12 2.5 2.5 2.5zm-8.8 6.5c-.75-.62-1.7-1-2.7-1-2.21 0-4 1.79-4 4 0 2.5 3 5 7 5 1.15 0 2.18-.32 3-.88-.82-.56-1.85-.88-3-.88-.28 0-.55.03-.82.08-.34-.73-.48-1.55-.48-2.32 0-1.53.5-2.88 1-4zm10.6 0c.5 1.12 1 2.47 1 4 0 .77-.14 1.59-.48 2.32-.27-.05-.54-.08-.82-.08-1.15 0-2.18.32-3 .88 4 0 7-2.5 7-5 0-2.21-1.79-4-4-4-1 0-1.95.38-2.7 1z"/>
+					<path
+						d="M12 10.5c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-5.5-1c1.38 0 2.5-1.12 2.5-2.5s-1.12-2.5-2.5-2.5-2.5 1.12-2.5 2.5 1.12 2.5 2.5 2.5zm11 0c1.38 0 2.5-1.12 2.5-2.5s-1.12-2.5-2.5-2.5-2.5 1.12-2.5 2.5 1.12 2.5 2.5 2.5zm-8.8 6.5c-.75-.62-1.7-1-2.7-1-2.21 0-4 1.79-4 4 0 2.5 3 5 7 5 1.15 0 2.18-.32 3-.88-.82-.56-1.85-.88-3-.88-.28 0-.55.03-.82.08-.34-.73-.48-1.55-.48-2.32 0-1.53.5-2.88 1-4zm10.6 0c.5 1.12 1 2.47 1 4 0 .77-.14 1.59-.48 2.32-.27-.05-.54-.08-.82-.08-1.15 0-2.18.32-3 .88 4 0 7-2.5 7-5 0-2.21-1.79-4-4-4-1 0-1.95.38-2.7 1z"
+					/>
 				</svg>
 				<span>{langStore.current === 'uk' ? 'Vet Crew (Основний)' : 'Vet Crew (Primary)'}</span>
 				<span class="variant-badge">{langStore.current === 'uk' ? 'Бренд' : 'Brand'}</span>
@@ -428,13 +449,7 @@
 						height="280"
 					>
 						{#if bgShape === 'circle'}
-							<circle
-								id="live-bg-circle"
-								cx="485.31"
-								cy="485.31"
-								r="461.76"
-								fill={bgCircleColor}
-							/>
+							<circle id="live-bg-circle" cx="485.31" cy="485.31" r="461.76" fill={bgCircleColor} />
 						{:else if bgShape === 'solid'}
 							<rect
 								id="live-bg-solid"
@@ -468,13 +483,7 @@
 						height="280"
 					>
 						{#if bgShape === 'circle'}
-							<circle
-								id="live-bg-circle-vc"
-								cx="2048"
-								cy="2048"
-								r="1948.6"
-								fill={bgCircleColor}
-							/>
+							<circle id="live-bg-circle-vc" cx="2048" cy="2048" r="1948.6" fill={bgCircleColor} />
 						{:else if bgShape === 'solid'}
 							<rect
 								id="live-bg-solid-vc"
@@ -489,13 +498,38 @@
 
 						<g id="live-vetcrew-content">
 							<g id="live-paw-vc" fill={pawColor}>
-								<path id="live-paw-toe-left-vc" fill-rule="evenodd" d={vetcrewLogoPaths.paths['paw-toe-left']} />
-								<path id="live-paw-toe-center-left-vc" fill-rule="evenodd" d={vetcrewLogoPaths.paths['paw-toe-center-left']} />
-								<path id="live-paw-toe-center-right-vc" fill-rule="evenodd" d={vetcrewLogoPaths.paths['paw-toe-center-right']} />
-								<path id="live-paw-toe-right-vc" fill-rule="evenodd" d={vetcrewLogoPaths.paths['paw-toe-right']} />
-								<path id="live-paw-pad-vc" fill-rule="evenodd" d={vetcrewLogoPaths.paths['paw-pad']} />
+								<path
+									id="live-paw-toe-left-vc"
+									fill-rule="evenodd"
+									d={vetcrewLogoPaths.paths['paw-toe-left']}
+								/>
+								<path
+									id="live-paw-toe-center-left-vc"
+									fill-rule="evenodd"
+									d={vetcrewLogoPaths.paths['paw-toe-center-left']}
+								/>
+								<path
+									id="live-paw-toe-center-right-vc"
+									fill-rule="evenodd"
+									d={vetcrewLogoPaths.paths['paw-toe-center-right']}
+								/>
+								<path
+									id="live-paw-toe-right-vc"
+									fill-rule="evenodd"
+									d={vetcrewLogoPaths.paths['paw-toe-right']}
+								/>
+								<path
+									id="live-paw-pad-vc"
+									fill-rule="evenodd"
+									d={vetcrewLogoPaths.paths['paw-pad']}
+								/>
 							</g>
-							<path id="live-text-vet-crew-vc" fill-rule="evenodd" fill={vetCrewColor} d={vetcrewLogoPaths.paths['text-vet-crew']} />
+							<path
+								id="live-text-vet-crew-vc"
+								fill-rule="evenodd"
+								fill={vetCrewColor}
+								d={vetcrewLogoPaths.paths['text-vet-crew']}
+							/>
 						</g>
 					</svg>
 				{/if}
@@ -509,7 +543,14 @@
 					onclick={downloadSvg}
 					title={langStore.current === 'uk' ? 'Завантажити векторний SVG' : 'Download SVG'}
 				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -522,14 +563,29 @@
 					class="action-dl-btn png-btn"
 					onclick={downloadPng}
 					disabled={isExportingPng}
-					title={langStore.current === 'uk' ? 'Завантажити растровий PNG (2000 px)' : 'Download PNG (2000 px)'}
+					title={langStore.current === 'uk'
+						? 'Завантажити растровий PNG (2000 px)'
+						: 'Download PNG (2000 px)'}
 				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
 					</svg>
-					<span>{isExportingPng ? '...' : (langStore.current === 'uk' ? 'PNG (2000 px)' : 'PNG (2000 px)')}</span>
+					<span
+						>{isExportingPng
+							? '...'
+							: langStore.current === 'uk'
+								? 'PNG (2000 px)'
+								: 'PNG (2000 px)'}</span
+					>
 				</button>
 			</div>
 		</div>
@@ -539,7 +595,9 @@
 			<!-- 1. Background Shape 3-Way Selector -->
 			<div class="control-row bg-toggle-row">
 				<div class="row-meta">
-					<span class="control-title">{langStore.current === 'uk' ? 'Форма підкладки:' : 'Background Style:'}</span>
+					<span class="control-title"
+						>{langStore.current === 'uk' ? 'Форма підкладки:' : 'Background Style:'}</span
+					>
 				</div>
 				<div class="toggle-pill-wrap">
 					<button
@@ -552,8 +610,15 @@
 						}}
 						title={langStore.current === 'uk' ? 'Канонічна кругла емблема' : 'Round emblem badge'}
 					>
-						<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" class="pill-icon" aria-hidden="true">
-							<circle cx="12" cy="12" r="9"/>
+						<svg
+							width="13"
+							height="13"
+							viewBox="0 0 24 24"
+							fill="currentColor"
+							class="pill-icon"
+							aria-hidden="true"
+						>
+							<circle cx="12" cy="12" r="9" />
 						</svg>
 						<span>{langStore.current === 'uk' ? 'Кругла' : 'Circle'}</span>
 					</button>
@@ -565,10 +630,19 @@
 							bgShape = 'solid';
 							activeGroup = 'bgCircle';
 						}}
-						title={langStore.current === 'uk' ? 'Суцільна заливка артборду' : 'Full solid canvas fill'}
+						title={langStore.current === 'uk'
+							? 'Суцільна заливка артборду'
+							: 'Full solid canvas fill'}
 					>
-						<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" class="pill-icon" aria-hidden="true">
-							<rect x="3" y="3" width="18" height="18" rx="4"/>
+						<svg
+							width="13"
+							height="13"
+							viewBox="0 0 24 24"
+							fill="currentColor"
+							class="pill-icon"
+							aria-hidden="true"
+						>
+							<rect x="3" y="3" width="18" height="18" rx="4" />
 						</svg>
 						<span>{langStore.current === 'uk' ? 'Суцільна' : 'Solid'}</span>
 					</button>
@@ -577,10 +651,23 @@
 						class="pill-btn"
 						class:is-active={bgShape === 'transparent'}
 						onclick={() => (bgShape = 'transparent')}
-						title={langStore.current === 'uk' ? 'Без підкладки (прозорий фон)' : 'Transparent without fill'}
+						title={langStore.current === 'uk'
+							? 'Без підкладки (прозорий фон)'
+							: 'Transparent without fill'}
 					>
-						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-dasharray="3.5 2.5" stroke-linecap="round" class="pill-icon" aria-hidden="true">
-							<circle cx="12" cy="12" r="8.75"/>
+						<svg
+							width="13"
+							height="13"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2.5"
+							stroke-dasharray="3.5 2.5"
+							stroke-linecap="round"
+							class="pill-icon"
+							aria-hidden="true"
+						>
+							<circle cx="12" cy="12" r="8.75" />
 						</svg>
 						<span>{langStore.current === 'uk' ? 'Без фону' : 'No Fill'}</span>
 					</button>
@@ -588,10 +675,7 @@
 			</div>
 
 			<!-- 2. Target Element Selector Tabs -->
-			<div
-				class="element-tabs"
-				class:element-tabs--three={activeVariant === 'vetcrew'}
-			>
+			<div class="element-tabs" class:element-tabs--three={activeVariant === 'vetcrew'}>
 				<button
 					type="button"
 					class="element-tab"
@@ -610,11 +694,19 @@
 					<div class="tab-text">
 						<span class="tab-name">
 							{langStore.current === 'uk'
-								? (bgShape === 'solid' ? 'Суцільний фон' : 'Коло основи')
-								: (bgShape === 'solid' ? 'Solid Fill' : 'Base Circle')}
+								? bgShape === 'solid'
+									? 'Суцільний фон'
+									: 'Коло основи'
+								: bgShape === 'solid'
+									? 'Solid Fill'
+									: 'Base Circle'}
 						</span>
 						<code class="tab-hex">
-							{bgShape !== 'transparent' ? bgCircleColor : (langStore.current === 'uk' ? 'Прозоре' : 'None')}
+							{bgShape !== 'transparent'
+								? bgCircleColor
+								: langStore.current === 'uk'
+									? 'Прозоре'
+									: 'None'}
 						</code>
 					</div>
 				</button>
@@ -669,8 +761,12 @@
 						<strong>
 							{#if activeGroup === 'bgCircle'}
 								{langStore.current === 'uk'
-									? (bgShape === 'solid' ? 'Суцільного фону' : 'Кола основи')
-									: (bgShape === 'solid' ? 'Solid Background' : 'Circle Base')}
+									? bgShape === 'solid'
+										? 'Суцільного фону'
+										: 'Кола основи'
+									: bgShape === 'solid'
+										? 'Solid Background'
+										: 'Circle Base'}
 							{:else if activeGroup === 'paw'}
 								{langStore.current === 'uk' ? 'Лапки' : 'Paw Print'}
 							{:else if activeGroup === 'vetCrew'}
@@ -723,16 +819,32 @@
 							id="{baseId}-custom-color"
 							type="color"
 							value={getCurrentColor(activeGroup)}
-							aria-label={langStore.current === 'uk' ? 'Власний колір (палітра)' : 'Custom color picker'}
-							oninput={(e) => setCurrentColor(activeGroup, (e.target as HTMLInputElement).value.toUpperCase())}
+							aria-label={langStore.current === 'uk'
+								? 'Власний колір (палітра)'
+								: 'Custom color picker'}
+							oninput={(e) =>
+								setCurrentColor(activeGroup, (e.target as HTMLInputElement).value.toUpperCase())}
 						/>
 						<span class="swatch-name">
-							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block; vertical-align:-2px; margin-right:4px;">
-								<circle cx="13.5" cy="6.5" r=".5" fill="#ffffff"/>
-								<circle cx="17.5" cy="10.5" r=".5" fill="#ffffff"/>
-								<circle cx="8.5" cy="7.5" r=".5" fill="#ffffff"/>
-								<circle cx="6.5" cy="12.5" r=".5" fill="#ffffff"/>
-								<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+							<svg
+								width="14"
+								height="14"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="#ffffff"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								aria-hidden="true"
+								style="display:inline-block; vertical-align:-2px; margin-right:4px;"
+							>
+								<circle cx="13.5" cy="6.5" r=".5" fill="#ffffff" />
+								<circle cx="17.5" cy="10.5" r=".5" fill="#ffffff" />
+								<circle cx="8.5" cy="7.5" r=".5" fill="#ffffff" />
+								<circle cx="6.5" cy="12.5" r=".5" fill="#ffffff" />
+								<path
+									d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"
+								/>
 							</svg>
 							{langStore.current === 'uk' ? 'Власний' : 'Custom'}
 						</span>
@@ -1188,7 +1300,10 @@
 		border: 2px solid rgba(0, 0, 0, 0.1);
 		cursor: pointer;
 		position: relative;
-		transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+		transition:
+			transform 0.15s ease,
+			box-shadow 0.15s ease,
+			border-color 0.15s ease;
 	}
 
 	.color-swatch-btn:hover {
@@ -1198,7 +1313,9 @@
 
 	.color-swatch-btn.is-active {
 		border-color: #ffb327;
-		box-shadow: 0 0 0 2px var(--panel-bg), 0 0 0 4px #ffb327;
+		box-shadow:
+			0 0 0 2px var(--panel-bg),
+			0 0 0 4px #ffb327;
 		transform: scale(1.02);
 	}
 
@@ -1218,7 +1335,17 @@
 
 	/* Custom Picker Button */
 	.custom-picker-btn {
-		background: conic-gradient(from 0deg at 50% 50%, #FF0000 0deg, #FFA500 51deg, #FFFF00 102deg, #008000 153deg, #0000FF 204deg, #4B0082 255deg, #EE82EE 306deg, #FF0000 360deg);
+		background: conic-gradient(
+			from 0deg at 50% 50%,
+			#ff0000 0deg,
+			#ffa500 51deg,
+			#ffff00 102deg,
+			#008000 153deg,
+			#0000ff 204deg,
+			#4b0082 255deg,
+			#ee82ee 306deg,
+			#ff0000 360deg
+		);
 		background-clip: padding-box;
 		color: #ffffff;
 		cursor: pointer;

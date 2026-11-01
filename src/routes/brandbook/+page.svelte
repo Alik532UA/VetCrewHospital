@@ -65,18 +65,24 @@
 			setTimeout(() => {
 				if (copiedVal === val) copiedVal = null;
 			}, 2000);
-		} catch {}
+		} catch {
+			// clipboard write may fail if document is not focused or denied
+		}
 	}
 </script>
 
 <svelte:head>
-	<title>{langStore.current === 'uk' ? 'Офіційний брендбук — Vet Crew Hospital' : 'Official BrandBook — Vet Crew Hospital'}</title>
+	<title
+		>{langStore.current === 'uk'
+			? 'Офіційний брендбук — Vet Crew Hospital'
+			: 'Official BrandBook — Vet Crew Hospital'}</title
+	>
 	<meta name="robots" content="noindex, nofollow" />
 	<meta
 		name="description"
-		content="{langStore.current === 'uk'
+		content={langStore.current === 'uk'
 			? 'Внутрішній гайдлайн та брендбук Vet Crew Hospital: колірна палітра, 3D конструктор логотипу, іконки тварин, навігація, слогани та типографіка.'
-			: 'Internal guideline and brandbook for Vet Crew Hospital: color palette, 3D logo customizer, animal emblems, signage, slogans, and typography.'}"
+			: 'Internal guideline and brandbook for Vet Crew Hospital: color palette, 3D logo customizer, animal emblems, signage, slogans, and typography.'}
 	/>
 </svelte:head>
 
@@ -86,7 +92,17 @@
 		<header class="brandbook-header">
 			<div class="top-nav-bar">
 				<a href={resolve('/')} class="back-link">
-					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<svg
+						width="20"
+						height="20"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
 						<line x1="19" y1="12" x2="5" y2="12"></line>
 						<polyline points="12 19 5 12 12 5"></polyline>
 					</svg>
@@ -99,18 +115,52 @@
 						type="button"
 						class="header-action-btn theme-switch-btn"
 						onclick={() => themeStore.toggle()}
-						aria-label={themeStore.current === 'dark' ? (langStore.current === 'uk' ? 'Увімкнути світлу тему' : 'Switch to Light Mode') : (langStore.current === 'uk' ? 'Увімкнути темну тему' : 'Switch to Dark Mode')}
-						title={themeStore.current === 'dark' ? (langStore.current === 'uk' ? 'Увімкнути світлу тему' : 'Switch to Light Mode') : (langStore.current === 'uk' ? 'Увімкнути темну тему' : 'Switch to Dark Mode')}
+						aria-label={themeStore.current === 'dark'
+							? langStore.current === 'uk'
+								? 'Увімкнути світлу тему'
+								: 'Switch to Light Mode'
+							: langStore.current === 'uk'
+								? 'Увімкнути темну тему'
+								: 'Switch to Dark Mode'}
+						title={themeStore.current === 'dark'
+							? langStore.current === 'uk'
+								? 'Увімкнути світлу тему'
+								: 'Switch to Light Mode'
+							: langStore.current === 'uk'
+								? 'Увімкнути темну тему'
+								: 'Switch to Dark Mode'}
 					>
 						{#if themeStore.current === 'dark'}
-							<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-								<circle cx="12" cy="12" r="4"/>
-								<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+							<svg
+								width="17"
+								height="17"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								aria-hidden="true"
+							>
+								<circle cx="12" cy="12" r="4" />
+								<path
+									d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+								/>
 							</svg>
 							<span>{langStore.current === 'uk' ? 'Світла тема' : 'Light'}</span>
 						{:else}
-							<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-								<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+							<svg
+								width="17"
+								height="17"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								aria-hidden="true"
+							>
+								<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
 							</svg>
 							<span>{langStore.current === 'uk' ? 'Темна тема' : 'Dark'}</span>
 						{/if}
@@ -121,13 +171,27 @@
 						type="button"
 						class="header-action-btn lang-switch-btn"
 						onclick={() => langStore.toggle()}
-						aria-label={langStore.current === 'uk' ? 'Switch to English' : 'Перемкнути на українську'}
+						aria-label={langStore.current === 'uk'
+							? 'Switch to English'
+							: 'Перемкнути на українську'}
 						title={langStore.current === 'uk' ? 'Switch to English' : 'Перемкнути на українську'}
 					>
-						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<circle cx="12" cy="12" r="10"/>
-							<line x1="2" y1="12" x2="22" y2="12"/>
-							<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+						<svg
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<circle cx="12" cy="12" r="10" />
+							<line x1="2" y1="12" x2="22" y2="12" />
+							<path
+								d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+							/>
 						</svg>
 						<span>{langStore.current === 'uk' ? 'UA' : 'EN'}</span>
 					</button>
@@ -136,7 +200,9 @@
 
 			<div class="header-titles">
 				<h1 class="main-title">
-					{langStore.current === 'uk' ? 'Брендбук Vet Crew Hospital' : 'Vet Crew Hospital BrandBook'}
+					{langStore.current === 'uk'
+						? 'Брендбук Vet Crew Hospital'
+						: 'Vet Crew Hospital BrandBook'}
 				</h1>
 			</div>
 		</header>
@@ -153,13 +219,14 @@
 					<div class="card-head">
 						<span class="step-num">01</span>
 						<div>
-							<h2 class="card-title">{langStore.current === 'uk' ? 'Фірмова колірна палітра' : 'Brand Color Palette'}</h2>
+							<h2 class="card-title">
+								{langStore.current === 'uk' ? 'Фірмова колірна палітра' : 'Brand Color Palette'}
+							</h2>
 						</div>
 					</div>
 
 					<div class="palette-grid">
 						{#each colors as c (c.hex)}
-							<!-- svelte-ignore a11y_click_events_have_key_events -->
 							<div
 								class="color-tile"
 								role="button"
@@ -172,7 +239,9 @@
 										copyToClipboard(c.hex);
 									}
 								}}
-								title="{langStore.current === 'uk' ? `Натисніть для копіювання ${c.hex}` : `Click to copy ${c.hex}`}"
+								title={langStore.current === 'uk'
+									? `Натисніть для копіювання ${c.hex}`
+									: `Click to copy ${c.hex}`}
 							>
 								<div class="tile-swatch">
 									<div class="swatch-top-row">
@@ -180,16 +249,31 @@
 										<span class="swatch-copy-hint">
 											{#if copiedVal === c.hex || copiedVal === `rgb(${c.rgb})`}
 												<span class="copied-badge">
-													<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+													<svg
+														width="12"
+														height="12"
+														viewBox="0 0 24 24"
+														fill="none"
+														stroke="currentColor"
+														stroke-width="3"
+													>
 														<polyline points="20 6 9 17 4 12"></polyline>
 													</svg>
 													<span>{langStore.current === 'uk' ? 'Скопійовано!' : 'Copied!'}</span>
 												</span>
 											{:else}
 												<span class="click-hint">
-													<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+													<svg
+														width="12"
+														height="12"
+														viewBox="0 0 24 24"
+														fill="none"
+														stroke="currentColor"
+														stroke-width="2"
+													>
 														<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-														<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+														<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+														></path>
 													</svg>
 													<span>{langStore.current === 'uk' ? 'Копіювати' : 'Copy'}</span>
 												</span>
@@ -208,9 +292,18 @@
 												e.stopPropagation();
 												copyToClipboard(c.hex);
 											}}
-											title="{langStore.current === 'uk' ? `Скопіювати HEX (${c.hex})` : `Copy HEX (${c.hex})`}"
+											title={langStore.current === 'uk'
+												? `Скопіювати HEX (${c.hex})`
+												: `Copy HEX (${c.hex})`}
 										>
-											<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+											<svg
+												width="13"
+												height="13"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+											>
 												{#if copiedVal === c.hex}
 													<polyline points="20 6 9 17 4 12"></polyline>
 												{:else}
@@ -218,7 +311,13 @@
 													<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
 												{/if}
 											</svg>
-											<span>{copiedVal === c.hex ? (langStore.current === 'uk' ? 'Скопійовано!' : 'Copied!') : c.hex}</span>
+											<span
+												>{copiedVal === c.hex
+													? langStore.current === 'uk'
+														? 'Скопійовано!'
+														: 'Copied!'
+													: c.hex}</span
+											>
 										</button>
 
 										<button
@@ -229,9 +328,18 @@
 												e.stopPropagation();
 												copyToClipboard(`rgb(${c.rgb})`);
 											}}
-											title="{langStore.current === 'uk' ? `Скопіювати RGB (${c.rgb})` : `Copy RGB (${c.rgb})`}"
+											title={langStore.current === 'uk'
+												? `Скопіювати RGB (${c.rgb})`
+												: `Copy RGB (${c.rgb})`}
 										>
-											<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+											<svg
+												width="13"
+												height="13"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+											>
 												{#if copiedVal === `rgb(${c.rgb})`}
 													<polyline points="20 6 9 17 4 12"></polyline>
 												{:else}
@@ -239,7 +347,13 @@
 													<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
 												{/if}
 											</svg>
-											<span>{copiedVal === `rgb(${c.rgb})` ? (langStore.current === 'uk' ? 'Скопійовано!' : 'Copied!') : `RGB: ${c.rgb}`}</span>
+											<span
+												>{copiedVal === `rgb(${c.rgb})`
+													? langStore.current === 'uk'
+														? 'Скопійовано!'
+														: 'Copied!'
+													: `RGB: ${c.rgb}`}</span
+											>
 										</button>
 									</div>
 								</div>
@@ -253,7 +367,11 @@
 					<div class="card-head">
 						<span class="step-num">02</span>
 						<div>
-							<h2 class="card-title">{langStore.current === 'uk' ? 'Логотип та генератор кольорів' : 'Logo & Color Studio'}</h2>
+							<h2 class="card-title">
+								{langStore.current === 'uk'
+									? 'Логотип та генератор кольорів'
+									: 'Logo & Color Studio'}
+							</h2>
 						</div>
 					</div>
 
@@ -266,7 +384,11 @@
 						<div class="card-head-title-wrap">
 							<span class="step-num">03</span>
 							<div>
-								<h2 class="card-title">{langStore.current === 'uk' ? 'Офіційна назва та суббренди' : 'Official Naming & Sub-brands'}</h2>
+								<h2 class="card-title">
+									{langStore.current === 'uk'
+										? 'Офіційна назва та суббренди'
+										: 'Official Naming & Sub-brands'}
+								</h2>
 							</div>
 						</div>
 						<StageBgSwitcher bind:current={namingStage} />
@@ -283,14 +405,23 @@
 								/>
 							</div>
 							<div class="branding-info">
-								<h3 class="branding-title">{langStore.current === 'uk' ? 'Вет Крю Хоспітал (UA)' : 'Vet Crew Hospital (UA)'}</h3>
+								<h3 class="branding-title">
+									{langStore.current === 'uk' ? 'Вет Крю Хоспітал (UA)' : 'Vet Crew Hospital (UA)'}
+								</h3>
 								<div class="branding-actions">
 									<a
 										href="{base}/brand/naming/vet-crew-hospital-ua.svg"
 										download="vet-crew-hospital-ua.svg"
 										class="download-brand-btn svg-btn"
 									>
-										<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<svg
+											width="13"
+											height="13"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+										>
 											<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 											<polyline points="7 10 12 15 17 10"></polyline>
 											<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -300,9 +431,21 @@
 									<button
 										type="button"
 										class="download-brand-btn png-btn"
-										onclick={() => downloadUrlAsPng(`${base}/brand/naming/vet-crew-hospital-ua.svg`, 'vet-crew-hospital-ua-2000px.png', 2000)}
+										onclick={() =>
+											downloadUrlAsPng(
+												`${base}/brand/naming/vet-crew-hospital-ua.svg`,
+												'vet-crew-hospital-ua-2000px.png',
+												2000
+											)}
 									>
-										<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<svg
+											width="13"
+											height="13"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+										>
 											<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 											<polyline points="7 10 12 15 17 10"></polyline>
 											<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -330,7 +473,14 @@
 										download="vet-crew-shop.svg"
 										class="download-brand-btn svg-btn"
 									>
-										<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<svg
+											width="13"
+											height="13"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+										>
 											<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 											<polyline points="7 10 12 15 17 10"></polyline>
 											<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -340,9 +490,21 @@
 									<button
 										type="button"
 										class="download-brand-btn png-btn"
-										onclick={() => downloadUrlAsPng(`${base}/brand/subbrands/vet-crew-shop.svg`, 'vet-crew-shop-2000px.png', 2000)}
+										onclick={() =>
+											downloadUrlAsPng(
+												`${base}/brand/subbrands/vet-crew-shop.svg`,
+												'vet-crew-shop-2000px.png',
+												2000
+											)}
 									>
-										<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<svg
+											width="13"
+											height="13"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+										>
 											<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 											<polyline points="7 10 12 15 17 10"></polyline>
 											<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -361,7 +523,11 @@
 						<div class="card-head-title-wrap">
 							<span class="step-num">04</span>
 							<div>
-								<h2 class="card-title">{langStore.current === 'uk' ? 'Фірмовий слоган та цінності' : 'Brand Slogan & Values'}</h2>
+								<h2 class="card-title">
+									{langStore.current === 'uk'
+										? 'Фірмовий слоган та цінності'
+										: 'Brand Slogan & Values'}
+								</h2>
 							</div>
 						</div>
 						<StageBgSwitcher bind:current={sloganStage} />
@@ -375,7 +541,11 @@
 					<div class="card-head">
 						<span class="step-num">05</span>
 						<div>
-							<h2 class="card-title">{langStore.current === 'uk' ? 'Фірмова іконографіка (24 тварини)' : 'Animal Iconography (24 Species)'}</h2>
+							<h2 class="card-title">
+								{langStore.current === 'uk'
+									? 'Фірмова іконографіка (24 тварини)'
+									: 'Animal Iconography (24 Species)'}
+							</h2>
 						</div>
 					</div>
 
@@ -387,7 +557,11 @@
 					<div class="card-head">
 						<span class="step-num">06</span>
 						<div>
-							<h2 class="card-title">{langStore.current === 'uk' ? 'QR-навігація та таблички сервісів' : 'QR Signage & Service Plaques'}</h2>
+							<h2 class="card-title">
+								{langStore.current === 'uk'
+									? 'QR-навігація та таблички сервісів'
+									: 'QR Signage & Service Plaques'}
+							</h2>
 						</div>
 					</div>
 
@@ -399,7 +573,9 @@
 					<div class="card-head">
 						<span class="step-num">07</span>
 						<div>
-							<h2 class="card-title">{langStore.current === 'uk' ? 'Типографіка' : 'Typography'}</h2>
+							<h2 class="card-title">
+								{langStore.current === 'uk' ? 'Типографіка' : 'Typography'}
+							</h2>
 						</div>
 					</div>
 
@@ -411,7 +587,11 @@
 					<div class="card-head">
 						<span class="step-num">08</span>
 						<div>
-							<h2 class="card-title">{langStore.current === 'uk' ? 'Дверні таблички та навігація відділень' : 'Door Signage & Department Navigation'}</h2>
+							<h2 class="card-title">
+								{langStore.current === 'uk'
+									? 'Дверні таблички та навігація відділень'
+									: 'Door Signage & Department Navigation'}
+							</h2>
 						</div>
 					</div>
 
@@ -423,7 +603,11 @@
 					<div class="card-head">
 						<span class="step-num">09</span>
 						<div>
-							<h2 class="card-title">{langStore.current === 'uk' ? 'Комплексний логотип з тваринами' : 'Composite Logos with Animals'}</h2>
+							<h2 class="card-title">
+								{langStore.current === 'uk'
+									? 'Комплексний логотип з тваринами'
+									: 'Composite Logos with Animals'}
+							</h2>
 						</div>
 					</div>
 
@@ -435,7 +619,11 @@
 					<div class="card-head">
 						<span class="step-num">10</span>
 						<div>
-							<h2 class="card-title">{langStore.current === 'uk' ? 'Генератор шпалер для ПК та смартфонів' : 'Wallpaper Studio (PC & Mobile)'}</h2>
+							<h2 class="card-title">
+								{langStore.current === 'uk'
+									? 'Генератор шпалер для ПК та смартфонів'
+									: 'Wallpaper Studio (PC & Mobile)'}
+							</h2>
 						</div>
 					</div>
 
@@ -678,7 +866,10 @@
 		cursor: pointer;
 		outline: none;
 		user-select: none;
-		transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.2s ease;
+		transition:
+			transform 0.25s ease,
+			box-shadow 0.25s ease,
+			border-color 0.2s ease;
 	}
 
 	.color-tile:hover,

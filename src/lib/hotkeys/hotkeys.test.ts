@@ -1,13 +1,6 @@
 // src/lib/hotkeys/hotkeys.test.ts — тести системи гарячих клавіш (HOTKEYS-v10)
 import { describe, expect, it, vi } from 'vitest';
-import {
-	HotkeyService,
-	isControlActivation,
-	isTypingTarget,
-	shortcutLetter,
-	KEYMAP,
-	POSITIONAL
-} from './hotkeys';
+import { HotkeyService, isControlActivation, isTypingTarget, shortcutLetter } from './hotkeys';
 
 function createMockEvent(
 	init: {

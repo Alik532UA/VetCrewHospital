@@ -16,4 +16,3 @@ export const SITE_BASE = base;
  */
 export const siteUrl = (path = '/'): string =>
 	`${SITE_ORIGIN}${SITE_BASE}${path.startsWith('/') ? path : `/${path}`}`;
-

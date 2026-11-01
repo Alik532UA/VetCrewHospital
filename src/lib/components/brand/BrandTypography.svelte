@@ -40,17 +40,25 @@
 			>
 				<div class="specimen-header">
 					<div class="specimen-titles">
-						<span class="specimen-category">{langStore.current === 'uk' ? f.categoryUk : f.categoryEn}</span>
+						<span class="specimen-category"
+							>{langStore.current === 'uk' ? f.categoryUk : f.categoryEn}</span
+						>
 						<h3 class="specimen-name">{f.name}</h3>
 					</div>
 					<span class="specimen-weights">{f.weights}</span>
 				</div>
 
-				<div class="specimen-hero-sample" style:font-family="var(--ff-{f.id}, '{f.fontFamily}', sans-serif)">
+				<div
+					class="specimen-hero-sample"
+					style:font-family="var(--ff-{f.id}, '{f.fontFamily}', sans-serif)"
+				>
 					{f.sampleHead}
 				</div>
 
-				<div class="specimen-charset" style:font-family="var(--ff-{f.id}, '{f.fontFamily}', sans-serif)">
+				<div
+					class="specimen-charset"
+					style:font-family="var(--ff-{f.id}, '{f.fontFamily}', sans-serif)"
+				>
 					<span>ABCDEFGHIJKLMNOPQRSTUVWXYZ</span>
 					<span>АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ</span>
 					<span>0123456789 & # % ? ! @</span>
@@ -66,21 +74,42 @@
 							activeTesterFont = f.id;
 						}}
 					>
-						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-							<circle cx="12" cy="12" r="3"/>
+						<svg
+							width="13"
+							height="13"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2.2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+							<circle cx="12" cy="12" r="3" />
 						</svg>
-						<span>{langStore.current === 'uk' ? 'Спробувати в тестері' : 'Test in Playground'}</span>
+						<span>{langStore.current === 'uk' ? 'Спробувати в тестері' : 'Test in Playground'}</span
+						>
 					</button>
 
 					<a
 						href="{base}/fonts/{f.file}"
-						download="{f.file}"
+						download={f.file}
 						class="download-font-btn"
-						title="{langStore.current === 'uk' ? 'Завантажити шрифт (.ttf)' : 'Download font (.ttf)'}"
+						title={langStore.current === 'uk' ? 'Завантажити шрифт (.ttf)' : 'Download font (.ttf)'}
 						onclick={(e) => e.stopPropagation()}
 					>
-						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<svg
+							width="13"
+							height="13"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
 							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 							<polyline points="7 10 12 15 17 10"></polyline>
 							<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -103,7 +132,10 @@
 						class:is-active={activeTesterFont === f.id}
 						onclick={() => (activeTesterFont = f.id)}
 					>
-						<span class="tab-font-indicator" style:font-family="var(--ff-{f.id}, '{f.fontFamily}', sans-serif)">Aa</span>
+						<span
+							class="tab-font-indicator"
+							style:font-family="var(--ff-{f.id}, '{f.fontFamily}', sans-serif)">Aa</span
+						>
 						<span>{f.name}</span>
 					</button>
 				{/each}
@@ -111,7 +143,7 @@
 
 			<div class="tester-controls">
 				<div class="size-presets">
-					{#each SIZES as s}
+					{#each SIZES as s (s)}
 						<button
 							type="button"
 							class="size-preset-btn"
@@ -140,9 +172,11 @@
 
 		<!-- PRESET SAMPLES -->
 		<div class="tester-presets-bar">
-			<span class="presets-label">{langStore.current === 'uk' ? 'Швидкі зразки:' : 'Quick samples:'}</span>
+			<span class="presets-label"
+				>{langStore.current === 'uk' ? 'Швидкі зразки:' : 'Quick samples:'}</span
+			>
 			<div class="preset-chips">
-				{#each PRESETS as p}
+				{#each PRESETS as p (p.labelEn)}
 					<button
 						type="button"
 						class="preset-chip"
@@ -158,9 +192,19 @@
 						onclick={() => (customText = '')}
 						title={langStore.current === 'uk' ? 'Скинути текст' : 'Reset text'}
 					>
-						<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<line x1="18" y1="6" x2="6" y2="18"/>
-							<line x1="6" y1="6" x2="18" y2="18"/>
+						<svg
+							width="12"
+							height="12"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<line x1="18" y1="6" x2="6" y2="18" />
+							<line x1="6" y1="6" x2="18" y2="18" />
 						</svg>
 						<span>{langStore.current === 'uk' ? 'Скинути' : 'Reset'}</span>
 					</button>
@@ -172,7 +216,9 @@
 			<input
 				type="text"
 				bind:value={customText}
-				placeholder={langStore.current === 'uk' ? 'Введіть власний текст для тестування...' : 'Type custom text here to preview...'}
+				placeholder={langStore.current === 'uk'
+					? 'Введіть власний текст для тестування...'
+					: 'Type custom text here to preview...'}
 				class="tester-text-input"
 				aria-label="Type tester custom text"
 			/>
@@ -225,7 +271,9 @@
 
 	.font-specimen-card.is-highlighted {
 		border-color: var(--brand-leaf, #598f3a);
-		box-shadow: 0 0 0 1px var(--brand-leaf, #598f3a), 0 10px 28px rgba(89, 143, 58, 0.14);
+		box-shadow:
+			0 0 0 1px var(--brand-leaf, #598f3a),
+			0 10px 28px rgba(89, 143, 58, 0.14);
 	}
 
 	:global([data-theme='dark']) .font-specimen-card:hover {
@@ -235,7 +283,9 @@
 
 	:global([data-theme='dark']) .font-specimen-card.is-highlighted {
 		border-color: var(--brand-gold, #ffb327);
-		box-shadow: 0 0 0 1px var(--brand-gold, #ffb327), 0 10px 28px rgba(255, 179, 39, 0.15);
+		box-shadow:
+			0 0 0 1px var(--brand-gold, #ffb327),
+			0 10px 28px rgba(255, 179, 39, 0.15);
 	}
 
 	.specimen-header {

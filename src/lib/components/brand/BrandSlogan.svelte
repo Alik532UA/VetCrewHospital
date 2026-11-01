@@ -71,7 +71,9 @@
 		</div>
 
 		<div class="slogan-details">
-			<h3 class="slogan-title">{langStore.current === 'uk' ? 'Фірмовий маніфест шпиталю' : 'Hospital Brand Manifesto'}</h3>
+			<h3 class="slogan-title">
+				{langStore.current === 'uk' ? 'Фірмовий маніфест шпиталю' : 'Hospital Brand Manifesto'}
+			</h3>
 
 			<div class="values-pills">
 				{#if langStore.current === 'uk'}
@@ -93,7 +95,14 @@
 					download="vet-crew-slogan-values.svg"
 					class="download-brand-btn"
 				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -104,9 +113,21 @@
 				<button
 					type="button"
 					class="download-brand-btn"
-					onclick={() => downloadUrlAsPng(`${base}/brand/slogan/exotic-wild-special-important.svg`, 'vet-crew-slogan-values-2000px.png', 2000)}
+					onclick={() =>
+						downloadUrlAsPng(
+							`${base}/brand/slogan/exotic-wild-special-important.svg`,
+							'vet-crew-slogan-values-2000px.png',
+							2000
+						)}
 				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -121,21 +142,21 @@
 	<div class="slogan-container">
 		<div class="slogan-visual butterfly-visual stage--{stageTheme}">
 			<!-- Live SVG Viewport: pure butterfly vector -->
-			<svg
-				viewBox="0 0 260 300"
-				class="butterfly-svg-live"
-				aria-label="Фірмовий метелик Vet Crew"
-			>
+			<svg viewBox="0 0 260 300" class="butterfly-svg-live" aria-label="Фірмовий метелик Vet Crew">
 				<path fill={butterflyColor} d={BUTTERFLY_PATH_D} />
 			</svg>
 		</div>
 
 		<div class="slogan-details">
-			<h3 class="slogan-title">{langStore.current === 'uk' ? 'Метелик Vet Crew (Butterfly)' : 'Vet Crew Butterfly Symbol'}</h3>
+			<h3 class="slogan-title">
+				{langStore.current === 'uk' ? 'Метелик Vet Crew (Butterfly)' : 'Vet Crew Butterfly Symbol'}
+			</h3>
 
 			<!-- Live Color Palette Switcher -->
 			<div class="butterfly-color-bar">
-				<span class="color-bar-label">{langStore.current === 'uk' ? 'Колір метелика:' : 'Butterfly Color:'}</span>
+				<span class="color-bar-label"
+					>{langStore.current === 'uk' ? 'Колір метелика:' : 'Butterfly Color:'}</span
+				>
 				<div class="swatches-row">
 					{#each brandColors as c (c.hex)}
 						<button
@@ -148,8 +169,18 @@
 							aria-label="{c.name} ({c.hex})"
 						>
 							{#if butterflyColor.toUpperCase() === c.hex.toUpperCase()}
-								<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c.textColor} stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-									<polyline points="20 6 9 17 4 12"/>
+								<svg
+									width="12"
+									height="12"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke={c.textColor}
+									stroke-width="3"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									aria-hidden="true"
+								>
+									<polyline points="20 6 9 17 4 12" />
 								</svg>
 							{/if}
 						</button>
@@ -158,7 +189,9 @@
 					<!-- Custom Color Picker -->
 					<label
 						class="color-pill-btn custom-picker-pill"
-						class:is-active={!brandColors.some((c) => c.hex.toUpperCase() === butterflyColor.toUpperCase())}
+						class:is-active={!brandColors.some(
+							(c) => c.hex.toUpperCase() === butterflyColor.toUpperCase()
+						)}
 						title={langStore.current === 'uk' ? 'Власний колір (палітра)' : 'Custom color'}
 					>
 						<input
@@ -167,12 +200,25 @@
 							oninput={(e) => (butterflyColor = (e.target as HTMLInputElement).value.toUpperCase())}
 							aria-label="Custom color picker"
 						/>
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="picker-icon" aria-hidden="true">
-							<circle cx="13.5" cy="6.5" r=".5" fill="#ffffff"/>
-							<circle cx="17.5" cy="10.5" r=".5" fill="#ffffff"/>
-							<circle cx="8.5" cy="7.5" r=".5" fill="#ffffff"/>
-							<circle cx="6.5" cy="12.5" r=".5" fill="#ffffff"/>
-							<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+						<svg
+							width="14"
+							height="14"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="#ffffff"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="picker-icon"
+							aria-hidden="true"
+						>
+							<circle cx="13.5" cy="6.5" r=".5" fill="#ffffff" />
+							<circle cx="17.5" cy="10.5" r=".5" fill="#ffffff" />
+							<circle cx="8.5" cy="7.5" r=".5" fill="#ffffff" />
+							<circle cx="6.5" cy="12.5" r=".5" fill="#ffffff" />
+							<path
+								d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"
+							/>
 						</svg>
 					</label>
 
@@ -181,29 +227,33 @@
 			</div>
 
 			<div class="slogan-actions">
-				<button
-					type="button"
-					class="download-brand-btn"
-					onclick={downloadCustomButterfly}
-				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<button type="button" class="download-brand-btn" onclick={downloadCustomButterfly}>
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
 					</svg>
 					<span>
-						{langStore.current === 'uk'
-							? `SVG (${butterflyColor})`
-							: `SVG (${butterflyColor})`}
+						{langStore.current === 'uk' ? `SVG (${butterflyColor})` : `SVG (${butterflyColor})`}
 					</span>
 				</button>
 
-				<button
-					type="button"
-					class="download-brand-btn"
-					onclick={downloadButterflyPng}
-				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<button type="button" class="download-brand-btn" onclick={downloadButterflyPng}>
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -444,7 +494,17 @@
 		inset: 0;
 		border-radius: 50%;
 		clip-path: circle(50% at 50% 50%);
-		background: conic-gradient(from 0deg at 50% 50%, #FF0000 0deg, #FFA500 51deg, #FFFF00 102deg, #008000 153deg, #0000FF 204deg, #4B0082 255deg, #EE82EE 306deg, #FF0000 360deg);
+		background: conic-gradient(
+			from 0deg at 50% 50%,
+			#ff0000 0deg,
+			#ffa500 51deg,
+			#ffff00 102deg,
+			#008000 153deg,
+			#0000ff 204deg,
+			#4b0082 255deg,
+			#ee82ee 306deg,
+			#ff0000 360deg
+		);
 		z-index: 0;
 	}
 
