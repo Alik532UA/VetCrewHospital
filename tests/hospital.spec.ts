@@ -46,4 +46,3 @@ test.describe('Vet Crew Hospital Portal E2E', () => {
 		await expect(title.first()).toBeVisible();
 	});
 });
-

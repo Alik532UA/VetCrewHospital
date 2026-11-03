@@ -65,7 +65,6 @@
 						aria-hidden="true"
 					>
 						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-						<!-- svelte-ignore svelte/no-at-html-tags -->
 						{@html item.svg}
 					</svg>
 				</div>

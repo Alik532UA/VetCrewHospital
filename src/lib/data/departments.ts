@@ -1,10 +1,5 @@
 export type MedicalSpecialty =
-	| 'surgery'
-	| 'diagnostics'
-	| 'intensive_care'
-	| 'rehabilitation'
-	| 'exotic_medicine'
-	| 'dentistry';
+	'surgery' | 'diagnostics' | 'intensive_care' | 'rehabilitation' | 'exotic_medicine' | 'dentistry';
 
 export interface MedicalEquipment {
 	id: string;
@@ -32,8 +27,10 @@ export const DEPARTMENTS: DepartmentItem[] = [
 		slug: 'surgical-complex',
 		titleUk: 'Хірургічний комплекс',
 		titleEn: 'Surgical Complex',
-		descriptionUk: 'Стерильні операційні зали з мікрохірургічним обладнанням для складних операцій диким та екзотичним тваринам.',
-		descriptionEn: 'Sterile surgical suites with microsurgical instrumentation for complex wildlife and exotic animal procedures.',
+		descriptionUk:
+			'Стерильні операційні зали з мікрохірургічним обладнанням для складних операцій диким та екзотичним тваринам.',
+		descriptionEn:
+			'Sterile surgical suites with microsurgical instrumentation for complex wildlife and exotic animal procedures.',
 		specialty: 'surgery',
 		equipment: [
 			{
@@ -57,8 +54,10 @@ export const DEPARTMENTS: DepartmentItem[] = [
 		slug: 'intensive-care-unit',
 		titleUk: 'Відділення інтенсивної терапії та реанімації',
 		titleEn: 'Intensive Care Unit (ICU)',
-		descriptionUk: 'Цілодобовий моніторинг життєвих показників, кисневі бокси та клімат-контрольовані інкубатори.',
-		descriptionEn: 'Round-the-clock vital signs monitoring, oxygen chambers, and climate-controlled incubators.',
+		descriptionUk:
+			'Цілодобовий моніторинг життєвих показників, кисневі бокси та клімат-контрольовані інкубатори.',
+		descriptionEn:
+			'Round-the-clock vital signs monitoring, oxygen chambers, and climate-controlled incubators.',
 		specialty: 'intensive_care',
 		equipment: [
 			{
@@ -82,8 +81,10 @@ export const DEPARTMENTS: DepartmentItem[] = [
 		slug: 'diagnostic-imaging',
 		titleUk: 'Центр променевої діагностики та УЗД',
 		titleEn: 'Diagnostic Imaging Center',
-		descriptionUk: 'Цифровий рентген високої чіткості та експертне ультразвукове дослідження м’яких тканин і судин.',
-		descriptionEn: 'High-definition digital radiography and expert ultrasonography for soft tissues and vascular imaging.',
+		descriptionUk:
+			'Цифровий рентген високої чіткості та експертне ультразвукове дослідження м’яких тканин і судин.',
+		descriptionEn:
+			'High-definition digital radiography and expert ultrasonography for soft tissues and vascular imaging.',
 		specialty: 'diagnostics',
 		equipment: [
 			{
@@ -107,8 +108,10 @@ export const DEPARTMENTS: DepartmentItem[] = [
 		slug: 'wildlife-rehabilitation',
 		titleUk: 'Реабілітаційний вольєрний модуль',
 		titleEn: 'Wildlife Rehabilitation Module',
-		descriptionUk: 'Просторі адаптаційні вольєри для відновлення природних рефлексів перед випуском у дику природу.',
-		descriptionEn: 'Spacious adaptation enclosures to restore natural reflexes prior to wild release.',
+		descriptionUk:
+			'Просторі адаптаційні вольєри для відновлення природних рефлексів перед випуском у дику природу.',
+		descriptionEn:
+			'Spacious adaptation enclosures to restore natural reflexes prior to wild release.',
 		specialty: 'rehabilitation',
 		equipment: [
 			{
@@ -122,4 +125,3 @@ export const DEPARTMENTS: DepartmentItem[] = [
 		acceptsWildlife: true
 	}
 ];
-

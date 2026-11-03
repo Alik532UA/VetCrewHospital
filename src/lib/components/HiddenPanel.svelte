@@ -42,7 +42,7 @@
 		function onDocClick(e: MouseEvent) {
 			if (isPinned) {
 				const target = e.target as HTMLElement | null;
-				if (!target?.closest('.dev-action-wrap')) {
+				if (!target?.closest('.dev-panel-container')) {
 					isPinned = false;
 				}
 			}
@@ -86,6 +86,49 @@
 	aria-label="Додаткові налаштування"
 	aria-hidden={!isVisible}
 >
+	<!-- 1. Окремий лівий контейнер: У РОЗРОБЦІ -->
+	<div class="dev-panel-container action-item-wrap">
+		<button
+			type="button"
+			class="action-item dev-item"
+			class:is-active={showTooltip}
+			onclick={toggleDevStatus}
+			onmouseenter={() => (isHovered = true)}
+			onmouseleave={() => (isHovered = false)}
+			onfocus={() => (isFocused = true)}
+			onblur={() => (isFocused = false)}
+			aria-label="{langStore.t('dev_btn')}: {langStore.t('dev_status_text')}"
+			aria-expanded={showTooltip}
+			aria-keyshortcuts="i"
+		>
+			<span class="action-icon-box dev-icon-box">
+				<svg
+					class="action-icon dev-icon"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<circle cx="12" cy="12" r="9.5" stroke="currentColor" stroke-width="2" />
+					<line x1="12" y1="16" x2="12" y2="11" stroke="currentColor" stroke-width="2" />
+					<circle cx="12" cy="7.75" r="0.9" fill="currentColor" stroke="none" />
+				</svg>
+			</span>
+			<span class="action-title dev-title">{langStore.t('dev_btn')}</span>
+		</button>
+
+		<!-- Sleek Neon Capsule Tooltip (matches reference style) -->
+		{#if showTooltip}
+			<div class="dev-capsule-tooltip" role="status" transition:fade={{ duration: 160 }}>
+				<span class="dev-capsule-text">{langStore.t('dev_status_text')}</span>
+			</div>
+		{/if}
+	</div>
+
+	<!-- 2. Основна права капсула: ТЕМА, МОВА, ЕКРАН -->
 	<div class="hidden-panel-content">
 		<!-- 1. ТЕМА -->
 		<button
@@ -130,7 +173,7 @@
 						stroke-linejoin="round"
 						aria-hidden="true"
 					>
-						<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+						<path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z" />
 					</svg>
 				{/if}
 			</span>
@@ -166,49 +209,7 @@
 			<span class="action-title">{langStore.t('lang_name')}</span>
 		</button>
 
-		<!-- 3. У РОЗРОБЦІ (i) -->
-		<div class="action-item-wrap dev-action-wrap">
-			<button
-				type="button"
-				class="action-item dev-item"
-				class:is-active={showTooltip}
-				onclick={toggleDevStatus}
-				onmouseenter={() => (isHovered = true)}
-				onmouseleave={() => (isHovered = false)}
-				onfocus={() => (isFocused = true)}
-				onblur={() => (isFocused = false)}
-				aria-label="{langStore.t('dev_btn')}: {langStore.t('dev_status_text')}"
-				aria-expanded={showTooltip}
-				aria-keyshortcuts="i"
-			>
-				<span class="action-icon-box dev-icon-box">
-					<svg
-						class="action-icon dev-icon"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						aria-hidden="true"
-					>
-						<circle cx="12" cy="12" r="9.5" stroke="currentColor" stroke-width="2" />
-						<line x1="12" y1="16" x2="12" y2="11" stroke="currentColor" stroke-width="2" />
-						<circle cx="12" cy="7.75" r="0.9" fill="currentColor" stroke="none" />
-					</svg>
-				</span>
-				<span class="action-title dev-title">{langStore.t('dev_btn')}</span>
-			</button>
-
-			<!-- Sleek Neon Capsule Tooltip (matches reference style) -->
-			{#if showTooltip}
-				<div class="dev-capsule-tooltip" role="status" transition:fade={{ duration: 160 }}>
-					<span class="dev-capsule-text">{langStore.t('dev_status_text')}</span>
-				</div>
-			{/if}
-		</div>
-
-		<!-- 4. ПОВНИЙ ЕКРАН (якщо підтримується) -->
+		<!-- 3. ПОВНИЙ ЕКРАН (якщо підтримується) -->
 		{#if isSupported}
 			<button
 				type="button"
@@ -266,7 +267,9 @@
 		right: 0;
 		z-index: 40;
 		display: flex;
+		align-items: center;
 		justify-content: center;
+		gap: 0.75rem;
 		pointer-events: none;
 		opacity: 0;
 		transform: translateY(40px) scale(0.96);
@@ -281,18 +284,26 @@
 		transform: translateY(0) scale(1);
 	}
 
+	.dev-panel-container,
 	.hidden-panel-content {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 0.35rem;
-		padding: 0.65rem 1.15rem;
 		background: var(--panel-bg);
 		backdrop-filter: blur(20px) saturate(180%);
 		-webkit-backdrop-filter: blur(20px) saturate(180%);
 		border: 1px solid var(--panel-border);
 		border-radius: 9999px;
 		box-shadow: var(--panel-shadow);
+	}
+
+	.dev-panel-container {
+		padding: 0.65rem 0.85rem;
+	}
+
+	.hidden-panel-content {
+		gap: 0.35rem;
+		padding: 0.65rem 1.15rem;
 	}
 
 	.action-item-wrap {
@@ -310,7 +321,7 @@
 		width: 82px;
 		gap: 0.35rem;
 		padding: 0.45rem 0.5rem;
-		border-radius: 14px;
+		border-radius: 9999px;
 		background: transparent;
 		border: 1px solid transparent;
 		color: var(--text-secondary);
@@ -438,7 +449,12 @@
 		.hidden-panel-wrapper {
 			bottom: 0.85rem;
 			padding: 0 0.5rem;
+			gap: 0.4rem;
 			box-sizing: border-box;
+		}
+
+		.dev-panel-container {
+			padding: 0.45rem 0.5rem;
 		}
 
 		.hidden-panel-content {

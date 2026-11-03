@@ -41,4 +41,3 @@ describe('Hospital Departments Data Registry (Scalability & Integrity)', () => {
 		}
 	});
 });
-
