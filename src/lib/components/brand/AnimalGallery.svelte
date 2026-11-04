@@ -8,7 +8,11 @@
 
 	import { ANIMALS, ANIMAL_BRAND_COLORS as brandColors, type AnimalItem } from '$lib/data/animals';
 
-	let customSelectedColor = $state<string | null>(null);
+	interface Props {
+		customSelectedColor?: string | null;
+	}
+
+	let { customSelectedColor = $bindable(null) }: Props = $props();
 	let animalColor = $derived(
 		customSelectedColor ?? (themeStore.current === 'dark' ? '#93C84A' : '#13371B')
 	);
@@ -88,91 +92,10 @@
 <div class="animal-gallery-widget">
 	<!-- Color Selector & Filters Toolbar -->
 	<div class="gallery-controls-card">
-		<!-- 1. Color Picker Row -->
-		<div class="color-picker-row">
-			<div class="color-picker-left">
-				<div class="color-picker-label">
-					<span class="label-title"
-						>{langStore.current === 'uk' ? 'Колір іконок:' : 'Icon Color:'}</span
-					>
-					<code class="active-hex-badge">{animalColor}</code>
-				</div>
-
-				<div class="colors-palette-wrap">
-					{#each brandColors as c (c.hex)}
-						<button
-							type="button"
-							class="color-pill-btn"
-							class:is-active={animalColor.toUpperCase() === c.hex.toUpperCase()}
-							style:background-color={c.hex}
-							onclick={() => (customSelectedColor = c.hex)}
-							title="{c.name} ({c.hex})"
-							aria-label="{c.name} ({c.hex})"
-						>
-							{#if animalColor.toUpperCase() === c.hex.toUpperCase()}
-								<svg
-									width="12"
-									height="12"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke={c.textColor}
-									stroke-width="3"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									aria-hidden="true"
-								>
-									<polyline points="20 6 9 17 4 12" />
-								</svg>
-							{/if}
-						</button>
-					{/each}
-
-					<!-- Custom color picker -->
-					<label
-						class="color-pill-btn custom-picker-pill"
-						class:is-active={!brandColors.some(
-							(c) => c.hex.toUpperCase() === animalColor.toUpperCase()
-						)}
-						title={langStore.current === 'uk' ? 'Власний колір (палітра)' : 'Custom color'}
-					>
-						<input
-							type="color"
-							value={animalColor}
-							oninput={(e) =>
-								(customSelectedColor = (e.target as HTMLInputElement).value.toUpperCase())}
-							aria-label="Custom color picker"
-						/>
-						<svg
-							width="14"
-							height="14"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="#ffffff"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="picker-icon"
-							aria-hidden="true"
-						>
-							<circle cx="13.5" cy="6.5" r=".5" fill="#ffffff" />
-							<circle cx="17.5" cy="10.5" r=".5" fill="#ffffff" />
-							<circle cx="8.5" cy="7.5" r=".5" fill="#ffffff" />
-							<circle cx="6.5" cy="12.5" r=".5" fill="#ffffff" />
-							<path
-								d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"
-							/>
-						</svg>
-					</label>
-				</div>
-			</div>
-
-			<div class="color-picker-right">
+		<div class="gallery-toolbar">
+			<div class="stage-switcher-wrap">
 				<StageBgSwitcher bind:current={stageTheme} />
 			</div>
-		</div>
-
-		<!-- 2. Filter & Search Toolbar (Single balanced row) -->
-		<div class="gallery-toolbar">
 			<div class="category-chips">
 				<button
 					type="button"
@@ -416,81 +339,7 @@
 		flex-wrap: wrap;
 	}
 
-	.color-pill-btn {
-		width: 30px;
-		height: 30px;
-		border-radius: 50%;
-		border: 2px solid rgba(0, 0, 0, 0.15);
-		cursor: pointer;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		transition: all 0.18s ease;
-		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-	}
-
-	.color-pill-btn:hover {
-		transform: scale(1.15);
-		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
-	}
-
-	.color-pill-btn.is-active {
-		border-color: var(--brand-emerald, #13371b);
-		transform: scale(1.15);
-		box-shadow: 0 0 0 3px rgba(89, 143, 58, 0.45);
-	}
-
-	:global([data-theme='dark']) .color-pill-btn.is-active {
-		border-color: var(--brand-gold, #ffb327);
-		box-shadow: 0 0 0 3px rgba(255, 179, 39, 0.45);
-	}
-
-	.custom-picker-pill {
-		position: relative;
-		border-radius: 50%;
-		overflow: hidden;
-		isolation: isolate;
-		-webkit-mask-image: -webkit-radial-gradient(white, black);
-		mask-image: radial-gradient(circle, #fff 100%, #000 100%);
-		background: transparent;
-	}
-
-	.custom-picker-pill::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		border-radius: 50%;
-		clip-path: circle(50% at 50% 50%);
-		background: conic-gradient(
-			from 0deg at 50% 50%,
-			#ff0000 0deg,
-			#ffa500 51deg,
-			#ffff00 102deg,
-			#008000 153deg,
-			#0000ff 204deg,
-			#4b0082 255deg,
-			#ee82ee 306deg,
-			#ff0000 360deg
-		);
-		z-index: 0;
-	}
-
-	.custom-picker-pill input[type='color'] {
-		position: absolute;
-		inset: 0;
-		width: 100%;
-		height: 100%;
-		opacity: 0;
-		cursor: pointer;
-		z-index: 2;
-	}
-
-	.picker-icon {
-		position: relative;
-		z-index: 1;
-		pointer-events: none;
-		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.85));
-	}
+	
 
 	/* ROW 2: TOOLBAR */
 	.gallery-toolbar {

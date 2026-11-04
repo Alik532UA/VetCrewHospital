@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 	import { themeStore } from '$lib/theme.svelte';
@@ -17,12 +18,84 @@
 
 	// Unified controls state
 	let currentFormat = $state<SignFormat>('composite');
-	let customSelectedColor = $state<string | null>(null);
+	interface Props {
+		customSelectedColor?: string | null;
+	}
+
+	let { customSelectedColor = $bindable(null) }: Props = $props();
 	let signColor = $derived(
 		customSelectedColor ?? (themeStore.current === 'dark' ? '#93C84A' : '#13371B')
 	);
 	let stageTheme = $state<StageTheme>('checker');
 	let isDownloading = $state<string | null>(null);
+
+
+
+
+	// Navigation Arrow direction state (0 to 360 degrees)
+	export const ARROW_DIRECTIONS: { deg: number; labelUk: string; labelEn: string; icon: string }[] = [
+		{ deg: 0, labelUk: 'Праворуч', labelEn: 'Right', icon: '→' },
+		{ deg: 45, labelUk: 'Вниз-праворуч', labelEn: 'Down-Right', icon: '↘' },
+		{ deg: 90, labelUk: 'Вниз', labelEn: 'Down', icon: '↓' },
+		{ deg: 135, labelUk: 'Вниз-ліворуч', labelEn: 'Down-Left', icon: '↙' },
+		{ deg: 180, labelUk: 'Ліворуч', labelEn: 'Left', icon: '←' },
+		{ deg: 225, labelUk: 'Вгору-ліворуч', labelEn: 'Up-Left', icon: '↖' },
+		{ deg: 270, labelUk: 'Вгору', labelEn: 'Up', icon: '↑' },
+		{ deg: 315, labelUk: 'Вгору-праворуч', labelEn: 'Up-Right', icon: '↗' }
+	];
+
+	let arrowAngle = $state<number>(0);
+	let currentArrowDir = $derived(
+		ARROW_DIRECTIONS.find((d) => d.deg === arrowAngle)
+	);
+
+	// PNG Resolution options (480p, 720p, 1080p, 1440p, 2160p)
+	export interface PngResolution {
+		id: string;
+		label: string;
+		px: number;
+		descriptionUk: string;
+		descriptionEn: string;
+	}
+
+	export const PNG_RESOLUTIONS: PngResolution[] = [
+		{ id: '480p', label: '480p', px: 480, descriptionUk: 'Компактний (480 px)', descriptionEn: 'Compact (480 px)' },
+		{ id: '720p', label: '720p', px: 720, descriptionUk: 'HD (720 px)', descriptionEn: 'HD (720 px)' },
+		{ id: '1080p', label: '1080p', px: 1080, descriptionUk: 'Full HD (1080 px)', descriptionEn: 'Full HD (1080 px)' },
+		{ id: '1440p', label: '1440p', px: 1440, descriptionUk: '2K QHD (1440 px)', descriptionEn: '2K QHD (1440 px)' },
+		{ id: '2160p', label: '2160p', px: 2160, descriptionUk: '4K UHD (2160 px)', descriptionEn: '4K UHD (2160 px)' }
+	];
+
+	let currentResId = $state<string>('1080p');
+	let currentResolution = $derived(
+		PNG_RESOLUTIONS.find((r) => r.id === currentResId) ?? PNG_RESOLUTIONS[2]!
+	);
+	let openPngMenuId = $state<string | null>(null);
+
+	function togglePngMenu(id: string, e: MouseEvent) {
+		e.stopPropagation();
+		openPngMenuId = openPngMenuId === id ? null : id;
+	}
+
+	$effect(() => {
+		if (!browser) return;
+		if (openPngMenuId === null) return;
+
+		const onDocClick = () => {
+			openPngMenuId = null;
+		};
+		const onKeyDown = (e: KeyboardEvent) => {
+			if (e.key === 'Escape') openPngMenuId = null;
+		};
+
+		window.addEventListener('click', onDocClick);
+		window.addEventListener('keydown', onKeyDown);
+		return () => {
+			window.removeEventListener('click', onDocClick);
+			window.removeEventListener('keydown', onKeyDown);
+		};
+	});
+
 
 	let currentList = $derived(
 		currentFormat === 'composite'
@@ -77,9 +150,8 @@
 		}
 	}
 
-	async function downloadColoredSignPng(e: MouseEvent, item: SignItem) {
-		e.preventDefault();
-		isDownloading = `${item.id}-png`;
+	async function downloadColoredSignPng(item: SignItem, res: PngResolution = currentResolution) {
+		isDownloading = `${item.id}-png-${res.id}`;
 		try {
 			const url = getAssetUrl(item);
 			const formatLabel =
@@ -90,11 +162,11 @@
 						: 'Іконка';
 			await downloadUrlAsPng(
 				url,
-				`${item.num} - ${item.titleUk} (${formatLabel}, ${signColor}).png`,
-				2000,
+				`${item.num} - ${item.titleUk} (${formatLabel}, ${signColor}, ${res.label}).png`,
+				res.px,
 				(svgText) => {
-					svgText = svgText.replace(/fill:\s*#[0-9a-fA-F]{6}/g, `fill: ${signColor}`);
-					svgText = svgText.replace(/fill="(?!(?:none))#[0-9a-fA-F]{6}"/g, `fill="${signColor}"`);
+					svgText = svgText.replace(/fill:\s*#[0-9a-fA-F]{6}/gi, `fill: ${signColor}`);
+					svgText = svgText.replace(/fill="(?!(?:none))#[0-9a-fA-F]{6}"/gi, `fill="${signColor}"`);
 					return svgText;
 				}
 			);
@@ -102,14 +174,89 @@
 			logService.error('brand', 'Download PNG error', err);
 		} finally {
 			isDownloading = null;
+			openPngMenuId = null;
 		}
 	}
+
+	async function downloadArrowSvg(e: MouseEvent) {
+		e.preventDefault();
+		isDownloading = 'arrow-svg';
+		try {
+			const url = `${base}/brand/signage/arrow-right.svg`;
+			const res = await fetch(url);
+			let svgText = await res.text();
+
+			svgText = svgText
+				.replace(/fill:\s*#[0-9a-fA-F]{6}/gi, `fill: ${signColor}`)
+				.replace(/fill="(?!(?:none))#[0-9a-fA-F]{6}"/gi, `fill="${signColor}"`)
+				.replace(/stroke:\s*#[0-9a-fA-F]{6}/gi, `stroke: ${signColor}`)
+				.replace(/stroke="(?!(?:none))#[0-9a-fA-F]{6}"/gi, `stroke="${signColor}"`);
+
+			if (arrowAngle !== 0) {
+				svgText = svgText.replace(
+					/<path\s+/i,
+					`<path transform="rotate(${arrowAngle} 12 12)" `
+				);
+			}
+
+			const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
+			const downloadUrl = URL.createObjectURL(blob);
+			const link = document.createElement('a');
+			link.href = downloadUrl;
+			const dirLabel = currentArrowDir
+				? (langStore.current === 'uk' ? currentArrowDir.labelUk : currentArrowDir.labelEn)
+				: `${arrowAngle}°`;
+			link.download = `${langStore.current === 'uk' ? 'Навігаційна стрілка' : 'Directional Arrow'} (${dirLabel}, ${signColor}).svg`;
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			URL.revokeObjectURL(downloadUrl);
+		} catch (err) {
+			logService.error('brand', 'Download Arrow SVG error', err);
+		} finally {
+			isDownloading = null;
+		}
+	}
+
+	async function downloadArrowPng(res: PngResolution = currentResolution) {
+		isDownloading = `arrow-png-${res.id}`;
+		try {
+			const url = `${base}/brand/signage/arrow-right.svg`;
+			const dirLabel = currentArrowDir
+				? (langStore.current === 'uk' ? currentArrowDir.labelUk : currentArrowDir.labelEn)
+				: `${arrowAngle}°`;
+			const filename = `${langStore.current === 'uk' ? 'Навігаційна стрілка' : 'Directional Arrow'} (${dirLabel}, ${signColor}, ${res.label}).png`;
+			await downloadUrlAsPng(url, filename, res.px, (svgText) => {
+				svgText = svgText
+					.replace(/fill:\s*#[0-9a-fA-F]{6}/gi, `fill: ${signColor}`)
+					.replace(/fill="(?!(?:none))#[0-9a-fA-F]{6}"/gi, `fill="${signColor}"`)
+					.replace(/stroke:\s*#[0-9a-fA-F]{6}/gi, `stroke: ${signColor}`)
+					.replace(/stroke="(?!(?:none))#[0-9a-fA-F]{6}"/gi, `stroke="${signColor}"`);
+				if (arrowAngle !== 0) {
+					svgText = svgText.replace(
+						/<path\s+/i,
+						`<path transform="rotate(${arrowAngle} 12 12)" `
+					);
+				}
+				return svgText;
+			});
+		} catch (err) {
+			logService.error('brand', 'Download Arrow PNG error', err);
+		} finally {
+			isDownloading = null;
+			openPngMenuId = null;
+		}
+	}
+
 </script>
 
 <div class="door-signage-widget">
 	<!-- UNIFIED CONTROL TOOLBAR -->
+	
+
+
 	<div class="unified-controls-panel">
-		<!-- ROW 1: Format Selector -->
+		<!-- Unified Controls: Format Selector & Stage Background Switcher -->
 		<div class="control-row format-row">
 			<div class="control-label-group">
 				<span class="control-title"
@@ -135,12 +282,13 @@
 						stroke-linejoin="round"
 						aria-hidden="true"
 					>
-						<path d="M18 20V6a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v14" />
-						<path d="M2 20h20" />
-						<path d="M14 12v.01" />
+						<rect width="18" height="18" x="3" y="3" rx="2" />
+						<circle cx="9" cy="9" r="2" />
+						<path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
 					</svg>
-					<span>{langStore.current === 'uk' ? 'Іконка + напис' : 'Icon + Text'}</span>
+					<span>{langStore.current === 'uk' ? 'Іконка + Напис' : 'Icon + Text'}</span>
 				</button>
+
 				<button
 					type="button"
 					class="format-tab-btn"
@@ -158,16 +306,12 @@
 						stroke-linejoin="round"
 						aria-hidden="true"
 					>
-						<path d="M12 6v4" />
-						<path d="M14 14h-4" />
-						<path d="M14 18h-4" />
-						<path d="M14 8h-4" />
-						<path d="M18 12h-4" />
-						<rect width="16" height="20" x="4" y="2" rx="2" />
-						<path d="M10 22v-4h4v4" />
+						<circle cx="12" cy="12" r="10" />
+						<path d="m10 15 5-3-5-3v6Z" fill="currentColor" />
 					</svg>
 					<span>{langStore.current === 'uk' ? 'Тільки іконка' : 'Icon Only'}</span>
 				</button>
+
 				<button
 					type="button"
 					class="format-tab-btn"
@@ -192,89 +336,27 @@
 					<span>{langStore.current === 'uk' ? 'Тільки напис' : 'Text Only'}</span>
 				</button>
 			</div>
-		</div>
 
-		<!-- ROW 2: Interactive Color Palette + Background Stage -->
-		<div class="control-row styling-row">
-			<!-- Color Picker (as in 24 Animals) -->
-			<div class="color-picker-box">
-				<div class="color-label-wrap">
-					<span class="control-title"
-						>{langStore.current === 'uk' ? 'Колір табличок:' : 'Sign Color:'}</span
-					>
-					<code class="active-hex-badge">{signColor}</code>
-				</div>
-
-				<div class="colors-palette-wrap">
-					{#each BRAND_COLORS as c (c.hex)}
+			<div class="res-switcher-wrap" title={langStore.current === 'uk' ? 'Роздільна здатність PNG' : 'PNG Resolution'}>
+				<span class="res-switcher-title">{langStore.current === 'uk' ? 'PNG якість:' : 'PNG:'}</span>
+				<div class="res-pills">
+					{#each PNG_RESOLUTIONS as res (res.id)}
 						<button
 							type="button"
-							class="color-pill-btn"
-							class:is-active={signColor.toUpperCase() === c.hex.toUpperCase()}
-							style:background-color={c.hex}
-							onclick={() => (customSelectedColor = c.hex)}
-							title="{c.name} ({c.hex})"
-							aria-label="{c.name} ({c.hex})"
+							class="res-pill-btn"
+							class:is-active={currentResId === res.id}
+							onclick={() => (currentResId = res.id)}
+							title="{res.label} ({langStore.current === 'uk' ? res.descriptionUk : res.descriptionEn})"
 						>
-							{#if signColor.toUpperCase() === c.hex.toUpperCase()}
-								<svg
-									width="12"
-									height="12"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke={c.textColor}
-									stroke-width="3"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									aria-hidden="true"
-								>
-									<polyline points="20 6 9 17 4 12" />
-								</svg>
-							{/if}
+							{res.label}
 						</button>
 					{/each}
-
-					<!-- Custom HTML5 Color Picker -->
-					<label
-						class="color-pill-btn custom-picker-pill"
-						class:is-active={!BRAND_COLORS.some(
-							(c) => c.hex.toUpperCase() === signColor.toUpperCase()
-						)}
-						title={langStore.current === 'uk' ? 'Власний колір (палітра)' : 'Custom color'}
-					>
-						<input
-							type="color"
-							value={signColor}
-							oninput={(e) =>
-								(customSelectedColor = (e.target as HTMLInputElement).value.toUpperCase())}
-							aria-label="Custom color picker"
-						/>
-						<svg
-							width="14"
-							height="14"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="#ffffff"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="picker-icon"
-							aria-hidden="true"
-						>
-							<circle cx="13.5" cy="6.5" r=".5" fill="#ffffff" />
-							<circle cx="17.5" cy="10.5" r=".5" fill="#ffffff" />
-							<circle cx="8.5" cy="7.5" r=".5" fill="#ffffff" />
-							<circle cx="6.5" cy="12.5" r=".5" fill="#ffffff" />
-							<path
-								d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"
-							/>
-						</svg>
-					</label>
 				</div>
 			</div>
 
-			<!-- Stage Background Switcher -->
-			<StageBgSwitcher bind:current={stageTheme} />
+			<div class="stage-switcher-wrap">
+				<StageBgSwitcher bind:current={stageTheme} />
+			</div>
 		</div>
 	</div>
 
@@ -311,7 +393,7 @@
 					></div>
 				</div>
 
-				<!-- Download Action Button with injected color -->
+				<!-- Download Action Buttons (SVG and PNG with dropdown) -->
 				<div class="sign-card-footer">
 					<button
 						type="button"
@@ -329,28 +411,209 @@
 							fill="none"
 							stroke="currentColor"
 							stroke-width="2"
+							aria-hidden="true"
 						>
 							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 							<polyline points="7 10 12 15 17 10"></polyline>
 							<line x1="12" y1="15" x2="12" y2="3"></line>
 						</svg>
 						<span>
-							{isDownloading === item.id
-								? '...'
-								: langStore.current === 'uk'
-									? `SVG (${signColor})`
-									: `SVG (${signColor})`}
+							{isDownloading === item.id ? '...' : 'SVG'}
 						</span>
 					</button>
 
+					<div class="png-dropdown-wrap">
+						<button
+							type="button"
+							class="download-sign-btn png-btn"
+							onclick={(e) => togglePngMenu(item.id, e)}
+							disabled={isDownloading?.startsWith(`${item.id}-png`)}
+							aria-expanded={openPngMenuId === item.id}
+							aria-haspopup="menu"
+							title={langStore.current === 'uk'
+								? `Завантажити PNG (випадаючий список 480p - 2160p)`
+								: `Download PNG (select 480p - 2160p)`}
+						>
+							<svg
+								width="13"
+								height="13"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								aria-hidden="true"
+							>
+								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+								<polyline points="7 10 12 15 17 10"></polyline>
+								<line x1="12" y1="15" x2="12" y2="3"></line>
+							</svg>
+							<span>
+								{isDownloading?.startsWith(`${item.id}-png`)
+									? '...'
+									: `PNG (${currentResolution.label})`}
+							</span>
+							<svg
+								width="10"
+								height="10"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2.5"
+								class="chevron-icon"
+								class:is-flipped={openPngMenuId === item.id}
+								aria-hidden="true"
+							>
+								<polyline points="6 9 12 15 18 9"></polyline>
+							</svg>
+						</button>
+
+						{#if openPngMenuId === item.id}
+							<div
+								class="png-menu-dropdown"
+								role="menu"
+								tabindex="-1"
+								onclick={(e) => e.stopPropagation()}
+								onkeydown={(e) => {
+									if (e.key === 'Escape') openPngMenuId = null;
+								}}
+							>
+								<div class="png-menu-header">
+									<span>{langStore.current === 'uk' ? 'Роздільна здатність PNG:' : 'PNG Resolution:'}</span>
+								</div>
+								{#each PNG_RESOLUTIONS as res (res.id)}
+									<button
+										type="button"
+										role="menuitem"
+										class="png-menu-item"
+										class:is-selected={res.id === currentResId}
+										onclick={() => {
+											currentResId = res.id;
+											downloadColoredSignPng(item, res);
+										}}
+									>
+										<span class="res-badge">{res.label}</span>
+										<span class="res-desc">
+											{langStore.current === 'uk' ? res.descriptionUk : res.descriptionEn}
+										</span>
+										{#if res.id === currentResId}
+											<svg
+												width="12"
+												height="12"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="3"
+												class="check-icon"
+												aria-hidden="true"
+											>
+												<polyline points="20 6 9 17 4 12"></polyline>
+											</svg>
+										{/if}
+									</button>
+								{/each}
+							</div>
+						{/if}
+					</div>
+				</div>
+			</div>
+		{/each}
+	</div>
+	<!-- SEPARATE ADDITIONAL ELEMENT: DIRECTIONAL NAVIGATION ARROW -->
+	<div class="nav-arrow-block">
+		<div class="nav-arrow-card">
+			<div class="nav-arrow-header">
+				<div class="nav-arrow-badge-group">
+					<span class="sign-num">NAV</span>
+					<div class="sign-titles">
+						<span class="sign-name-uk">
+							{langStore.current === 'uk'
+								? 'Навігаційна стрілка (Покажчик напрямку)'
+								: 'Directional Navigation Arrow'}
+						</span>
+						<span class="sign-name-en">
+							{langStore.current === 'uk'
+								? 'Додатковий універсальний елемент для коридорної навігації та вказівників'
+								: 'Standalone corridor & wayfinding pointer for hospital navigation'}
+						</span>
+					</div>
+				</div>
+
+				<!-- 8 Directions + Custom Angle Controls in Header -->
+				<div class="direction-pills-wrap">
+					<div class="direction-pills">
+						{#each ARROW_DIRECTIONS as d (d.deg)}
+							<button
+								type="button"
+								class="dir-pill-btn"
+								class:is-active={arrowAngle === d.deg}
+								onclick={() => (arrowAngle = d.deg)}
+								title="{langStore.current === 'uk' ? d.labelUk : d.labelEn} ({d.deg}°)"
+							>
+								<span class="dir-arrow-symbol">{d.icon}</span>
+								<span class="dir-pill-text">{langStore.current === 'uk' ? d.labelUk : d.labelEn}</span>
+							</button>
+						{/each}
+					</div>
+
+					<div class="custom-angle-wrap" title={langStore.current === 'uk' ? 'Власний кут обертання (0° - 360°)' : 'Custom rotation angle (0° - 360°)'}>
+						<label for="arrow-angle-input" class="angle-label">{langStore.current === 'uk' ? 'Кут:' : 'Angle:'}</label>
+						<div class="angle-input-box">
+							<input
+								id="arrow-angle-input"
+								type="number"
+								min="0"
+								max="360"
+								step="1"
+								value={arrowAngle}
+								oninput={(e) => {
+									const n = parseInt((e.target as HTMLInputElement).value, 10);
+									arrowAngle = isNaN(n) ? 0 : ((n % 360) + 360) % 360;
+								}}
+								class="angle-num-input"
+								aria-label={langStore.current === 'uk' ? 'Кут повороту в градусах' : 'Angle in degrees'}
+							/>
+							<span class="deg-sym">°</span>
+						</div>
+						<input
+							type="range"
+							min="0"
+							max="360"
+							step="1"
+							value={arrowAngle}
+							oninput={(e) => {
+								arrowAngle = parseInt((e.target as HTMLInputElement).value, 10) || 0;
+							}}
+							class="angle-slider"
+							aria-label={langStore.current === 'uk' ? 'Повзунок кута повороту' : 'Angle slider'}
+						/>
+					</div>
+				</div>
+			</div>
+
+			<div class="nav-arrow-stage-wrap">
+				<div
+					class="sign-preview-stage stage--{stageTheme} arrow-preview-stage"
+					aria-label={langStore.current === 'uk' ? 'Навігаційна стрілка' : 'Directional Arrow'}
+				>
+					<div
+						class="arrow-svg-mask"
+						style:background-color={signColor}
+						style:--mask-url="url('{base}/brand/signage/arrow-right.svg')"
+						style:transform="rotate({arrowAngle}deg)"
+					></div>
+				</div>
+			</div>
+
+			<div class="nav-arrow-footer">
+				<div class="arrow-actions">
 					<button
 						type="button"
-						class="download-sign-btn png-btn"
-						onclick={(e) => downloadColoredSignPng(e, item)}
-						disabled={isDownloading === `${item.id}-png`}
+						class="download-sign-btn svg-btn"
+						onclick={downloadArrowSvg}
+						disabled={isDownloading === 'arrow-svg'}
 						title={langStore.current === 'uk'
-							? `Завантажити PNG (2000 px) у кольорі ${signColor}`
-							: `Download PNG (2000 px) in ${signColor}`}
+							? `Завантажити стрілку у SVG (${signColor})`
+							: `Download arrow SVG (${signColor})`}
 					>
 						<svg
 							width="13"
@@ -359,18 +622,112 @@
 							fill="none"
 							stroke="currentColor"
 							stroke-width="2"
+							aria-hidden="true"
 						>
 							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 							<polyline points="7 10 12 15 17 10"></polyline>
 							<line x1="12" y1="15" x2="12" y2="3"></line>
 						</svg>
 						<span>
-							{isDownloading === `${item.id}-png` ? '...' : 'PNG (2000 px)'}
+							{isDownloading === 'arrow-svg' ? '...' : 'SVG'}
 						</span>
 					</button>
+
+					<div class="png-dropdown-wrap">
+						<button
+							type="button"
+							class="download-sign-btn png-btn"
+							onclick={(e) => togglePngMenu('arrow', e)}
+							disabled={isDownloading?.startsWith('arrow-png')}
+							aria-expanded={openPngMenuId === 'arrow'}
+							aria-haspopup="menu"
+							title={langStore.current === 'uk'
+								? `Завантажити стрілку у PNG (випадаючий список 480p - 2160p)`
+								: `Download arrow PNG (select 480p - 2160p)`}
+						>
+							<svg
+								width="13"
+								height="13"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								aria-hidden="true"
+							>
+								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+								<polyline points="7 10 12 15 17 10"></polyline>
+								<line x1="12" y1="15" x2="12" y2="3"></line>
+							</svg>
+							<span>
+								{isDownloading?.startsWith('arrow-png')
+									? '...'
+									: `PNG (${currentResolution.label})`}
+							</span>
+							<svg
+								width="10"
+								height="10"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2.5"
+								class="chevron-icon"
+								class:is-flipped={openPngMenuId === 'arrow'}
+								aria-hidden="true"
+							>
+								<polyline points="6 9 12 15 18 9"></polyline>
+							</svg>
+						</button>
+
+						{#if openPngMenuId === 'arrow'}
+							<div
+								class="png-menu-dropdown"
+								role="menu"
+								tabindex="-1"
+								onclick={(e) => e.stopPropagation()}
+								onkeydown={(e) => {
+									if (e.key === 'Escape') openPngMenuId = null;
+								}}
+							>
+								<div class="png-menu-header">
+									<span>{langStore.current === 'uk' ? 'Роздільна здатність PNG:' : 'PNG Resolution:'}</span>
+								</div>
+								{#each PNG_RESOLUTIONS as res (res.id)}
+									<button
+										type="button"
+										role="menuitem"
+										class="png-menu-item"
+										class:is-selected={res.id === currentResId}
+										onclick={() => {
+											currentResId = res.id;
+											downloadArrowPng(res);
+										}}
+									>
+										<span class="res-badge">{res.label}</span>
+										<span class="res-desc">
+											{langStore.current === 'uk' ? res.descriptionUk : res.descriptionEn}
+										</span>
+										{#if res.id === currentResId}
+											<svg
+												width="12"
+												height="12"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="3"
+												class="check-icon"
+												aria-hidden="true"
+											>
+												<polyline points="20 6 9 17 4 12"></polyline>
+											</svg>
+										{/if}
+									</button>
+								{/each}
+							</div>
+						{/if}
+					</div>
 				</div>
 			</div>
-		{/each}
+		</div>
 	</div>
 </div>
 
@@ -517,90 +874,7 @@
 		flex-wrap: wrap;
 	}
 
-	.color-pill-btn {
-		position: relative;
-		width: 30px;
-		height: 30px;
-		border-radius: 50%;
-		border: 2px solid rgba(0, 0, 0, 0.15);
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 0;
-		transition:
-			transform 0.15s ease,
-			box-shadow 0.15s ease;
-	}
-
-	:global([data-theme='dark']) .color-pill-btn,
-	:global(.dark) .color-pill-btn {
-		border-color: rgba(255, 255, 255, 0.25);
-	}
-
-	.color-pill-btn:hover {
-		transform: scale(1.15);
-	}
-
-	.color-pill-btn.is-active {
-		border-color: var(--brand-emerald, #13371b);
-		box-shadow: 0 0 0 3px rgba(89, 143, 58, 0.45);
-		transform: scale(1.15);
-	}
-
-	:global([data-theme='dark']) .color-pill-btn.is-active,
-	:global(.dark) .color-pill-btn.is-active {
-		border-color: var(--brand-gold);
-		box-shadow: 0 0 0 3px rgba(255, 179, 39, 0.45);
-	}
-
-	.custom-picker-pill {
-		position: relative;
-		border-radius: 50%;
-		overflow: hidden;
-		isolation: isolate;
-		-webkit-mask-image: -webkit-radial-gradient(white, black);
-		mask-image: radial-gradient(circle, #fff 100%, #000 100%);
-		background: transparent;
-	}
-
-	.custom-picker-pill::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		border-radius: 50%;
-		clip-path: circle(50% at 50% 50%);
-		background: conic-gradient(
-			from 0deg at 50% 50%,
-			#ff0000 0deg,
-			#ffa500 51deg,
-			#ffff00 102deg,
-			#008000 153deg,
-			#0000ff 204deg,
-			#4b0082 255deg,
-			#ee82ee 306deg,
-			#ff0000 360deg
-		);
-		z-index: 0;
-	}
-
-	.custom-picker-pill input[type='color'] {
-		position: absolute;
-		inset: 0;
-		opacity: 0;
-		cursor: pointer;
-		width: 100%;
-		height: 100%;
-		z-index: 2;
-	}
-
-	.picker-icon {
-		position: relative;
-		z-index: 1;
-		font-size: 0.75rem;
-		pointer-events: none;
-		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.85));
-	}
+	
 
 	/* SIGNS GRID */
 	.signage-grid {
@@ -773,11 +1047,66 @@
 		transform: scale(1.03);
 	}
 
-	/* FOOTER ACTION */
+	/* PNG RESOLUTION SWITCHER */
+	.res-switcher-wrap {
+		display: flex;
+		align-items: center;
+		gap: 0.55rem;
+		flex-wrap: wrap;
+	}
+
+	.res-switcher-title {
+		font-size: 0.8rem;
+		font-weight: 700;
+		color: var(--fg-secondary);
+		white-space: nowrap;
+	}
+
+	.res-pills {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		padding: 3px;
+		background: var(--bg-secondary);
+		border: 1px solid var(--border);
+		border-radius: 10px;
+	}
+
+	.res-pill-btn {
+		padding: 0.35rem 0.6rem;
+		border-radius: 7px;
+		border: 1px solid transparent;
+		background: transparent;
+		color: var(--fg-secondary);
+		font-size: 0.76rem;
+		font-weight: 700;
+		cursor: pointer;
+		transition: all 0.15s ease;
+	}
+
+	.res-pill-btn:hover {
+		color: var(--fg-primary);
+	}
+
+	.res-pill-btn.is-active {
+		background: var(--brand-emerald, #13371b);
+		color: #ffffff;
+		border-color: var(--brand-emerald, #13371b);
+	}
+
+	:global([data-theme='dark']) .res-pill-btn.is-active,
+	:global(.dark) .res-pill-btn.is-active {
+		background: var(--brand-emerald, #13371b);
+		color: #ffffff;
+		border-color: var(--brand-leaf, #598f3a);
+	}
+
+	/* FOOTER ACTION - CENTERED BUTTONS */
 	.sign-card-footer {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 0.5rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.65rem;
 		padding: 0.85rem 1rem;
 		background: var(--bg-secondary);
 		border-top: 1px solid var(--border);
@@ -789,8 +1118,8 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.35rem;
-		width: 100%;
-		padding: 0.55rem 0.5rem;
+		min-width: 110px;
+		padding: 0.55rem 0.85rem;
 		border-radius: 8px;
 		font-size: 0.76rem;
 		font-weight: 700;
@@ -830,4 +1159,403 @@
 		opacity: 0.55;
 		cursor: wait;
 	}
+
+	/* PNG DROPDOWN COMPONENT */
+	.png-dropdown-wrap {
+		position: relative;
+		display: inline-flex;
+	}
+
+	.png-dropdown-wrap .download-sign-btn {
+		min-width: 125px;
+	}
+
+	.chevron-icon {
+		margin-left: 0.2rem;
+		transition: transform 0.2s ease;
+	}
+
+	.chevron-icon.is-flipped {
+		transform: rotate(180deg);
+	}
+
+	.png-menu-dropdown {
+		position: absolute;
+		bottom: calc(100% + 8px);
+		left: 50%;
+		transform: translateX(-50%);
+		min-width: 220px;
+		background: var(--panel-bg);
+		border: 1px solid var(--border);
+		border-radius: 12px;
+		padding: 0.45rem;
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+		z-index: 60;
+		backdrop-filter: blur(16px);
+		-webkit-backdrop-filter: blur(16px);
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		animation: popIn 0.15s ease-out;
+	}
+
+	@keyframes popIn {
+		from {
+			opacity: 0;
+			transform: translateX(-50%) translateY(4px);
+		}
+		to {
+			opacity: 1;
+			transform: translateX(-50%) translateY(0);
+		}
+	}
+
+	.png-menu-header {
+		padding: 0.25rem 0.5rem 0.35rem;
+		font-size: 0.7rem;
+		font-weight: 700;
+		color: var(--fg-secondary);
+		border-bottom: 1px solid var(--border);
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+
+	.png-menu-item {
+		display: flex;
+		align-items: center;
+		gap: 0.55rem;
+		padding: 0.45rem 0.65rem;
+		border-radius: 8px;
+		border: 1px solid transparent;
+		background: transparent;
+		color: var(--fg-primary);
+		font-size: 0.78rem;
+		cursor: pointer;
+		transition: all 0.15s ease;
+		text-align: left;
+		width: 100%;
+	}
+
+	.png-menu-item:hover {
+		background: var(--bg-secondary);
+		border-color: var(--border-hover);
+		color: var(--brand-leaf, #598f3a);
+	}
+
+	:global([data-theme='dark']) .png-menu-item:hover,
+	:global(.dark) .png-menu-item:hover {
+		color: var(--brand-gold, #ffb327);
+	}
+
+	.png-menu-item.is-selected {
+		background: rgba(89, 143, 58, 0.12);
+		border-color: var(--brand-leaf, #598f3a);
+		font-weight: 700;
+		color: var(--brand-emerald, #13371b);
+	}
+
+	:global([data-theme='dark']) .png-menu-item.is-selected,
+	:global(.dark) .png-menu-item.is-selected {
+		background: rgba(255, 179, 39, 0.14);
+		border-color: var(--brand-gold, #ffb327);
+		color: var(--brand-gold, #ffb327);
+	}
+
+	.res-badge {
+		font-weight: 800;
+		font-family: monospace;
+		font-size: 0.78rem;
+		padding: 0.15rem 0.4rem;
+		border-radius: 4px;
+		background: var(--bg-secondary);
+		border: 1px solid var(--border);
+	}
+
+	.res-desc {
+		flex: 1;
+		font-size: 0.74rem;
+		color: var(--fg-secondary);
+		white-space: nowrap;
+	}
+
+	.check-icon {
+		color: var(--brand-leaf, #598f3a);
+	}
+
+	:global([data-theme='dark']) .check-icon,
+	:global(.dark) .check-icon {
+		color: var(--brand-gold, #ffb327);
+	}
+
+	/* SEPARATE ADDITIONAL ELEMENT: NAVIGATION ARROW */
+	.nav-arrow-block {
+		margin-top: 0.5rem;
+		width: 100%;
+	}
+
+	.nav-arrow-card {
+		display: flex;
+		flex-direction: column;
+		background: var(--panel-bg);
+		border: 1px solid var(--border);
+		border-radius: 16px;
+		overflow: hidden;
+		transition: all 0.25s ease;
+		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+	}
+
+	.nav-arrow-card:hover {
+		border-color: var(--border-hover);
+		box-shadow: 0 10px 24px rgba(0, 0, 0, 0.07);
+	}
+
+	.nav-arrow-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 1.1rem 1.4rem;
+		border-bottom: 1px solid var(--border);
+		background: var(--bg-secondary);
+		flex-wrap: wrap;
+	}
+
+	.nav-arrow-badge-group {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.direction-pills-wrap {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		flex-wrap: wrap;
+	}
+
+	.direction-pills {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		padding: 3px;
+		background: var(--panel-bg);
+		border: 1px solid var(--border);
+		border-radius: 10px;
+		flex-wrap: wrap;
+	}
+
+	.dir-pill-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3rem;
+		padding: 0.35rem 0.55rem;
+		border-radius: 7px;
+		border: 1px solid transparent;
+		background: transparent;
+		color: var(--fg-secondary);
+		font-size: 0.76rem;
+		font-weight: 700;
+		cursor: pointer;
+		transition: all 0.15s ease;
+	}
+
+	.dir-pill-btn:hover {
+		color: var(--fg-primary);
+		background: var(--bg-secondary);
+	}
+
+	.dir-pill-btn.is-active {
+		background: var(--brand-emerald, #13371b);
+		color: #ffffff;
+		border-color: var(--brand-emerald, #13371b);
+		box-shadow: 0 2px 6px rgba(19, 55, 27, 0.25);
+	}
+
+	:global([data-theme='dark']) .dir-pill-btn.is-active,
+	:global(.dark) .dir-pill-btn.is-active {
+		background: var(--brand-emerald, #13371b);
+		color: #ffffff;
+		border-color: var(--brand-leaf, #598f3a);
+		box-shadow: 0 2px 6px rgba(89, 143, 58, 0.25);
+	}
+
+	.dir-arrow-symbol {
+		font-size: 0.95rem;
+		line-height: 1;
+	}
+
+	.dir-pill-text {
+		font-size: 0.75rem;
+	}
+
+	.custom-angle-wrap {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0.25rem 0.6rem;
+		background: var(--panel-bg);
+		border: 1px solid var(--border);
+		border-radius: 10px;
+	}
+
+	.angle-label {
+		font-size: 0.78rem;
+		font-weight: 700;
+		color: var(--fg-secondary);
+		white-space: nowrap;
+	}
+
+	.angle-input-box {
+		display: inline-flex;
+		align-items: center;
+		position: relative;
+	}
+
+	.angle-num-input {
+		width: 48px;
+		height: 28px;
+		padding: 0 12px 0 6px;
+		border-radius: 6px;
+		border: 1px solid var(--border);
+		background: var(--bg-secondary);
+		color: var(--fg-primary);
+		font-size: 0.8rem;
+		font-weight: 700;
+		font-family: monospace;
+		text-align: right;
+		outline: none;
+	}
+
+	.angle-num-input:focus {
+		border-color: var(--brand-leaf, #598f3a);
+	}
+
+	:global([data-theme='dark']) .angle-num-input:focus,
+	:global(.dark) .angle-num-input:focus {
+		border-color: var(--brand-gold, #ffb327);
+	}
+
+	.deg-sym {
+		position: absolute;
+		right: 4px;
+		font-size: 0.8rem;
+		font-weight: 700;
+		color: var(--fg-secondary);
+		pointer-events: none;
+	}
+
+	.angle-slider {
+		width: 70px;
+		height: 4px;
+		accent-color: var(--brand-leaf, #598f3a);
+		cursor: pointer;
+	}
+
+	:global([data-theme='dark']) .angle-slider,
+	:global(.dark) .angle-slider {
+		accent-color: var(--brand-gold, #ffb327);
+	}
+
+	.nav-arrow-stage-wrap {
+		width: 100%;
+	}
+
+	.arrow-preview-stage {
+		min-height: 220px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.arrow-svg-mask {
+		width: 120px;
+		height: 120px;
+		-webkit-mask: var(--mask-url) no-repeat center / contain;
+		mask: var(--mask-url) no-repeat center / contain;
+		transition:
+			background-color 0.2s ease,
+			transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	/* CENTERED BUTTONS IN ARROW FOOTER */
+	.nav-arrow-footer {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.9rem 1.4rem;
+		background: var(--bg-secondary);
+		border-top: 1px solid var(--border);
+	}
+
+	.arrow-actions {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.65rem;
+		width: 100%;
+		max-width: 360px;
+		margin: 0 auto;
+	}
+
+	.arrow-actions .download-sign-btn {
+		min-width: 125px;
+	}
+
+	@media (max-width: 720px) {
+		.nav-arrow-header {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.direction-pills-wrap {
+			width: 100%;
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.direction-pills {
+			width: 100%;
+			justify-content: space-between;
+		}
+
+		.dir-pill-btn {
+			flex: 1;
+			justify-content: center;
+			padding: 0.35rem 0.3rem;
+			font-size: 0.72rem;
+		}
+
+		.custom-angle-wrap {
+			width: 100%;
+			justify-content: space-between;
+		}
+
+		.angle-slider {
+			flex: 1;
+		}
+
+		.sign-card-footer {
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.sign-card-footer .download-sign-btn,
+		.png-dropdown-wrap {
+			width: 100%;
+		}
+
+		.nav-arrow-footer {
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.arrow-actions {
+			flex-direction: column;
+			width: 100%;
+		}
+	}
+
+
+	
+
 </style>

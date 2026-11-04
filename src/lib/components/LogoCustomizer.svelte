@@ -14,9 +14,15 @@
 
 	interface Props {
 		brandColors: ColorOption[];
+		externalColor?: string;
+		onElementChange?: (name: string, color: string) => void;
 	}
 
-	let { brandColors }: Props = $props();
+	let {
+		brandColors,
+		externalColor,
+		onElementChange
+	}: Props = $props();
 	const baseId = $props.id();
 
 	type LogoVariant = 'hospital' | 'vetcrew';
@@ -163,11 +169,48 @@
 	// Preview background switcher (defaults to transparent checkerboard)
 	let previewGrid = $state<StageTheme>('checker');
 
+	function getGroupName(group: TargetGroup): string {
+		switch (group) {
+			case 'bgCircle':
+				return bgShape === 'solid'
+					? langStore.current === 'uk'
+						? 'Суцільний фон'
+						: 'Solid Background'
+					: langStore.current === 'uk'
+						? 'Коло основи'
+						: 'Circle Base';
+			case 'paw':
+				return langStore.current === 'uk' ? 'Лапка' : 'Paw Print';
+			case 'vetCrew':
+				return '«VET CREW»';
+			case 'hospital':
+				return '«HOSPITAL»';
+		}
+	}
+
+	function notifyElementChange() {
+		onElementChange?.(getGroupName(activeGroup), getCurrentColor(activeGroup));
+	}
+
+	function selectGroup(group: TargetGroup) {
+		activeGroup = group;
+		notifyElementChange();
+	}
+
 	function setVariant(v: LogoVariant) {
 		activeVariant = v;
 		if (v === 'vetcrew' && activeGroup === 'hospital') {
 			activeGroup = 'paw';
 		}
+		notifyElementChange();
+	}
+
+	function setShape(shape: BgShape) {
+		bgShape = shape;
+		if (shape === 'transparent' && activeGroup === 'bgCircle') {
+			activeGroup = 'paw';
+		}
+		notifyElementChange();
 	}
 
 	function applyPreset(p: (typeof PRESETS_HOSPITAL)[0] | (typeof PRESETS_VETCREW)[0]) {
@@ -178,6 +221,7 @@
 		if ('hospital' in p) {
 			hospitalColor = p.hospital;
 		}
+		notifyElementChange();
 	}
 
 	function isPresetActive(p: (typeof PRESETS_HOSPITAL)[0] | (typeof PRESETS_VETCREW)[0]): boolean {
@@ -221,6 +265,23 @@
 				break;
 		}
 	}
+
+	let lastAppliedExternal = $state<string | null>(null);
+
+	$effect(() => {
+		if (
+			externalColor &&
+			externalColor !== lastAppliedExternal &&
+			externalColor.toUpperCase() !== getCurrentColor(activeGroup).toUpperCase()
+		) {
+			lastAppliedExternal = externalColor;
+			setCurrentColor(activeGroup, externalColor);
+		}
+	});
+
+	$effect(() => {
+		notifyElementChange();
+	});
 
 	// Dynamic SVG string generation for download and canvas export
 	let svgString = $derived.by(() => {
@@ -605,8 +666,8 @@
 						class="pill-btn"
 						class:is-active={bgShape === 'circle'}
 						onclick={() => {
-							bgShape = 'circle';
-							activeGroup = 'bgCircle';
+							setShape('circle');
+							selectGroup('bgCircle');
 						}}
 						title={langStore.current === 'uk' ? 'Канонічна кругла емблема' : 'Round emblem badge'}
 					>
@@ -627,8 +688,8 @@
 						class="pill-btn"
 						class:is-active={bgShape === 'solid'}
 						onclick={() => {
-							bgShape = 'solid';
-							activeGroup = 'bgCircle';
+							setShape('solid');
+							selectGroup('bgCircle');
 						}}
 						title={langStore.current === 'uk'
 							? 'Суцільна заливка артборду'
@@ -650,7 +711,7 @@
 						type="button"
 						class="pill-btn"
 						class:is-active={bgShape === 'transparent'}
-						onclick={() => (bgShape = 'transparent')}
+						onclick={() => setShape('transparent')}
 						title={langStore.current === 'uk'
 							? 'Без підкладки (прозорий фон)'
 							: 'Transparent without fill'}
@@ -682,8 +743,8 @@
 					class:is-selected={activeGroup === 'bgCircle'}
 					class:is-disabled={bgShape === 'transparent'}
 					onclick={() => {
-						if (bgShape === 'transparent') bgShape = 'circle';
-						activeGroup = 'bgCircle';
+						if (bgShape === 'transparent') setShape('circle');
+						selectGroup('bgCircle');
 					}}
 				>
 					<span
@@ -715,7 +776,7 @@
 					type="button"
 					class="element-tab"
 					class:is-selected={activeGroup === 'paw'}
-					onclick={() => (activeGroup = 'paw')}
+					onclick={() => selectGroup('paw')}
 				>
 					<span class="tab-indicator" style:background-color={pawColor}></span>
 					<div class="tab-text">
@@ -728,7 +789,7 @@
 					type="button"
 					class="element-tab"
 					class:is-selected={activeGroup === 'vetCrew'}
-					onclick={() => (activeGroup = 'vetCrew')}
+					onclick={() => selectGroup('vetCrew')}
 				>
 					<span class="tab-indicator" style:background-color={vetCrewColor}></span>
 					<div class="tab-text">
@@ -742,7 +803,7 @@
 						type="button"
 						class="element-tab"
 						class:is-selected={activeGroup === 'hospital'}
-						onclick={() => (activeGroup = 'hospital')}
+						onclick={() => selectGroup('hospital')}
 					>
 						<span class="tab-indicator" style:background-color={hospitalColor}></span>
 						<div class="tab-text">
@@ -753,106 +814,7 @@
 				{/if}
 			</div>
 
-			<!-- 3. Color Picker Area for Selected Element -->
-			<div class="color-palette-selector">
-				<div class="palette-header">
-					<span class="palette-title">
-						{langStore.current === 'uk' ? 'Виберіть колір для:' : 'Choose color for:'}
-						<strong>
-							{#if activeGroup === 'bgCircle'}
-								{langStore.current === 'uk'
-									? bgShape === 'solid'
-										? 'Суцільного фону'
-										: 'Кола основи'
-									: bgShape === 'solid'
-										? 'Solid Background'
-										: 'Circle Base'}
-							{:else if activeGroup === 'paw'}
-								{langStore.current === 'uk' ? 'Лапки' : 'Paw Print'}
-							{:else if activeGroup === 'vetCrew'}
-								«VET CREW»
-							{:else if activeGroup === 'hospital'}
-								«HOSPITAL»
-							{/if}
-						</strong>
-					</span>
-				</div>
-
-				<div class="swatches-grid">
-					{#each brandColors as c (c.hex)}
-						<button
-							type="button"
-							class="color-swatch-btn"
-							class:is-active={getCurrentColor(activeGroup).toLowerCase() === c.hex.toLowerCase()}
-							style:background-color={c.hex}
-							style:color={c.textColor}
-							onclick={() => setCurrentColor(activeGroup, c.hex)}
-							title="{c.name} ({c.hex})"
-						>
-							<span class="swatch-name">{c.name}</span>
-							<code class="swatch-code">{c.hex}</code>
-						</button>
-					{/each}
-
-					<!-- Special White swatch for quick access -->
-					<button
-						type="button"
-						class="color-swatch-btn"
-						class:is-active={getCurrentColor(activeGroup).toLowerCase() === '#ffffff'}
-						style:background-color="#ffffff"
-						style:color="#13371b"
-						onclick={() => setCurrentColor(activeGroup, '#FFFFFF')}
-						title="White (#FFFFFF)"
-					>
-						<span class="swatch-name">White</span>
-						<code class="swatch-code">#FFFFFF</code>
-					</button>
-
-					<!-- Custom Color Picker -->
-					<label
-						for="{baseId}-custom-color"
-						class="color-swatch-btn custom-picker-btn"
-						class:is-active={isCustomColor(getCurrentColor(activeGroup))}
-						title={langStore.current === 'uk' ? 'Власний колір (палітра)' : 'Custom color picker'}
-					>
-						<input
-							id="{baseId}-custom-color"
-							type="color"
-							value={getCurrentColor(activeGroup)}
-							aria-label={langStore.current === 'uk'
-								? 'Власний колір (палітра)'
-								: 'Custom color picker'}
-							oninput={(e) =>
-								setCurrentColor(activeGroup, (e.target as HTMLInputElement).value.toUpperCase())}
-						/>
-						<span class="swatch-name">
-							<svg
-								width="14"
-								height="14"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="#ffffff"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								aria-hidden="true"
-								style="display:inline-block; vertical-align:-2px; margin-right:4px;"
-							>
-								<circle cx="13.5" cy="6.5" r=".5" fill="#ffffff" />
-								<circle cx="17.5" cy="10.5" r=".5" fill="#ffffff" />
-								<circle cx="8.5" cy="7.5" r=".5" fill="#ffffff" />
-								<circle cx="6.5" cy="12.5" r=".5" fill="#ffffff" />
-								<path
-									d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"
-								/>
-							</svg>
-							{langStore.current === 'uk' ? 'Власний' : 'Custom'}
-						</span>
-						<code class="swatch-code">{getCurrentColor(activeGroup)}</code>
-					</label>
-				</div>
 			</div>
-		</div>
 	</div>
 </div>
 
@@ -1275,96 +1237,7 @@
 		padding-top: 0.5rem;
 	}
 
-	.palette-header {
-		font-size: 0.86rem;
-		color: var(--fg-secondary);
-	}
-
-	.palette-header strong {
-		color: var(--fg-primary);
-	}
-
-	.swatches-grid {
-		display: grid;
-		grid-template-columns: repeat(4, 1fr);
-		gap: 0.65rem;
-	}
-
-	.color-swatch-btn {
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		padding: 0.65rem;
-		height: 64px;
-		border-radius: 10px;
-		border: 2px solid rgba(0, 0, 0, 0.1);
-		cursor: pointer;
-		position: relative;
-		transition:
-			transform 0.15s ease,
-			box-shadow 0.15s ease,
-			border-color 0.15s ease;
-	}
-
-	.color-swatch-btn:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
-	}
-
-	.color-swatch-btn.is-active {
-		border-color: #ffb327;
-		box-shadow:
-			0 0 0 2px var(--panel-bg),
-			0 0 0 4px #ffb327;
-		transform: scale(1.02);
-	}
-
-	.swatch-name {
-		font-size: 0.72rem;
-		font-weight: 700;
-		text-align: left;
-		line-height: 1.1;
-	}
-
-	.swatch-code {
-		font-family: monospace;
-		font-size: 0.68rem;
-		opacity: 0.85;
-		text-align: left;
-	}
-
-	/* Custom Picker Button */
-	.custom-picker-btn {
-		background: conic-gradient(
-			from 0deg at 50% 50%,
-			#ff0000 0deg,
-			#ffa500 51deg,
-			#ffff00 102deg,
-			#008000 153deg,
-			#0000ff 204deg,
-			#4b0082 255deg,
-			#ee82ee 306deg,
-			#ff0000 360deg
-		);
-		background-clip: padding-box;
-		color: #ffffff;
-		cursor: pointer;
-		overflow: hidden;
-		text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
-	}
-
-	.custom-picker-btn svg {
-		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.85));
-	}
-
-	.custom-picker-btn input[type='color'] {
-		position: absolute;
-		inset: 0;
-		width: 100%;
-		height: 100%;
-		opacity: 0;
-		cursor: pointer;
-	}
+	
 
 	@media (max-width: 900px) {
 		.customizer-workspace {

@@ -172,5 +172,6 @@ export const SIGNAGE_BRAND_COLORS: SignColor[] = [
 	{ hex: '#FFB327', name: 'Brand Gold', textColor: '#101e14' },
 	{ hex: '#E5E5E5', name: 'Light Gray', textColor: '#101e14' },
 	{ hex: '#262626', name: 'Dark Gray', textColor: '#ffffff' },
-	{ hex: '#FFFFFF', name: 'Pure White', textColor: '#13371b' }
+	{ hex: '#FFFFFF', name: 'Pure White', textColor: '#13371b' },
+	{ hex: '#000000', name: 'Black', textColor: '#ffffff' }
 ];

@@ -88,7 +88,11 @@
 		}
 	];
 
-	let activeId = $state<string>('palette');
+	interface Props {
+		activeId?: string;
+	}
+
+	let { activeId = $bindable('palette') }: Props = $props();
 	let host = $state<HTMLElement | null>(null);
 
 	$effect(() => {

@@ -11,6 +11,7 @@
 	import QrShowcase from '$lib/components/brand/QrShowcase.svelte';
 	import BrandTypography from '$lib/components/brand/BrandTypography.svelte';
 	import DoorSignage from '$lib/components/brand/DoorSignage.svelte';
+	import BrandColorNav from '$lib/components/brand/BrandColorNav.svelte';
 	import PhotoLogos from '$lib/components/brand/PhotoLogos.svelte';
 	import WallpaperStudio from '$lib/components/brand/WallpaperStudio.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
@@ -18,6 +19,45 @@
 	let copiedVal = $state<string | null>(null);
 	let namingStage = $state<StageTheme>('checker');
 	let sloganStage = $state<StageTheme>('checker');
+	// Active section and color states for universal right-side color palette
+	let activeSection = $state<string>('palette');
+	let activeLogoColor = $state<string>('#13371B');
+	let activeLogoElementName = $state<string>('');
+	let activeButterflyColor = $state<string>('#FFB327');
+	let activeAnimalColor = $state<string | null>(null);
+	let activeSignColor = $state<string | null>(null);
+
+	let activeColorForNav = $derived.by(() => {
+		switch (activeSection) {
+			case 'logo-studio':
+				return activeLogoColor;
+			case 'slogan':
+				return activeButterflyColor;
+			case 'animals':
+				return activeAnimalColor ?? (themeStore.current === 'dark' ? '#93C84A' : '#13371B');
+			case 'door-signs':
+				return activeSignColor ?? (themeStore.current === 'dark' ? '#93C84A' : '#13371B');
+			default:
+				return themeStore.current === 'dark' ? '#93C84A' : '#13371B';
+		}
+	});
+
+	function handleNavColorChange(hex: string) {
+		switch (activeSection) {
+			case 'logo-studio':
+				activeLogoColor = hex;
+				break;
+			case 'slogan':
+				activeButterflyColor = hex;
+				break;
+			case 'animals':
+				activeAnimalColor = hex;
+				break;
+			case 'door-signs':
+				activeSignColor = hex;
+				break;
+		}
+	}
 
 	const colors = [
 		{
@@ -210,7 +250,7 @@
 		<!-- MAIN 2-COLUMN LAYOUT WITH STICKY TOC -->
 		<div class="brandbook-layout">
 			<!-- STICKY SIDE NAVIGATION (TOC) -->
-			<BrandToc />
+			<BrandToc bind:activeId={activeSection} />
 
 			<!-- SECTIONS STACK -->
 			<div class="brandbook-sections">
@@ -375,7 +415,14 @@
 						</div>
 					</div>
 
-					<LogoCustomizer brandColors={colors} />
+					<LogoCustomizer
+						brandColors={colors}
+						externalColor={activeLogoColor}
+						onElementChange={(name, col) => {
+							activeLogoElementName = name;
+							activeLogoColor = col;
+						}}
+					/>
 				</section>
 
 				<!-- SECTION 03: UKRAINIAN NAMING & SUB-BRANDS -->
@@ -533,7 +580,7 @@
 						<StageBgSwitcher bind:current={sloganStage} />
 					</div>
 
-					<BrandSlogan stageTheme={sloganStage} />
+					<BrandSlogan stageTheme={sloganStage} bind:butterflyColor={activeButterflyColor} />
 				</section>
 
 				<!-- SECTION 05: ANIMAL ICONOGRAPHY (24) -->
@@ -549,7 +596,7 @@
 						</div>
 					</div>
 
-					<AnimalGallery />
+					<AnimalGallery bind:customSelectedColor={activeAnimalColor} />
 				</section>
 
 				<!-- SECTION 06: QR SIGNAGE & SERVICING -->
@@ -595,7 +642,7 @@
 						</div>
 					</div>
 
-					<DoorSignage />
+					<DoorSignage bind:customSelectedColor={activeSignColor} />
 				</section>
 
 				<!-- SECTION 09: PHOTO EMBLEMS -->
@@ -630,6 +677,14 @@
 					<WallpaperStudio brandColors={colors} />
 				</section>
 			</div>
+			<!-- STICKY RIGHT UNIVERSAL COLOR NAVIGATION -->
+			<BrandColorNav
+				activeSection={activeSection}
+				selectedColor={activeColorForNav}
+				onColorChange={handleNavColorChange}
+				onSectionActive={(sec) => (activeSection = sec)}
+				activeTargetName={activeSection === 'logo-studio' ? activeLogoElementName : ''}
+			/>
 		</div>
 	</div>
 </main>
@@ -651,7 +706,7 @@
 	}
 
 	.brandbook-container {
-		max-width: 1180px;
+		max-width: 1280px;
 		margin: 0 auto;
 		display: flex;
 		flex-direction: column;
@@ -663,7 +718,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1.5rem;
-		padding-left: calc(64px + 2rem);
+		padding: 0 calc(64px + 1.5rem);
 		transition: padding 0.2s ease;
 	}
 
@@ -775,11 +830,11 @@
 		line-height: 1.6;
 	}
 
-	/* 2-COLUMN BRANDBOOK LAYOUT */
+	/* 3-COLUMN BRANDBOOK LAYOUT */
 	.brandbook-layout {
 		display: grid;
-		grid-template-columns: 64px minmax(0, 1fr);
-		gap: 2rem;
+		grid-template-columns: 64px minmax(0, 1fr) 64px;
+		gap: 1.5rem;
 		align-items: start;
 		min-width: 0;
 	}
@@ -1126,7 +1181,7 @@
 		}
 
 		.brandbook-header {
-			padding-left: 0;
+			padding: 0;
 		}
 
 		.brandbook-layout {
