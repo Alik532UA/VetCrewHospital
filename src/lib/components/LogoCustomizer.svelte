@@ -13,17 +13,12 @@
 	}
 
 	interface Props {
-		brandColors: ColorOption[];
+		brandColors?: ColorOption[];
 		externalColor?: string;
 		onElementChange?: (name: string, color: string) => void;
 	}
 
-	let {
-		brandColors,
-		externalColor,
-		onElementChange
-	}: Props = $props();
-	const baseId = $props.id();
+	let { brandColors: _brandColors = [], externalColor, onElementChange }: Props = $props();
 
 	type LogoVariant = 'hospital' | 'vetcrew';
 	type BgShape = 'circle' | 'solid' | 'transparent';
@@ -399,11 +394,6 @@
 		} finally {
 			isExportingPng = false;
 		}
-	}
-
-	function isCustomColor(hex: string): boolean {
-		const norm = hex.toLowerCase();
-		return !brandColors.some((c) => c.hex.toLowerCase() === norm) && norm !== '#ffffff';
 	}
 </script>
 
@@ -813,8 +803,7 @@
 					</button>
 				{/if}
 			</div>
-
-			</div>
+		</div>
 	</div>
 </div>
 
@@ -1236,8 +1225,6 @@
 		gap: 0.85rem;
 		padding-top: 0.5rem;
 	}
-
-	
 
 	@media (max-width: 900px) {
 		.customizer-workspace {

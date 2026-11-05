@@ -11,7 +11,6 @@
 		COMPOSITE_PLAQUES,
 		TEXT_PLAQUES,
 		ICON_PLAQUES,
-		SIGNAGE_BRAND_COLORS as BRAND_COLORS,
 		type SignFormat,
 		type SignItem
 	} from '$lib/data/doorSignage';
@@ -29,25 +28,21 @@
 	let stageTheme = $state<StageTheme>('checker');
 	let isDownloading = $state<string | null>(null);
 
-
-
-
 	// Navigation Arrow direction state (0 to 360 degrees)
-	export const ARROW_DIRECTIONS: { deg: number; labelUk: string; labelEn: string; icon: string }[] = [
-		{ deg: 0, labelUk: 'Праворуч', labelEn: 'Right', icon: '→' },
-		{ deg: 45, labelUk: 'Вниз-праворуч', labelEn: 'Down-Right', icon: '↘' },
-		{ deg: 90, labelUk: 'Вниз', labelEn: 'Down', icon: '↓' },
-		{ deg: 135, labelUk: 'Вниз-ліворуч', labelEn: 'Down-Left', icon: '↙' },
-		{ deg: 180, labelUk: 'Ліворуч', labelEn: 'Left', icon: '←' },
-		{ deg: 225, labelUk: 'Вгору-ліворуч', labelEn: 'Up-Left', icon: '↖' },
-		{ deg: 270, labelUk: 'Вгору', labelEn: 'Up', icon: '↑' },
-		{ deg: 315, labelUk: 'Вгору-праворуч', labelEn: 'Up-Right', icon: '↗' }
-	];
+	export const ARROW_DIRECTIONS: { deg: number; labelUk: string; labelEn: string; icon: string }[] =
+		[
+			{ deg: 0, labelUk: 'Праворуч', labelEn: 'Right', icon: '→' },
+			{ deg: 45, labelUk: 'Вниз-праворуч', labelEn: 'Down-Right', icon: '↘' },
+			{ deg: 90, labelUk: 'Вниз', labelEn: 'Down', icon: '↓' },
+			{ deg: 135, labelUk: 'Вниз-ліворуч', labelEn: 'Down-Left', icon: '↙' },
+			{ deg: 180, labelUk: 'Ліворуч', labelEn: 'Left', icon: '←' },
+			{ deg: 225, labelUk: 'Вгору-ліворуч', labelEn: 'Up-Left', icon: '↖' },
+			{ deg: 270, labelUk: 'Вгору', labelEn: 'Up', icon: '↑' },
+			{ deg: 315, labelUk: 'Вгору-праворуч', labelEn: 'Up-Right', icon: '↗' }
+		];
 
 	let arrowAngle = $state<number>(0);
-	let currentArrowDir = $derived(
-		ARROW_DIRECTIONS.find((d) => d.deg === arrowAngle)
-	);
+	let currentArrowDir = $derived(ARROW_DIRECTIONS.find((d) => d.deg === arrowAngle));
 
 	// PNG Resolution options (480p, 720p, 1080p, 1440p, 2160p)
 	export interface PngResolution {
@@ -59,11 +54,41 @@
 	}
 
 	export const PNG_RESOLUTIONS: PngResolution[] = [
-		{ id: '480p', label: '480p', px: 480, descriptionUk: 'Компактний (480 px)', descriptionEn: 'Compact (480 px)' },
-		{ id: '720p', label: '720p', px: 720, descriptionUk: 'HD (720 px)', descriptionEn: 'HD (720 px)' },
-		{ id: '1080p', label: '1080p', px: 1080, descriptionUk: 'Full HD (1080 px)', descriptionEn: 'Full HD (1080 px)' },
-		{ id: '1440p', label: '1440p', px: 1440, descriptionUk: '2K QHD (1440 px)', descriptionEn: '2K QHD (1440 px)' },
-		{ id: '2160p', label: '2160p', px: 2160, descriptionUk: '4K UHD (2160 px)', descriptionEn: '4K UHD (2160 px)' }
+		{
+			id: '480p',
+			label: '480p',
+			px: 480,
+			descriptionUk: 'Компактний (480 px)',
+			descriptionEn: 'Compact (480 px)'
+		},
+		{
+			id: '720p',
+			label: '720p',
+			px: 720,
+			descriptionUk: 'HD (720 px)',
+			descriptionEn: 'HD (720 px)'
+		},
+		{
+			id: '1080p',
+			label: '1080p',
+			px: 1080,
+			descriptionUk: 'Full HD (1080 px)',
+			descriptionEn: 'Full HD (1080 px)'
+		},
+		{
+			id: '1440p',
+			label: '1440p',
+			px: 1440,
+			descriptionUk: '2K QHD (1440 px)',
+			descriptionEn: '2K QHD (1440 px)'
+		},
+		{
+			id: '2160p',
+			label: '2160p',
+			px: 2160,
+			descriptionUk: '4K UHD (2160 px)',
+			descriptionEn: '4K UHD (2160 px)'
+		}
 	];
 
 	let currentResId = $state<string>('1080p');
@@ -95,7 +120,6 @@
 			window.removeEventListener('keydown', onKeyDown);
 		};
 	});
-
 
 	let currentList = $derived(
 		currentFormat === 'composite'
@@ -193,10 +217,7 @@
 				.replace(/stroke="(?!(?:none))#[0-9a-fA-F]{6}"/gi, `stroke="${signColor}"`);
 
 			if (arrowAngle !== 0) {
-				svgText = svgText.replace(
-					/<path\s+/i,
-					`<path transform="rotate(${arrowAngle} 12 12)" `
-				);
+				svgText = svgText.replace(/<path\s+/i, `<path transform="rotate(${arrowAngle} 12 12)" `);
 			}
 
 			const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
@@ -204,7 +225,9 @@
 			const link = document.createElement('a');
 			link.href = downloadUrl;
 			const dirLabel = currentArrowDir
-				? (langStore.current === 'uk' ? currentArrowDir.labelUk : currentArrowDir.labelEn)
+				? langStore.current === 'uk'
+					? currentArrowDir.labelUk
+					: currentArrowDir.labelEn
 				: `${arrowAngle}°`;
 			link.download = `${langStore.current === 'uk' ? 'Навігаційна стрілка' : 'Directional Arrow'} (${dirLabel}, ${signColor}).svg`;
 			document.body.appendChild(link);
@@ -223,7 +246,9 @@
 		try {
 			const url = `${base}/brand/signage/arrow-right.svg`;
 			const dirLabel = currentArrowDir
-				? (langStore.current === 'uk' ? currentArrowDir.labelUk : currentArrowDir.labelEn)
+				? langStore.current === 'uk'
+					? currentArrowDir.labelUk
+					: currentArrowDir.labelEn
 				: `${arrowAngle}°`;
 			const filename = `${langStore.current === 'uk' ? 'Навігаційна стрілка' : 'Directional Arrow'} (${dirLabel}, ${signColor}, ${res.label}).png`;
 			await downloadUrlAsPng(url, filename, res.px, (svgText) => {
@@ -233,10 +258,7 @@
 					.replace(/stroke:\s*#[0-9a-fA-F]{6}/gi, `stroke: ${signColor}`)
 					.replace(/stroke="(?!(?:none))#[0-9a-fA-F]{6}"/gi, `stroke="${signColor}"`);
 				if (arrowAngle !== 0) {
-					svgText = svgText.replace(
-						/<path\s+/i,
-						`<path transform="rotate(${arrowAngle} 12 12)" `
-					);
+					svgText = svgText.replace(/<path\s+/i, `<path transform="rotate(${arrowAngle} 12 12)" `);
 				}
 				return svgText;
 			});
@@ -247,13 +269,10 @@
 			openPngMenuId = null;
 		}
 	}
-
 </script>
 
 <div class="door-signage-widget">
 	<!-- UNIFIED CONTROL TOOLBAR -->
-	
-
 
 	<div class="unified-controls-panel">
 		<!-- Unified Controls: Format Selector & Stage Background Switcher -->
@@ -337,8 +356,12 @@
 				</button>
 			</div>
 
-			<div class="res-switcher-wrap" title={langStore.current === 'uk' ? 'Роздільна здатність PNG' : 'PNG Resolution'}>
-				<span class="res-switcher-title">{langStore.current === 'uk' ? 'PNG якість:' : 'PNG:'}</span>
+			<div
+				class="res-switcher-wrap"
+				title={langStore.current === 'uk' ? 'Роздільна здатність PNG' : 'PNG Resolution'}
+			>
+				<span class="res-switcher-title">{langStore.current === 'uk' ? 'PNG якість:' : 'PNG:'}</span
+				>
 				<div class="res-pills">
 					{#each PNG_RESOLUTIONS as res (res.id)}
 						<button
@@ -346,7 +369,9 @@
 							class="res-pill-btn"
 							class:is-active={currentResId === res.id}
 							onclick={() => (currentResId = res.id)}
-							title="{res.label} ({langStore.current === 'uk' ? res.descriptionUk : res.descriptionEn})"
+							title="{res.label} ({langStore.current === 'uk'
+								? res.descriptionUk
+								: res.descriptionEn})"
 						>
 							{res.label}
 						</button>
@@ -478,7 +503,11 @@
 								}}
 							>
 								<div class="png-menu-header">
-									<span>{langStore.current === 'uk' ? 'Роздільна здатність PNG:' : 'PNG Resolution:'}</span>
+									<span
+										>{langStore.current === 'uk'
+											? 'Роздільна здатність PNG:'
+											: 'PNG Resolution:'}</span
+									>
 								</div>
 								{#each PNG_RESOLUTIONS as res (res.id)}
 									<button
@@ -550,13 +579,22 @@
 								title="{langStore.current === 'uk' ? d.labelUk : d.labelEn} ({d.deg}°)"
 							>
 								<span class="dir-arrow-symbol">{d.icon}</span>
-								<span class="dir-pill-text">{langStore.current === 'uk' ? d.labelUk : d.labelEn}</span>
+								<span class="dir-pill-text"
+									>{langStore.current === 'uk' ? d.labelUk : d.labelEn}</span
+								>
 							</button>
 						{/each}
 					</div>
 
-					<div class="custom-angle-wrap" title={langStore.current === 'uk' ? 'Власний кут обертання (0° - 360°)' : 'Custom rotation angle (0° - 360°)'}>
-						<label for="arrow-angle-input" class="angle-label">{langStore.current === 'uk' ? 'Кут:' : 'Angle:'}</label>
+					<div
+						class="custom-angle-wrap"
+						title={langStore.current === 'uk'
+							? 'Власний кут обертання (0° - 360°)'
+							: 'Custom rotation angle (0° - 360°)'}
+					>
+						<label for="arrow-angle-input" class="angle-label"
+							>{langStore.current === 'uk' ? 'Кут:' : 'Angle:'}</label
+						>
 						<div class="angle-input-box">
 							<input
 								id="arrow-angle-input"
@@ -570,7 +608,9 @@
 									arrowAngle = isNaN(n) ? 0 : ((n % 360) + 360) % 360;
 								}}
 								class="angle-num-input"
-								aria-label={langStore.current === 'uk' ? 'Кут повороту в градусах' : 'Angle in degrees'}
+								aria-label={langStore.current === 'uk'
+									? 'Кут повороту в градусах'
+									: 'Angle in degrees'}
 							/>
 							<span class="deg-sym">°</span>
 						</div>
@@ -689,7 +729,11 @@
 								}}
 							>
 								<div class="png-menu-header">
-									<span>{langStore.current === 'uk' ? 'Роздільна здатність PNG:' : 'PNG Resolution:'}</span>
+									<span
+										>{langStore.current === 'uk'
+											? 'Роздільна здатність PNG:'
+											: 'PNG Resolution:'}</span
+									>
 								</div>
 								{#each PNG_RESOLUTIONS as res (res.id)}
 									<button
@@ -873,8 +917,6 @@
 		gap: 0.45rem;
 		flex-wrap: wrap;
 	}
-
-	
 
 	/* SIGNS GRID */
 	.signage-grid {
@@ -1554,8 +1596,4 @@
 			width: 100%;
 		}
 	}
-
-
-	
-
 </style>

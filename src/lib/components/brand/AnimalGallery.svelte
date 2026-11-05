@@ -6,7 +6,7 @@
 	import { logService } from '$lib/services/logService.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 
-	import { ANIMALS, ANIMAL_BRAND_COLORS as brandColors, type AnimalItem } from '$lib/data/animals';
+	import { ANIMALS, type AnimalItem } from '$lib/data/animals';
 
 	interface Props {
 		customSelectedColor?: string | null;
@@ -338,8 +338,6 @@
 		gap: 0.5rem;
 		flex-wrap: wrap;
 	}
-
-	
 
 	/* ROW 2: TOOLBAR */
 	.gallery-toolbar {

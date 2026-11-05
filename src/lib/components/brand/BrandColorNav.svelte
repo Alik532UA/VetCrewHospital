@@ -101,9 +101,7 @@
 
 	// Primary brand palette (excluding monochrome White & Black)
 	let primaryColors = $derived(
-		colors.filter(
-			(c) => c.hex.toUpperCase() !== '#FFFFFF' && c.hex.toUpperCase() !== '#000000'
-		)
+		colors.filter((c) => c.hex.toUpperCase() !== '#FFFFFF' && c.hex.toUpperCase() !== '#000000')
 	);
 
 	// Monochromatic White & Black swatches placed at the end, separated by divider line

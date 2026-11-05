@@ -679,7 +679,7 @@
 			</div>
 			<!-- STICKY RIGHT UNIVERSAL COLOR NAVIGATION -->
 			<BrandColorNav
-				activeSection={activeSection}
+				{activeSection}
 				selectedColor={activeColorForNav}
 				onColorChange={handleNavColorChange}
 				onSectionActive={(sec) => (activeSection = sec)}

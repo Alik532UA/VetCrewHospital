@@ -1,12 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
-import {
-	COMPOSITE_PLAQUES,
-	TEXT_PLAQUES,
-	ICON_PLAQUES,
-	SIGNAGE_BRAND_COLORS
-} from './doorSignage';
+import { COMPOSITE_PLAQUES, TEXT_PLAQUES, ICON_PLAQUES, SIGNAGE_BRAND_COLORS } from './doorSignage';
 
 describe('Door Signage & Navigation Elements Integrity', () => {
 	it('defines consistent department plaques across formats', () => {
