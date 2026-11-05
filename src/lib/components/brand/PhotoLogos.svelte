@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
+	import { downloadUrlAsPng } from '$lib/utils/exportPng';
+	import { logService } from '$lib/services/logService.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
+	import PngDownloadBtn from '$lib/components/brand/PngDownloadBtn.svelte';
+	import type { PngResolution } from '$lib/data/pngResolutions';
 
 	interface EmblemItem {
 		id: string;
@@ -48,6 +52,22 @@
 	];
 
 	let stageTheme = $state<StageTheme>('checker');
+	let isDownloading = $state<string | null>(null);
+
+	async function downloadEmblemPng(item: EmblemItem, res: PngResolution) {
+		isDownloading = `${item.id}-png`;
+		try {
+			await downloadUrlAsPng(
+				`${base}/brand/emblems/${item.svgFile}`,
+				`vet-crew-${item.num}-${item.nameUk}-${res.label}.png`,
+				res.px
+			);
+		} catch (err) {
+			logService.error('brand', 'Emblem PNG download error', err);
+		} finally {
+			isDownloading = null;
+		}
+	}
 </script>
 
 <div class="photo-logos-widget">
@@ -104,28 +124,11 @@
 							<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
 						</a>
 
-						<a
-							href="{base}/brand/emblems/{item.pngFile}"
-							download="vet-crew-{item.num}-{item.nameUk}.png"
-							class="download-btn png-btn"
-							title={langStore.current === 'uk'
-								? `Завантажити PNG (2000 px) — ${item.num} ${item.nameUk}`
-								: `Download PNG (2000 px) — ${item.num} ${item.nameEn}`}
-						>
-							<svg
-								width="13"
-								height="13"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-							>
-								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-								<polyline points="7 10 12 15 17 10"></polyline>
-								<line x1="12" y1="15" x2="12" y2="3"></line>
-							</svg>
-							<span>PNG (2000 px)</span>
-						</a>
+						<PngDownloadBtn
+							onselect={(res) => downloadEmblemPng(item, res)}
+							isDownloading={isDownloading === `${item.id}-png`}
+							btnClass="download-btn"
+						/>
 					</div>
 				</div>
 			</div>

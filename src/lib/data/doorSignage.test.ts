@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import { COMPOSITE_PLAQUES, TEXT_PLAQUES, ICON_PLAQUES, SIGNAGE_BRAND_COLORS } from './doorSignage';
+import { PNG_RESOLUTIONS } from './pngResolutions';
 
 describe('Door Signage & Navigation Elements Integrity', () => {
 	it('defines consistent department plaques across formats', () => {
@@ -73,13 +74,9 @@ describe('Door Signage & Navigation Elements Integrity', () => {
 		expect(code).toContain('sign-card-footer');
 		expect(code).toContain('arrow-actions');
 
-		// PNG resolution dropdown: 480p, 720p, 1080p, 1440p, 2160p
+		// PNG resolution dropdown: 480p, 720p, 1080p, 1440p, 2160p via PNG_RESOLUTIONS
 		expect(code).toContain('PNG_RESOLUTIONS');
-		expect(code).toContain("'480p'");
-		expect(code).toContain("'720p'");
-		expect(code).toContain("'1080p'");
-		expect(code).toContain("'1440p'");
-		expect(code).toContain("'2160p'");
+		expect(code).toContain('currentResId');
 		expect(code).toContain('png-menu-dropdown');
 	});
 
@@ -124,5 +121,65 @@ describe('Door Signage & Navigation Elements Integrity', () => {
 
 		// Section 01 brand palette: Black 000000 must NOT be in the official colors array
 		expect(code).not.toMatch(/name:\s*'Black',\s*textColor:\s*'#ffffff',\s*rgb:\s*'0, 0, 0'/);
+	});
+
+	it('verifies PngDownloadBtn component and unified PNG resolution dropdown across brandbook', () => {
+		expect(PNG_RESOLUTIONS.map((r) => r.id)).toEqual(['480p', '720p', '1080p', '1440p', '2160p']);
+
+		const btnPath = path.resolve('src/lib/components/brand/PngDownloadBtn.svelte');
+		expect(fs.existsSync(btnPath)).toBe(true);
+
+		const btnCode = fs.readFileSync(btnPath, 'utf8');
+		// Opaque solid background (not transparent)
+		expect(btnCode).toContain('background: #ffffff');
+		expect(btnCode).toContain('background: #18221b');
+		// Anchor arrow seamlessly connecting to trigger button
+		expect(btnCode).toContain('.png-menu-dropdown::before');
+		expect(btnCode).toContain('.png-menu-dropdown::after');
+		expect(btnCode).toContain('border-top-color');
+
+		// DoorSignage dropdown is solid and connected
+		const doorCode = fs.readFileSync(
+			path.resolve('src/lib/components/brand/DoorSignage.svelte'),
+			'utf8'
+		);
+		expect(doorCode).toContain('background: #ffffff');
+		expect(doorCode).toContain('background: #18221b');
+		expect(doorCode).toContain('.png-menu-dropdown::before');
+		expect(doorCode).toContain('.png-menu-dropdown::after');
+
+		// Verifies other brandbook sections integrate PngDownloadBtn
+		const logoCode = fs.readFileSync(
+			path.resolve('src/lib/components/LogoCustomizer.svelte'),
+			'utf8'
+		);
+		expect(logoCode).toContain('PngDownloadBtn');
+
+		const sloganCode = fs.readFileSync(
+			path.resolve('src/lib/components/brand/BrandSlogan.svelte'),
+			'utf8'
+		);
+		expect(sloganCode).toContain('PngDownloadBtn');
+
+		const animalCode = fs.readFileSync(
+			path.resolve('src/lib/components/brand/AnimalGallery.svelte'),
+			'utf8'
+		);
+		expect(animalCode).toContain('PngDownloadBtn');
+
+		const qrCode = fs.readFileSync(
+			path.resolve('src/lib/components/brand/QrShowcase.svelte'),
+			'utf8'
+		);
+		expect(qrCode).toContain('PngDownloadBtn');
+
+		const photoCode = fs.readFileSync(
+			path.resolve('src/lib/components/brand/PhotoLogos.svelte'),
+			'utf8'
+		);
+		expect(photoCode).toContain('PngDownloadBtn');
+
+		const pageCode = fs.readFileSync(path.resolve('src/routes/brandbook/+page.svelte'), 'utf8');
+		expect(pageCode).toContain('PngDownloadBtn');
 	});
 });

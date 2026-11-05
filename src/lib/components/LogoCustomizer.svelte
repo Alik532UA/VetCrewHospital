@@ -5,6 +5,8 @@
 	import vetcrewLogoPaths from '$lib/assets/vetcrew-logo-paths.json';
 	import { logService } from '$lib/services/logService.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
+	import PngDownloadBtn from '$lib/components/brand/PngDownloadBtn.svelte';
+	import { DEFAULT_PNG_RESOLUTION, type PngResolution } from '$lib/data/pngResolutions';
 
 	interface ColorOption {
 		hex: string;
@@ -344,12 +346,12 @@
 
 	let isExportingPng = $state(false);
 
-	async function downloadPng() {
+	async function downloadPng(res: PngResolution = DEFAULT_PNG_RESOLUTION) {
 		if (!browser) return;
 		isExportingPng = true;
 
 		try {
-			const size = 2000; // High resolution 2000px
+			const size = res.px;
 			const canvas = document.createElement('canvas');
 			canvas.width = size;
 			canvas.height = size;
@@ -383,7 +385,7 @@
 				const prefix = activeVariant === 'hospital' ? 'VetCrewHospital' : 'VetCrew';
 				const suffix =
 					bgShape === 'circle' ? 'badge' : bgShape === 'solid' ? 'solid' : 'transparent';
-				link.download = `${prefix}-${suffix}-2000px.png`;
+				link.download = `${prefix}-${suffix}-${res.label}.png`;
 				document.body.appendChild(link);
 				link.click();
 				document.body.removeChild(link);
@@ -609,35 +611,11 @@
 					<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
 				</button>
 
-				<button
-					type="button"
-					class="action-dl-btn png-btn"
-					onclick={downloadPng}
-					disabled={isExportingPng}
-					title={langStore.current === 'uk'
-						? 'Завантажити растровий PNG (2000 px)'
-						: 'Download PNG (2000 px)'}
-				>
-					<svg
-						width="13"
-						height="13"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-						<polyline points="7 10 12 15 17 10"></polyline>
-						<line x1="12" y1="15" x2="12" y2="3"></line>
-					</svg>
-					<span
-						>{isExportingPng
-							? '...'
-							: langStore.current === 'uk'
-								? 'PNG (2000 px)'
-								: 'PNG (2000 px)'}</span
-					>
-				</button>
+				<PngDownloadBtn
+					onselect={downloadPng}
+					isDownloading={isExportingPng}
+					btnClass="action-dl-btn"
+				/>
 			</div>
 		</div>
 

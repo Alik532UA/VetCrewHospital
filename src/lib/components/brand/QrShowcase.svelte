@@ -4,6 +4,8 @@
 	import { downloadUrlAsPng } from '$lib/utils/exportPng';
 	import { logService } from '$lib/services/logService.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
+	import PngDownloadBtn from '$lib/components/brand/PngDownloadBtn.svelte';
+	import type { PngResolution } from '$lib/data/pngResolutions';
 
 	// Global format toggle: with background container vs transparent without background
 	let withBg = $state(true);
@@ -31,13 +33,13 @@
 
 	let isExporting = $state<string | null>(null);
 
-	async function exportQrPng(relativeFile: string, baseFilename: string) {
+	async function exportQrPng(relativeFile: string, baseFilename: string, res: PngResolution) {
 		isExporting = relativeFile;
 		try {
 			await downloadUrlAsPng(
 				`${base}/brand/qr/${relativeFile}`,
-				`${baseFilename}-2000px.png`,
-				2000
+				`${baseFilename}-${res.label}.png`,
+				res.px
 			);
 		} catch (err) {
 			logService.error('brand', 'PNG export failed', err);
@@ -156,26 +158,11 @@
 					</svg>
 					<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
 				</a>
-				<button
-					type="button"
-					class="download-qr-btn png-btn"
-					onclick={() => exportQrPng('background.svg', 'vet-crew-qr-plaque-background')}
-					disabled={isExporting === 'background.svg'}
-				>
-					<svg
-						width="13"
-						height="13"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-						<polyline points="7 10 12 15 17 10"></polyline>
-						<line x1="12" y1="15" x2="12" y2="3"></line>
-					</svg>
-					<span>{isExporting === 'background.svg' ? '...' : 'PNG (2000 px)'}</span>
-				</button>
+				<PngDownloadBtn
+					onselect={(res) => exportQrPng('background.svg', 'vet-crew-qr-plaque-background', res)}
+					isDownloading={isExporting === 'background.svg'}
+					btnClass="download-qr-btn"
+				/>
 			</div>
 		</div>
 
@@ -212,26 +199,11 @@
 					</svg>
 					<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
 				</a>
-				<button
-					type="button"
-					class="download-qr-btn png-btn"
-					onclick={() => exportQrPng(wifiFile, `vet-crew-wifi${withBg ? '' : '-nobg'}`)}
-					disabled={isExporting === wifiFile}
-				>
-					<svg
-						width="13"
-						height="13"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-						<polyline points="7 10 12 15 17 10"></polyline>
-						<line x1="12" y1="15" x2="12" y2="3"></line>
-					</svg>
-					<span>{isExporting === wifiFile ? '...' : 'PNG (2000 px)'}</span>
-				</button>
+				<PngDownloadBtn
+					onselect={(res) => exportQrPng(wifiFile, `vet-crew-wifi${withBg ? '' : '-nobg'}`, res)}
+					isDownloading={isExporting === wifiFile}
+					btnClass="download-qr-btn"
+				/>
 			</div>
 		</div>
 
@@ -268,26 +240,11 @@
 					</svg>
 					<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
 				</a>
-				<button
-					type="button"
-					class="download-qr-btn png-btn"
-					onclick={() => exportQrPng(igFile, `vet-crew-instagram${withBg ? '' : '-nobg'}`)}
-					disabled={isExporting === igFile}
-				>
-					<svg
-						width="13"
-						height="13"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-						<polyline points="7 10 12 15 17 10"></polyline>
-						<line x1="12" y1="15" x2="12" y2="3"></line>
-					</svg>
-					<span>{isExporting === igFile ? '...' : 'PNG (2000 px)'}</span>
-				</button>
+				<PngDownloadBtn
+					onselect={(res) => exportQrPng(igFile, `vet-crew-instagram${withBg ? '' : '-nobg'}`, res)}
+					isDownloading={isExporting === igFile}
+					btnClass="download-qr-btn"
+				/>
 			</div>
 		</div>
 
@@ -351,27 +308,12 @@
 					</svg>
 					<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
 				</a>
-				<button
-					type="button"
-					class="download-qr-btn png-btn"
-					onclick={() =>
-						exportQrPng(activeReviewFile, `vet-crew-${reviewVariant}${withBg ? '' : '-nobg'}`)}
-					disabled={isExporting === activeReviewFile}
-				>
-					<svg
-						width="13"
-						height="13"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-						<polyline points="7 10 12 15 17 10"></polyline>
-						<line x1="12" y1="15" x2="12" y2="3"></line>
-					</svg>
-					<span>{isExporting === activeReviewFile ? '...' : 'PNG (2000 px)'}</span>
-				</button>
+				<PngDownloadBtn
+					onselect={(res) =>
+						exportQrPng(activeReviewFile, `vet-crew-${reviewVariant}${withBg ? '' : '-nobg'}`, res)}
+					isDownloading={isExporting === activeReviewFile}
+					btnClass="download-qr-btn"
+				/>
 			</div>
 		</div>
 
@@ -439,30 +381,16 @@
 					</svg>
 					<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
 				</a>
-				<button
-					type="button"
-					class="download-qr-btn png-btn"
-					onclick={() =>
+				<PngDownloadBtn
+					onselect={(res) =>
 						exportQrPng(
 							activeWebsiteFile,
-							`vet-crew-website-${websiteVariant === 'v2' ? 'valentyna' : 'alik'}${withBg ? '' : '-nobg'}`
+							`vet-crew-website-${websiteVariant === 'v2' ? 'valentyna' : 'alik'}${withBg ? '' : '-nobg'}`,
+							res
 						)}
-					disabled={isExporting === activeWebsiteFile}
-				>
-					<svg
-						width="13"
-						height="13"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-						<polyline points="7 10 12 15 17 10"></polyline>
-						<line x1="12" y1="15" x2="12" y2="3"></line>
-					</svg>
-					<span>{isExporting === activeWebsiteFile ? '...' : 'PNG (2000 px)'}</span>
-				</button>
+					isDownloading={isExporting === activeWebsiteFile}
+					btnClass="download-qr-btn"
+				/>
 			</div>
 		</div>
 	</div>

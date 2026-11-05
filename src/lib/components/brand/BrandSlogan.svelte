@@ -3,6 +3,8 @@
 	import { langStore } from '$lib/lang.svelte';
 	import { downloadSvgAsPng, downloadUrlAsPng } from '$lib/utils/exportPng';
 	import type { StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
+	import PngDownloadBtn from '$lib/components/brand/PngDownloadBtn.svelte';
+	import type { PngResolution } from '$lib/data/pngResolutions';
 
 	interface Props {
 		stageTheme?: StageTheme;
@@ -31,13 +33,18 @@
 		URL.revokeObjectURL(url);
 	}
 
-	function downloadButterflyPng() {
+	function downloadButterflyPng(res: PngResolution) {
+		const h = Math.round((res.px * 300) / 260);
 		const svgCode = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 300" width="2000" height="2308">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 300" width="${res.px}" height="${h}">
   <title>Фірмовий метелик Vet Crew (${butterflyColor})</title>
   <path fill="${butterflyColor}" d="${BUTTERFLY_PATH_D}"/>
 </svg>`;
-		downloadSvgAsPng(svgCode, `vet-crew-butterfly-${butterflyColor.replace('#', '')}.png`, 2000);
+		downloadSvgAsPng(
+			svgCode,
+			`vet-crew-butterfly-${butterflyColor.replace('#', '')}-${res.label}.png`,
+			res.px
+		);
 	}
 </script>
 
@@ -93,30 +100,15 @@
 					<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
 				</a>
 
-				<button
-					type="button"
-					class="download-brand-btn"
-					onclick={() =>
+				<PngDownloadBtn
+					onselect={(res) =>
 						downloadUrlAsPng(
 							`${base}/brand/slogan/exotic-wild-special-important.svg`,
-							'vet-crew-slogan-values-2000px.png',
-							2000
+							`vet-crew-slogan-values-${res.label}.png`,
+							res.px
 						)}
-				>
-					<svg
-						width="13"
-						height="13"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-						<polyline points="7 10 12 15 17 10"></polyline>
-						<line x1="12" y1="15" x2="12" y2="3"></line>
-					</svg>
-					<span>{langStore.current === 'uk' ? 'PNG (2000 px)' : 'PNG (2000 px)'}</span>
-				</button>
+					btnClass="download-brand-btn"
+				/>
 			</div>
 		</div>
 	</div>
@@ -152,21 +144,7 @@
 					<span> 'SVG' </span>
 				</button>
 
-				<button type="button" class="download-brand-btn" onclick={downloadButterflyPng}>
-					<svg
-						width="13"
-						height="13"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-						<polyline points="7 10 12 15 17 10"></polyline>
-						<line x1="12" y1="15" x2="12" y2="3"></line>
-					</svg>
-					<span>{langStore.current === 'uk' ? 'PNG (2000 px)' : 'PNG (2000 px)'}</span>
-				</button>
+				<PngDownloadBtn onselect={downloadButterflyPng} btnClass="download-brand-btn" />
 			</div>
 		</div>
 	</div>

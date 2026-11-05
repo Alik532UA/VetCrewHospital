@@ -15,6 +15,7 @@
 	import PhotoLogos from '$lib/components/brand/PhotoLogos.svelte';
 	import WallpaperStudio from '$lib/components/brand/WallpaperStudio.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
+	import PngDownloadBtn from '$lib/components/brand/PngDownloadBtn.svelte';
 
 	let copiedVal = $state<string | null>(null);
 	let namingStage = $state<StageTheme>('checker');
@@ -475,30 +476,15 @@
 										</svg>
 										<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
 									</a>
-									<button
-										type="button"
-										class="download-brand-btn png-btn"
-										onclick={() =>
+									<PngDownloadBtn
+										onselect={(res) =>
 											downloadUrlAsPng(
 												`${base}/brand/naming/vet-crew-hospital-ua.svg`,
-												'vet-crew-hospital-ua-2000px.png',
-												2000
+												`vet-crew-hospital-ua-${res.label}.png`,
+												res.px
 											)}
-									>
-										<svg
-											width="13"
-											height="13"
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="2"
-										>
-											<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-											<polyline points="7 10 12 15 17 10"></polyline>
-											<line x1="12" y1="15" x2="12" y2="3"></line>
-										</svg>
-										<span>{langStore.current === 'uk' ? 'PNG (2000 px)' : 'PNG (2000 px)'}</span>
-									</button>
+										btnClass="download-brand-btn"
+									/>
 								</div>
 							</div>
 						</div>
@@ -534,30 +520,15 @@
 										</svg>
 										<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
 									</a>
-									<button
-										type="button"
-										class="download-brand-btn png-btn"
-										onclick={() =>
+									<PngDownloadBtn
+										onselect={(res) =>
 											downloadUrlAsPng(
 												`${base}/brand/subbrands/vet-crew-shop.svg`,
-												'vet-crew-shop-2000px.png',
-												2000
+												`vet-crew-shop-${res.label}.png`,
+												res.px
 											)}
-									>
-										<svg
-											width="13"
-											height="13"
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="2"
-										>
-											<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-											<polyline points="7 10 12 15 17 10"></polyline>
-											<line x1="12" y1="15" x2="12" y2="3"></line>
-										</svg>
-										<span>{langStore.current === 'uk' ? 'PNG (2000 px)' : 'PNG (2000 px)'}</span>
-									</button>
+										btnClass="download-brand-btn"
+									/>
 								</div>
 							</div>
 						</div>
