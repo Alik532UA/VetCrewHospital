@@ -141,7 +141,7 @@
 						<polyline points="7 10 12 15 17 10"></polyline>
 						<line x1="12" y1="15" x2="12" y2="3"></line>
 					</svg>
-					<span> 'SVG' </span>
+					<span>SVG</span>
 				</button>
 
 				<PngDownloadBtn onselect={downloadButterflyPng} btnClass="download-brand-btn" />
@@ -253,7 +253,7 @@
 	.slogan-actions {
 		display: flex;
 		gap: 0.75rem;
-		flex-wrap: wrap;
+		flex-wrap: nowrap;
 		align-items: center;
 	}
 

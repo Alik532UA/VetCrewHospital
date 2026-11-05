@@ -929,12 +929,13 @@
 
 	/* CARD */
 	.sign-card {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		background: var(--panel-bg);
 		border: 1px solid var(--border);
 		border-radius: 16px;
-		overflow: hidden;
+		overflow: visible;
 		transition: all 0.25s ease;
 		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
 	}
@@ -952,6 +953,8 @@
 		padding: 1rem 1.25rem;
 		border-bottom: 1px solid var(--border);
 		background: var(--bg-secondary);
+		border-top-left-radius: 15px;
+		border-top-right-radius: 15px;
 	}
 
 	.sign-num {
@@ -1383,12 +1386,13 @@
 	}
 
 	.nav-arrow-card {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		background: var(--panel-bg);
 		border: 1px solid var(--border);
 		border-radius: 16px;
-		overflow: hidden;
+		overflow: visible;
 		transition: all 0.25s ease;
 		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
 	}
@@ -1405,6 +1409,8 @@
 		gap: 1rem;
 		padding: 1.1rem 1.4rem;
 		border-bottom: 1px solid var(--border);
+		border-top-left-radius: 15px;
+		border-top-right-radius: 15px;
 		background: var(--bg-secondary);
 		flex-wrap: wrap;
 	}

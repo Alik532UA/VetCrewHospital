@@ -1036,12 +1036,13 @@
 	}
 
 	.branding-card {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		border-radius: 1.25rem;
 		background: var(--bg-secondary);
 		border: 1px solid var(--border);
-		overflow: hidden;
+		overflow: visible;
 		transition: all 0.2s ease;
 	}
 
@@ -1058,6 +1059,8 @@
 		justify-content: center;
 		padding: 1.5rem;
 		border-bottom: 1px solid var(--border);
+		border-top-left-radius: 1.2rem;
+		border-top-right-radius: 1.2rem;
 	}
 
 	.branding-svg-img {

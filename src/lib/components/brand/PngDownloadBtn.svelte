@@ -45,9 +45,7 @@
 	function toggleMenu(e: MouseEvent) {
 		e.stopPropagation();
 		if (!isOpen) {
-			window.dispatchEvent(
-				new CustomEvent(GLOBAL_PNG_EVENT, { detail: { openId: instanceId } })
-			);
+			window.dispatchEvent(new CustomEvent(GLOBAL_PNG_EVENT, { detail: { openId: instanceId } }));
 			isOpen = true;
 			autoAlign = null;
 		} else {
@@ -138,7 +136,7 @@
 			<line x1="12" y1="15" x2="12" y2="3"></line>
 		</svg>
 		<span>
-			{isDownloading ? '...' : `PNG (${currentResolution.label})`}
+			{isDownloading ? '...' : size === 'compact' ? 'PNG' : `PNG (${currentResolution.label})`}
 		</span>
 		<svg
 			width="10"
@@ -207,6 +205,9 @@
 	.png-dropdown-wrap {
 		position: relative;
 		display: inline-flex;
+	}
+
+	.png-dropdown-wrap.size--compact {
 		width: 100%;
 	}
 
@@ -219,7 +220,6 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.35rem;
-		width: 100%;
 		min-width: 0;
 		padding: 0.55rem 0.85rem;
 		border-radius: 8px;
@@ -235,6 +235,7 @@
 	}
 
 	.download-png-trigger.size--compact {
+		width: 100%;
 		padding: 0.35rem 0.45rem;
 		font-size: 0.72rem;
 		border-radius: 7px;

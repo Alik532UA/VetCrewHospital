@@ -359,13 +359,7 @@
 		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 		width: fit-content;
 		align-items: center;
-		max-height: 94vh;
-		overflow-y: auto;
-		scrollbar-width: none;
-	}
-
-	.color-nav-list::-webkit-scrollbar {
-		display: none;
+		overflow: visible;
 	}
 
 	.color-nav-head-btn {
@@ -466,7 +460,7 @@
 	/* CUSTOM PICKER BUTTON */
 	.custom-picker-btn {
 		position: relative;
-		overflow: hidden;
+		overflow: visible;
 		isolation: isolate;
 		background: transparent;
 	}
