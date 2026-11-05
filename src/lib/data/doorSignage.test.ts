@@ -166,6 +166,8 @@ describe('Door Signage & Navigation Elements Integrity', () => {
 			'utf8'
 		);
 		expect(animalCode).toContain('PngDownloadBtn');
+		expect(animalCode).toContain('size="compact"');
+		expect(animalCode).toContain('.animal-card:has(.png-dropdown-wrap.is-open)');
 
 		const qrCode = fs.readFileSync(
 			path.resolve('src/lib/components/brand/QrShowcase.svelte'),

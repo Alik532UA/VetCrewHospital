@@ -508,6 +508,7 @@
 	}
 
 	.qr-card {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		background: var(--panel-bg);
@@ -516,6 +517,11 @@
 		overflow: hidden;
 		transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+	}
+
+	.qr-card:has(.png-dropdown-wrap.is-open) {
+		overflow: visible;
+		z-index: 60;
 	}
 
 	.qr-card:hover {

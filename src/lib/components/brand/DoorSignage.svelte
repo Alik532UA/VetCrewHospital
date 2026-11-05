@@ -56,28 +56,41 @@
 		PNG_RESOLUTIONS.find((r) => r.id === currentResId) ?? DEFAULT_PNG_RESOLUTION
 	);
 	let openPngMenuId = $state<string | null>(null);
+	const GLOBAL_PNG_EVENT = 'vetcrew:close-png-menus';
 
 	function togglePngMenu(id: string, e: MouseEvent) {
 		e.stopPropagation();
-		openPngMenuId = openPngMenuId === id ? null : id;
+		if (openPngMenuId !== id) {
+			window.dispatchEvent(new CustomEvent(GLOBAL_PNG_EVENT, { detail: { openId: id } }));
+			openPngMenuId = id;
+		} else {
+			openPngMenuId = null;
+		}
 	}
 
 	$effect(() => {
 		if (!browser) return;
-		if (openPngMenuId === null) return;
 
 		const onDocClick = () => {
-			openPngMenuId = null;
+			if (openPngMenuId !== null) openPngMenuId = null;
 		};
 		const onKeyDown = (e: KeyboardEvent) => {
-			if (e.key === 'Escape') openPngMenuId = null;
+			if (e.key === 'Escape' && openPngMenuId !== null) openPngMenuId = null;
+		};
+		const onGlobalClose = (e: Event) => {
+			const custom = e as CustomEvent<{ openId: string }>;
+			if (custom.detail?.openId !== openPngMenuId && openPngMenuId !== null) {
+				openPngMenuId = null;
+			}
 		};
 
 		window.addEventListener('click', onDocClick);
 		window.addEventListener('keydown', onKeyDown);
+		window.addEventListener(GLOBAL_PNG_EVENT, onGlobalClose);
 		return () => {
 			window.removeEventListener('click', onDocClick);
 			window.removeEventListener('keydown', onKeyDown);
+			window.removeEventListener(GLOBAL_PNG_EVENT, onGlobalClose);
 		};
 	});
 
@@ -354,7 +367,11 @@
 	>
 		{#each currentList as item (item.id)}
 			{@const assetUrl = getAssetUrl(item)}
-			<div class="sign-card" class:sign-card--icon={currentFormat === 'icon'}>
+			<div
+				class="sign-card"
+				class:sign-card--icon={currentFormat === 'icon'}
+				class:is-active-dropdown={openPngMenuId === item.id}
+			>
 				<!-- Card Header -->
 				<div class="sign-card-header">
 					<span class="sign-num">#{item.num}</span>
@@ -407,7 +424,7 @@
 						</span>
 					</button>
 
-					<div class="png-dropdown-wrap">
+					<div class="png-dropdown-wrap" class:is-open={openPngMenuId === item.id}>
 						<button
 							type="button"
 							class="download-sign-btn png-btn"
@@ -633,7 +650,7 @@
 						</span>
 					</button>
 
-					<div class="png-dropdown-wrap">
+					<div class="png-dropdown-wrap" class:is-open={openPngMenuId === 'arrow'}>
 						<button
 							type="button"
 							class="download-sign-btn png-btn"
@@ -1163,9 +1180,35 @@
 	}
 
 	/* PNG DROPDOWN COMPONENT */
+	.sign-card:has(.png-dropdown-wrap.is-open),
+	.sign-card.is-active-dropdown {
+		z-index: 60;
+	}
+
 	.png-dropdown-wrap {
 		position: relative;
 		display: inline-flex;
+	}
+
+	.png-dropdown-wrap.is-open {
+		z-index: 90;
+	}
+
+	.png-dropdown-wrap.is-open .download-sign-btn {
+		background: var(--brand-emerald, #13371b);
+		border-color: var(--brand-emerald, #13371b);
+		color: #ffffff;
+		transform: none !important;
+		box-shadow: 0 2px 8px rgba(19, 55, 27, 0.25);
+	}
+
+	:global([data-theme='dark']) .png-dropdown-wrap.is-open .download-sign-btn,
+	:global(.dark) .png-dropdown-wrap.is-open .download-sign-btn {
+		background: var(--brand-gold, #ffb327);
+		border-color: var(--brand-gold, #ffb327);
+		color: #101e14;
+		transform: none !important;
+		box-shadow: 0 2px 8px rgba(255, 179, 39, 0.35);
 	}
 
 	.png-dropdown-wrap .download-sign-btn {
@@ -1183,7 +1226,7 @@
 
 	.png-menu-dropdown {
 		position: absolute;
-		bottom: calc(100% + 5px);
+		bottom: calc(100% + 2px);
 		left: 50%;
 		transform: translateX(-50%);
 		min-width: 220px;
@@ -1194,7 +1237,7 @@
 		box-shadow:
 			0 12px 32px rgba(0, 0, 0, 0.25),
 			0 2px 6px rgba(0, 0, 0, 0.08);
-		z-index: 70;
+		z-index: 100;
 		display: flex;
 		flex-direction: column;
 		gap: 0.25rem;
@@ -1210,27 +1253,34 @@
 			0 2px 6px rgba(0, 0, 0, 0.3);
 	}
 
-	/* Anchor arrow pointing directly down to parent button */
+	/* Anchor arrow pointing directly down to parent button - seamlessly connected with zero gap */
 	.png-menu-dropdown::before {
 		content: '';
 		position: absolute;
 		top: 100%;
 		left: 50%;
 		transform: translateX(-50%);
-		border: 6px solid transparent;
-		border-top-color: var(--border);
+		border-left: 8px solid transparent;
+		border-right: 8px solid transparent;
+		border-top: 8px solid rgba(19, 55, 27, 0.25);
 		pointer-events: none;
 	}
 
 	.png-menu-dropdown::after {
 		content: '';
 		position: absolute;
-		top: 100%;
+		top: calc(100% - 1px);
 		left: 50%;
 		transform: translateX(-50%);
-		border: 5px solid transparent;
-		border-top-color: #ffffff;
+		border-left: 7px solid transparent;
+		border-right: 7px solid transparent;
+		border-top: 7px solid #ffffff;
 		pointer-events: none;
+	}
+
+	:global([data-theme='dark']) .png-menu-dropdown::before,
+	:global(.dark) .png-menu-dropdown::before {
+		border-top-color: rgba(255, 255, 255, 0.25);
 	}
 
 	:global([data-theme='dark']) .png-menu-dropdown::after,

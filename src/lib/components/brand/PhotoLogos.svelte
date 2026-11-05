@@ -166,6 +166,7 @@
 	}
 
 	.emblem-card {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		background: var(--bg-secondary);
@@ -174,6 +175,11 @@
 		overflow: hidden;
 		transition: all 0.3s ease;
 		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+	}
+
+	.emblem-card:has(.png-dropdown-wrap.is-open) {
+		overflow: visible;
+		z-index: 60;
 	}
 
 	.emblem-card:hover {

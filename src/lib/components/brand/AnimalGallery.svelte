@@ -193,7 +193,7 @@
 
 	<!-- Grid of 24 Cards -->
 	<div class="animals-grid">
-		{#each filteredAnimals as a (a.id)}
+		{#each filteredAnimals as a, index (a.id)}
 			<div class="animal-card">
 				<div class="card-badge">#{a.num}</div>
 
@@ -240,7 +240,8 @@
 					<PngDownloadBtn
 						onselect={(res) => downloadColoredPng(a, res)}
 						isDownloading={isDownloading === `${a.id}-png`}
-						btnClass="download-animal-btn"
+						size="compact"
+						align={index % 6 >= 4 ? 'right' : index % 6 <= 1 ? 'left' : 'center'}
 					/>
 				</div>
 			</div>
@@ -452,6 +453,12 @@
 		box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
 	}
 
+	/* Elevate card when dropdown is open so subsequent grid items cannot overlay it */
+	.animal-card:has(.png-dropdown-wrap.is-open),
+	.animal-card:focus-within {
+		z-index: 60;
+	}
+
 	.card-badge {
 		position: absolute;
 		top: 0.5rem;
@@ -525,6 +532,7 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.25rem;
+		width: 100%;
 		padding: 0.35rem 0.45rem;
 		border-radius: 7px;
 		font-size: 0.72rem;

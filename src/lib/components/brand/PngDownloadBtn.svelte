@@ -15,6 +15,7 @@
 		wrapClass?: string;
 		title?: string;
 		align?: 'center' | 'left' | 'right';
+		size?: 'normal' | 'compact';
 	}
 
 	let {
@@ -24,10 +25,18 @@
 		btnClass = '',
 		wrapClass = '',
 		title,
-		align = 'center'
+		align = 'center',
+		size = 'normal'
 	}: Props = $props();
 
 	let isOpen = $state(false);
+	let menuEl = $state<HTMLDivElement | null>(null);
+	let autoAlign = $state<'center' | 'left' | 'right' | null>(null);
+	let effectiveAlign = $derived(autoAlign ?? align);
+
+	// Coordinate closing across all dropdown instances on the page
+	const instanceId = Math.random().toString(36).slice(2, 9);
+	const GLOBAL_PNG_EVENT = 'vetcrew:close-png-menus';
 
 	let currentResolution = $derived(
 		PNG_RESOLUTIONS.find((r) => r.id === selectedResId) ?? DEFAULT_PNG_RESOLUTION
@@ -35,7 +44,15 @@
 
 	function toggleMenu(e: MouseEvent) {
 		e.stopPropagation();
-		isOpen = !isOpen;
+		if (!isOpen) {
+			window.dispatchEvent(
+				new CustomEvent(GLOBAL_PNG_EVENT, { detail: { openId: instanceId } })
+			);
+			isOpen = true;
+			autoAlign = null;
+		} else {
+			isOpen = false;
+		}
 	}
 
 	function handleSelect(res: PngResolution) {
@@ -44,21 +61,46 @@
 		onselect(res);
 	}
 
+	// Smart edge detection to prevent clipping past window bounds
 	$effect(() => {
-		if (!browser || !isOpen) return;
+		if (isOpen && menuEl) {
+			const rect = menuEl.getBoundingClientRect();
+			const rightMargin = window.innerWidth - rect.right;
+			const leftMargin = rect.left;
+
+			if (rightMargin < 12) {
+				autoAlign = 'right';
+			} else if (leftMargin < 12) {
+				autoAlign = 'left';
+			} else {
+				autoAlign = null;
+			}
+		}
+	});
+
+	$effect(() => {
+		if (!browser) return;
 
 		const onDocClick = () => {
-			isOpen = false;
+			if (isOpen) isOpen = false;
 		};
 		const onKeyDown = (e: KeyboardEvent) => {
-			if (e.key === 'Escape') isOpen = false;
+			if (e.key === 'Escape' && isOpen) isOpen = false;
+		};
+		const onGlobalClose = (e: Event) => {
+			const custom = e as CustomEvent<{ openId: string }>;
+			if (custom.detail?.openId !== instanceId && isOpen) {
+				isOpen = false;
+			}
 		};
 
 		window.addEventListener('click', onDocClick);
 		window.addEventListener('keydown', onKeyDown);
+		window.addEventListener(GLOBAL_PNG_EVENT, onGlobalClose);
 		return () => {
 			window.removeEventListener('click', onDocClick);
 			window.removeEventListener('keydown', onKeyDown);
+			window.removeEventListener(GLOBAL_PNG_EVENT, onGlobalClose);
 		};
 	});
 
@@ -69,10 +111,13 @@
 	);
 </script>
 
-<div class="png-dropdown-wrap align--{align} {wrapClass}">
+<div
+	class="png-dropdown-wrap align--{effectiveAlign} size--{size} {wrapClass}"
+	class:is-open={isOpen}
+>
 	<button
 		type="button"
-		class="download-png-trigger {btnClass}"
+		class="download-png-trigger size--{size} {btnClass}"
 		onclick={toggleMenu}
 		disabled={isDownloading}
 		aria-expanded={isOpen}
@@ -112,7 +157,8 @@
 
 	{#if isOpen}
 		<div
-			class="png-menu-dropdown align--{align}"
+			bind:this={menuEl}
+			class="png-menu-dropdown align--{effectiveAlign}"
 			role="menu"
 			tabindex="-1"
 			onclick={(e) => e.stopPropagation()}
@@ -161,6 +207,11 @@
 	.png-dropdown-wrap {
 		position: relative;
 		display: inline-flex;
+		width: 100%;
+	}
+
+	.png-dropdown-wrap.is-open {
+		z-index: 90;
 	}
 
 	.download-png-trigger {
@@ -168,7 +219,8 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.35rem;
-		min-width: 125px;
+		width: 100%;
+		min-width: 0;
 		padding: 0.55rem 0.85rem;
 		border-radius: 8px;
 		font-size: 0.76rem;
@@ -182,12 +234,27 @@
 		color: var(--brand-emerald, #13371b);
 	}
 
+	.download-png-trigger.size--compact {
+		padding: 0.35rem 0.45rem;
+		font-size: 0.72rem;
+		border-radius: 7px;
+		gap: 0.25rem;
+	}
+
 	.download-png-trigger:hover:not(:disabled) {
 		background: var(--brand-emerald, #13371b);
 		border-color: var(--brand-emerald, #13371b);
 		color: #ffffff;
 		transform: translateY(-1px);
 		box-shadow: 0 4px 12px rgba(19, 55, 27, 0.25);
+	}
+
+	.png-dropdown-wrap.is-open .download-png-trigger {
+		background: var(--brand-emerald, #13371b);
+		border-color: var(--brand-emerald, #13371b);
+		color: #ffffff;
+		transform: none !important;
+		box-shadow: 0 2px 8px rgba(19, 55, 27, 0.25);
 	}
 
 	:global([data-theme='dark']) .download-png-trigger,
@@ -205,6 +272,15 @@
 		box-shadow: 0 4px 14px rgba(255, 179, 39, 0.35);
 	}
 
+	:global([data-theme='dark']) .png-dropdown-wrap.is-open .download-png-trigger,
+	:global(.dark) .png-dropdown-wrap.is-open .download-png-trigger {
+		background: var(--brand-gold, #ffb327);
+		border-color: var(--brand-gold, #ffb327);
+		color: #101e14;
+		transform: none !important;
+		box-shadow: 0 2px 8px rgba(255, 179, 39, 0.35);
+	}
+
 	.download-png-trigger:disabled {
 		opacity: 0.55;
 		cursor: wait;
@@ -219,10 +295,10 @@
 		transform: rotate(180deg);
 	}
 
-	/* DROPDOWN POPOVER - SOLID (NOT TRANSPARENT) AND ATTACHED (NOT DETACHED) */
+	/* DROPDOWN POPOVER - 100% OPAQUE AND DIRECTLY ANCHORED WITHOUT AIR GAP */
 	.png-menu-dropdown {
 		position: absolute;
-		bottom: calc(100% + 5px);
+		bottom: calc(100% + 2px);
 		left: 50%;
 		transform: translateX(-50%);
 		min-width: 220px;
@@ -233,11 +309,19 @@
 		box-shadow:
 			0 12px 32px rgba(0, 0, 0, 0.25),
 			0 2px 6px rgba(0, 0, 0, 0.08);
-		z-index: 70;
+		z-index: 100;
 		display: flex;
 		flex-direction: column;
 		gap: 0.25rem;
-		animation: popIn 0.15s ease-out;
+	}
+
+	.png-menu-dropdown.align--center {
+		animation: popInCenter 0.15s ease-out;
+	}
+
+	.png-menu-dropdown.align--right,
+	.png-menu-dropdown.align--left {
+		animation: popInEdge 0.15s ease-out;
 	}
 
 	:global([data-theme='dark']) .png-menu-dropdown,
@@ -249,27 +333,34 @@
 			0 2px 6px rgba(0, 0, 0, 0.3);
 	}
 
-	/* Anchor arrow pointing directly down to parent button */
+	/* Anchor arrow pointing directly down to parent button - seamlessly connected with zero gap */
 	.png-menu-dropdown::before {
 		content: '';
 		position: absolute;
 		top: 100%;
 		left: 50%;
 		transform: translateX(-50%);
-		border: 6px solid transparent;
-		border-top-color: var(--border);
+		border-left: 8px solid transparent;
+		border-right: 8px solid transparent;
+		border-top: 8px solid rgba(19, 55, 27, 0.25);
 		pointer-events: none;
 	}
 
 	.png-menu-dropdown::after {
 		content: '';
 		position: absolute;
-		top: 100%;
+		top: calc(100% - 1px);
 		left: 50%;
 		transform: translateX(-50%);
-		border: 5px solid transparent;
-		border-top-color: #ffffff;
+		border-left: 7px solid transparent;
+		border-right: 7px solid transparent;
+		border-top: 7px solid #ffffff;
 		pointer-events: none;
+	}
+
+	:global([data-theme='dark']) .png-menu-dropdown::before,
+	:global(.dark) .png-menu-dropdown::before {
+		border-top-color: rgba(255, 255, 255, 0.25);
 	}
 
 	:global([data-theme='dark']) .png-menu-dropdown::after,
@@ -277,17 +368,22 @@
 		border-top-color: #18221b;
 	}
 
-	/* Alignment variants if needed */
+	/* Alignment variants */
 	.png-menu-dropdown.align--right {
 		left: auto;
 		right: 0;
 		transform: none;
 	}
 
-	.png-menu-dropdown.align--right::before,
+	.png-menu-dropdown.align--right::before {
+		left: auto;
+		right: 20px;
+		transform: none;
+	}
+
 	.png-menu-dropdown.align--right::after {
 		left: auto;
-		right: 24px;
+		right: 21px;
 		transform: none;
 	}
 
@@ -296,13 +392,17 @@
 		transform: none;
 	}
 
-	.png-menu-dropdown.align--left::before,
-	.png-menu-dropdown.align--left::after {
-		left: 24px;
+	.png-menu-dropdown.align--left::before {
+		left: 20px;
 		transform: none;
 	}
 
-	@keyframes popIn {
+	.png-menu-dropdown.align--left::after {
+		left: 21px;
+		transform: none;
+	}
+
+	@keyframes popInCenter {
 		from {
 			opacity: 0;
 			transform: translateX(-50%) translateY(4px);
@@ -310,6 +410,17 @@
 		to {
 			opacity: 1;
 			transform: translateX(-50%) translateY(0);
+		}
+	}
+
+	@keyframes popInEdge {
+		from {
+			opacity: 0;
+			transform: translateY(4px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
 		}
 	}
 
