@@ -9,7 +9,7 @@ test.describe('Vet Crew Hospital Portal E2E', () => {
 		await expect(page).toHaveTitle(/Vet Crew Hospital/i);
 
 		// Перевірка наявності логотипу та інтерактивних елементів
-		const logo = page.locator('.vetcrew-logo-canvas, .logo-interactive-wrap, svg.logo-svg');
+		const logo = page.locator('.logo-container, .logo-stage, svg.vet-crew-svg');
 		await expect(logo.first()).toBeVisible();
 
 		// Перевірка контактних каналів клініки
