@@ -3,6 +3,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { COMPOSITE_PLAQUES, TEXT_PLAQUES, ICON_PLAQUES, SIGNAGE_BRAND_COLORS } from './doorSignage';
 import { PNG_RESOLUTIONS } from './pngResolutions';
+import {
+	STELE_DEPARTMENTS,
+	STELE_COLOR_PRESETS,
+	getSteleOuterPath,
+	getSteleInnerPath,
+	generateSteleSvg
+} from './directorySteleData';
 
 describe('Door Signage & Navigation Elements Integrity', () => {
 	it('defines consistent department plaques across formats', () => {
@@ -183,5 +190,120 @@ describe('Door Signage & Navigation Elements Integrity', () => {
 
 		const pageCode = fs.readFileSync(path.resolve('src/routes/brandbook/+page.svelte'), 'utf8');
 		expect(pageCode).toContain('PngDownloadBtn');
+	});
+
+	it('validates Directory Wayfinding Stele data, geometry, and SVG generator integrity', () => {
+		// 7 core departments in exact order from the reference mockup
+		expect(STELE_DEPARTMENTS).toHaveLength(7);
+		expect(STELE_DEPARTMENTS[0]?.id).toBe('reception');
+		expect(STELE_DEPARTMENTS[0]?.titleUk).toBe('РЕЦЕПЦІЯ');
+		expect(STELE_DEPARTMENTS[1]?.id).toBe('pet-shop');
+		expect(STELE_DEPARTMENTS[1]?.titleUk).toBe('ЗООМАГАЗИН');
+		expect(STELE_DEPARTMENTS[2]?.id).toBe('consultation');
+		expect(STELE_DEPARTMENTS[2]?.titleUk).toBe('ПРИЙМАЛЬНИЙ КАБІНЕТ');
+		expect(STELE_DEPARTMENTS[2]?.twoLines).toBe(true);
+		expect(STELE_DEPARTMENTS[3]?.id).toBe('procedures');
+		expect(STELE_DEPARTMENTS[3]?.titleUk).toBe('ПРОЦЕДУРНА');
+		expect(STELE_DEPARTMENTS[4]?.id).toBe('surgery');
+		expect(STELE_DEPARTMENTS[4]?.titleUk).toBe('ОПЕРАЦІЙНА');
+		expect(STELE_DEPARTMENTS[5]?.id).toBe('hospital');
+		expect(STELE_DEPARTMENTS[5]?.titleUk).toBe('СТАЦІОНАР');
+		expect(STELE_DEPARTMENTS[6]?.id).toBe('laboratory');
+		expect(STELE_DEPARTMENTS[6]?.titleUk).toBe('ЛАБОРАТОРІЯ');
+
+		for (const dep of STELE_DEPARTMENTS) {
+			expect(dep.paths.length).toBeGreaterThan(0);
+			for (const p of dep.paths) {
+				expect(p.length).toBeGreaterThan(20);
+			}
+		}
+
+		// Asymmetric slanted top outer contour
+		const outer420 = getSteleOuterPath(420, 800, 22);
+		expect(outer420).toContain('M 22 40'); // slantY for 420mm ~ 40
+		expect(outer420).toContain('L 398 0');
+		expect(outer420).toContain('L 420 778');
+		expect(outer420).toContain('L 22 800');
+		expect(outer420).toContain('L 0 62');
+
+		const inner420 = getSteleInnerPath(420, 800, 10, 22);
+		expect(inner420).toContain('M 22 50');
+
+		// Generator creates valid vector SVG
+		const svg = generateSteleSvg({
+			width: 420,
+			height: 800,
+			iconSize: 44,
+			fontSize: 22,
+			dividerThickness: 2.5,
+			dividerInset: 24,
+			sidePadding: 22,
+			verticalPadding: 14,
+			arrowAngle: 0,
+			bgColor: '#4E812D',
+			fgColor: '#13371B',
+			borderColor: '#13371B'
+		});
+
+		expect(svg).toContain('xmlns="http://www.w3.org/2000/svg"');
+		expect(svg).toContain('viewBox="0 0 420 800"');
+		expect(svg).toContain('width="420mm"');
+		expect(svg).toContain('height="800mm"');
+		expect(svg).toContain('stroke-width="2.5"');
+		expect(svg).toContain('РЕЦЕПЦІЯ');
+		expect(svg).toContain('ПРИЙМАЛЬНИЙ');
+		expect(svg).toContain('КАБІНЕТ');
+		expect(svg).toContain('ЛАБОРАТОРІЯ');
+
+		// Color presets
+		expect(STELE_COLOR_PRESETS.length).toBeGreaterThanOrEqual(4);
+		const classic = STELE_COLOR_PRESETS.find((p) => p.id === 'classic-green');
+		expect(classic).toBeDefined();
+		expect(classic?.bg).toBe('#4E812D');
+		expect(classic?.fg).toBe('#13371B');
+	});
+
+	it('verifies DirectoryStele component structure and integration in DoorSignage', () => {
+		const steleComponentPath = path.resolve('src/lib/components/brand/DirectoryStele.svelte');
+		expect(fs.existsSync(steleComponentPath)).toBe(true);
+
+		const steleCode = fs.readFileSync(steleComponentPath, 'utf8');
+
+		// Svelte 5 Runes state controls
+		expect(steleCode).toContain('$state');
+		expect(steleCode).toContain('$derived');
+		expect(steleCode).toContain('$props');
+
+		// 420 & 600 mm preset buttons
+		expect(steleCode).toContain('420 × 800 мм');
+		expect(steleCode).toContain('600 × 800 мм');
+		expect(steleCode).toContain('width = 420');
+		expect(steleCode).toContain('width = 600');
+
+		// Sliders: width (350-750), icon size, font size, divider thickness & inset
+		expect(steleCode).toContain('min="350"');
+		expect(steleCode).toContain('max="750"');
+		expect(steleCode).toContain('isSizeLinked');
+		expect(steleCode).toContain('onIconSizeChange');
+		expect(steleCode).toContain('onFontSizeChange');
+		expect(steleCode).toContain('dividerThickness');
+		expect(steleCode).toContain('dividerInset');
+
+		// Arrow direction selector & color inversion
+		expect(steleCode).toContain('ARROW_SHORTCUTS');
+		expect(steleCode).toContain('invertColors');
+
+		// SVG & PNG downloads
+		expect(steleCode).toContain('downloadSvg');
+		expect(steleCode).toContain('downloadPng');
+		expect(steleCode).toContain('PNG_RESOLUTIONS');
+
+		// Integrated into DoorSignage
+		const doorSignCode = fs.readFileSync(
+			path.resolve('src/lib/components/brand/DoorSignage.svelte'),
+			'utf8'
+		);
+		expect(doorSignCode).toContain('DirectoryStele');
+		expect(doorSignCode).toContain('<DirectoryStele');
 	});
 });

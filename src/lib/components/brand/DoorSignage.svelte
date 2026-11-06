@@ -6,6 +6,7 @@
 	import { downloadUrlAsPng } from '$lib/utils/exportPng';
 	import { logService } from '$lib/services/logService.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
+	import DirectoryStele from '$lib/components/brand/DirectoryStele.svelte';
 
 	import {
 		COMPOSITE_PLAQUES,
@@ -524,6 +525,10 @@
 			</div>
 		{/each}
 	</div>
+
+	<!-- COMPREHENSIVE WAYFINDING STELE (DIRECTORY BOARD) -->
+	<DirectoryStele {customSelectedColor} />
+
 	<!-- SEPARATE ADDITIONAL ELEMENT: DIRECTIONAL NAVIGATION ARROW -->
 	<div class="nav-arrow-block">
 		<div class="nav-arrow-card">
