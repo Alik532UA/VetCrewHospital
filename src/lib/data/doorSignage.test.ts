@@ -8,7 +8,16 @@ import {
 	STELE_COLOR_PRESETS,
 	getSteleOuterPath,
 	getSteleInnerPath,
-	generateSteleSvg
+	generateSteleSvg,
+	formatSteleTitle,
+	ORACAL_641_PALETTE,
+	STELE_ORACAL_PRESETS,
+	getOracalColorByCode,
+	serializeSteleConfig,
+	parseSteleConfig,
+	generateSteleShareText,
+	generateSteleShareUrl,
+	type SteleConfig
 } from './directorySteleData';
 
 describe('Door Signage & Navigation Elements Integrity', () => {
@@ -200,8 +209,8 @@ describe('Door Signage & Navigation Elements Integrity', () => {
 		expect(STELE_DEPARTMENTS[1]?.id).toBe('pet-shop');
 		expect(STELE_DEPARTMENTS[1]?.titleUk).toBe('ЗООМАГАЗИН');
 		expect(STELE_DEPARTMENTS[2]?.id).toBe('consultation');
-		expect(STELE_DEPARTMENTS[2]?.titleUk).toBe('ПРИЙМАЛЬНИЙ КАБІНЕТ');
-		expect(STELE_DEPARTMENTS[2]?.twoLines).toBe(true);
+		expect(STELE_DEPARTMENTS[2]?.titleUk).toBe('ОГЛЯДОВА');
+		expect(STELE_DEPARTMENTS[2]?.twoLines).toBe(false);
 		expect(STELE_DEPARTMENTS[3]?.id).toBe('procedures');
 		expect(STELE_DEPARTMENTS[3]?.titleUk).toBe('ПРОЦЕДУРНА');
 		expect(STELE_DEPARTMENTS[4]?.id).toBe('surgery');
@@ -218,6 +227,11 @@ describe('Door Signage & Navigation Elements Integrity', () => {
 			}
 		}
 
+		// Text case formatting helper
+		expect(formatSteleTitle('ОГЛЯДОВА', 'titlecase')).toBe('Оглядова');
+		expect(formatSteleTitle('ОГЛЯДОВА', 'uppercase')).toBe('ОГЛЯДОВА');
+		expect(formatSteleTitle('РЕЦЕПЦІЯ', 'titlecase')).toBe('Рецепція');
+
 		// Asymmetric slanted top outer contour
 		const outer420 = getSteleOuterPath(420, 800, 22);
 		expect(outer420).toContain('M 22 40'); // slantY for 420mm ~ 40
@@ -229,7 +243,12 @@ describe('Door Signage & Navigation Elements Integrity', () => {
 		const inner420 = getSteleInnerPath(420, 800, 10, 22);
 		expect(inner420).toContain('M 22 50');
 
-		// Generator creates valid vector SVG
+		// Inner border path with thickness compensation strictly stays inside [0, width] x [0, height]
+		const innerFlush = getSteleInnerPath(420, 800, 0, 22, 7);
+		expect(innerFlush).toContain('M 22 43.5'); // totalOffset = 3.5, slantY = 40 -> 43.5
+		expect(innerFlush).not.toContain('-'); // No negative coordinates anywhere
+
+		// Generator creates valid vector SVG with configurable thick outer border and title case
 		const svg = generateSteleSvg({
 			width: 420,
 			height: 800,
@@ -242,25 +261,48 @@ describe('Door Signage & Navigation Elements Integrity', () => {
 			arrowAngle: 0,
 			bgColor: '#4E812D',
 			fgColor: '#13371B',
-			borderColor: '#13371B'
+			borderColor: '#13371B',
+			borderThickness: 7,
+			textCase: 'titlecase'
 		});
 
 		expect(svg).toContain('xmlns="http://www.w3.org/2000/svg"');
 		expect(svg).toContain('viewBox="0 0 420 800"');
 		expect(svg).toContain('width="420mm"');
 		expect(svg).toContain('height="800mm"');
-		expect(svg).toContain('stroke-width="2.5"');
-		expect(svg).toContain('РЕЦЕПЦІЯ');
-		expect(svg).toContain('ПРИЙМАЛЬНИЙ');
-		expect(svg).toContain('КАБІНЕТ');
-		expect(svg).toContain('ЛАБОРАТОРІЯ');
+		expect(svg).toContain('stroke-width="7"');
+		expect(svg).toContain('Рецепція');
+		expect(svg).toContain('Оглядова');
+		expect(svg).toContain('Лабораторія');
 
-		// Color presets
+		// Color presets and dedicated ORACAL 641 palette
 		expect(STELE_COLOR_PRESETS.length).toBeGreaterThanOrEqual(4);
 		const classic = STELE_COLOR_PRESETS.find((p) => p.id === 'classic-green');
 		expect(classic).toBeDefined();
-		expect(classic?.bg).toBe('#4E812D');
-		expect(classic?.fg).toBe('#13371B');
+		expect(classic?.bg).toBe('#00783F'); // 068M Grass green
+		expect(classic?.fg).toBe('#003C24'); // 060M Dark green
+
+		// ORACAL 641 Economy Cal (Matt) Fixed Palette
+		expect(ORACAL_641_PALETTE.length).toBe(59);
+		const grassGreen = getOracalColorByCode('068M');
+		expect(grassGreen).toBeDefined();
+		expect(grassGreen?.hex).toBe('#00783F');
+		expect(grassGreen?.nameEn).toBe('Grass green');
+		expect(grassGreen?.nameUk).toBe("Трав'яний зелений");
+
+		const darkGreen = getOracalColorByCode('060M');
+		expect(darkGreen).toBeDefined();
+		expect(darkGreen?.hex).toBe('#003C24');
+
+		const white = getOracalColorByCode('010M');
+		expect(white).toBeDefined();
+		expect(white?.hex).toBe('#E7EAEE');
+
+		const gold = getOracalColorByCode('091M');
+		expect(gold).toBeDefined();
+		expect(gold?.hex).toBe('#796532');
+
+		expect(STELE_ORACAL_PRESETS.length).toBeGreaterThanOrEqual(6);
 	});
 
 	it('verifies DirectoryStele component structure and integration in DoorSignage', () => {
@@ -289,6 +331,22 @@ describe('Door Signage & Navigation Elements Integrity', () => {
 		expect(steleCode).toContain('dividerThickness');
 		expect(steleCode).toContain('dividerInset');
 
+		// Text case toggle (UPPERCASE vs Titlecase)
+		expect(steleCode).toContain('textCase');
+		expect(steleCode).toContain('case-toggle-group');
+
+		// Configurable outer border thickness and offset, with overflow protection
+		expect(steleCode).toContain('borderThickness');
+		expect(steleCode).toContain('borderOffset');
+		expect(steleCode).toContain('border-preset-pills');
+		expect(steleCode).toContain('overflow: visible');
+
+		// Dedicated Oracal 641 Economy Cal palette controls
+		expect(steleCode).toContain('ORACAL_641_PALETTE');
+		expect(steleCode).toContain('STELE_ORACAL_PRESETS');
+		expect(steleCode).toContain('oracal-card');
+		expect(steleCode).toContain('copyOracalSpec');
+
 		// Arrow direction selector & color inversion
 		expect(steleCode).toContain('ARROW_SHORTCUTS');
 		expect(steleCode).toContain('invertColors');
@@ -305,5 +363,119 @@ describe('Door Signage & Navigation Elements Integrity', () => {
 		);
 		expect(doorSignCode).toContain('DirectoryStele');
 		expect(doorSignCode).toContain('<DirectoryStele');
+	});
+
+	it('supports full roundtrip serialization, URL generation, hybrid text, and validation', () => {
+		const config: SteleConfig = {
+			width: 480,
+			height: 800,
+			iconSize: 48,
+			fontSize: 26,
+			dividerThickness: 3.5,
+			dividerInset: 20,
+			sidePadding: 24,
+			verticalPadding: 16,
+			arrowAngle: 45,
+			bgColor: '#00783F',
+			fgColor: '#003C24',
+			borderColor: '#003C24',
+			borderThickness: 9,
+			borderOffset: 5,
+			textCase: 'titlecase',
+			bgOracalCode: '068M',
+			fgOracalCode: '060M',
+			borderOracalCode: '060M'
+		};
+
+		// Serialization produces VCH1 token
+		const token = serializeSteleConfig(config, true);
+		expect(token.startsWith('VCH1:')).toBe(true);
+
+		// Hybrid text contains friendly summary and the token
+		const shareText = generateSteleShareText(config, token);
+		expect(shareText).toContain('Макет стели Vet Crew Hospital (480 × 800 мм)');
+		expect(shareText).toContain('068M');
+		expect(shareText).toContain('060M');
+		expect(shareText).toContain(token);
+
+		// Share URL contains the token in query parameter
+		const shareUrl = generateSteleShareUrl(token, 'https://vet-crew-hospital.org/brandbook');
+		expect(shareUrl).toContain('stele=' + encodeURIComponent(token));
+
+		// Parsing raw token
+		const parseDirect = parseSteleConfig(token);
+		expect(parseDirect.success).toBe(true);
+		if (parseDirect.success) {
+			expect(parseDirect.data.width).toBe(480);
+			expect(parseDirect.data.iconSize).toBe(48);
+			expect(parseDirect.data.fontSize).toBe(26);
+			expect(parseDirect.data.dividerThickness).toBe(3.5);
+			expect(parseDirect.data.dividerInset).toBe(20);
+			expect(parseDirect.data.borderThickness).toBe(9);
+			expect(parseDirect.data.borderOffset).toBe(5);
+			expect(parseDirect.data.textCase).toBe('titlecase');
+			expect(parseDirect.data.bgOracalCode).toBe('068M');
+			expect(parseDirect.data.fgOracalCode).toBe('060M');
+			expect(parseDirect.data.borderOracalCode).toBe('060M');
+			expect(parseDirect.data.isBorderLinked).toBe(true);
+		}
+
+		// Parsing hybrid chat text
+		const messyChat = `Привіт! Ось мої параметри для стели:
+		${shareText}
+		Чи можна замовити виготовлення?`;
+		const parseChat = parseSteleConfig(messyChat);
+		expect(parseChat.success).toBe(true);
+		if (parseChat.success) {
+			expect(parseChat.data.width).toBe(480);
+			expect(parseChat.data.bgOracalCode).toBe('068M');
+		}
+
+		// Parsing direct URL
+		const parseUrl = parseSteleConfig(shareUrl);
+		expect(parseUrl.success).toBe(true);
+
+		// Validation: Rejects invalid or out-of-range payloads
+		const invalidWidth = parseSteleConfig(
+			'VCH1:' + Buffer.from(JSON.stringify({ w: 9999 })).toString('base64')
+		);
+		expect(invalidWidth.success).toBe(false);
+
+		const invalidColor = parseSteleConfig(
+			'VCH1:' + Buffer.from(JSON.stringify({ w: 420, bg: '999NONEXISTENT' })).toString('base64')
+		);
+		expect(invalidColor.success).toBe(false);
+
+		const garbage = parseSteleConfig('Just some random text without code');
+		expect(garbage.success).toBe(false);
+	});
+
+	it('verifies DirectoryStele UI features: sticky preview, copy config, share link, and modal import', () => {
+		const steleCode = fs.readFileSync(
+			path.resolve('src/lib/components/brand/DirectoryStele.svelte'),
+			'utf8'
+		);
+
+		// Sticky preview keeps stage in view while scrolling controls
+		expect(steleCode).toContain('.stele-stage-column');
+		expect(steleCode).toContain('position: sticky');
+		expect(steleCode).toContain('top: 1.5rem');
+		expect(steleCode).toContain('align-self: start');
+
+		// Action buttons in top header
+		expect(steleCode).toContain('copy-config-btn');
+		expect(steleCode).toContain('share-link-btn');
+		expect(steleCode).toContain('import-btn');
+		expect(steleCode).toContain('copyShareConfig');
+		expect(steleCode).toContain('copyShareUrl');
+		expect(steleCode).toContain('openImportModal');
+
+		// Import modal dialog with textarea, paste button, and validation
+		expect(steleCode).toContain('stele-modal-dialog');
+		expect(steleCode).toContain('modal-textarea');
+		expect(steleCode).toContain('pasteFromClipboard');
+		expect(steleCode).toContain('applyImportedConfig');
+		expect(steleCode).toContain('modal-alert--error');
+		expect(steleCode).toContain('modal-alert--success');
 	});
 });

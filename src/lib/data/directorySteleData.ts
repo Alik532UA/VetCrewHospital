@@ -43,11 +43,9 @@ export const STELE_DEPARTMENTS: SteleDepartment[] = [
 	{
 		id: 'consultation',
 		file: 'herpetology.svg',
-		titleUk: 'ПРИЙМАЛЬНИЙ КАБІНЕТ',
-		line1: 'ПРИЙМАЛЬНИЙ',
-		line2: 'КАБІНЕТ',
+		titleUk: 'ОГЛЯДОВА',
 		titleEn: 'EXAMINATION ROOM',
-		twoLines: true,
+		twoLines: false,
 		paths: [
 			'M826,589c5.97-2.89,11.87-5.95,18.03-8.47,88.87-36.31,182.75-9.68,229.14,75.8,51.55,94.98,37.97,256.56-93.24,269.1-1.44,9.39-3.16,17.83-7.76,26.24-7.68,14.01-20.92,22.94-36.79,25.21l-236.86.11c-14.83-1.36-26.88-10.25-30.65-24.85-7.03.26-17.28-2.29-22.33,3.9-9.32,16.76-16.07,35.53-29.02,49.98-45.97,51.3-129.2,38.68-155.37-25.66-22.27-54.74,12.68-80.4,45.37-116.34,14.92-16.41,23.51-30.65,43.81-42.19,35.69-20.28,81.53-16.26,121.18-16.82l1.49-.51c12.67-18.69,36.44-13.99,56.01-14.49-1.48-15.76,9.12-27.51,20.99-35.99-27.26,1.69-78.69-6.43-89.48-36.03-1.04-2.87-1.21-7.48-2.03-8.97-1.39-2.51-9.36-5.6-12.67-12.33-14.14-28.72,19.99-72.56,40.17-91.19,22.64-20.9,82.61-59.2,113.41-58.39,12.07.32,26.61,13.18,26.61,25.4v16.5ZM722.5,714c-7.23,1.12-16.96-.82-24.5,0,1.76,2.68,6.45,3.9,9.48,5.02,4.1,1.51,15.2,4.98,19.02,4.98h60.5v-15.5c0-3.89,8.85-9.1,12.62-9.45,19.91-1.86,17.53,24.97,13.14,37.21-2.9,8.08-16.78,27.42-24.77,30.23-4.66,1.64-9.9,1.93-14.97,4.03-7.19,2.96-17.47,9.57-14.02,18.48h48c1.55-12.31,14.13-21.16,21.4-31.1,5.13-7.02,9.86-13.31,10.64-22.36.91-10.54-4.08-24.4,4.31-32.19,7.74-7.18,22.28-3.18,24.42,7.38.67,3.28-1.05,12.18,1.87,13.13,10.95-.73,24.24,1.46,34.89.17,3.34-.4,6.42-2.47,10.08-2.92,11.45-1.41,25.21,1.19,24.46,15.42-.86,16.44-19.62,11.02-29.75,16.29-5.48,2.85-10.99,9.89-13.49,15.51-5.2,11.67,3.28,11.87,12.73,11.69s11.73-5.56,19.78-10.19c13.62-7.84,32.08-12.18,47.67-9.83-6.44-15.12-21.35-39.73-13.73-56.23,4.12-8.91,16.73-10.73,23.64-4.17,5.46,5.2,3.9,12.56,5.57,19.43,4.25,17.55,19.77,23.43,30.5,36.5,25.65,31.25,26.13,83.78-7.05,109.89-24.89,19.58-71.92,13.39-77.47-21.37-2.36-14.83,7.12-33.97,23.71-24.71,13.31,7.43-.67,19.39,12.45,25.55,19.58,9.18,36.3-15.43,27.87-34.87-16.72-38.56-83.98-18.09-84.28,28.48-.25,39.4,40.25,61.3,75.64,53.85,83.08-17.5,83.91-142,58.62-204.32-31.21-76.9-106.59-108.03-185.23-83.3-6.34,1.99-38.47,14.8-40.05,19.95-1.27,4.13.05,12.63-1.47,18.53-4.02,15.69-22.12,19.03-29.51,4.07-.45-8.56,2.74-66.65-.26-69.25-20.47,3.81-40.41,14.42-57.87,25.54-22.73,14.48-50.5,37.61-60.94,63.06-3.77,9.19-6.76,17.9,6.35,19.36,11.24,1.25,37.49-2.74,45.85,2.15,12.01,7.02,6.97,23.87-5.85,25.85ZM842,789h25c-4.59-12.26-.24-25.25,7.01-35.49.02-.75-7.05-.85-7.85-.35-.71.44-6.03,12.14-7.75,14.75-4.38,6.62-10.27,12.04-14.92,18.08-.78,1.01-1.93,1.26-1.49,3.01ZM885,831h-176v102h218.5c3.81,0,10.17-11.91,9.05-15.99-21.39-10.8-37.28-26.48-46.04-49.02-1.6-4.12-5.52-15.64-5.52-19.48v-17.5ZM667,846c-25.18,1.03-53.65-2.7-78.01,4.49-15.53,4.58-23.71,13.34-34.51,24.49-14.87,15.37-32.25,33.77-46,50-38.49,45.42,26.59,94.12,69.98,57.98,23.76-19.78,29.18-72.97,66.03-72.97h22.5v-64Z',
 			'M617.21,549.2l-.22,36.8c10.09.65,23.24-.08,31.04,7.46,10.73,10.38,6.91,29.78-7.26,34.81-9.24,3.28-17.07-.5-26.57.94l-84.79,119.7c-8.36,11.51-24.08,12.23-33.94,2.11l-91.16-127.09c-33.41,7.85-67.57,15.57-97.99,31.9-44.79,24.05-74.08,65.52-79.31,116.69l-.27,270.73c-3.93,27.14-43.67,24.12-44.77-2.7v-276.08c5.88-74.23,54.41-133.72,122.79-160.21,31-12.01,64.05-16.53,96.31-23.86l-.55-35.39c-88.19-62.38-112.39-177.75-48.73-267.71,73.07-103.26,222.51-116.5,307.74-20.29,78.63,88.76,59.13,230.82-42.3,292.22ZM498.8,237.3c-101.89,7.75-167.79,116.91-126.65,211.06,46.03,105.34,193.43,118.96,261.27,27.56,78.16-105.3-5.52-248.44-134.62-238.62ZM576,570c-8.07.8-15.8,4.01-23.81,5.69-36.64,7.66-71.68,4.44-107.19-6.69v37.5l66.5,90.48,64.5-89.48v-37.5Z',
@@ -108,6 +106,20 @@ export const STELE_DEPARTMENTS: SteleDepartment[] = [
 
 export const STELE_ARROW_PATH = 'M6 12H18M18 12L13 7M18 12L13 17';
 
+import { getOracalColorByCode } from './oracal641Data';
+
+export {
+	ORACAL_641_PALETTE,
+	ORACAL_CATEGORIES,
+	STELE_ORACAL_PRESETS,
+	getOracalColorByCode,
+	getOracalColorByHex,
+	type OracalColor,
+	type OracalCategory,
+	type OracalCategoryMeta,
+	type SteleOracalPreset
+} from './oracal641Data';
+
 export interface SteleColorPreset {
 	id: string;
 	nameUk: string;
@@ -123,39 +135,51 @@ export const STELE_COLOR_PRESETS: SteleColorPreset[] = [
 		id: 'classic-green',
 		nameUk: 'Фірмовий зелений (як на фото)',
 		nameEn: 'Brand Green (Classic)',
-		bg: '#4E812D',
-		fg: '#13371B',
-		border: '#13371B',
-		previewDot: '#4E812D'
+		bg: '#00783F', // 068M Grass green
+		fg: '#003C24', // 060M Dark green
+		border: '#003C24', // 060M Dark green
+		previewDot: '#00783F'
 	},
 	{
 		id: 'dark-luxury',
 		nameUk: 'Темно-зелений контраст',
 		nameEn: 'Deep Green Contrast',
-		bg: '#13371B',
-		fg: '#93C84A',
-		border: '#93C84A',
-		previewDot: '#13371B'
+		bg: '#005236', // 613M Forest green
+		fg: '#6AA72F', // 063M Lime-tree green
+		border: '#6AA72F',
+		previewDot: '#005236'
 	},
 	{
 		id: 'light-clean',
 		nameUk: 'Світлий клінічний',
 		nameEn: 'Light Clinical',
-		bg: '#F5F7F4',
-		fg: '#13371B',
-		border: '#13371B',
-		previewDot: '#E8ECE6'
+		bg: '#E7EAEE', // 010M White
+		fg: '#003C24', // 060M Dark green
+		border: '#003C24',
+		previewDot: '#E7EAEE'
 	},
 	{
 		id: 'gold-accent',
 		nameUk: 'Золотий преміум',
 		nameEn: 'Gold Accent',
-		bg: '#13371B',
-		fg: '#FFB327',
-		border: '#FFB327',
-		previewDot: '#FFB327'
+		bg: '#003C24', // 060M Dark green
+		fg: '#796532', // 091M Gold
+		border: '#796532',
+		previewDot: '#796532'
 	}
 ];
+
+export type SteleTextCase = 'uppercase' | 'titlecase';
+
+export function formatSteleTitle(title: string, textCase: SteleTextCase = 'uppercase'): string {
+	if (textCase === 'uppercase') {
+		return title.toUpperCase();
+	}
+	return title
+		.split(' ')
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+		.join(' ');
+}
 
 export interface SteleConfig {
 	width: number;
@@ -171,6 +195,11 @@ export interface SteleConfig {
 	fgColor: string;
 	borderColor: string;
 	borderOffset?: number;
+	borderThickness?: number;
+	textCase?: SteleTextCase;
+	bgOracalCode?: string;
+	fgOracalCode?: string;
+	borderOracalCode?: string;
 }
 
 /**
@@ -194,23 +223,33 @@ export function getSteleOuterPath(width: number, height: number, r = 22): string
 
 /**
  * Calculates the inner decorative inset border path.
+ * Insets the path by (bOffset + bThickness / 2) so that when stroked with bThickness,
+ * the stroke's outer edge strictly touches (width - bOffset, height - bOffset)
+ * and NEVER exceeds the outer board boundary [0, width] x [0, height].
  */
-export function getSteleInnerPath(width: number, height: number, bOffset = 10, r = 22): string {
+export function getSteleInnerPath(
+	width: number,
+	height: number,
+	bOffset = 10,
+	r = 22,
+	bThickness = 0
+): string {
+	const totalOffset = bOffset + bThickness / 2;
 	const slantY = Math.round(width * 0.095);
-	const innerR = Math.max(4, r - bOffset);
-	const innerW = width - 2 * bOffset;
-	const innerH = height - 2 * bOffset;
+	const innerR = Math.max(4, r - totalOffset);
+	const innerW = width - 2 * totalOffset;
+	const innerH = height - 2 * totalOffset;
 
 	return [
-		`M ${bOffset + innerR} ${bOffset + slantY}`,
-		`L ${bOffset + innerW - innerR} ${bOffset}`,
-		`A ${innerR} ${innerR} 0 0 1 ${bOffset + innerW} ${bOffset + innerR}`,
-		`L ${bOffset + innerW} ${bOffset + innerH - innerR}`,
-		`A ${innerR} ${innerR} 0 0 1 ${bOffset + innerW - innerR} ${bOffset + innerH}`,
-		`L ${bOffset + innerR} ${bOffset + innerH}`,
-		`A ${innerR} ${innerR} 0 0 1 ${bOffset} ${bOffset + innerH - innerR}`,
-		`L ${bOffset} ${bOffset + slantY + innerR}`,
-		`A ${innerR} ${innerR} 0 0 1 ${bOffset + innerR} ${bOffset + slantY}`,
+		`M ${totalOffset + innerR} ${totalOffset + slantY}`,
+		`L ${totalOffset + innerW - innerR} ${totalOffset}`,
+		`A ${innerR} ${innerR} 0 0 1 ${totalOffset + innerW} ${totalOffset + innerR}`,
+		`L ${totalOffset + innerW} ${totalOffset + innerH - innerR}`,
+		`A ${innerR} ${innerR} 0 0 1 ${totalOffset + innerW - innerR} ${totalOffset + innerH}`,
+		`L ${totalOffset + innerR} ${totalOffset + innerH}`,
+		`A ${innerR} ${innerR} 0 0 1 ${totalOffset} ${totalOffset + innerH - innerR}`,
+		`L ${totalOffset} ${totalOffset + slantY + innerR}`,
+		`A ${innerR} ${innerR} 0 0 1 ${totalOffset + innerR} ${totalOffset + slantY}`,
 		'Z'
 	].join(' ');
 }
@@ -235,13 +274,15 @@ export function generateSteleSvg(config: SteleConfig): string {
 		borderColor
 	} = config;
 
-	const bOffset = config.borderOffset ?? 10;
+	const bOffset = config.borderOffset ?? 6;
+	const bThickness = config.borderThickness ?? 7;
+	const textCase = config.textCase ?? 'uppercase';
 	const outerD = getSteleOuterPath(width, height);
-	const innerD = getSteleInnerPath(width, height, bOffset);
+	const innerD = getSteleInnerPath(width, height, bOffset, 22, bThickness);
 	const slantY = Math.round(width * 0.095);
 
-	const topY = slantY + bOffset + verticalPadding;
-	const bottomY = height - bOffset - verticalPadding;
+	const topY = slantY + bOffset + bThickness + verticalPadding;
+	const bottomY = height - bOffset - bThickness - verticalPadding;
 	const availH = bottomY - topY;
 	const rowH = availH / 7;
 
@@ -249,8 +290,17 @@ export function generateSteleSvg(config: SteleConfig): string {
 	const arrowScale = (arrowSize / 24).toFixed(4);
 	const iconScale = (iconSize / 1254).toFixed(5);
 
+	const bgCode = config.bgOracalCode ? ` [ORACAL 641 ${config.bgOracalCode}]` : '';
+	const fgCode = config.fgOracalCode ? ` [ORACAL 641 ${config.fgOracalCode}]` : '';
+	const borderCode = config.borderOracalCode ? ` [ORACAL 641 ${config.borderOracalCode}]` : '';
+
 	let svg = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+	svg += `<!-- Production Plotter Specification: ORACAL® 641 Economy Cal (Matt) -->\n`;
+	svg += `<!-- Background: ${bgColor}${bgCode} -->\n`;
+	svg += `<!-- Graphics: ${fgColor}${fgCode} -->\n`;
+	svg += `<!-- Border: ${borderColor}${borderCode} -->\n`;
 	svg += `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}mm" height="${height}mm">\n`;
+	svg += `  <desc>ORACAL 641 Economy Cal Specification: Background ${bgColor}${bgCode}, Graphics ${fgColor}${fgCode}, Border ${borderColor}${borderCode}</desc>\n`;
 	svg += `  <defs>\n`;
 	svg += `    <style>\n`;
 	svg += `      .stele-text {\n`;
@@ -267,7 +317,7 @@ export function generateSteleSvg(config: SteleConfig): string {
 	svg += `  <path d="${outerD}" fill="${bgColor}" />\n\n`;
 
 	svg += `  <!-- Inner Decorative Border Rim -->\n`;
-	svg += `  <path d="${innerD}" fill="none" stroke="${borderColor}" stroke-width="2" />\n\n`;
+	svg += `  <path d="${innerD}" fill="none" stroke="${borderColor}" stroke-width="${bThickness}" stroke-linejoin="round" />\n\n`;
 
 	// Dividing lines (6 dividers between 7 rows)
 	svg += `  <!-- Row Dividers -->\n`;
@@ -283,10 +333,10 @@ export function generateSteleSvg(config: SteleConfig): string {
 	svg += `  <!-- Department Rows -->\n`;
 	STELE_DEPARTMENTS.forEach((dep, i) => {
 		const cy = topY + (i + 0.5) * rowH;
-		const iconX = bOffset + sidePadding;
+		const iconX = bOffset + bThickness + sidePadding;
 		const iconY = cy - iconSize / 2;
 		const textX = iconX + iconSize + 14;
-		const arrowX = width - bOffset - sidePadding - arrowSize;
+		const arrowX = width - bOffset - bThickness - sidePadding - arrowSize;
 		const arrowY = cy - arrowSize / 2;
 
 		svg += `  <!-- Row ${i + 1}: ${dep.titleUk} -->\n`;
@@ -303,11 +353,14 @@ export function generateSteleSvg(config: SteleConfig): string {
 		if (dep.twoLines && dep.line1 && dep.line2) {
 			const y1 = (cy - fontSize * 0.12).toFixed(2);
 			const y2 = (cy + fontSize * 0.95).toFixed(2);
-			svg += `    <text class="stele-text" x="${textX.toFixed(2)}" y="${y1}" fill="${fgColor}" font-size="${fontSize}px">${dep.line1}</text>\n`;
-			svg += `    <text class="stele-text" x="${textX.toFixed(2)}" y="${y2}" fill="${fgColor}" font-size="${fontSize}px">${dep.line2}</text>\n`;
+			const l1 = formatSteleTitle(dep.line1, textCase);
+			const l2 = formatSteleTitle(dep.line2, textCase);
+			svg += `    <text class="stele-text" x="${textX.toFixed(2)}" y="${y1}" fill="${fgColor}" font-size="${fontSize}px">${l1}</text>\n`;
+			svg += `    <text class="stele-text" x="${textX.toFixed(2)}" y="${y2}" fill="${fgColor}" font-size="${fontSize}px">${l2}</text>\n`;
 		} else {
 			const textY = (cy + fontSize * 0.36).toFixed(2);
-			svg += `    <text class="stele-text" x="${textX.toFixed(2)}" y="${textY}" fill="${fgColor}" font-size="${fontSize}px">${dep.titleUk}</text>\n`;
+			const formattedTitle = formatSteleTitle(dep.titleUk, textCase);
+			svg += `    <text class="stele-text" x="${textX.toFixed(2)}" y="${textY}" fill="${fgColor}" font-size="${fontSize}px">${formattedTitle}</text>\n`;
 		}
 
 		// Arrow
@@ -321,4 +374,245 @@ export function generateSteleSvg(config: SteleConfig): string {
 
 	svg += `</svg>`;
 	return svg;
+}
+
+/* ==========================================================================
+   CONFIG SERIALIZATION, SHARING & IMPORT PARSER
+   ========================================================================== */
+
+export interface SteleParsedConfig {
+	width: number;
+	borderThickness: number;
+	borderOffset: number;
+	textCase: SteleTextCase;
+	iconSize: number;
+	fontSize: number;
+	dividerThickness: number;
+	dividerInset: number;
+	sidePadding: number;
+	verticalPadding: number;
+	arrowAngle: number;
+	bgOracalCode: string;
+	fgOracalCode: string;
+	borderOracalCode: string;
+	isBorderLinked: boolean;
+}
+
+function toBase64(str: string): string {
+	if (typeof btoa === 'function') {
+		return btoa(unescape(encodeURIComponent(str)));
+	}
+	if (typeof Buffer !== 'undefined') {
+		return Buffer.from(str, 'utf8').toString('base64');
+	}
+	return '';
+}
+
+function fromBase64(b64: string): string {
+	if (typeof atob === 'function') {
+		return decodeURIComponent(escape(atob(b64)));
+	}
+	if (typeof Buffer !== 'undefined') {
+		return Buffer.from(b64, 'base64').toString('utf8');
+	}
+	return '';
+}
+
+/**
+ * Serializes the current stele state into a compact, URL-safe VCH1 token.
+ */
+export function serializeSteleConfig(config: SteleConfig, isBorderLinked = true): string {
+	const payload = {
+		v: 1,
+		w: config.width,
+		bt: config.borderThickness ?? 7,
+		bo: config.borderOffset ?? 6,
+		tc: config.textCase === 'titlecase' ? 't' : 'u',
+		is: config.iconSize,
+		fs: config.fontSize,
+		dt: config.dividerThickness,
+		di: config.dividerInset,
+		sp: config.sidePadding,
+		vp: config.verticalPadding,
+		aa: config.arrowAngle,
+		bg: config.bgOracalCode ?? '068M',
+		fg: config.fgOracalCode ?? '060M',
+		bc: config.borderOracalCode ?? config.fgOracalCode ?? '060M',
+		bl: isBorderLinked ? 1 : 0
+	};
+	return `VCH1:${toBase64(JSON.stringify(payload))}`;
+}
+
+/**
+ * Parses and strictly validates a stele configuration string.
+ * Supports:
+ * - Hybrid message containing "VCH1:..."
+ * - Standalone token "VCH1:..."
+ * - Share URL containing "?stele=VCH1:..."
+ * - Raw JSON
+ */
+export function parseSteleConfig(
+	input: string
+): { success: true; data: SteleParsedConfig } | { success: false; error: string } {
+	if (!input || typeof input !== 'string') {
+		return { success: false, error: 'Порожній текст конфігурації.' };
+	}
+
+	let token = input.trim();
+	const urlMatch = token.match(/[?&]stele=([A-Za-z0-9+/=_%-]+)/i);
+	if (urlMatch && urlMatch[1]) {
+		token = decodeURIComponent(urlMatch[1]);
+	}
+
+	const match = token.match(/VCH1:([A-Za-z0-9+/=_-]+)/);
+	let jsonStr: string;
+
+	if (match && match[1]) {
+		try {
+			jsonStr = fromBase64(match[1]);
+		} catch {
+			return {
+				success: false,
+				error: 'Некоректний код конфігурації. Будь ласка, перевірте скопійований текст.'
+			};
+		}
+	} else if (token.startsWith('VCH1:')) {
+		try {
+			jsonStr = fromBase64(token.slice(5));
+		} catch {
+			return {
+				success: false,
+				error: 'Некоректний код конфігурації. Будь ласка, перевірте скопійований текст.'
+			};
+		}
+	} else {
+		jsonStr = token;
+	}
+
+	let obj: Record<string, unknown>;
+	try {
+		obj = JSON.parse(jsonStr);
+	} catch {
+		return {
+			success: false,
+			error: 'Некоректний код конфігурації. Будь ласка, перевірте скопійований текст.'
+		};
+	}
+
+	if (!obj || typeof obj !== 'object') {
+		return {
+			success: false,
+			error: 'Некоректний код конфігурації.'
+		};
+	}
+
+	const rawWidth = Number(obj.w ?? obj.width);
+	if (isNaN(rawWidth) || rawWidth < 350 || rawWidth > 750) {
+		return { success: false, error: 'Ширина стели має бути від 350 до 750 мм.' };
+	}
+
+	const rawBorderThickness = Number(obj.bt ?? obj.borderThickness ?? 7);
+	if (isNaN(rawBorderThickness) || rawBorderThickness < 2 || rawBorderThickness > 18) {
+		return { success: false, error: 'Товщина рамки має бути від 2 до 18 мм.' };
+	}
+
+	const rawBorderOffset = Number(obj.bo ?? obj.borderOffset ?? 6);
+	if (isNaN(rawBorderOffset) || rawBorderOffset < 0 || rawBorderOffset > 16) {
+		return { success: false, error: 'Відступ рамки має бути від 0 до 16 мм.' };
+	}
+
+	const rawTextCase: SteleTextCase =
+		obj.tc === 't' || obj.textCase === 'titlecase' ? 'titlecase' : 'uppercase';
+
+	const rawIconSize = Number(obj.is ?? obj.iconSize ?? 44);
+	if (isNaN(rawIconSize) || rawIconSize < 28 || rawIconSize > 65) {
+		return { success: false, error: 'Розмір іконок має бути від 28 до 65 мм.' };
+	}
+
+	const rawFontSize = Number(obj.fs ?? obj.fontSize ?? 22);
+	if (isNaN(rawFontSize) || rawFontSize < 14 || rawFontSize > 34) {
+		return { success: false, error: 'Розмір шрифту має бути від 14 до 34 мм.' };
+	}
+
+	const rawDividerThickness = Number(obj.dt ?? obj.dividerThickness ?? 2.5);
+	if (isNaN(rawDividerThickness) || rawDividerThickness < 1 || rawDividerThickness > 8) {
+		return { success: false, error: 'Товщина ліній має бути від 1 до 8 мм.' };
+	}
+
+	const rawDividerInset = Number(obj.di ?? obj.dividerInset ?? 24);
+	if (isNaN(rawDividerInset) || rawDividerInset < 0 || rawDividerInset > 60) {
+		return { success: false, error: 'Втяжка ліній має бути від 0 до 60 мм.' };
+	}
+
+	const sidePadding = Math.max(12, Math.min(40, Number(obj.sp ?? obj.sidePadding ?? 22)));
+	const verticalPadding = Math.max(8, Math.min(30, Number(obj.vp ?? obj.verticalPadding ?? 14)));
+	const arrowAngle = Math.max(0, Math.min(360, Number(obj.aa ?? obj.arrowAngle ?? 0)));
+
+	const bgOracalCode = String(obj.bg ?? obj.bgOracalCode ?? '068M').trim();
+	const fgOracalCode = String(obj.fg ?? obj.fgOracalCode ?? '060M').trim();
+	const borderOracalCode = String(obj.bc ?? obj.borderOracalCode ?? fgOracalCode).trim();
+	const isBorderLinked = obj.bl === 1 || obj.bl === undefined || obj.isBorderLinked === true;
+
+	if (!getOracalColorByCode(bgOracalCode)) {
+		return { success: false, error: `Невідомий код плівки фону: "${bgOracalCode}".` };
+	}
+	if (!getOracalColorByCode(fgOracalCode)) {
+		return { success: false, error: `Невідомий код плівки графіки: "${fgOracalCode}".` };
+	}
+	if (!getOracalColorByCode(borderOracalCode)) {
+		return { success: false, error: `Невідомий код плівки рамки: "${borderOracalCode}".` };
+	}
+
+	return {
+		success: true,
+		data: {
+			width: rawWidth,
+			borderThickness: rawBorderThickness,
+			borderOffset: rawBorderOffset,
+			textCase: rawTextCase,
+			iconSize: rawIconSize,
+			fontSize: rawFontSize,
+			dividerThickness: rawDividerThickness,
+			dividerInset: rawDividerInset,
+			sidePadding,
+			verticalPadding,
+			arrowAngle,
+			bgOracalCode,
+			fgOracalCode,
+			borderOracalCode,
+			isBorderLinked
+		}
+	};
+}
+
+/**
+ * Generates hybrid friendly text for clipboard sharing.
+ */
+export function generateSteleShareText(config: SteleConfig, token: string): string {
+	const bg = config.bgOracalCode ?? '068M';
+	const fg = config.fgOracalCode ?? '060M';
+	const bc = config.borderOracalCode ?? fg;
+	const bgCol = getOracalColorByCode(bg);
+	const fgCol = getOracalColorByCode(fg);
+
+	return [
+		`📐 Макет стели Vet Crew Hospital (${config.width} × 800 мм)`,
+		`• Плівки ORACAL 641: Фон ${bg} (${bgCol?.nameEn ?? ''}) + Графіка ${fg} (${fgCol?.nameEn ?? ''})`,
+		`• Рамка: ${config.borderThickness ?? 7} мм (плівка ${bc})`,
+		`• Розміри: Іконки ${config.iconSize} мм, Шрифт ${config.fontSize} мм`,
+		`\nКод конфігурації:\n${token}\n`,
+		`Щоб переглянути: відкрийте сторінку макета в брендбуці та натисніть «📥 Завантажити конфіг».`
+	].join('\n');
+}
+
+/**
+ * Generates a direct share URL with embedded configuration token.
+ */
+export function generateSteleShareUrl(token: string, baseUrl?: string): string {
+	const base =
+		baseUrl ||
+		(typeof window !== 'undefined'
+			? `${window.location.origin}${window.location.pathname}`
+			: 'https://vet-crew-hospital.org/brandbook');
+	return `${base}#door-signs?stele=${encodeURIComponent(token)}`;
 }
