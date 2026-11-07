@@ -1,3 +1,5 @@
+import { DEFAULT_BG_SHAPE_ID, getQrBgShapeById } from './qrBackgroundShapes';
+
 export type ServiceId = 'wifi' | 'instagram' | 'reviews' | 'website';
 export type PlaqueId = 'background' | ServiceId;
 
@@ -9,6 +11,15 @@ export interface QrFileVariant {
 	nobg: string;
 	labelUk: string;
 	labelEn: string;
+}
+
+export interface QrBgTransform {
+	shapeId: string;
+	rotation: number;
+	flipX: boolean;
+	scale: number;
+	offsetX: number;
+	offsetY: number;
 }
 
 export const REVIEW_FILES: Record<ReviewVariant, QrFileVariant> = {
@@ -57,6 +68,9 @@ export interface QrShowcaseConfig {
 	sharedFgCode: string;
 	cardBgCodes: Record<PlaqueId, string>;
 	cardFgCodes: Record<ServiceId, string>;
+	syncBgShapes: boolean;
+	sharedBgTransform: QrBgTransform;
+	cardBgTransforms: Record<PlaqueId, QrBgTransform>;
 }
 
 export interface QrParsedConfig {
@@ -69,11 +83,23 @@ export interface QrParsedConfig {
 	sharedFgCode: string;
 	cardBgCodes: Record<PlaqueId, string>;
 	cardFgCodes: Record<ServiceId, string>;
+	syncBgShapes: boolean;
+	sharedBgTransform: QrBgTransform;
+	cardBgTransforms: Record<PlaqueId, QrBgTransform>;
 }
 
+export const DEFAULT_BG_TRANSFORM: QrBgTransform = {
+	shapeId: DEFAULT_BG_SHAPE_ID,
+	rotation: 0,
+	flipX: false,
+	scale: 1.0,
+	offsetX: 0,
+	offsetY: 0
+};
+
 export const DEFAULT_QR_CONFIG: QrShowcaseConfig = {
-	serviceOrder: ['wifi', 'instagram', 'reviews', 'website'],
-	reviewVariant: 'vidhuk',
+	serviceOrder: ['reviews', 'website', 'wifi', 'instagram'],
+	reviewVariant: 'reviews',
 	websiteVariant: 'v2',
 	withBg: true,
 	stageTheme: 'checker',
@@ -81,16 +107,25 @@ export const DEFAULT_QR_CONFIG: QrShowcaseConfig = {
 	sharedFgCode: '060M',
 	cardBgCodes: {
 		background: '020M',
-		wifi: '020M',
-		instagram: '068M',
+		wifi: '063M',
+		instagram: '021M',
 		reviews: '021M',
-		website: '063M'
+		website: '010M'
 	},
 	cardFgCodes: {
 		wifi: '060M',
 		instagram: '060M',
 		reviews: '060M',
 		website: '060M'
+	},
+	syncBgShapes: false,
+	sharedBgTransform: { ...DEFAULT_BG_TRANSFORM },
+	cardBgTransforms: {
+		background: { ...DEFAULT_BG_TRANSFORM },
+		wifi: { ...DEFAULT_BG_TRANSFORM },
+		instagram: { ...DEFAULT_BG_TRANSFORM },
+		reviews: { ...DEFAULT_BG_TRANSFORM },
+		website: { ...DEFAULT_BG_TRANSFORM }
 	}
 };
 
@@ -109,9 +144,96 @@ function fromBase64(b64: string): string {
 }
 
 /**
+ * Builds a dynamic SVG string with background silhouette and foreground elements.
+ * Rotation, flip, scale, and offset are applied strictly to the background container;
+ * the foreground (QR code, icons, text) remains upright and centered.
+ */
+export function buildQrSvg({
+	foregroundInnerSvg,
+	bgColorHex,
+	fgColorHex,
+	showBg,
+	shapeD,
+	rotation = 0,
+	flipX = false,
+	scale = 1.0,
+	offsetX = 0,
+	offsetY = 0
+}: {
+	foregroundInnerSvg?: string;
+	bgColorHex: string;
+	fgColorHex: string;
+	showBg: boolean;
+	shapeD: string;
+	rotation?: number;
+	flipX?: boolean;
+	scale?: number;
+	offsetX?: number;
+	offsetY?: number;
+}): string {
+	const rot = ((Math.round(rotation) % 360) + 360) % 360;
+	const s =
+		typeof scale === 'number' && !isNaN(scale) && scale > 0 ? Number(scale.toFixed(2)) : 1.0;
+	const ox = Math.round(offsetX || 0);
+	const oy = Math.round(offsetY || 0);
+
+	let transformAttr = '';
+	if (rot !== 0 || flipX || s !== 1.0 || ox !== 0 || oy !== 0) {
+		const transforms: string[] = [];
+		transforms.push(`translate(${400 + ox}, ${400 + oy})`);
+		if (rot !== 0) {
+			transforms.push(`rotate(${rot})`);
+		}
+		const scaleX = flipX ? -s : s;
+		const scaleY = s;
+		if (scaleX !== 1 || scaleY !== 1) {
+			transforms.push(`scale(${scaleX}, ${scaleY})`);
+		}
+		transforms.push('translate(-400, -400)');
+		transformAttr = ` transform="${transforms.join(' ')}"`;
+	}
+
+	const bgPath = showBg
+		? `  <path id="container-bg" fill="${bgColorHex}" d="${shapeD}"${transformAttr}/>\n`
+		: '';
+
+	let fgPart = '';
+	if (foregroundInnerSvg) {
+		fgPart = foregroundInnerSvg
+			.replace(/fill="#13371b"/gi, `fill="${fgColorHex}"`)
+			.replace(/fill="#101e14"/gi, `fill="${fgColorHex}"`);
+		if (!fgPart.endsWith('\n')) fgPart += '\n';
+	}
+
+	// Dynamic safety viewBox so the shape is never cut off against the canvas boundary
+	// Base artboard is 800x800 centered at (400, 400).
+	const maxShapeExtent = 350 * s;
+	const maxDistX = Math.max(400, Math.abs(ox) + maxShapeExtent + 10);
+	const maxDistY = Math.max(400, Math.abs(oy) + maxShapeExtent + 10);
+	const halfSize = Math.ceil(Math.max(maxDistX, maxDistY));
+	const vbX = 400 - halfSize;
+	const vbY = 400 - halfSize;
+	const vbSize = halfSize * 2;
+
+	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vbX} ${vbY} ${vbSize} ${vbSize}" width="800" height="800" style="overflow: visible;">\n${bgPath}${fgPart}</svg>`;
+}
+
+/**
  * Serializes QR showcase configuration into a compact Base64 token with prefix "VQR1:".
  */
 export function serializeQrConfig(config: QrShowcaseConfig): string {
+	function packTransform(t: QrBgTransform) {
+		const out: Record<string, unknown> = {
+			s: t.shapeId,
+			r: t.rotation,
+			f: t.flipX ? 1 : 0
+		};
+		if (t.scale !== 1.0) out.sc = Math.round(t.scale * 100);
+		if (t.offsetX !== 0) out.ox = Math.round(t.offsetX);
+		if (t.offsetY !== 0) out.oy = Math.round(t.offsetY);
+		return out;
+	}
+
 	const payload = {
 		v: 1,
 		so: config.serviceOrder,
@@ -122,9 +244,51 @@ export function serializeQrConfig(config: QrShowcaseConfig): string {
 		sf: config.syncFgColors ? 1 : 0,
 		fg: config.sharedFgCode,
 		bg: config.cardBgCodes,
-		fgs: config.cardFgCodes
+		fgs: config.cardFgCodes,
+		sb: config.syncBgShapes ? 1 : 0,
+		bt: packTransform(config.sharedBgTransform),
+		bts: {
+			background: packTransform(config.cardBgTransforms.background),
+			wifi: packTransform(config.cardBgTransforms.wifi),
+			instagram: packTransform(config.cardBgTransforms.instagram),
+			reviews: packTransform(config.cardBgTransforms.reviews),
+			website: packTransform(config.cardBgTransforms.website)
+		}
 	};
 	return `VQR1:${toBase64(JSON.stringify(payload))}`;
+}
+
+function parseSingleTransform(raw: unknown, fallback: QrBgTransform): QrBgTransform {
+	if (!raw || typeof raw !== 'object') return { ...fallback };
+	const r = raw as Record<string, unknown>;
+	const rawShapeId = typeof r.s === 'string' && r.s.trim() ? r.s.trim() : fallback.shapeId;
+	const shape = getQrBgShapeById(rawShapeId);
+	const rawRotation = typeof r.r === 'number' ? r.r : fallback.rotation;
+	const rotation = ((Math.round(rawRotation) % 360) + 360) % 360;
+	const flipX =
+		r.f === 1 || r.f === true ? true : r.f === 0 || r.f === false ? false : fallback.flipX;
+
+	const scale =
+		typeof r.sc === 'number' && !isNaN(r.sc) && r.sc >= 30 && r.sc <= 250
+			? Number((r.sc / 100).toFixed(2))
+			: (fallback.scale ?? 1.0);
+	const offsetX =
+		typeof r.ox === 'number' && !isNaN(r.ox)
+			? Math.max(-200, Math.min(200, Math.round(r.ox)))
+			: (fallback.offsetX ?? 0);
+	const offsetY =
+		typeof r.oy === 'number' && !isNaN(r.oy)
+			? Math.max(-200, Math.min(200, Math.round(r.oy)))
+			: (fallback.offsetY ?? 0);
+
+	return {
+		shapeId: shape.id,
+		rotation,
+		flipX,
+		scale,
+		offsetX,
+		offsetY
+	};
 }
 
 /**
@@ -223,10 +387,10 @@ export function parseQrConfig(
 
 	const defaultBgs: Record<PlaqueId, string> = {
 		background: '020M',
-		wifi: '020M',
-		instagram: '068M',
+		wifi: '063M',
+		instagram: '021M',
 		reviews: '021M',
-		website: '063M'
+		website: '010M'
 	};
 	const rawBgs = (obj.bg && typeof obj.bg === 'object' ? obj.bg : {}) as Record<string, string>;
 	const cardBgCodes: Record<PlaqueId, string> = {
@@ -245,6 +409,19 @@ export function parseQrConfig(
 		website: rawFgs.website || sharedFgCode
 	};
 
+	// Parse shape synchronization and transforms (backward compatible with old tokens)
+	const syncBgShapes = obj.sb === 0 ? false : true;
+	const sharedBgTransform = parseSingleTransform(obj.bt, DEFAULT_BG_TRANSFORM);
+
+	const rawBts = (obj.bts && typeof obj.bts === 'object' ? obj.bts : {}) as Record<string, unknown>;
+	const cardBgTransforms: Record<PlaqueId, QrBgTransform> = {
+		background: parseSingleTransform(rawBts.background, sharedBgTransform),
+		wifi: parseSingleTransform(rawBts.wifi, sharedBgTransform),
+		instagram: parseSingleTransform(rawBts.instagram, sharedBgTransform),
+		reviews: parseSingleTransform(rawBts.reviews, sharedBgTransform),
+		website: parseSingleTransform(rawBts.website, sharedBgTransform)
+	};
+
 	return {
 		success: true,
 		data: {
@@ -256,7 +433,10 @@ export function parseQrConfig(
 			syncFgColors,
 			sharedFgCode,
 			cardBgCodes,
-			cardFgCodes
+			cardFgCodes,
+			syncBgShapes,
+			sharedBgTransform,
+			cardBgTransforms
 		}
 	};
 }
@@ -282,12 +462,18 @@ export function generateQrShareText(config: QrShowcaseConfig, token: string): st
 		})
 		.join('\n  ');
 
+	const shape = getQrBgShapeById(config.sharedBgTransform.shapeId);
+	const shapeInfo = config.syncBgShapes
+		? `• Форма підкладки: ${shape.nameUk} (кути: ${config.sharedBgTransform.rotation}°${config.sharedBgTransform.flipX ? ', віддзеркалено ↔' : ''})`
+		: '• Форма підкладки: індивідуальна для кожної таблички';
+
 	return `📐 Конфігурація QR-навігації та табличок сервісів Vet Crew Hospital
 • Порядок табличок у ряду:
   ${orderNames}
 • Варіант напису відгуків: ${reviewLabel}
 • Варіант сайту: ${websiteLabel}
 • Режим контейнера: ${config.withBg ? `З підкладкою (ORACAL ${config.cardBgCodes.background ?? '020M'})` : 'Прозорий (без фону)'}
+${shapeInfo}
 • Колір графіки / QR-кодів: ORACAL ${config.sharedFgCode}${config.syncFgColors ? ' (спільний для всіх)' : ' (індивідуальний)'}
 • Тло прев'ю: ${config.stageTheme}
 

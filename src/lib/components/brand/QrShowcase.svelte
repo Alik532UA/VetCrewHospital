@@ -7,27 +7,33 @@
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 	import PngDownloadBtn from '$lib/components/brand/PngDownloadBtn.svelte';
 	import OracalColorPicker from '$lib/components/brand/OracalColorPicker.svelte';
+	import QrShapePicker from '$lib/components/brand/QrShapePicker.svelte';
+	import QrTransformControls from '$lib/components/brand/QrTransformControls.svelte';
 	import type { PngResolution } from '$lib/data/pngResolutions';
 	import {
 		getOracalColorByCode,
 		type OracalColor,
 		ORACAL_641_PALETTE
 	} from '$lib/data/oracal641Data';
+	import { getQrBgShapeById } from '$lib/data/qrBackgroundShapes';
 
 	import {
 		REVIEW_FILES,
 		WEBSITE_FILES,
 		DEFAULT_QR_CONFIG,
+		DEFAULT_BG_TRANSFORM,
 		serializeQrConfig,
 		parseQrConfig,
 		generateQrShareText,
 		generateQrShareUrl,
+		buildQrSvg,
 		type ReviewVariant,
 		type WebsiteVariant,
 		type ServiceId,
 		type PlaqueId,
 		type QrShowcaseConfig,
-		type QrParsedConfig
+		type QrParsedConfig,
+		type QrBgTransform
 	} from '$lib/data/qrShowcase';
 
 	// Signage mode: with background container vs transparent
@@ -35,11 +41,11 @@
 	let stageTheme = $state<StageTheme>('checker');
 
 	// Default order of the 4 service mockups (reorderable with arrows)
-	let serviceOrder = $state<ServiceId[]>(['wifi', 'instagram', 'reviews', 'website']);
+	let serviceOrder = $state<ServiceId[]>([...DEFAULT_QR_CONFIG.serviceOrder]);
 
 	// Subvariant selections
-	let reviewVariant = $state<ReviewVariant>('vidhuk');
-	let websiteVariant = $state<WebsiteVariant>('v2');
+	let reviewVariant = $state<ReviewVariant>(DEFAULT_QR_CONFIG.reviewVariant);
+	let websiteVariant = $state<WebsiteVariant>(DEFAULT_QR_CONFIG.websiteVariant);
 
 	// Share & Import states
 	let isConfigCopied = $state<boolean>(false);
@@ -52,21 +58,24 @@
 	// Color configurations (ORACAL 641)
 	// Shared foreground color for text, icons, and QR codes across all plaques
 	const defaultFg = getOracalColorByCode('060M') ?? ORACAL_641_PALETTE[0]!; // Dark green
-	const defaultBgYellow = getOracalColorByCode('020M') ?? defaultFg; // Golden yellow
-	const defaultBgGrass = getOracalColorByCode('068M') ?? defaultFg; // Grass green
-	const defaultBgLime = getOracalColorByCode('063M') ?? defaultFg; // Lime green
-	const defaultBgMidYellow = getOracalColorByCode('021M') ?? defaultFg; // Yellow
+	const defaultBgBackground =
+		getOracalColorByCode(DEFAULT_QR_CONFIG.cardBgCodes.background) ?? defaultFg;
+	const defaultBgReviews = getOracalColorByCode(DEFAULT_QR_CONFIG.cardBgCodes.reviews) ?? defaultFg;
+	const defaultBgWebsite = getOracalColorByCode(DEFAULT_QR_CONFIG.cardBgCodes.website) ?? defaultFg;
+	const defaultBgWifi = getOracalColorByCode(DEFAULT_QR_CONFIG.cardBgCodes.wifi) ?? defaultFg;
+	const defaultBgInstagram =
+		getOracalColorByCode(DEFAULT_QR_CONFIG.cardBgCodes.instagram) ?? defaultFg;
 
 	let sharedFgColor = $state<OracalColor>(defaultFg);
 	let syncFgColors = $state<boolean>(true); // "за замовчуванням міняти разом"
 
 	// Individual background colors for each mockup + background container
 	let cardBgColors = $state<Record<PlaqueId, OracalColor>>({
-		background: defaultBgYellow,
-		wifi: defaultBgYellow,
-		instagram: defaultBgGrass,
-		reviews: defaultBgMidYellow,
-		website: defaultBgLime
+		background: defaultBgBackground,
+		wifi: defaultBgWifi,
+		instagram: defaultBgInstagram,
+		reviews: defaultBgReviews,
+		website: defaultBgWebsite
 	});
 
 	// Individual foreground colors (used when unlinked)
@@ -76,6 +85,69 @@
 		reviews: defaultFg,
 		website: defaultFg
 	});
+
+	// Background shapes & transformation states
+	let syncBgShapes = $state<boolean>(false); // Individual shapes per plaque by default
+
+	let sharedBgTransform = $state<QrBgTransform>({
+		...DEFAULT_BG_TRANSFORM
+	});
+
+	let cardBgTransforms = $state<Record<PlaqueId, QrBgTransform>>({
+		background: { ...DEFAULT_BG_TRANSFORM },
+		wifi: { ...DEFAULT_BG_TRANSFORM },
+		instagram: { ...DEFAULT_BG_TRANSFORM },
+		reviews: { ...DEFAULT_BG_TRANSFORM },
+		website: { ...DEFAULT_BG_TRANSFORM }
+	});
+
+	// Sync transforms when syncBgShapes is active
+	$effect(() => {
+		if (syncBgShapes) {
+			cardBgTransforms.background = { ...sharedBgTransform };
+			cardBgTransforms.wifi = { ...sharedBgTransform };
+			cardBgTransforms.instagram = { ...sharedBgTransform };
+			cardBgTransforms.reviews = { ...sharedBgTransform };
+			cardBgTransforms.website = { ...sharedBgTransform };
+		}
+	});
+
+	function getTransformFor(id: PlaqueId): QrBgTransform {
+		return syncBgShapes ? sharedBgTransform : (cardBgTransforms[id] ?? sharedBgTransform);
+	}
+
+	function setSharedTransform(t: Partial<QrBgTransform>) {
+		sharedBgTransform = { ...sharedBgTransform, ...t };
+		if (syncBgShapes) {
+			cardBgTransforms.background = { ...sharedBgTransform };
+			cardBgTransforms.wifi = { ...sharedBgTransform };
+			cardBgTransforms.instagram = { ...sharedBgTransform };
+			cardBgTransforms.reviews = { ...sharedBgTransform };
+			cardBgTransforms.website = { ...sharedBgTransform };
+		}
+	}
+
+	function setCardTransform(id: PlaqueId, t: Partial<QrBgTransform>) {
+		const current = cardBgTransforms[id] ?? sharedBgTransform;
+		cardBgTransforms[id] = { ...current, ...t };
+		if (syncBgShapes) {
+			sharedBgTransform = { ...cardBgTransforms[id] };
+			cardBgTransforms.background = { ...sharedBgTransform };
+			cardBgTransforms.wifi = { ...sharedBgTransform };
+			cardBgTransforms.instagram = { ...sharedBgTransform };
+			cardBgTransforms.reviews = { ...sharedBgTransform };
+			cardBgTransforms.website = { ...sharedBgTransform };
+		}
+	}
+
+	function applyShapeToAll(sourceTransform: QrBgTransform) {
+		sharedBgTransform = { ...sourceTransform };
+		cardBgTransforms.background = { ...sourceTransform };
+		cardBgTransforms.wifi = { ...sourceTransform };
+		cardBgTransforms.instagram = { ...sourceTransform };
+		cardBgTransforms.reviews = { ...sourceTransform };
+		cardBgTransforms.website = { ...sourceTransform };
+	}
 
 	// Derived current configuration token
 	let qrConfig = $derived<QrShowcaseConfig>({
@@ -98,7 +170,10 @@
 			instagram: cardFgColors.instagram.code,
 			reviews: cardFgColors.reviews.code,
 			website: cardFgColors.website.code
-		}
+		},
+		syncBgShapes,
+		sharedBgTransform,
+		cardBgTransforms
 	});
 
 	let currentToken = $derived(serializeQrConfig(qrConfig));
@@ -176,11 +251,11 @@
 		const bgS = getOracalColorByCode(data.cardBgCodes.website);
 
 		cardBgColors = {
-			background: bgB ?? defaultBgYellow,
-			wifi: bgW ?? defaultBgYellow,
-			instagram: bgI ?? defaultBgGrass,
-			reviews: bgR ?? defaultBgMidYellow,
-			website: bgS ?? defaultBgLime
+			background: bgB ?? defaultBgBackground,
+			wifi: bgW ?? defaultBgWifi,
+			instagram: bgI ?? defaultBgInstagram,
+			reviews: bgR ?? defaultBgReviews,
+			website: bgS ?? defaultBgWebsite
 		};
 
 		const fgW = getOracalColorByCode(data.cardFgCodes.wifi);
@@ -193,6 +268,16 @@
 			instagram: fgI ?? defaultFg,
 			reviews: fgR ?? defaultFg,
 			website: fgS ?? defaultFg
+		};
+
+		syncBgShapes = data.syncBgShapes;
+		sharedBgTransform = { ...data.sharedBgTransform };
+		cardBgTransforms = {
+			background: { ...data.cardBgTransforms.background },
+			wifi: { ...data.cardBgTransforms.wifi },
+			instagram: { ...data.cardBgTransforms.instagram },
+			reviews: { ...data.cardBgTransforms.reviews },
+			website: { ...data.cardBgTransforms.website }
 		};
 	}
 
@@ -235,7 +320,16 @@
 			syncFgColors: DEFAULT_QR_CONFIG.syncFgColors,
 			sharedFgCode: DEFAULT_QR_CONFIG.sharedFgCode,
 			cardBgCodes: { ...DEFAULT_QR_CONFIG.cardBgCodes },
-			cardFgCodes: { ...DEFAULT_QR_CONFIG.cardFgCodes }
+			cardFgCodes: { ...DEFAULT_QR_CONFIG.cardFgCodes },
+			syncBgShapes: DEFAULT_QR_CONFIG.syncBgShapes,
+			sharedBgTransform: { ...DEFAULT_QR_CONFIG.sharedBgTransform },
+			cardBgTransforms: {
+				background: { ...DEFAULT_QR_CONFIG.cardBgTransforms.background },
+				wifi: { ...DEFAULT_QR_CONFIG.cardBgTransforms.wifi },
+				instagram: { ...DEFAULT_QR_CONFIG.cardBgTransforms.instagram },
+				reviews: { ...DEFAULT_QR_CONFIG.cardBgTransforms.reviews },
+				website: { ...DEFAULT_QR_CONFIG.cardBgTransforms.website }
+			}
 		});
 	}
 
@@ -282,10 +376,15 @@
 	}
 
 	function getBgFor(id: PlaqueId): OracalColor {
-		return cardBgColors[id] ?? defaultBgYellow;
+		return cardBgColors[id] ?? defaultBgBackground;
 	}
 
 	let bgContainer = $derived(getBgFor('background'));
+	let tmplTransform = $derived(getTransformFor('background'));
+	let tmplShape = $derived(getQrBgShapeById(tmplTransform.shapeId));
+	let tmplFilename = $derived(
+		`vet-crew-qr-plaque-background (${tmplShape.nameEn}, ${bgContainer.code}${tmplTransform.rotation !== 0 ? `, ${tmplTransform.rotation}deg` : ''}${tmplTransform.flipX ? ', flip' : ''}${tmplTransform.scale !== 1.0 ? `, ${Math.round(tmplTransform.scale * 100)}%` : ''})`
+	);
 
 	// Reordering logic for the 4 service mockups
 	function moveService(index: number, delta: -1 | 1) {
@@ -299,40 +398,43 @@
 		serviceOrder = next;
 	}
 
-	// Dynamic SVG caching and transformation
-	let rawSvgs = $state<Record<string, string>>({});
+	// Dynamic SVG caching and transformation (foreground inners without <svg> tags)
+	let fgInners = $state<Record<string, string>>({});
 	let isExporting = $state<string | null>(null);
 
 	async function loadAllSvgs() {
-		const files = [
-			'background.svg',
-			'wifi.svg',
-			'instagram.svg',
-			'vidhuk.svg',
-			'google-reviews.svg',
-			'reviews.svg',
-			'website.svg',
-			'website-v2.svg'
+		const fgFiles = [
+			'wifi-nobg.svg',
+			'instagram-nobg.svg',
+			'vidhuk-nobg.svg',
+			'google-reviews-nobg.svg',
+			'reviews-nobg.svg',
+			'website-nobg.svg',
+			'website-v2-nobg.svg'
 		];
 		try {
 			const results = await Promise.all(
-				files.map(async (file) => {
+				fgFiles.map(async (file) => {
 					try {
 						const res = await fetch(`${base}/brand/qr/${file}`);
 						const text = await res.text();
-						return [file, text] as const;
+						const inner = text
+							.replace(/<svg[^>]*>/i, '')
+							.replace(/<\/svg>/i, '')
+							.trim();
+						return [file, inner] as const;
 					} catch {
 						return [file, ''] as const;
 					}
 				})
 			);
 			const map: Record<string, string> = {};
-			for (const [f, txt] of results) {
-				map[f] = txt;
+			for (const [f, inner] of results) {
+				map[f] = inner;
 			}
-			rawSvgs = map;
+			fgInners = map;
 		} catch (err) {
-			logService.error('brand', 'Failed loading QR SVGs', err);
+			logService.error('brand', 'Failed loading QR foreground SVGs', err);
 		}
 	}
 
@@ -342,64 +444,67 @@
 		}
 	});
 
-	function getActiveFileFor(id: ServiceId): string {
+	function getActiveNobgFileFor(id: ServiceId): string {
 		switch (id) {
 			case 'wifi':
-				return 'wifi.svg';
+				return 'wifi-nobg.svg';
 			case 'instagram':
-				return 'instagram.svg';
+				return 'instagram-nobg.svg';
 			case 'reviews':
-				return REVIEW_FILES[reviewVariant].bg;
+				return REVIEW_FILES[reviewVariant].nobg;
 			case 'website':
-				return WEBSITE_FILES[websiteVariant].bg;
+				return WEBSITE_FILES[websiteVariant].nobg;
 		}
 	}
 
-	function transformQrSvg(
-		svgCode: string,
-		bgColorHex: string,
-		fgColorHex: string,
-		showBg: boolean
+	function renderFullSvg(
+		id: PlaqueId,
+		activeFgFile: string | null,
+		bg: OracalColor,
+		fg: OracalColor,
+		showBg: boolean,
+		overrideTransform?: QrBgTransform
 	): string {
-		if (!svgCode) return '';
-		let res = svgCode;
+		const transform = overrideTransform ?? getTransformFor(id);
+		const shape = getQrBgShapeById(transform.shapeId);
+		const innerSvg = activeFgFile ? (fgInners[activeFgFile] ?? '') : '';
 
-		if (!showBg) {
-			// Strip the container-bg path
-			res = res.replace(/<path[^>]*id="container-bg"[^>]*\/>\s*/i, '');
-		} else {
-			// Update fill attribute on container-bg
-			res = res.replace(/(<path[^>]*id="container-bg"[^>]*\bfill=")[^"]*(")/i, `$1${bgColorHex}$2`);
-			res = res.replace(/(<path[^>]*\bfill=")[^"]*("[^>]*id="container-bg")/i, `$1${bgColorHex}$2`);
-			// Also replace default #ffb327 if present
-			res = res.replace(/fill="#ffb327"/gi, `fill="${bgColorHex}"`);
-		}
-
-		// Update foreground fill for icon, qr-code, text
-		res = res.replace(/fill="#13371b"/gi, `fill="${fgColorHex}"`);
-		res = res.replace(/fill="#101e14"/gi, `fill="${fgColorHex}"`);
-
-		return res;
+		return buildQrSvg({
+			foregroundInnerSvg: innerSvg,
+			bgColorHex: bg.hex,
+			fgColorHex: fg.hex,
+			showBg,
+			shapeD: shape.d,
+			rotation: transform.rotation,
+			flipX: transform.flipX,
+			scale: transform.scale,
+			offsetX: transform.offsetX,
+			offsetY: transform.offsetY
+		});
 	}
 
-	function getCardDataUri(file: string, bg: OracalColor, fg: OracalColor, showBg: boolean): string {
-		const raw = rawSvgs[file];
-		if (!raw) return `${base}/brand/qr/${file}`;
-		const transformed = transformQrSvg(raw, bg.hex, fg.hex, showBg);
-		return `data:image/svg+xml;utf8,${encodeURIComponent(transformed)}`;
+	function getCardDataUri(
+		id: PlaqueId,
+		activeFgFile: string | null,
+		bg: OracalColor,
+		fg: OracalColor,
+		showBg: boolean,
+		overrideTransform?: QrBgTransform
+	): string {
+		const fullSvg = renderFullSvg(id, activeFgFile, bg, fg, showBg, overrideTransform);
+		return `data:image/svg+xml;utf8,${encodeURIComponent(fullSvg)}`;
 	}
 
 	function downloadCustomSvg(
 		filename: string,
-		rawFile: string,
+		id: PlaqueId,
+		activeFgFile: string | null,
 		bg: OracalColor,
 		fg: OracalColor,
 		showBg: boolean
 	) {
-		const raw = rawSvgs[rawFile];
-		if (!raw) return;
-		const transformed = transformQrSvg(raw, bg.hex, fg.hex, showBg);
-		const blob = new Blob([transformed], { type: 'image/svg+xml;charset=utf-8' });
+		const fullSvg = renderFullSvg(id, activeFgFile, bg, fg, showBg);
+		const blob = new Blob([fullSvg], { type: 'image/svg+xml;charset=utf-8' });
 		const url = URL.createObjectURL(blob);
 		const link = document.createElement('a');
 		link.href = url;
@@ -412,18 +517,17 @@
 
 	async function exportCustomPng(
 		filename: string,
-		rawFile: string,
+		id: PlaqueId,
+		activeFgFile: string | null,
 		bg: OracalColor,
 		fg: OracalColor,
 		showBg: boolean,
 		res: PngResolution
 	) {
-		const raw = rawSvgs[rawFile];
-		if (!raw) return;
+		const fullSvg = renderFullSvg(id, activeFgFile, bg, fg, showBg);
 		isExporting = filename;
 		try {
-			const transformed = transformQrSvg(raw, bg.hex, fg.hex, showBg);
-			await downloadSvgAsPng(transformed, `${filename}-${res.label}.png`, res.px);
+			await downloadSvgAsPng(fullSvg, `${filename}-${res.label}.png`, res.px);
 		} catch (err) {
 			logService.error('brand', 'PNG export error', err);
 		} finally {
@@ -652,12 +756,75 @@
 		</div>
 	</div>
 
+	<!-- Master Shape & Rotation Toolbar (Visible when withBg is enabled) -->
+	{#if withBg}
+		<div class="shape-master-bar">
+			<div class="shape-bar-left">
+				<QrShapePicker
+					selectedShapeId={sharedBgTransform.shapeId}
+					onselect={(s) => setSharedTransform({ shapeId: s.id })}
+					label={langStore.current === 'uk'
+						? 'Загальна форма для всіх:'
+						: 'Master Background Shape:'}
+					colorHex={bgContainer.hex}
+					align="left"
+				/>
+
+				<QrTransformControls
+					rotation={sharedBgTransform.rotation}
+					flipX={sharedBgTransform.flipX}
+					scale={sharedBgTransform.scale}
+					offsetX={sharedBgTransform.offsetX}
+					offsetY={sharedBgTransform.offsetY}
+					onchange={(t) => setSharedTransform(t)}
+					label={langStore.current === 'uk' ? 'Поворот, масштаб, рух:' : 'Transform:'}
+				/>
+			</div>
+
+			<div class="shape-bar-right">
+				<button
+					type="button"
+					class="action-btn apply-all-btn"
+					onclick={() => applyShapeToAll(sharedBgTransform)}
+					title={langStore.current === 'uk'
+						? 'Застосувати цю форму та кут до всіх 4 табличок'
+						: 'Apply this shape & transform to all 4 plaques'}
+				>
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.2"
+						aria-hidden="true"
+					>
+						<polyline points="20 6 9 17 4 12"></polyline>
+					</svg>
+					<span>{langStore.current === 'uk' ? 'Застосувати до всіх' : 'Apply to all'}</span>
+				</button>
+
+				<label
+					class="sync-checkbox-label"
+					title={langStore.current === 'uk'
+						? 'Синхронізація: зміна форми в будь-якій табличці змінюватиме всі інші'
+						: 'Link shapes: editing shape in any plaque syncs all others'}
+				>
+					<input type="checkbox" class="sync-checkbox" bind:checked={syncBgShapes} />
+					<span class="sync-text">
+						{langStore.current === 'uk' ? 'Синхронізувати форму' : 'Linked Shape'}
+					</span>
+				</label>
+			</div>
+		</div>
+	{/if}
+
 	<!-- 1. MASTER BACKGROUND TEMPLATE (Separated at the top) -->
 	<div class="master-template-section">
 		<div class="master-template-card">
 			<div class="template-stage-wrap stage--{stageTheme}">
 				<img
-					src={getCardDataUri('background.svg', bgContainer, sharedFgColor, true)}
+					src={getCardDataUri('background', null, bgContainer, sharedFgColor, true, tmplTransform)}
 					alt={langStore.current === 'uk'
 						? 'Фоновий контейнер (Шаблон)'
 						: 'Plaque Background Template'}
@@ -695,6 +862,26 @@
 							label={langStore.current === 'uk' ? 'Плівка підкладки:' : 'Plaque Film:'}
 							align="left"
 						/>
+
+						{#if withBg}
+							<QrShapePicker
+								selectedShapeId={tmplTransform.shapeId}
+								onselect={(s) => setCardTransform('background', { shapeId: s.id })}
+								label={langStore.current === 'uk' ? 'Форма підкладки:' : 'Shape:'}
+								colorHex={bgContainer.hex}
+								compact
+							/>
+							<QrTransformControls
+								rotation={tmplTransform.rotation}
+								flipX={tmplTransform.flipX}
+								scale={tmplTransform.scale}
+								offsetX={tmplTransform.offsetX}
+								offsetY={tmplTransform.offsetY}
+								onchange={(t) => setCardTransform('background', t)}
+								compact
+								label={langStore.current === 'uk' ? 'Поворот, масштаб, рух:' : 'Transform:'}
+							/>
+						{/if}
 					</div>
 
 					<div class="template-actions">
@@ -703,8 +890,9 @@
 							class="download-qr-btn svg-btn"
 							onclick={() =>
 								downloadCustomSvg(
-									`vet-crew-qr-plaque-background (${bgContainer.code})`,
-									'background.svg',
+									tmplFilename,
+									'background',
+									null,
 									bgContainer,
 									sharedFgColor,
 									true
@@ -728,14 +916,15 @@
 						<PngDownloadBtn
 							onselect={(res) =>
 								exportCustomPng(
-									`vet-crew-qr-plaque-background (${bgContainer.code})`,
-									'background.svg',
+									tmplFilename,
+									'background',
+									null,
 									bgContainer,
 									sharedFgColor,
 									true,
 									res
 								)}
-							isDownloading={isExporting === `vet-crew-qr-plaque-background (${bgContainer.code})`}
+							isDownloading={isExporting === tmplFilename}
 							btnClass="download-qr-btn"
 							size="compact"
 						/>
@@ -767,8 +956,21 @@
 			{#each serviceOrder as id, idx (id)}
 				{@const bg = getBgFor(id)}
 				{@const fg = getFgFor(id)}
-				{@const activeFile = getActiveFileFor(id)}
-				{@const baseFilename = `vet-crew-${id}${id === 'reviews' ? `-${reviewVariant}` : id === 'website' ? `-${websiteVariant}` : ''} (${bg.code} + ${fg.code}${withBg ? '' : ', nobg'})`}
+				{@const activeNobgFile = getActiveNobgFileFor(id)}
+				{@const cardTransform = getTransformFor(id)}
+				{@const cardShape = getQrBgShapeById(cardTransform.shapeId)}
+				{@const rotSuffix =
+					withBg && cardTransform.rotation !== 0 ? `, ${cardTransform.rotation}deg` : ''}
+				{@const flipSuffix = withBg && cardTransform.flipX ? ', flip' : ''}
+				{@const scaleSuffix =
+					withBg && cardTransform.scale !== 1.0
+						? `, ${Math.round(cardTransform.scale * 100)}%`
+						: ''}
+				{@const offsetSuffix =
+					withBg && (cardTransform.offsetX !== 0 || cardTransform.offsetY !== 0)
+						? `, (${cardTransform.offsetX},${cardTransform.offsetY})`
+						: ''}
+				{@const cardFilename = `vet-crew-${id}${id === 'reviews' ? `-${reviewVariant}` : id === 'website' ? `-${websiteVariant}` : ''} (${cardShape.nameEn}, ${bg.code} + ${fg.code}${withBg ? `${rotSuffix}${flipSuffix}${scaleSuffix}${offsetSuffix}` : ', nobg'})`}
 
 				<div class="qr-card service-card">
 					<!-- Card Header with Title, Badge, and Reorder Arrows -->
@@ -823,7 +1025,7 @@
 					<!-- Visual Preview Stage -->
 					<div class="qr-preview-stage stage--{stageTheme}" class:is-nobg={!withBg}>
 						<img
-							src={getCardDataUri(activeFile, bg, fg, withBg)}
+							src={getCardDataUri(id, activeNobgFile, bg, fg, withBg, cardTransform)}
 							alt={id}
 							class="qr-svg-render"
 							loading="lazy"
@@ -854,6 +1056,30 @@
 								/>
 							{/if}
 						</div>
+
+						<!-- Per-card Shape & Transform controls -->
+						{#if withBg}
+							<div class="card-shape-controls">
+								<QrShapePicker
+									selectedShapeId={cardTransform.shapeId}
+									onselect={(s) => setCardTransform(id, { shapeId: s.id })}
+									label={langStore.current === 'uk' ? 'Форма підкладки:' : 'Shape:'}
+									colorHex={bg.hex}
+									compact
+									align={idx > 1 ? 'right' : 'left'}
+								/>
+								<QrTransformControls
+									rotation={cardTransform.rotation}
+									flipX={cardTransform.flipX}
+									scale={cardTransform.scale}
+									offsetX={cardTransform.offsetX}
+									offsetY={cardTransform.offsetY}
+									onchange={(t) => setCardTransform(id, t)}
+									compact
+									label={langStore.current === 'uk' ? 'Поворот, масштаб, рух:' : 'Transform:'}
+								/>
+							</div>
+						{/if}
 
 						<!-- Subvariants (for Reviews and Website) -->
 						{#if id === 'reviews'}
@@ -904,10 +1130,10 @@
 						<button
 							type="button"
 							class="download-qr-btn svg-btn"
-							onclick={() => downloadCustomSvg(baseFilename, activeFile, bg, fg, withBg)}
+							onclick={() => downloadCustomSvg(cardFilename, id, activeNobgFile, bg, fg, withBg)}
 							title="{langStore.current === 'uk'
 								? 'Завантажити SVG'
-								: 'Download SVG'}: {baseFilename}.svg"
+								: 'Download SVG'}: {cardFilename}.svg"
 						>
 							<svg
 								width="13"
@@ -925,8 +1151,9 @@
 						</button>
 
 						<PngDownloadBtn
-							onselect={(res) => exportCustomPng(baseFilename, activeFile, bg, fg, withBg, res)}
-							isDownloading={isExporting === baseFilename}
+							onselect={(res) =>
+								exportCustomPng(cardFilename, id, activeNobgFile, bg, fg, withBg, res)}
+							isDownloading={isExporting === cardFilename}
 							btnClass="download-qr-btn"
 							size="compact"
 							align={idx >= 2 ? 'right' : 'left'}
@@ -1285,6 +1512,61 @@
 		white-space: nowrap;
 	}
 
+	/* MASTER SHAPE & ROTATION BAR */
+	.shape-master-bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1.25rem;
+		flex-wrap: wrap;
+		padding: 0.85rem 1.25rem;
+		background: var(--bg-secondary);
+		border: 1px solid var(--border);
+		border-radius: 14px;
+		position: relative;
+	}
+
+	.shape-master-bar:has(:global(.is-open)),
+	.shape-master-bar:has(:global(.picker-popover)),
+	.shape-master-bar:has(:global(.shape-picker-popover)),
+	.shape-master-bar:focus-within {
+		z-index: 55;
+	}
+
+	.shape-bar-left {
+		display: flex;
+		align-items: center;
+		gap: 1.5rem;
+		flex-wrap: wrap;
+	}
+
+	.shape-bar-right {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		flex-wrap: wrap;
+	}
+
+	.apply-all-btn {
+		background: rgba(89, 143, 58, 0.12);
+		border-color: var(--brand-leaf, #598f3a);
+		color: var(--brand-leaf, #598f3a);
+		font-weight: 600;
+	}
+
+	.apply-all-btn:hover {
+		background: var(--brand-leaf, #598f3a);
+		color: #ffffff;
+	}
+
+	.card-shape-controls {
+		display: flex;
+		flex-direction: column;
+		gap: 0.45rem;
+		padding-top: 0.45rem;
+		border-top: 1px dashed var(--border);
+	}
+
 	/* MASTER TEMPLATE SECTION */
 	.master-template-section {
 		display: flex;
@@ -1417,6 +1699,7 @@
 		display: flex;
 		align-items: center;
 		gap: 0.75rem;
+		flex-wrap: wrap;
 	}
 
 	.template-actions {
