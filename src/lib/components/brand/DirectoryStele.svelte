@@ -3,7 +3,7 @@
 	import { langStore } from '$lib/lang.svelte';
 	import { logService } from '$lib/services/logService.svelte';
 	import { downloadUrlAsPng } from '$lib/utils/exportPng';
-	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
+	import StageBgSwitcher from '$lib/components/brand/StageBgSwitcher.svelte';
 	import {
 		PNG_RESOLUTIONS,
 		DEFAULT_PNG_RESOLUTION,
@@ -21,22 +21,28 @@
 		generateSteleShareText,
 		generateSteleShareUrl,
 		ORACAL_641_PALETTE,
-		ORACAL_CATEGORIES,
 		STELE_ORACAL_PRESETS,
 		getOracalColorByCode,
+		getOracalColorByHex,
 		type SteleConfig,
 		type SteleTextCase,
 		type SteleParsedConfig,
 		type OracalColor,
-		type OracalCategory,
 		type SteleOracalPreset
 	} from '$lib/data/directorySteleData';
 
 	interface Props {
 		customSelectedColor?: string | null;
+		textCase?: SteleTextCase;
+		activeTargetName?: string;
 	}
 
-	let { customSelectedColor: _customSelectedColor = null }: Props = $props();
+	let {
+		customSelectedColor = $bindable(null),
+		textCase = $bindable('titlecase'),
+		// eslint-disable-next-line no-useless-assignment
+		activeTargetName = $bindable('')
+	}: Props = $props();
 
 	// Physical dimension states (in millimeters)
 	let width = $state<number>(420);
@@ -44,16 +50,13 @@
 	const cornerRadius = 22;
 
 	// Outer border states (in millimeters)
-	let borderThickness = $state<number>(7);
-	let borderOffset = $state<number>(6);
-
-	// Text casing ('uppercase' | 'titlecase')
-	let textCase = $state<SteleTextCase>('uppercase');
+	let borderThickness = $state<number>(10);
+	let borderOffset = $state<number>(5);
 
 	// Sizing states (in millimeters)
-	let isSizeLinked = $state<boolean>(true);
-	let iconSize = $state<number>(44);
-	let fontSize = $state<number>(22);
+	let isSizeLinked = $state<boolean>(false);
+	let iconSize = $state<number>(65);
+	let fontSize = $state<number>(30);
 
 	function onIconSizeChange(newVal: number) {
 		iconSize = newVal;
@@ -70,11 +73,11 @@
 	}
 
 	// Divider states (in millimeters)
-	let dividerThickness = $state<number>(2.5);
-	let dividerInset = $state<number>(24);
+	let dividerThickness = $state<number>(3);
+	let dividerInset = $state<number>(30);
 
 	// Padding states (in millimeters)
-	let sidePadding = $state<number>(22);
+	let sidePadding = $state<number>(20);
 	let verticalPadding = $state<number>(14);
 
 	// Arrow direction (0° = Right, 180° = Left, etc.)
@@ -88,11 +91,11 @@
 	let arrowAngle = $state<number>(0);
 
 	// Color scheme state using ORACAL® 641 Economy Cal (Matt)
-	let activePresetId = $state<string>('photo-match');
-	let bgOracal = $state<OracalColor>(getOracalColorByCode('068M') ?? ORACAL_641_PALETTE[41]!);
-	let fgOracal = $state<OracalColor>(getOracalColorByCode('060M') ?? ORACAL_641_PALETTE[38]!);
-	let borderOracal = $state<OracalColor>(getOracalColorByCode('060M') ?? ORACAL_641_PALETTE[38]!);
-	let isBorderLinked = $state<boolean>(true);
+	let activePresetId = $state<string>('lime-forest');
+	let bgOracal = $state<OracalColor>(getOracalColorByCode('063M') ?? ORACAL_641_PALETTE[40]!);
+	let fgOracal = $state<OracalColor>(getOracalColorByCode('613M') ?? ORACAL_641_PALETTE[43]!);
+	let borderOracal = $state<OracalColor>(getOracalColorByCode('613M') ?? ORACAL_641_PALETTE[43]!);
+	let isBorderLinked = $state<boolean>(false);
 
 	let customBg = $derived(bgOracal.hex);
 	let customFg = $derived(fgOracal.hex);
@@ -100,41 +103,124 @@
 	let customBorder = $derived(activeBorderOracal.hex);
 
 	// Palette picker state
-	type ColorTarget = 'bg' | 'fg' | 'border';
-	let activeColorTarget = $state<ColorTarget>('bg');
-	let oracalSearchQuery = $state<string>('');
-	let selectedCategory = $state<OracalCategory | 'all'>('all');
+	type ColorTarget = 'bg' | 'fg' | 'border' | 'stage' | null;
+	let activeColorTarget = $state<ColorTarget>(null);
+	let lastTarget = $state<'bg' | 'fg' | 'border' | 'stage'>('bg');
 	let isSpecCopied = $state<boolean>(false);
 
-	let filteredOracalColors = $derived(
-		ORACAL_641_PALETTE.filter((c) => {
-			const matchesCategory = selectedCategory === 'all' || c.category === selectedCategory;
-			if (!matchesCategory) return false;
-			if (!oracalSearchQuery.trim()) return true;
-			const q = oracalSearchQuery.toLowerCase().trim();
-			return (
-				c.code.toLowerCase().includes(q) ||
-				c.nameEn.toLowerCase().includes(q) ||
-				c.nameUk.toLowerCase().includes(q) ||
-				c.hex.toLowerCase().includes(q)
-			);
-		})
-	);
+	function selectTarget(target: 'bg' | 'fg' | 'border' | 'stage') {
+		activeColorTarget = target;
+		lastTarget = target;
+		syncToParent();
+	}
+
+	function clearSelection() {
+		activeColorTarget = null;
+		customSelectedColor = null;
+	}
+
+	function syncToParent() {
+		if (activeColorTarget === 'bg') {
+			customSelectedColor = bgOracal.hex;
+		} else if (activeColorTarget === 'fg') {
+			customSelectedColor = fgOracal.hex;
+		} else if (activeColorTarget === 'border') {
+			customSelectedColor = activeBorderOracal.hex;
+		} else if (activeColorTarget === 'stage') {
+			customSelectedColor =
+				stageTheme === 'checker' ? 'transparent' : (activeStageBgHex ?? '#f0f3ef');
+		} else {
+			customSelectedColor = null;
+		}
+	}
+
+	$effect(() => {
+		if (activeColorTarget === 'bg') {
+			activeTargetName = langStore.current === 'uk' ? 'Фон стели' : 'Base';
+		} else if (activeColorTarget === 'fg') {
+			activeTargetName = langStore.current === 'uk' ? 'Графіка' : 'Graphics';
+		} else if (activeColorTarget === 'border') {
+			activeTargetName = langStore.current === 'uk' ? 'Рамка' : 'Border';
+		} else if (activeColorTarget === 'stage') {
+			activeTargetName = langStore.current === 'uk' ? 'Тло прев’ю' : 'Preview background';
+		} else {
+			activeTargetName = '';
+		}
+	});
 
 	function applyOracalColor(color: OracalColor) {
+		const target = activeColorTarget ?? lastTarget;
+		if (target === 'stage') {
+			customStageBg = color.hex;
+			const match = Object.entries(STAGE_BG_MAP).find(
+				([_, h]) => h.toLowerCase() === color.hex.toLowerCase()
+			);
+			if (match) {
+				stageTheme = match[0];
+			}
+			activeColorTarget = 'stage';
+			lastTarget = 'stage';
+			syncToParent();
+			return;
+		}
+
 		activePresetId = 'custom';
-		if (activeColorTarget === 'bg') {
+		if (target === 'bg') {
 			bgOracal = color;
-		} else if (activeColorTarget === 'fg') {
+		} else if (target === 'fg') {
 			fgOracal = color;
 			if (isBorderLinked) {
 				borderOracal = color;
 			}
-		} else if (activeColorTarget === 'border') {
+		} else if (target === 'border') {
 			borderOracal = color;
 			isBorderLinked = false;
 		}
+		activeColorTarget = target;
+		lastTarget = target;
+		syncToParent();
 	}
+
+	// External color sync from right floating BrandColorNav
+	$effect(() => {
+		if (customSelectedColor) {
+			const target = activeColorTarget ?? lastTarget;
+			const valLower = customSelectedColor.toLowerCase();
+			if (valLower === 'transparent' || valLower === 'checker') {
+				if (target === 'stage') {
+					stageTheme = 'checker';
+					customStageBg = null;
+				} else if (target === 'border') {
+					isBorderLinked = false;
+					borderThickness = 0;
+				}
+				return;
+			}
+
+			if (target === 'stage') {
+				const hexUpper = customSelectedColor.toUpperCase();
+				const matchTheme = Object.entries(STAGE_BG_MAP).find(
+					([_, h]) => h.toUpperCase() === hexUpper
+				);
+				if (matchTheme) {
+					stageTheme = matchTheme[0];
+					customStageBg = null;
+				} else {
+					customStageBg = customSelectedColor;
+				}
+				return;
+			}
+
+			const found = getOracalColorByHex(customSelectedColor);
+			if (found) {
+				const currentHex =
+					target === 'bg' ? bgOracal.hex : target === 'fg' ? fgOracal.hex : activeBorderOracal.hex;
+				if (found.hex.toLowerCase() !== currentHex.toLowerCase()) {
+					applyOracalColor(found);
+				}
+			}
+		}
+	});
 
 	function selectOracalPreset(preset: SteleOracalPreset) {
 		activePresetId = preset.id;
@@ -145,6 +231,7 @@
 		if (fg) fgOracal = fg;
 		if (b) borderOracal = b;
 		isBorderLinked = preset.fgCode === preset.borderCode;
+		syncToParent();
 	}
 
 	function invertColors() {
@@ -155,6 +242,7 @@
 		if (!isBorderLinked) {
 			borderOracal = temp;
 		}
+		syncToParent();
 	}
 
 	function copyOracalSpec() {
@@ -179,8 +267,22 @@
 		}
 	}
 
-	// Stage preview background
-	let stageTheme = $state<StageTheme>('light');
+	// Stage preview background with support for Oracal wraps & clinic walls
+	let stageTheme = $state<string>('light');
+	let customStageBg = $state<string | null>(null);
+	const STAGE_BG_MAP: Record<string, string> = {
+		white: '#FFFFFF',
+		grey: '#E5E7EB',
+		dark: '#181C19',
+		grass: '#00783F',
+		emerald: '#003C24',
+		forest: '#005236',
+		yellow: '#E8A700',
+		gold: '#796532',
+		black: '#060607',
+		light: '#f0f3ef'
+	};
+	let activeStageBgHex = $derived(customStageBg ?? STAGE_BG_MAP[stageTheme] ?? null);
 
 	// PNG dropdown resolution state
 	let currentResId = $state<string>('1080p');
@@ -203,11 +305,38 @@
 
 	$effect(() => {
 		if (!browser) return;
-		const onDocClick = () => {
+		const onDocClick = (e: MouseEvent) => {
 			if (isPngMenuOpen) isPngMenuOpen = false;
+			const target = e.target as HTMLElement | null;
+			if (!target) return;
+
+			if (
+				target.closest('.brand-color-nav') ||
+				target.closest('.oracal-flyout-popover') ||
+				target.closest('.stele-dimension-badge') ||
+				target.closest('.stele-target-selector-bar') ||
+				target.closest('.stele-quick-actions') ||
+				target.closest('.stage-switcher-box') ||
+				target.closest('.bg-switch-group')
+			) {
+				return;
+			}
+
+			if (target.closest('.stele-interactive-shape')) {
+				return;
+			}
+
+			if (target.closest('.stele-preview-stage') || target.closest('.stele-canvas-wrapper')) {
+				return;
+			}
+
+			clearSelection();
 		};
 		const onKeyDown = (e: KeyboardEvent) => {
-			if (e.key === 'Escape' && isPngMenuOpen) isPngMenuOpen = false;
+			if (e.key === 'Escape') {
+				if (isPngMenuOpen) isPngMenuOpen = false;
+				clearSelection();
+			}
 		};
 		const onGlobalClose = (e: Event) => {
 			const custom = e as CustomEvent<{ openId: string }>;
@@ -684,7 +813,7 @@
 			</button>
 
 			<div class="stage-switcher-box">
-				<StageBgSwitcher bind:current={stageTheme} />
+				<StageBgSwitcher bind:current={stageTheme} mode="oracal" />
 			</div>
 		</div>
 	</div>
@@ -1134,159 +1263,15 @@
 					{/each}
 				</div>
 
-				<!-- Target Component Selector (What are you changing?) -->
-				<div class="section-micro-header">
+				<!-- Border link option -->
+				<label class="border-link-checkbox">
+					<input type="checkbox" bind:checked={isBorderLinked} />
 					<span
 						>{langStore.current === 'uk'
-							? 'Вибір елемента для заміни плівки:'
-							: 'Select element to customize:'}</span
+							? 'Колір рамки однаковий з текстом та іконками'
+							: 'Sync border color with graphics'}</span
 					>
-				</div>
-				<div class="color-target-pills">
-					<button
-						type="button"
-						class="target-pill"
-						class:is-active={activeColorTarget === 'bg'}
-						onclick={() => (activeColorTarget = 'bg')}
-					>
-						<span class="target-swatch" style:background-color={bgOracal.hex}></span>
-						<div class="target-info">
-							<span class="target-role"
-								>{langStore.current === 'uk' ? 'Фон стели' : 'Base Film'}</span
-							>
-							<span class="target-code"
-								>{bgOracal.code} • {langStore.current === 'uk'
-									? bgOracal.nameUk
-									: bgOracal.nameEn}</span
-							>
-						</div>
-					</button>
-
-					<button
-						type="button"
-						class="target-pill"
-						class:is-active={activeColorTarget === 'fg'}
-						onclick={() => (activeColorTarget = 'fg')}
-					>
-						<span class="target-swatch" style:background-color={fgOracal.hex}></span>
-						<div class="target-info">
-							<span class="target-role"
-								>{langStore.current === 'uk' ? 'Текст/Іконки' : 'Graphics'}</span
-							>
-							<span class="target-code"
-								>{fgOracal.code} • {langStore.current === 'uk'
-									? fgOracal.nameUk
-									: fgOracal.nameEn}</span
-							>
-						</div>
-					</button>
-
-					<button
-						type="button"
-						class="target-pill"
-						class:is-active={activeColorTarget === 'border'}
-						onclick={() => {
-							activeColorTarget = 'border';
-							isBorderLinked = false;
-						}}
-					>
-						<span
-							class="target-swatch"
-							style:background-color={isBorderLinked ? fgOracal.hex : borderOracal.hex}
-						></span>
-						<div class="target-info">
-							<span class="target-role"
-								>{langStore.current === 'uk' ? 'Рамка (бордер)' : 'Border'}</span
-							>
-							<span class="target-code">
-								{isBorderLinked ? fgOracal.code : borderOracal.code} • {isBorderLinked
-									? langStore.current === 'uk'
-										? fgOracal.nameUk
-										: fgOracal.nameEn
-									: langStore.current === 'uk'
-										? borderOracal.nameUk
-										: borderOracal.nameEn}
-							</span>
-						</div>
-					</button>
-				</div>
-
-				{#if activeColorTarget === 'border'}
-					<label class="border-link-checkbox">
-						<input type="checkbox" bind:checked={isBorderLinked} />
-						<span
-							>{langStore.current === 'uk'
-								? 'Синхронізувати колір рамки з текстом та іконками'
-								: 'Sync border color with graphics'}</span
-						>
-					</label>
-				{/if}
-
-				<!-- Palette Search and Category Filters -->
-				<div class="oracal-picker-box">
-					<div class="picker-search-row">
-						<input
-							type="text"
-							bind:value={oracalSearchQuery}
-							placeholder={langStore.current === 'uk'
-								? '🔍 Пошук плівки: 068, green, white, gold...'
-								: '🔍 Search film: 068, green, white, gold...'}
-							class="oracal-search-input"
-						/>
-						{#if oracalSearchQuery}
-							<button
-								type="button"
-								class="clear-search-btn"
-								onclick={() => (oracalSearchQuery = '')}
-							>
-								✕
-							</button>
-						{/if}
-					</div>
-
-					<div class="category-filter-scroll">
-						{#each ORACAL_CATEGORIES as cat (cat.id)}
-							<button
-								type="button"
-								class="cat-pill"
-								class:is-active={selectedCategory === cat.id}
-								onclick={() => (selectedCategory = cat.id)}
-							>
-								{langStore.current === 'uk' ? cat.nameUk : cat.nameEn}
-							</button>
-						{/each}
-					</div>
-
-					<!-- Color Swatches Grid -->
-					<div class="oracal-swatches-grid" role="listbox" aria-label="Палітра плівок Oracal 641">
-						{#each filteredOracalColors as c (c.code)}
-							{@const isSelected =
-								(activeColorTarget === 'bg' && bgOracal.code === c.code) ||
-								(activeColorTarget === 'fg' && fgOracal.code === c.code) ||
-								(activeColorTarget === 'border' &&
-									(isBorderLinked ? fgOracal.code : borderOracal.code) === c.code)}
-							<button
-								type="button"
-								class="oracal-swatch-chip"
-								class:is-selected={isSelected}
-								onclick={() => applyOracalColor(c)}
-								title="{c.code} {c.nameEn} ({langStore.current === 'uk'
-									? c.nameUk
-									: ''}) • sRGB: {c.r}, {c.g}, {c.b}"
-							>
-								<span class="swatch-circle" style:background-color={c.hex}></span>
-								<div class="swatch-label-wrap">
-									<strong class="swatch-code">{c.code}</strong>
-									<span class="swatch-name">{langStore.current === 'uk' ? c.nameUk : c.nameEn}</span
-									>
-								</div>
-								{#if isSelected}
-									<span class="swatch-check">✓</span>
-								{/if}
-							</button>
-						{/each}
-					</div>
-				</div>
+				</label>
 
 				<!-- Live Specification & Copy Button -->
 				<div class="oracal-spec-summary">
@@ -1340,8 +1325,49 @@
 
 		<!-- RIGHT: LIVE PREVIEW STAGE WITH INTERACTIVE SVG -->
 		<div class="stele-stage-column">
-			<div class="stele-preview-stage stage--{stageTheme}">
-				<div class="stele-canvas-wrapper" style:max-width="{width * 0.95}px">
+			<div
+				class="stele-preview-stage"
+				class:stage--checker={stageTheme === 'checker'}
+				class:is-active-target={activeColorTarget === 'stage'}
+				style:background-color={activeStageBgHex}
+				role="button"
+				tabindex="0"
+				aria-label={langStore.current === 'uk'
+					? 'Тло прев’ю покажчика (клікніть для вибору кольору тла або на макет для налаштування)'
+					: 'Preview stage background (click to select background color or on mockup to customize)'}
+				onclick={(e) => {
+					const target = e.target as HTMLElement | SVGElement | null;
+					if (
+						target &&
+						!target.closest('.stele-interactive-shape') &&
+						!target.closest('.stele-target-selector-bar') &&
+						!target.closest('.stele-quick-actions')
+					) {
+						e.stopPropagation();
+						selectTarget('stage');
+					}
+				}}
+				onkeydown={(e) => {
+					if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
+						e.preventDefault();
+						e.stopPropagation();
+						selectTarget('stage');
+					}
+				}}
+			>
+				{#if activeColorTarget === 'stage'}
+					<div class="stage-active-indicator">
+						<span class="stage-active-badge">
+							{langStore.current === 'uk' ? 'Тло прев’ю: активне' : 'Preview Bg: Active'}
+						</span>
+					</div>
+				{/if}
+
+				<div
+					class="stele-canvas-wrapper"
+					class:is-stage-active={activeColorTarget === 'stage'}
+					style:max-width="{width * 0.95}px"
+				>
 					<!-- Interactive SVG Mockup -->
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -1367,112 +1393,304 @@
 							</style>
 						</defs>
 
-						<!-- Outer Beveled Board -->
-						<path d={outerPath} fill={customBg} />
+						<!-- Outer Beveled Board (Interactive Background) -->
+						<path
+							d={outerPath}
+							fill={customBg}
+							class="stele-interactive-shape stele-bg-shape"
+							class:is-active-target={activeColorTarget === 'bg'}
+							onclick={(e) => {
+								e.stopPropagation();
+								selectTarget('bg');
+							}}
+							role="button"
+							tabindex="0"
+							aria-label={langStore.current === 'uk'
+								? 'Вибрати фон стели для зміни кольору'
+								: 'Select board background for color customization'}
+							onkeydown={(e) => {
+								if (e.key === 'Enter' || e.key === ' ') {
+									e.stopPropagation();
+									selectTarget('bg');
+								}
+							}}
+						/>
+						{#if activeColorTarget === 'bg'}
+							<path
+								d={outerPath}
+								fill="none"
+								stroke="#22c55e"
+								stroke-width="3"
+								stroke-dasharray="10 6"
+								class="stele-selection-ring"
+								pointer-events="none"
+							/>
+						{/if}
 
-						<!-- Inner Decorative Frame -->
+						<!-- Inner Decorative Frame (Interactive Border) -->
 						<path
 							d={innerPath}
 							fill="none"
 							stroke={customBorder}
 							stroke-width={borderThickness}
 							stroke-linejoin="round"
+							class="stele-interactive-shape stele-border-shape"
+							class:is-active-target={activeColorTarget === 'border'}
+							onclick={(e) => {
+								e.stopPropagation();
+								selectTarget('border');
+							}}
+							role="button"
+							tabindex="0"
+							aria-label={langStore.current === 'uk'
+								? 'Вибрати рамку стели для зміни кольору'
+								: 'Select border frame for color customization'}
+							onkeydown={(e) => {
+								if (e.key === 'Enter' || e.key === ' ') {
+									e.stopPropagation();
+									selectTarget('border');
+								}
+							}}
 						/>
-
-						<!-- 6 Dividing Lines -->
-						{#each Array(6) as _, i (i)}
-							{@const lineY = topY + (i + 1) * rowH}
-							<line
-								x1={dividerInset}
-								y1={lineY}
-								x2={width - dividerInset}
-								y2={lineY}
-								stroke={customFg}
-								stroke-width={dividerThickness}
-								stroke-linecap="round"
+						{#if activeColorTarget === 'border'}
+							<path
+								d={innerPath}
+								fill="none"
+								stroke="#22c55e"
+								stroke-width={borderThickness + 4}
+								stroke-dasharray="8 5"
+								stroke-linejoin="round"
+								class="stele-selection-ring"
+								pointer-events="none"
 							/>
-						{/each}
+						{/if}
 
-						<!-- 7 Department Rows -->
-						{#each STELE_DEPARTMENTS as dep, i (dep.id)}
-							{@const cy = topY + (i + 0.5) * rowH}
-							{@const iconX = borderOffset + borderThickness + sidePadding}
-							{@const iconY = cy - iconSize / 2}
-							{@const textX = iconX + iconSize + 14}
-							{@const arrowX = width - borderOffset - borderThickness - sidePadding - arrowSize}
-							{@const arrowY = cy - arrowSize / 2}
+						<!-- Graphics Layer (Lines, Icons, Text, Arrows) -->
+						<g
+							class="stele-interactive-shape stele-fg-group"
+							class:is-active-target={activeColorTarget === 'fg'}
+							onclick={(e) => {
+								e.stopPropagation();
+								selectTarget('fg');
+							}}
+							role="button"
+							tabindex="0"
+							aria-label={langStore.current === 'uk'
+								? 'Вибрати графіку (іконки, текст, лінії) для зміни кольору'
+								: 'Select graphics (icons, text, dividers) for color customization'}
+							onkeydown={(e) => {
+								if (e.key === 'Enter' || e.key === ' ') {
+									e.stopPropagation();
+									selectTarget('fg');
+								}
+							}}
+						>
+							<!-- 6 Dividing Lines -->
+							{#each Array(6) as _, i (i)}
+								{@const lineY = topY + (i + 1) * rowH}
+								<line
+									x1={dividerInset}
+									y1={lineY}
+									x2={width - dividerInset}
+									y2={lineY}
+									stroke={customFg}
+									stroke-width={dividerThickness}
+									stroke-linecap="round"
+								/>
+							{/each}
 
-							<g id="preview-row-{dep.id}">
-								<!-- Department Icon -->
-								<g transform="translate({iconX}, {iconY}) scale({iconScale})">
-									{#each dep.paths as p, pIdx (pIdx)}
-										<path d={p} fill={customFg} />
-									{/each}
+							<!-- 7 Department Rows -->
+							{#each STELE_DEPARTMENTS as dep, i (dep.id)}
+								{@const cy = topY + (i + 0.5) * rowH}
+								{@const iconX = borderOffset + borderThickness + sidePadding}
+								{@const iconY = cy - iconSize / 2}
+								{@const textX = iconX + iconSize + 14}
+								{@const arrowX = width - borderOffset - borderThickness - sidePadding - arrowSize}
+								{@const arrowY = cy - arrowSize / 2}
+
+								<g id="preview-row-{dep.id}">
+									<!-- Department Icon -->
+									<g transform="translate({iconX}, {iconY}) scale({iconScale})">
+										{#each dep.paths as p, pIdx (pIdx)}
+											<path d={p} fill={customFg} />
+										{/each}
+									</g>
+
+									<!-- Department Title -->
+									{#if dep.twoLines && dep.line1 && dep.line2}
+										<text
+											class="stele-text-render"
+											x={textX}
+											y={cy - fontSize * 0.12}
+											fill={customFg}
+											font-size="{fontSize}px"
+										>
+											{formatSteleTitle(dep.line1, textCase)}
+										</text>
+										<text
+											class="stele-text-render"
+											x={textX}
+											y={cy + fontSize * 0.95}
+											fill={customFg}
+											font-size="{fontSize}px"
+										>
+											{formatSteleTitle(dep.line2, textCase)}
+										</text>
+									{:else}
+										<text
+											class="stele-text-render"
+											x={textX}
+											y={cy + fontSize * 0.36}
+											fill={customFg}
+											font-size="{fontSize}px"
+										>
+											{formatSteleTitle(dep.titleUk, textCase)}
+										</text>
+									{/if}
+
+									<!-- Directional Arrow -->
+									<g
+										transform="translate({arrowX}, {arrowY}) scale({arrowScale}) rotate({arrowAngle} 12 12)"
+									>
+										<path
+											d={STELE_ARROW_PATH}
+											fill="none"
+											stroke={customFg}
+											stroke-width="2.2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										/>
+									</g>
 								</g>
-
-								<!-- Department Title -->
-								{#if dep.twoLines && dep.line1 && dep.line2}
-									<text
-										class="stele-text-render"
-										x={textX}
-										y={cy - fontSize * 0.12}
-										fill={customFg}
-										font-size="{fontSize}px"
-									>
-										{formatSteleTitle(dep.line1, textCase)}
-									</text>
-									<text
-										class="stele-text-render"
-										x={textX}
-										y={cy + fontSize * 0.95}
-										fill={customFg}
-										font-size="{fontSize}px"
-									>
-										{formatSteleTitle(dep.line2, textCase)}
-									</text>
-								{:else}
-									<text
-										class="stele-text-render"
-										x={textX}
-										y={cy + fontSize * 0.36}
-										fill={customFg}
-										font-size="{fontSize}px"
-									>
-										{formatSteleTitle(dep.titleUk, textCase)}
-									</text>
-								{/if}
-
-								<!-- Directional Arrow -->
-								<g
-									transform="translate({arrowX}, {arrowY}) scale({arrowScale}) rotate({arrowAngle} 12 12)"
-								>
-									<path
-										d={STELE_ARROW_PATH}
-										fill="none"
-										stroke={customFg}
-										stroke-width="2.2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									/>
-								</g>
-							</g>
-						{/each}
+							{/each}
+						</g>
 					</svg>
 				</div>
 
-				<!-- Physical Dimension Caption matching the reference photo -->
-				<div class="stele-dimension-badge">
+				<!-- Physical Dimension Caption & Unified Oracal Layers Bar -->
+				<div class="stele-dimension-badge stele-target-selector-bar">
 					<span class="dim-label">{width} × {height} мм</span>
-					<div class="stele-oracal-films-tag">
-						<span class="film-pill">
+					<div
+						class="stele-oracal-films-tag target-mode-buttons"
+						role="toolbar"
+						aria-label="Шари покажчика та плівки Oracal"
+					>
+						<!-- Background Layer -->
+						<button
+							type="button"
+							class="film-pill film-pill-btn target-mode-btn"
+							class:is-active={activeColorTarget === 'bg'}
+							onclick={(e) => {
+								e.stopPropagation();
+								selectTarget('bg');
+							}}
+							title={langStore.current === 'uk'
+								? `Фон стели: ORACAL ${bgOracal.code} ${bgOracal.nameEn} (${bgOracal.nameUk})`
+								: `Stele base: ORACAL ${bgOracal.code} ${bgOracal.nameEn}`}
+						>
 							<span class="film-swatch" style:background-color={bgOracal.hex}></span>
-							<span>{bgOracal.code} {bgOracal.nameEn}</span>
-						</span>
+							<span class="layer-role-name">{langStore.current === 'uk' ? 'Фон:' : 'Base:'}</span>
+							<strong class="layer-oracal-code">{bgOracal.code}</strong>
+							<span class="layer-oracal-name">{bgOracal.nameEn}</span>
+						</button>
+
 						<span class="film-divider">+</span>
-						<span class="film-pill">
+
+						<!-- Graphics Layer -->
+						<button
+							type="button"
+							class="film-pill film-pill-btn target-mode-btn"
+							class:is-active={activeColorTarget === 'fg'}
+							onclick={(e) => {
+								e.stopPropagation();
+								selectTarget('fg');
+							}}
+							title={langStore.current === 'uk'
+								? `Графіка: ORACAL ${fgOracal.code} ${fgOracal.nameEn} (${fgOracal.nameUk})`
+								: `Graphics: ORACAL ${fgOracal.code} ${fgOracal.nameEn}`}
+						>
 							<span class="film-swatch" style:background-color={fgOracal.hex}></span>
-							<span>{fgOracal.code} {fgOracal.nameEn}</span>
-						</span>
+							<span class="layer-role-name"
+								>{langStore.current === 'uk'
+									? isBorderLinked
+										? 'Графіка/рамка:'
+										: 'Графіка:'
+									: isBorderLinked
+										? 'Graphics/border:'
+										: 'Graphics:'}</span
+							>
+							<strong class="layer-oracal-code">{fgOracal.code}</strong>
+							<span class="layer-oracal-name">{fgOracal.nameEn}</span>
+						</button>
+
+						<!-- Border Layer (when unlinked) -->
+						{#if !isBorderLinked}
+							<span class="film-divider">+</span>
+							<button
+								type="button"
+								class="film-pill film-pill-btn target-mode-btn"
+								class:is-active={activeColorTarget === 'border'}
+								onclick={(e) => {
+									e.stopPropagation();
+									selectTarget('border');
+								}}
+								title={langStore.current === 'uk'
+									? `Рамка: ORACAL ${borderOracal.code} ${borderOracal.nameEn} (${borderOracal.nameUk})`
+									: `Frame border: ORACAL ${borderOracal.code} ${borderOracal.nameEn}`}
+							>
+								<span class="film-swatch" style:background-color={borderOracal.hex}></span>
+								<span class="layer-role-name"
+									>{langStore.current === 'uk' ? 'Рамка:' : 'Border:'}</span
+								>
+								<strong class="layer-oracal-code">{borderOracal.code}</strong>
+								<span class="layer-oracal-name">{borderOracal.nameEn}</span>
+							</button>
+						{/if}
+
+						<span class="film-divider">•</span>
+
+						<!-- Stage Preview Background Layer -->
+						<button
+							type="button"
+							class="film-pill film-pill-btn target-mode-btn stage-pill-btn"
+							class:is-active={activeColorTarget === 'stage'}
+							onclick={(e) => {
+								e.stopPropagation();
+								selectTarget('stage');
+							}}
+							title={langStore.current === 'uk'
+								? `Тло прев’ю: ${stageTheme} (${activeStageBgHex ?? 'прозоре'})`
+								: `Preview stage background: ${stageTheme}`}
+						>
+							{#if stageTheme === 'checker'}
+								<span class="film-swatch swatch--checker" title="Сітка"></span>
+							{:else}
+								<span class="film-swatch" style:background-color={activeStageBgHex ?? '#f0f3ef'}
+								></span>
+							{/if}
+							<span class="layer-role-name"
+								>{langStore.current === 'uk' ? 'Тло прев’ю:' : 'Stage:'}</span
+							>
+							<strong class="layer-oracal-code">{stageTheme.toUpperCase()}</strong>
+						</button>
+
+						<!-- Deselect button (shown when activeColorTarget is not null) -->
+						{#if activeColorTarget !== null}
+							<button
+								type="button"
+								class="film-pill film-pill-btn target-mode-btn clear-target-btn"
+								onclick={(e) => {
+									e.stopPropagation();
+									clearSelection();
+								}}
+								title={langStore.current === 'uk'
+									? 'Прибрати виділення для чистого скріншоту (Esc або клік повз макет)'
+									: 'Clear selection for clean screenshot (Esc or click outside)'}
+							>
+								<span class="clear-icon">✕</span>
+								<span>{langStore.current === 'uk' ? 'Без виділення' : 'Deselect'}</span>
+							</button>
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -2251,18 +2469,6 @@
 			linear-gradient(-45deg, transparent 75%, #18231b 75%);
 	}
 
-	.stage--light {
-		background-color: #f0f3ef;
-	}
-
-	.stage--dark {
-		background-color: #111a13;
-	}
-
-	.stage--forest {
-		background-color: #13371b;
-	}
-
 	/* CANVAS WRAPPER & SVG RENDER */
 	.stele-canvas-wrapper {
 		display: flex;
@@ -2389,66 +2595,6 @@
 		background: rgba(255, 255, 255, 0.1);
 	}
 
-	/* TARGET ELEMENT SELECTOR */
-	.color-target-pills {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-		gap: 0.5rem;
-		margin-bottom: 0.5rem;
-	}
-
-	.target-pill {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 0.5rem 0.65rem;
-		border-radius: 10px;
-		border: 1px solid var(--border);
-		background: var(--bg-primary);
-		cursor: pointer;
-		text-align: left;
-		transition: all 0.15s ease;
-	}
-
-	.target-pill:hover {
-		border-color: #00783f;
-	}
-
-	.target-pill.is-active {
-		border-color: #00783f;
-		background: rgba(0, 120, 63, 0.08);
-		box-shadow: 0 0 0 2px rgba(0, 120, 63, 0.25);
-	}
-
-	.target-swatch {
-		width: 20px;
-		height: 20px;
-		border-radius: 50%;
-		border: 1px solid rgba(0, 0, 0, 0.2);
-		flex-shrink: 0;
-	}
-
-	.target-info {
-		display: flex;
-		flex-direction: column;
-		min-width: 0;
-	}
-
-	.target-role {
-		font-size: 0.68rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		color: var(--text-secondary);
-	}
-
-	.target-code {
-		font-size: 0.75rem;
-		font-weight: 600;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
 	.border-link-checkbox {
 		display: flex;
 		align-items: center;
@@ -2457,154 +2603,6 @@
 		color: var(--text-secondary);
 		cursor: pointer;
 		margin-bottom: 0.75rem;
-	}
-
-	/* PALETTE PICKER BOX */
-	.oracal-picker-box {
-		border: 1px solid var(--border);
-		border-radius: 12px;
-		background: var(--bg-primary);
-		padding: 0.75rem;
-		display: flex;
-		flex-direction: column;
-		gap: 0.65rem;
-	}
-
-	.picker-search-row {
-		position: relative;
-		display: flex;
-		align-items: center;
-	}
-
-	.oracal-search-input {
-		width: 100%;
-		padding: 0.45rem 2rem 0.45rem 0.75rem;
-		font-size: 0.8rem;
-		border-radius: 8px;
-		border: 1px solid var(--border);
-		background: var(--bg-secondary);
-		color: var(--text-primary);
-	}
-
-	.oracal-search-input:focus {
-		outline: none;
-		border-color: #00783f;
-		box-shadow: 0 0 0 2px rgba(0, 120, 63, 0.2);
-	}
-
-	.clear-search-btn {
-		position: absolute;
-		right: 0.5rem;
-		background: none;
-		border: none;
-		font-size: 0.75rem;
-		color: var(--text-secondary);
-		cursor: pointer;
-		padding: 0.25rem;
-	}
-
-	.category-filter-scroll {
-		display: flex;
-		gap: 0.35rem;
-		overflow-x: auto;
-		padding-bottom: 0.25rem;
-		scrollbar-width: thin;
-	}
-
-	.cat-pill {
-		padding: 0.25rem 0.55rem;
-		border-radius: 9999px;
-		border: 1px solid var(--border);
-		background: var(--bg-secondary);
-		color: var(--text-secondary);
-		font-size: 0.7rem;
-		font-weight: 600;
-		white-space: nowrap;
-		cursor: pointer;
-		transition: all 0.15s ease;
-	}
-
-	.cat-pill:hover {
-		border-color: #00783f;
-		color: var(--text-primary);
-	}
-
-	.cat-pill.is-active {
-		background: #00783f;
-		color: #ffffff;
-		border-color: #00783f;
-	}
-
-	/* SWATCHES GRID */
-	.oracal-swatches-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-		gap: 0.4rem;
-		max-height: 240px;
-		overflow-y: auto;
-		padding-right: 0.25rem;
-		scrollbar-width: thin;
-	}
-
-	.oracal-swatch-chip {
-		display: flex;
-		align-items: center;
-		gap: 0.45rem;
-		padding: 0.35rem 0.5rem;
-		border-radius: 8px;
-		border: 1px solid var(--border);
-		background: var(--bg-secondary);
-		cursor: pointer;
-		text-align: left;
-		transition: all 0.12s ease;
-		position: relative;
-	}
-
-	.oracal-swatch-chip:hover {
-		border-color: #00783f;
-		background: var(--bg-primary);
-		transform: translateY(-1px);
-	}
-
-	.oracal-swatch-chip.is-selected {
-		border-color: #00783f;
-		background: rgba(0, 120, 63, 0.12);
-		box-shadow: 0 0 0 2px #00783f;
-	}
-
-	.swatch-circle {
-		width: 18px;
-		height: 18px;
-		border-radius: 50%;
-		border: 1px solid rgba(0, 0, 0, 0.2);
-		flex-shrink: 0;
-	}
-
-	.swatch-label-wrap {
-		display: flex;
-		flex-direction: column;
-		min-width: 0;
-		line-height: 1.15;
-	}
-
-	.swatch-code {
-		font-size: 0.72rem;
-		color: var(--text-primary);
-	}
-
-	.swatch-name {
-		font-size: 0.65rem;
-		color: var(--text-secondary);
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.swatch-check {
-		margin-left: auto;
-		color: #00783f;
-		font-weight: 800;
-		font-size: 0.75rem;
 	}
 
 	/* PRODUCTION SPEC BOX */
@@ -2691,39 +2689,201 @@
 		background: rgba(255, 255, 255, 0.1);
 	}
 
+	/* INTERACTIVE CANVAS MOCKUP SELECTION */
+	.stele-interactive-shape {
+		cursor: pointer;
+		transition:
+			filter 0.2s ease,
+			opacity 0.2s ease;
+	}
+
+	.stele-bg-shape:hover {
+		filter: brightness(1.05);
+	}
+
+	.stele-border-shape:hover {
+		filter: brightness(1.15) drop-shadow(0 0 4px rgba(34, 197, 94, 0.6));
+	}
+
+	.stele-fg-group:hover {
+		filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.75));
+	}
+
+	.stele-selection-ring {
+		animation: steleDashRing 2s linear infinite;
+	}
+
+	@keyframes steleDashRing {
+		to {
+			stroke-dashoffset: -28;
+		}
+	}
+
+	/* UNIFIED PHYSICAL DIMENSION & ORACAL LAYERS BAR */
+	.stele-dimension-badge {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		margin-top: 1.25rem;
+		text-align: center;
+		gap: 0.55rem;
+		width: 100%;
+	}
+
+	.dim-label {
+		font-size: 1.15rem;
+		font-weight: 800;
+		color: #e02424;
+		letter-spacing: 0.05em;
+		font-style: italic;
+	}
+
 	.stele-oracal-films-tag {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 0.5rem;
-		margin-top: 0.45rem;
+		gap: 0.45rem;
+		flex-wrap: wrap;
+	}
+
+	.target-mode-buttons {
+		display: inline-flex;
 	}
 
 	.film-pill {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.35rem;
-		padding: 0.25rem 0.55rem;
+		padding: 0.35rem 0.65rem;
 		border-radius: 9999px;
 		border: 1px solid var(--border);
 		background: var(--bg-primary);
-		font-size: 0.72rem;
-		font-weight: 600;
+		font-size: 0.74rem;
+		font-weight: 500;
 		color: var(--text-primary);
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+		cursor: pointer;
+		transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.layer-role-name {
+		font-size: 0.72rem;
+		color: var(--text-secondary);
+		font-weight: 600;
+	}
+
+	.layer-oracal-code {
+		font-size: 0.74rem;
+		font-weight: 700;
+	}
+
+	.layer-oracal-name {
+		font-size: 0.7rem;
+		color: var(--text-secondary);
+	}
+
+	.film-pill-btn {
+		cursor: pointer;
+		transition: all 0.15s ease;
+	}
+
+	.film-pill-btn:hover {
+		border-color: #00783f;
+		transform: translateY(-1px);
+		box-shadow: 0 3px 8px rgba(0, 120, 63, 0.15);
+	}
+
+	.film-pill-btn.is-active {
+		border-color: #00783f;
+		background: rgba(0, 120, 63, 0.12);
+		box-shadow: 0 0 0 2px rgba(0, 120, 63, 0.35);
+		color: #00783f;
+		font-weight: 700;
+	}
+
+	:global(.dark) .film-pill-btn.is-active {
+		color: #4ade80;
+		border-color: #4ade80;
+		box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.35);
 	}
 
 	.film-swatch {
-		width: 10px;
-		height: 10px;
+		width: 12px;
+		height: 12px;
 		border-radius: 50%;
 		border: 1px solid rgba(0, 0, 0, 0.2);
+		flex-shrink: 0;
 	}
 
 	.film-divider {
 		font-weight: 700;
 		color: var(--text-secondary);
-		font-size: 0.8rem;
+		font-size: 0.85rem;
+		opacity: 0.6;
+	}
+
+	.clear-target-btn {
+		color: var(--text-secondary);
+		border-color: rgba(239, 68, 68, 0.3);
+		background: rgba(239, 68, 68, 0.04);
+	}
+
+	.clear-target-btn:hover {
+		color: #ef4444;
+		border-color: #ef4444;
+		background: rgba(239, 68, 68, 0.1);
+	}
+
+	:global(.dark) .clear-target-btn:hover {
+		color: #f87171;
+		border-color: #f87171;
+	}
+
+	.clear-icon {
+		font-weight: 800;
+		font-size: 0.72rem;
+	}
+
+	.stele-preview-stage.is-active-target {
+		outline: 2px dashed #22c55e;
+		outline-offset: -3px;
+	}
+
+	.stage-active-indicator {
+		position: absolute;
+		top: 10px;
+		right: 12px;
+		z-index: 10;
+		pointer-events: none;
+	}
+
+	.stage-active-badge {
+		font-size: 0.68rem;
+		font-weight: 700;
+		color: #22c55e;
+		background: rgba(34, 197, 94, 0.14);
+		border: 1px solid rgba(34, 197, 94, 0.35);
+		padding: 0.2rem 0.55rem;
+		border-radius: 9999px;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		backdrop-filter: blur(4px);
+	}
+
+	.film-swatch.swatch--checker {
+		background-color: #ffffff;
+		background-image:
+			linear-gradient(45deg, #d1d5db 25%, transparent 25%),
+			linear-gradient(-45deg, #d1d5db 25%, transparent 25%),
+			linear-gradient(45deg, transparent 75%, #d1d5db 75%),
+			linear-gradient(-45deg, transparent 75%, #d1d5db 75%);
+		background-size: 6px 6px;
+		background-position:
+			0 0,
+			0 3px,
+			3px -3px,
+			-3px 0;
 	}
 
 	/* MODAL DIALOG */

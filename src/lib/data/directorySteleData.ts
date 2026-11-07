@@ -111,6 +111,8 @@ import { getOracalColorByCode } from './oracal641Data';
 export {
 	ORACAL_641_PALETTE,
 	ORACAL_CATEGORIES,
+	ORACAL_PRIORITY_CODES,
+	ORACAL_PRIORITY_COLORS,
 	STELE_ORACAL_PRESETS,
 	getOracalColorByCode,
 	getOracalColorByHex,
@@ -203,26 +205,48 @@ export interface SteleConfig {
 }
 
 /**
- * Calculates the SVG outer contour path with the signature slanted top and rounded corners.
+ * Calculates the SVG outer contour path with the signature slanted top and tangent-continuous rounded corners.
+ * Uses exact G1 fillet geometry so the slanted top edge transitions smoothly into the corner arcs
+ * without any flat bends or kinks at the corners.
  */
 export function getSteleOuterPath(width: number, height: number, r = 22): string {
 	const slantY = Math.round(width * 0.095);
+	const alpha = Math.atan2(slantY, width);
+	const sinA = Math.sin(alpha);
+	const cosA = Math.cos(alpha);
+
+	// Left corner: fillet tangent to vertical edge (x=0) and slanted top line
+	const ycl = slantY + (r * (1 - sinA)) / cosA;
+	const pLeftVertX = 0;
+	const pLeftVertY = ycl;
+	const pLeftSlantX = r * (1 - sinA);
+	const pLeftSlantY = ycl - r * cosA;
+
+	// Right corner: fillet tangent to slanted top line and vertical edge (x=width)
+	const ycr = (r * (1 + sinA)) / cosA;
+	const pRightSlantX = width - r * (1 + sinA);
+	const pRightSlantY = ycr - r * cosA;
+	const pRightVertX = width;
+	const pRightVertY = ycr;
+
+	const f = (n: number) => Number(n.toFixed(2));
+
 	return [
-		`M ${r} ${slantY}`,
-		`L ${width - r} 0`,
-		`A ${r} ${r} 0 0 1 ${width} ${r}`,
+		`M ${f(pLeftSlantX)} ${f(pLeftSlantY)}`,
+		`L ${f(pRightSlantX)} ${f(pRightSlantY)}`,
+		`A ${r} ${r} 0 0 1 ${f(pRightVertX)} ${f(pRightVertY)}`,
 		`L ${width} ${height - r}`,
 		`A ${r} ${r} 0 0 1 ${width - r} ${height}`,
 		`L ${r} ${height}`,
 		`A ${r} ${r} 0 0 1 0 ${height - r}`,
-		`L 0 ${slantY + r}`,
-		`A ${r} ${r} 0 0 1 ${r} ${slantY}`,
+		`L ${f(pLeftVertX)} ${f(pLeftVertY)}`,
+		`A ${r} ${r} 0 0 1 ${f(pLeftSlantX)} ${f(pLeftSlantY)}`,
 		'Z'
 	].join(' ');
 }
 
 /**
- * Calculates the inner decorative inset border path.
+ * Calculates the inner decorative inset border path with tangent-continuous fillets.
  * Insets the path by (bOffset + bThickness / 2) so that when stroked with bThickness,
  * the stroke's outer edge strictly touches (width - bOffset, height - bOffset)
  * and NEVER exceeds the outer board boundary [0, width] x [0, height].
@@ -236,20 +260,40 @@ export function getSteleInnerPath(
 ): string {
 	const totalOffset = bOffset + bThickness / 2;
 	const slantY = Math.round(width * 0.095);
+	const alpha = Math.atan2(slantY, width);
+	const sinA = Math.sin(alpha);
+	const cosA = Math.cos(alpha);
 	const innerR = Math.max(4, r - totalOffset);
-	const innerW = width - 2 * totalOffset;
-	const innerH = height - 2 * totalOffset;
+
+	const xcl = totalOffset + innerR;
+	const ycl = slantY + ((totalOffset + innerR) * (1 - sinA)) / cosA;
+	const pLeftVertX = totalOffset;
+	const pLeftVertY = ycl;
+	const pLeftSlantX = xcl - innerR * sinA;
+	const pLeftSlantY = ycl - innerR * cosA;
+
+	const xcr = width - totalOffset - innerR;
+	const ycr = ((totalOffset + innerR) * (1 + sinA)) / cosA;
+	const pRightSlantX = xcr - innerR * sinA;
+	const pRightSlantY = ycr - innerR * cosA;
+	const pRightVertX = width - totalOffset;
+	const pRightVertY = ycr;
+
+	const rightX = width - totalOffset;
+	const bottomY = height - totalOffset;
+
+	const f = (n: number) => Number(n.toFixed(2));
 
 	return [
-		`M ${totalOffset + innerR} ${totalOffset + slantY}`,
-		`L ${totalOffset + innerW - innerR} ${totalOffset}`,
-		`A ${innerR} ${innerR} 0 0 1 ${totalOffset + innerW} ${totalOffset + innerR}`,
-		`L ${totalOffset + innerW} ${totalOffset + innerH - innerR}`,
-		`A ${innerR} ${innerR} 0 0 1 ${totalOffset + innerW - innerR} ${totalOffset + innerH}`,
-		`L ${totalOffset + innerR} ${totalOffset + innerH}`,
-		`A ${innerR} ${innerR} 0 0 1 ${totalOffset} ${totalOffset + innerH - innerR}`,
-		`L ${totalOffset} ${totalOffset + slantY + innerR}`,
-		`A ${innerR} ${innerR} 0 0 1 ${totalOffset + innerR} ${totalOffset + slantY}`,
+		`M ${f(pLeftSlantX)} ${f(pLeftSlantY)}`,
+		`L ${f(pRightSlantX)} ${f(pRightSlantY)}`,
+		`A ${innerR} ${innerR} 0 0 1 ${f(pRightVertX)} ${f(pRightVertY)}`,
+		`L ${f(rightX)} ${f(bottomY - innerR)}`,
+		`A ${innerR} ${innerR} 0 0 1 ${f(rightX - innerR)} ${f(bottomY)}`,
+		`L ${f(totalOffset + innerR)} ${f(bottomY)}`,
+		`A ${innerR} ${innerR} 0 0 1 ${f(totalOffset)} ${f(bottomY - innerR)}`,
+		`L ${f(pLeftVertX)} ${f(pLeftVertY)}`,
+		`A ${innerR} ${innerR} 0 0 1 ${f(pLeftSlantX)} ${f(pLeftSlantY)}`,
 		'Z'
 	].join(' ');
 }
@@ -274,9 +318,9 @@ export function generateSteleSvg(config: SteleConfig): string {
 		borderColor
 	} = config;
 
-	const bOffset = config.borderOffset ?? 6;
-	const bThickness = config.borderThickness ?? 7;
-	const textCase = config.textCase ?? 'uppercase';
+	const bOffset = config.borderOffset ?? 5;
+	const bThickness = config.borderThickness ?? 10;
+	const textCase = config.textCase ?? 'titlecase';
 	const outerD = getSteleOuterPath(width, height);
 	const innerD = getSteleInnerPath(width, height, bOffset, 22, bThickness);
 	const slantY = Math.round(width * 0.095);
@@ -418,6 +462,9 @@ function fromBase64(b64: string): string {
 	return '';
 }
 
+export const DEFAULT_STELE_CONFIG_TOKEN =
+	'VCH1:eyJ2IjoxLCJ3Ijo0MjAsImJ0IjoxMCwiYm8iOjUsInRjIjoidCIsImlzIjo2NSwiZnMiOjMwLCJkdCI6MywiZGkiOjMwLCJzcCI6MjAsInZwIjoxNCwiYWEiOjAsImJnIjoiMDYzTSIsImZnIjoiNjEzTSIsImJjIjoiNjEzTSIsImJsIjowfQ==';
+
 /**
  * Serializes the current stele state into a compact, URL-safe VCH1 token.
  */
@@ -425,9 +472,9 @@ export function serializeSteleConfig(config: SteleConfig, isBorderLinked = true)
 	const payload = {
 		v: 1,
 		w: config.width,
-		bt: config.borderThickness ?? 7,
-		bo: config.borderOffset ?? 6,
-		tc: config.textCase === 'titlecase' ? 't' : 'u',
+		bt: config.borderThickness ?? 10,
+		bo: config.borderOffset ?? 5,
+		tc: config.textCase === 'titlecase' || config.textCase === undefined ? 't' : 'u',
 		is: config.iconSize,
 		fs: config.fontSize,
 		dt: config.dividerThickness,
@@ -435,9 +482,9 @@ export function serializeSteleConfig(config: SteleConfig, isBorderLinked = true)
 		sp: config.sidePadding,
 		vp: config.verticalPadding,
 		aa: config.arrowAngle,
-		bg: config.bgOracalCode ?? '068M',
-		fg: config.fgOracalCode ?? '060M',
-		bc: config.borderOracalCode ?? config.fgOracalCode ?? '060M',
+		bg: config.bgOracalCode ?? '063M',
+		fg: config.fgOracalCode ?? '613M',
+		bc: config.borderOracalCode ?? config.fgOracalCode ?? '613M',
 		bl: isBorderLinked ? 1 : 0
 	};
 	return `VCH1:${toBase64(JSON.stringify(payload))}`;
@@ -589,8 +636,8 @@ export function parseSteleConfig(
  * Generates hybrid friendly text for clipboard sharing.
  */
 export function generateSteleShareText(config: SteleConfig, token: string): string {
-	const bg = config.bgOracalCode ?? '068M';
-	const fg = config.fgOracalCode ?? '060M';
+	const bg = config.bgOracalCode ?? '063M';
+	const fg = config.fgOracalCode ?? '613M';
 	const bc = config.borderOracalCode ?? fg;
 	const bgCol = getOracalColorByCode(bg);
 	const fgCol = getOracalColorByCode(fg);
@@ -598,7 +645,7 @@ export function generateSteleShareText(config: SteleConfig, token: string): stri
 	return [
 		`📐 Макет стели Vet Crew Hospital (${config.width} × 800 мм)`,
 		`• Плівки ORACAL 641: Фон ${bg} (${bgCol?.nameEn ?? ''}) + Графіка ${fg} (${fgCol?.nameEn ?? ''})`,
-		`• Рамка: ${config.borderThickness ?? 7} мм (плівка ${bc})`,
+		`• Рамка: ${config.borderThickness ?? 10} мм (плівка ${bc})`,
 		`• Розміри: Іконки ${config.iconSize} мм, Шрифт ${config.fontSize} мм`,
 		`\nКод конфігурації:\n${token}\n`,
 		`Щоб переглянути: відкрийте сторінку макета в брендбуці та натисніть «📥 Завантажити конфіг».`

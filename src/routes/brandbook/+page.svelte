@@ -27,6 +27,7 @@
 	let activeButterflyColor = $state<string>('#FFB327');
 	let activeAnimalColor = $state<string | null>(null);
 	let activeSignColor = $state<string | null>(null);
+	let activeSignTargetName = $state<string>('');
 
 	let activeColorForNav = $derived.by(() => {
 		switch (activeSection) {
@@ -37,7 +38,7 @@
 			case 'animals':
 				return activeAnimalColor ?? (themeStore.current === 'dark' ? '#93C84A' : '#13371B');
 			case 'door-signs':
-				return activeSignColor ?? (themeStore.current === 'dark' ? '#93C84A' : '#13371B');
+				return activeSignColor;
 			default:
 				return themeStore.current === 'dark' ? '#93C84A' : '#13371B';
 		}
@@ -613,7 +614,10 @@
 						</div>
 					</div>
 
-					<DoorSignage bind:customSelectedColor={activeSignColor} />
+					<DoorSignage
+						bind:customSelectedColor={activeSignColor}
+						bind:activeTargetName={activeSignTargetName}
+					/>
 				</section>
 
 				<!-- SECTION 09: PHOTO EMBLEMS -->
@@ -654,7 +658,11 @@
 				selectedColor={activeColorForNav}
 				onColorChange={handleNavColorChange}
 				onSectionActive={(sec) => (activeSection = sec)}
-				activeTargetName={activeSection === 'logo-studio' ? activeLogoElementName : ''}
+				activeTargetName={activeSection === 'logo-studio'
+					? activeLogoElementName
+					: activeSection === 'door-signs'
+						? activeSignTargetName
+						: ''}
 			/>
 		</div>
 	</div>
@@ -819,6 +827,8 @@
 
 	/* CARDS */
 	.guide-card {
+		position: relative;
+		z-index: 1;
 		background: var(--panel-bg);
 		border: 1px solid var(--panel-border);
 		border-radius: 1.75rem;
@@ -831,6 +841,14 @@
 		gap: 2rem;
 		scroll-margin-top: 2rem;
 		min-width: 0;
+	}
+
+	/* Elevate section with open picker or dropdown so subsequent sections (with backdrop-filter) do not cut it off */
+	.guide-card:has(:global(.is-open)),
+	.guide-card:has(:global(.picker-popover)),
+	.guide-card:has(:global(.png-menu-dropdown)),
+	.guide-card:focus-within {
+		z-index: 40;
 	}
 
 	.card-head {

@@ -47,7 +47,7 @@ export const COMPOSITE_PLAQUES: SignItem[] = [
 	{
 		id: 'consultation',
 		num: '06',
-		titleUk: 'Приймальний кабінет',
+		titleUk: 'Оглядова',
 		titleEn: 'Examination Room',
 		file: 'consultation.svg'
 	},
@@ -93,7 +93,7 @@ export const TEXT_PLAQUES: SignItem[] = [
 	{
 		id: 'consultation',
 		num: '06',
-		titleUk: 'Приймальний кабінет',
+		titleUk: 'Оглядова',
 		titleEn: 'Examination Room',
 		file: 'consultation.svg'
 	},

@@ -15,16 +15,25 @@
 		type SignFormat,
 		type SignItem
 	} from '$lib/data/doorSignage';
+	import { formatSteleTitle, type SteleTextCase } from '$lib/data/directorySteleData';
 
 	// Unified controls state
 	let currentFormat = $state<SignFormat>('composite');
+	let textCase = $state<SteleTextCase>('titlecase');
 	interface Props {
 		customSelectedColor?: string | null;
+		activeTargetName?: string;
 	}
 
-	let { customSelectedColor = $bindable(null) }: Props = $props();
+	let { customSelectedColor = $bindable(null), activeTargetName = $bindable('') }: Props = $props();
 	let signColor = $derived(
-		customSelectedColor ?? (themeStore.current === 'dark' ? '#93C84A' : '#13371B')
+		customSelectedColor &&
+			customSelectedColor !== 'transparent' &&
+			customSelectedColor !== 'checker'
+			? customSelectedColor
+			: themeStore.current === 'dark'
+				? '#93C84A'
+				: '#13371B'
 	);
 	let stageTheme = $state<StageTheme>('checker');
 	let isDownloading = $state<string | null>(null);
@@ -103,11 +112,15 @@
 				: ICON_PLAQUES
 	);
 
-	function getAssetUrl(item: SignItem): string {
+	function getAssetUrl(item: SignItem, tc: SteleTextCase = textCase): string {
 		if (currentFormat === 'composite') {
-			return `${base}/brand/signage/composite/${item.file}`;
+			return tc === 'titlecase'
+				? `${base}/brand/signage/composite/titlecase/${item.file}`
+				: `${base}/brand/signage/composite/${item.file}`;
 		} else if (currentFormat === 'text') {
-			return `${base}/brand/signage/text/${item.file}`;
+			return tc === 'titlecase'
+				? `${base}/brand/signage/text/titlecase/${item.file}`
+				: `${base}/brand/signage/text/${item.file}`;
 		} else {
 			// For icon, clean 13371B master icon
 			return `${base}/brand/signage/icons/13371B/${item.file}`;
@@ -118,13 +131,19 @@
 		e.preventDefault();
 		isDownloading = item.id;
 		try {
-			const url = getAssetUrl(item);
+			const url = getAssetUrl(item, textCase);
 			const res = await fetch(url);
 			let svgText = await res.text();
 
 			// Replace color in style tag (fill: #13371b) and inline attributes
 			svgText = svgText.replace(/fill:\s*#[0-9a-fA-F]{6}/g, `fill: ${signColor}`);
 			svgText = svgText.replace(/fill="(?!(?:none))#[0-9a-fA-F]{6}"/g, `fill="${signColor}"`);
+
+			// Ensure text case matches textCase as a fallback
+			svgText = svgText.replace(
+				/>([А-ЯЄІЇҐа-яєіїґ\s]+)<\/tspan>/g,
+				(m, word) => `>${formatSteleTitle(word, textCase)}</tspan>`
+			);
 
 			const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
 			const downloadUrl = URL.createObjectURL(blob);
@@ -136,7 +155,8 @@
 					: currentFormat === 'text'
 						? 'Тільки напис'
 						: 'Іконка';
-			link.download = `${item.num} - ${item.titleUk} (${formatLabel}, ${signColor}).svg`;
+			const formattedTitle = formatSteleTitle(item.titleUk, textCase);
+			link.download = `${item.num} - ${formattedTitle} (${formatLabel}, ${signColor}).svg`;
 			document.body.appendChild(link);
 			link.click();
 			document.body.removeChild(link);
@@ -151,20 +171,25 @@
 	async function downloadColoredSignPng(item: SignItem, res: PngResolution = currentResolution) {
 		isDownloading = `${item.id}-png-${res.id}`;
 		try {
-			const url = getAssetUrl(item);
+			const url = getAssetUrl(item, textCase);
 			const formatLabel =
 				currentFormat === 'composite'
 					? 'Іконка+Напис'
 					: currentFormat === 'text'
 						? 'Тільки напис'
 						: 'Іконка';
+			const formattedTitle = formatSteleTitle(item.titleUk, textCase);
 			await downloadUrlAsPng(
 				url,
-				`${item.num} - ${item.titleUk} (${formatLabel}, ${signColor}, ${res.label}).png`,
+				`${item.num} - ${formattedTitle} (${formatLabel}, ${signColor}, ${res.label}).png`,
 				res.px,
 				(svgText) => {
 					svgText = svgText.replace(/fill:\s*#[0-9a-fA-F]{6}/gi, `fill: ${signColor}`);
 					svgText = svgText.replace(/fill="(?!(?:none))#[0-9a-fA-F]{6}"/gi, `fill="${signColor}"`);
+					svgText = svgText.replace(
+						/>([А-ЯЄІЇҐа-яєіїґ\s]+)<\/tspan>/g,
+						(m, word) => `>${formatSteleTitle(word, textCase)}</tspan>`
+					);
 					return svgText;
 				}
 			);
@@ -330,6 +355,36 @@
 				</button>
 			</div>
 
+			<!-- Text Case Toggle (UPPERCASE vs Titlecase) -->
+			<div
+				class="case-switcher-wrap"
+				title={langStore.current === 'uk' ? 'Регістр тексту' : 'Text Case'}
+			>
+				<span class="case-switcher-title"
+					>{langStore.current === 'uk' ? 'Регістр тексту:' : 'Text Case:'}</span
+				>
+				<div class="case-toggle-group">
+					<button
+						type="button"
+						class="case-btn"
+						class:is-active={textCase === 'uppercase'}
+						onclick={() => (textCase = 'uppercase')}
+					>
+						<span class="case-badge">АА</span>
+						<span>{langStore.current === 'uk' ? 'ВСІ ВЕЛИКІ' : 'UPPERCASE'}</span>
+					</button>
+					<button
+						type="button"
+						class="case-btn"
+						class:is-active={textCase === 'titlecase'}
+						onclick={() => (textCase = 'titlecase')}
+					>
+						<span class="case-badge">Аа</span>
+						<span>{langStore.current === 'uk' ? 'Перша велика' : 'Title Case'}</span>
+					</button>
+				</div>
+			</div>
+
 			<div
 				class="res-switcher-wrap"
 				title={langStore.current === 'uk' ? 'Роздільна здатність PNG' : 'PNG Resolution'}
@@ -377,8 +432,8 @@
 				<div class="sign-card-header">
 					<span class="sign-num">#{item.num}</span>
 					<div class="sign-titles">
-						<span class="sign-name-uk">{item.titleUk}</span>
-						<span class="sign-name-en">{item.titleEn}</span>
+						<span class="sign-name-uk">{formatSteleTitle(item.titleUk, textCase)}</span>
+						<span class="sign-name-en">{formatSteleTitle(item.titleEn, textCase)}</span>
 					</div>
 				</div>
 
@@ -392,7 +447,7 @@
 						class="sign-svg-mask"
 						style:background-color={signColor}
 						style:--mask-url="url('{assetUrl}')"
-						aria-label={item.titleUk}
+						aria-label={formatSteleTitle(item.titleUk, textCase)}
 					></div>
 				</div>
 
@@ -527,7 +582,7 @@
 	</div>
 
 	<!-- COMPREHENSIVE WAYFINDING STELE (DIRECTORY BOARD) -->
-	<DirectoryStele {customSelectedColor} />
+	<DirectoryStele bind:customSelectedColor bind:textCase bind:activeTargetName />
 
 	<!-- SEPARATE ADDITIONAL ELEMENT: DIRECTIONAL NAVIGATION ARROW -->
 	<div class="nav-arrow-block">
@@ -945,10 +1000,22 @@
 		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
 	}
 
+	.sign-card:has(.png-dropdown-wrap.is-open),
+	.sign-card:has(.png-menu-dropdown),
+	.sign-card:focus-within {
+		z-index: 60;
+	}
+
 	.sign-card:hover {
 		border-color: var(--border-hover);
 		box-shadow: 0 10px 24px rgba(0, 0, 0, 0.07);
 		transform: translateY(-2px);
+	}
+
+	.sign-card:hover:has(.png-dropdown-wrap.is-open),
+	.sign-card:hover:has(.png-menu-dropdown),
+	.sign-card:hover:focus-within {
+		z-index: 60;
 	}
 
 	.sign-card-header {
@@ -1074,6 +1141,76 @@
 		transform: scale(1.03);
 	}
 
+	/* TEXT CASE SWITCHER */
+	.case-switcher-wrap {
+		display: flex;
+		align-items: center;
+		gap: 0.55rem;
+		flex-wrap: wrap;
+	}
+
+	.case-switcher-title {
+		font-size: 0.8rem;
+		font-weight: 700;
+		color: var(--fg-secondary);
+		white-space: nowrap;
+	}
+
+	.case-toggle-group {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		padding: 3px;
+		background: var(--bg-secondary);
+		border: 1px solid var(--border);
+		border-radius: 10px;
+	}
+
+	.case-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		padding: 0.35rem 0.6rem;
+		border-radius: 7px;
+		border: 1px solid transparent;
+		background: transparent;
+		color: var(--fg-secondary);
+		font-size: 0.76rem;
+		font-weight: 700;
+		cursor: pointer;
+		transition: all 0.15s ease;
+	}
+
+	.case-btn:hover {
+		color: var(--fg-primary);
+	}
+
+	.case-btn.is-active {
+		background: var(--brand-emerald, #13371b);
+		color: #ffffff;
+		border-color: var(--brand-emerald, #13371b);
+	}
+
+	:global([data-theme='dark']) .case-btn.is-active,
+	:global(.dark) .case-btn.is-active {
+		background: var(--brand-emerald, #13371b);
+		color: #ffffff;
+		border-color: var(--brand-leaf, #598f3a);
+	}
+
+	.case-badge {
+		font-size: 0.72rem;
+		font-weight: 800;
+		padding: 0.05rem 0.25rem;
+		border-radius: 4px;
+		background: rgba(0, 0, 0, 0.08);
+	}
+
+	.case-btn.is-active .case-badge {
+		background: rgba(255, 255, 255, 0.2);
+		color: #ffffff;
+	}
+
 	/* PNG RESOLUTION SWITCHER */
 	.res-switcher-wrap {
 		display: flex;
@@ -1138,6 +1275,13 @@
 		background: var(--bg-secondary);
 		border-top: 1px solid var(--border);
 		margin-top: auto;
+	}
+
+	.sign-card-footer:has(.png-dropdown-wrap.is-open),
+	.sign-card-footer:has(.png-menu-dropdown),
+	.sign-card-footer:focus-within {
+		position: relative;
+		z-index: 40;
 	}
 
 	.download-sign-btn {
@@ -1400,6 +1544,12 @@
 		overflow: visible;
 		transition: all 0.25s ease;
 		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+	}
+
+	.nav-arrow-card:has(.png-dropdown-wrap.is-open),
+	.nav-arrow-card:has(.png-menu-dropdown),
+	.nav-arrow-card:focus-within {
+		z-index: 60;
 	}
 
 	.nav-arrow-card:hover {

@@ -722,6 +722,16 @@ export interface SteleOracalPreset {
 
 export const STELE_ORACAL_PRESETS: readonly SteleOracalPreset[] = [
 	{
+		id: 'lime-forest',
+		nameUk: 'Фірмовий липовий + лісовий (Офіційний)',
+		nameEn: 'Brand Lime-tree + Forest Green (Official)',
+		bgCode: '063M',
+		fgCode: '613M',
+		borderCode: '613M',
+		descriptionUk: 'Фон: 063M Липовий зелений • Текст і рамка: 613M Лісовий зелений',
+		descriptionEn: 'Base: 063M Lime-tree green • Text & Border: 613M Forest green'
+	},
+	{
 		id: 'photo-match',
 		nameUk: 'Фірмовий зелений (як на фото)',
 		nameEn: 'Brand Green (Photo Match)',
@@ -782,3 +792,23 @@ export const STELE_ORACAL_PRESETS: readonly SteleOracalPreset[] = [
 		descriptionEn: 'Base: 050M Dark blue • Text: 010M White • Border: 084M Sky blue'
 	}
 ];
+
+/**
+ * Priority ORACAL 641 color codes for compact fast-access controls and right sidebar.
+ * Placed in strategic order: Greens first, Neutrals (White/Black), Contrast Accents (Yellow/Gold).
+ */
+export const ORACAL_PRIORITY_CODES = [
+	'068M', // Grass green (Фірмовий трав'яний)
+	'060M', // Dark green (Темно-зелений)
+	'613M', // Forest green (Лісовий зелений)
+	'063M', // Lime-tree green (Липовий зелений)
+	'061M', // Green (Зелений)
+	'010M', // White (Білий)
+	'070M', // Black (Чорний)
+	'019M', // Signal yellow (Сигнальний жовтий)
+	'091M' // Gold metallic (Золото)
+] as const;
+
+export const ORACAL_PRIORITY_COLORS: readonly OracalColor[] = ORACAL_PRIORITY_CODES.map((code) =>
+	getOracalColorByCode(code)
+).filter((c): c is OracalColor => c !== undefined);

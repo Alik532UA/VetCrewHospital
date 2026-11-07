@@ -66,9 +66,9 @@
 			const rightMargin = window.innerWidth - rect.right;
 			const leftMargin = rect.left;
 
-			if (rightMargin < 12) {
+			if (rightMargin < 16) {
 				autoAlign = 'right';
-			} else if (leftMargin < 12) {
+			} else if (leftMargin < 16) {
 				autoAlign = 'left';
 			} else {
 				autoAlign = null;
@@ -212,7 +212,7 @@
 	}
 
 	.png-dropdown-wrap.is-open {
-		z-index: 90;
+		z-index: 120;
 	}
 
 	.download-png-trigger {
@@ -310,7 +310,7 @@
 		box-shadow:
 			0 12px 32px rgba(0, 0, 0, 0.25),
 			0 2px 6px rgba(0, 0, 0, 0.08);
-		z-index: 100;
+		z-index: 150;
 		display: flex;
 		flex-direction: column;
 		gap: 0.25rem;
