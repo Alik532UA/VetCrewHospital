@@ -3,6 +3,7 @@
 ## Контекст
 
 Розділ брендбуку (`/brandbook`) у `VetCrewHospital` виріс у повноцінну інтерактивну дизайн-систему та виробничу студію для реальних фізичних носіїв ветеринарного госпіталю:
+
 - Навігаційна стела (`DirectoryStele.svelte` та `directorySteleData.ts`).
 - Таблички кабінетів (`DoorSignage.svelte` та `doorSignageData.ts`).
 - Студія QR-кодів бренду (`QrShowcase.svelte`, `QrTransformControls.svelte`, `QrShapePicker.svelte`).
@@ -26,4 +27,3 @@
 ## Статус
 
 Прийнято та реалізовано (2026-11-09).
-
