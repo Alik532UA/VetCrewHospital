@@ -24,6 +24,9 @@
 		label
 	}: Props = $props();
 
+	// Progressive disclosure: starts collapsed for cleaner UX, but expands on user toggle
+	let isExpanded = $state<boolean>(false);
+
 	function setRotation(newDeg: number) {
 		const norm = ((Math.round(newDeg) % 360) + 360) % 360;
 		onchange({ rotation: norm });
@@ -52,11 +55,6 @@
 		onchange({ offsetY: clamped });
 	}
 
-	function stepMove(dx: number, dy: number) {
-		setOffsetX(offsetX + dx);
-		setOffsetY(offsetY + dy);
-	}
-
 	function resetPosition() {
 		onchange({ offsetX: 0, offsetY: 0 });
 	}
@@ -74,6 +72,8 @@
 	const isModified = $derived(
 		rotation !== 0 || flipX || scale !== 1.0 || offsetX !== 0 || offsetY !== 0
 	);
+
+	const isAdvancedModified = $derived(scale !== 1.0 || offsetX !== 0 || offsetY !== 0);
 </script>
 
 <div class="transform-controls-wrap" class:is-compact={compact}>
@@ -85,19 +85,34 @@
 					type="button"
 					class="reset-micro-btn"
 					onclick={resetAll}
-					title={langStore.current === 'uk' ? 'Скинути всі трансформації' : 'Reset all transforms'}
+					title={langStore.current === 'uk'
+						? 'Скинути всі трансформації до початкових'
+						: 'Reset all transforms to default'}
 				>
-					{langStore.current === 'uk' ? 'Скинути' : 'Reset'}
+					<svg
+						width="11"
+						height="11"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.5"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+						<path d="M3 3v5h5" />
+					</svg>
+					<span>{langStore.current === 'uk' ? 'Скинути' : 'Reset'}</span>
 				</button>
 			{/if}
 		</div>
 	{/if}
 
-	<!-- Section 1: Rotation and Flip -->
+	<!-- Section 1: Combined Angle Presets + Flip Toolbar -->
 	<div class="control-section">
-		<div class="transform-actions-row">
-			<!-- Quick Angle Step Buttons -->
-			<div class="angle-buttons-group" role="group" aria-label="Кути повороту підкладки">
+		<div class="preset-toolbar" role="group" aria-label="Кути повороту та дзеркало">
+			<div class="angle-buttons-group">
 				{#each [0, 90, 180, 270] as const as deg (deg)}
 					<button
 						type="button"
@@ -111,7 +126,7 @@
 				{/each}
 			</div>
 
-			<!-- Horizontal Flip Button -->
+			<!-- Unified Flip Button in the same row -->
 			<button
 				type="button"
 				class="flip-btn"
@@ -122,12 +137,12 @@
 					: 'Mirror shape horizontally (Flip ↔)'}
 			>
 				<svg
-					width="13"
-					height="13"
+					width="12"
+					height="12"
 					viewBox="0 0 24 24"
 					fill="none"
 					stroke="currentColor"
-					stroke-width="2.2"
+					stroke-width="2.3"
 					stroke-linecap="round"
 					stroke-linejoin="round"
 					aria-hidden="true"
@@ -140,8 +155,8 @@
 			</button>
 		</div>
 
-		<!-- Fine-tune Angle Slider Row -->
-		<div class="slider-row angle-slider-row">
+		<!-- Fine-tune Continuous Angle Slider Row -->
+		<div class="slider-field">
 			<input
 				type="range"
 				min="0"
@@ -149,196 +164,272 @@
 				step="1"
 				value={rotation}
 				oninput={(e) => setRotation(Number((e.target as HTMLInputElement).value))}
-				class="custom-slider"
+				class="app-range-slider"
 				aria-label={langStore.current === 'uk' ? 'Кут повороту підкладки' : 'Plaque rotation angle'}
 			/>
-			<span class="slider-indicator">{rotation}°</span>
+			<span class="value-badge">{rotation}°</span>
 		</div>
 	</div>
 
-	<!-- Section 2: Scale Control -->
-	<div class="control-section sub-control-block">
-		<div class="sub-label-row">
-			<span class="sub-label">
-				{langStore.current === 'uk' ? 'Масштаб:' : 'Scale:'}
-			</span>
-			<div class="scale-quick-actions">
-				<button type="button" class="micro-step-btn" onclick={() => adjustScale(-0.1)} title="-10%">
-					-10%
-				</button>
-				<button
-					type="button"
-					class="micro-step-btn"
-					class:is-active={scale === 1.0}
-					onclick={() => setScale(1.0)}
-					title="100%"
+	<!-- Section 2: Progressive Disclosure Toggle for Advanced Adjustments (Scale & Offset) -->
+	<div class="advanced-wrapper">
+		<button
+			type="button"
+			class="advanced-toggle-trigger"
+			class:is-open={isExpanded}
+			class:has-custom={isAdvancedModified}
+			onclick={() => (isExpanded = !isExpanded)}
+			aria-expanded={isExpanded}
+			title={langStore.current === 'uk'
+				? 'Натисніть для налаштування масштабу та зміщення'
+				: 'Toggle scale and position controls'}
+		>
+			<div class="toggle-meta-left">
+				<svg
+					class="tune-icon"
+					width="13"
+					height="13"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2.2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
 				>
-					100%
-				</button>
-				<button type="button" class="micro-step-btn" onclick={() => adjustScale(+0.1)} title="+10%">
-					+10%
-				</button>
-			</div>
-			<span class="slider-indicator">{Math.round(scale * 100)}%</span>
-		</div>
-		<div class="slider-row">
-			<input
-				type="range"
-				min="0.5"
-				max="1.5"
-				step="0.01"
-				value={scale}
-				oninput={(e) => setScale(Number((e.target as HTMLInputElement).value))}
-				class="custom-slider"
-				aria-label={langStore.current === 'uk' ? 'Масштаб підкладки' : 'Scale'}
-			/>
-		</div>
-	</div>
-
-	<!-- Section 3: Position Shift (Рухати / Offset) Control -->
-	<div class="control-section sub-control-block">
-		<div class="sub-label-row">
-			<span class="sub-label">
-				{langStore.current === 'uk' ? 'Позиція (рухати):' : 'Position shift:'}
-			</span>
-			{#if offsetX !== 0 || offsetY !== 0}
-				<button
-					type="button"
-					class="reset-micro-btn"
-					onclick={resetPosition}
-					title={langStore.current === 'uk' ? 'Скинути по центру' : 'Reset to center'}
-				>
-					{langStore.current === 'uk' ? 'По центру' : 'Center'}
-				</button>
-			{/if}
-			<span class="slider-indicator offset-badge">
-				X: {offsetX > 0 ? `+${offsetX}` : offsetX} Y: {offsetY > 0 ? `+${offsetY}` : offsetY}
-			</span>
-		</div>
-
-		<div class="position-tools-row">
-			<!-- Mini D-pad for quick nudge -->
-			<div class="dpad-cluster" role="group" aria-label="Стрілки зсуву підкладки">
-				<button
-					type="button"
-					class="dpad-btn dpad-up"
-					onclick={() => stepMove(0, -10)}
-					title={langStore.current === 'uk' ? 'Вгору (10px)' : 'Up (10px)'}
-					aria-label="Вгору"
-				>
-					▲
-				</button>
-				<div class="dpad-mid-row">
-					<button
-						type="button"
-						class="dpad-btn dpad-left"
-						onclick={() => stepMove(-10, 0)}
-						title={langStore.current === 'uk' ? 'Вліво (10px)' : 'Left (10px)'}
-						aria-label="Вліво"
-					>
-						◄
-					</button>
-					<button
-						type="button"
-						class="dpad-btn dpad-center"
-						onclick={resetPosition}
-						title={langStore.current === 'uk' ? 'По центру' : 'Center'}
-						aria-label="По центру"
-					>
-						•
-					</button>
-					<button
-						type="button"
-						class="dpad-btn dpad-right"
-						onclick={() => stepMove(10, 0)}
-						title={langStore.current === 'uk' ? 'Вправо (10px)' : 'Right (10px)'}
-						aria-label="Вправо"
-					>
-						►
-					</button>
-				</div>
-				<button
-					type="button"
-					class="dpad-btn dpad-down"
-					onclick={() => stepMove(0, 10)}
-					title={langStore.current === 'uk' ? 'Вниз (10px)' : 'Down (10px)'}
-					aria-label="Вниз"
-				>
-					▼
-				</button>
+					<circle cx="12" cy="12" r="3"></circle>
+					<path
+						d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+					></path>
+				</svg>
+				<span class="toggle-text">
+					{langStore.current === 'uk' ? 'Масштаб / Зсув' : 'Scale / Shift'}
+				</span>
 			</div>
 
-			<!-- Direct Sliders for X and Y fine control -->
-			<div class="offset-sliders-stack">
-				<div class="axis-slider-row">
-					<span class="axis-label">X:</span>
-					<input
-						type="range"
-						min="-100"
-						max="100"
-						step="1"
-						value={offsetX}
-						oninput={(e) => setOffsetX(Number((e.target as HTMLInputElement).value))}
-						class="custom-slider"
-						aria-label="Зсув по горизонталі (X)"
-					/>
+			<div class="toggle-meta-right">
+				{#if isAdvancedModified}
+					<span class="active-summary-pill" title="Активне індивідуальне налаштування">
+						{#if scale !== 1.0 && (offsetX !== 0 || offsetY !== 0)}
+							{Math.round(scale * 100)}% ({offsetX > 0 ? `+${offsetX}` : offsetX},{offsetY > 0
+								? `+${offsetY}`
+								: offsetY})
+						{:else if scale !== 1.0}
+							{Math.round(scale * 100)}%
+						{:else}
+							{offsetX > 0 ? `+${offsetX}` : offsetX},{offsetY > 0 ? `+${offsetY}` : offsetY}
+						{/if}
+					</span>
+				{/if}
+				<svg
+					class="toggle-chevron"
+					class:is-rotated={isExpanded}
+					width="12"
+					height="12"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<polyline points="6 9 12 15 18 9"></polyline>
+				</svg>
+			</div>
+		</button>
+
+		<!-- Expanded Drawer: Full Width Scale and Axis Sliders -->
+		{#if isExpanded}
+			<div class="advanced-drawer">
+				<!-- Scale Row -->
+				<div class="drawer-field-block">
+					<div class="field-meta-row">
+						<span class="field-label-text">
+							{langStore.current === 'uk' ? 'Масштаб:' : 'Scale:'}
+						</span>
+						<div class="quick-pills-cluster">
+							<button
+								type="button"
+								class="quick-micro-pill"
+								onclick={() => adjustScale(-0.05)}
+								title="-5%"
+							>
+								-5%
+							</button>
+							<button
+								type="button"
+								class="quick-micro-pill"
+								class:is-active={scale === 1.0}
+								onclick={() => setScale(1.0)}
+								title="100%"
+							>
+								100%
+							</button>
+							<button
+								type="button"
+								class="quick-micro-pill"
+								onclick={() => adjustScale(+0.05)}
+								title="+5%"
+							>
+								+5%
+							</button>
+						</div>
+						<span class="value-badge">{Math.round(scale * 100)}%</span>
+					</div>
+					<div class="slider-field">
+						<input
+							type="range"
+							min="0.5"
+							max="1.5"
+							step="0.01"
+							value={scale}
+							oninput={(e) => setScale(Number((e.target as HTMLInputElement).value))}
+							class="app-range-slider"
+							aria-label={langStore.current === 'uk' ? 'Масштаб підкладки' : 'Scale'}
+						/>
+					</div>
 				</div>
-				<div class="axis-slider-row">
-					<span class="axis-label">Y:</span>
-					<input
-						type="range"
-						min="-100"
-						max="100"
-						step="1"
-						value={offsetY}
-						oninput={(e) => setOffsetY(Number((e.target as HTMLInputElement).value))}
-						class="custom-slider"
-						aria-label="Зсув по вертикалі (Y)"
-					/>
+
+				<!-- Position Offset Block: Full Width X and Y Sliders -->
+				<div class="drawer-field-block position-drawer-block">
+					<div class="field-meta-row">
+						<span class="field-label-text">
+							{langStore.current === 'uk' ? 'Зсув:' : 'Shift:'}
+						</span>
+						{#if offsetX !== 0 || offsetY !== 0}
+							<button
+								type="button"
+								class="center-reset-btn"
+								onclick={resetPosition}
+								title={langStore.current === 'uk'
+									? 'Скинути зміщення до центру (0, 0)'
+									: 'Reset position to center'}
+							>
+								<svg
+									width="10"
+									height="10"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2.5"
+									aria-hidden="true"
+								>
+									<circle cx="12" cy="12" r="10"></circle>
+									<line x1="12" y1="8" x2="12" y2="16"></line>
+									<line x1="8" y1="12" x2="16" y2="12"></line>
+								</svg>
+								<span>{langStore.current === 'uk' ? 'В центр' : 'Center'}</span>
+							</button>
+						{/if}
+					</div>
+
+					<!-- Axis X Slider (Full Width) -->
+					<div class="axis-control-row">
+						<span class="axis-label-tag">X</span>
+						<input
+							type="range"
+							min="-120"
+							max="120"
+							step="1"
+							value={offsetX}
+							oninput={(e) => setOffsetX(Number((e.target as HTMLInputElement).value))}
+							class="app-range-slider"
+							aria-label="Зсув по осі X"
+						/>
+						<span class="axis-num-readout">{offsetX > 0 ? `+${offsetX}` : offsetX}px</span>
+					</div>
+
+					<!-- Axis Y Slider (Full Width) -->
+					<div class="axis-control-row">
+						<span class="axis-label-tag">Y</span>
+						<input
+							type="range"
+							min="-120"
+							max="120"
+							step="1"
+							value={offsetY}
+							oninput={(e) => setOffsetY(Number((e.target as HTMLInputElement).value))}
+							class="app-range-slider"
+							aria-label="Зсув по осі Y"
+						/>
+						<span class="axis-num-readout">{offsetY > 0 ? `+${offsetY}` : offsetY}px</span>
+					</div>
 				</div>
 			</div>
-		</div>
+		{/if}
 	</div>
 </div>
 
 <style>
 	.transform-controls-wrap {
-		display: inline-flex;
+		display: flex;
 		flex-direction: column;
-		gap: 0.4rem;
-		user-select: none;
+		gap: 0.5rem;
+		background: var(--bg-secondary);
+		border: 1px solid var(--border);
+		border-radius: 10px;
+		padding: 0.6rem 0.65rem;
+		box-sizing: border-box;
 		width: 100%;
+		max-width: 100%;
+		overflow: hidden;
+	}
+
+	.transform-controls-wrap.is-compact {
+		padding: 0.5rem;
+		gap: 0.4rem;
 	}
 
 	.header-row {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 0.5rem;
+		gap: 0.35rem;
+		width: 100%;
+		min-width: 0;
 	}
 
 	.transform-label {
-		font-size: 0.72rem;
+		font-size: 0.7rem;
 		font-weight: 700;
+		color: var(--fg-secondary);
 		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: var(--muted-fg, #8ba994);
+		letter-spacing: 0.04em;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		min-width: 0;
 	}
 
 	.reset-micro-btn {
-		background: transparent;
-		border: none;
-		color: #e5a93c;
-		font-size: 0.68rem;
-		font-weight: 600;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		background: rgba(255, 179, 39, 0.15);
+		border: 1px solid rgba(255, 179, 39, 0.35);
+		color: #925c00;
+		font-size: 0.65rem;
+		font-weight: 700;
+		padding: 0.15rem 0.4rem;
+		border-radius: 6px;
 		cursor: pointer;
-		padding: 0 0.25rem;
-		text-decoration: underline;
-		transition: opacity 0.15s ease;
+		line-height: 1;
+		transition: all 0.15s ease;
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
+	:global([data-theme='dark']) .reset-micro-btn,
+	:global(.dark) .reset-micro-btn {
+		background: rgba(255, 179, 39, 0.1);
+		border-color: rgba(255, 179, 39, 0.25);
+		color: #ffb327;
 	}
 
 	.reset-micro-btn:hover {
-		opacity: 0.8;
+		background: rgba(255, 179, 39, 0.25);
+		border-color: #ffb327;
 	}
 
 	.control-section {
@@ -347,103 +438,135 @@
 		gap: 0.35rem;
 	}
 
-	.transform-actions-row {
-		display: inline-flex;
+	/* Preset Toolbar: angles + flip in one harmonious bar */
+	.preset-toolbar {
+		display: flex;
 		align-items: center;
-		gap: 0.4rem;
-		flex-wrap: wrap;
+		gap: 0.25rem;
+		width: 100%;
+		min-width: 0;
 	}
 
 	.angle-buttons-group {
-		display: inline-flex;
-		background: rgba(0, 0, 0, 0.25);
-		border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
-		border-radius: 8px;
-		padding: 2px;
+		display: flex;
+		flex: 1;
+		min-width: 0;
 		gap: 2px;
+		background: var(--panel-bg, #ffffff);
+		padding: 2px;
+		border-radius: 7px;
+		border: 1px solid var(--border);
+	}
+
+	:global([data-theme='dark']) .angle-buttons-group,
+	:global(.dark) .angle-buttons-group {
+		background: rgba(0, 0, 0, 0.28);
+		border-color: rgba(255, 255, 255, 0.08);
 	}
 
 	.angle-step-btn {
+		flex: 1;
+		min-width: 0;
 		background: transparent;
 		border: none;
-		color: var(--muted-fg, #8ba994);
-		font-size: 0.75rem;
+		color: var(--fg-secondary);
+		font-size: 0.7rem;
 		font-weight: 600;
-		padding: 0.3rem 0.5rem;
-		border-radius: 6px;
+		padding: 0.22rem 0.2rem;
+		border-radius: 5px;
 		cursor: pointer;
 		transition: all 0.15s ease;
 		line-height: 1;
+		text-align: center;
+		white-space: nowrap;
 	}
 
 	.is-compact .angle-step-btn {
-		padding: 0.22rem 0.38rem;
-		font-size: 0.68rem;
+		padding: 0.2rem 0.15rem;
+		font-size: 0.65rem;
 	}
 
 	.angle-step-btn:hover {
-		color: #ffffff;
-		background: rgba(255, 255, 255, 0.08);
+		color: var(--fg-primary);
+		background: var(--bg-secondary);
 	}
 
 	.angle-step-btn.is-active {
 		background: var(--brand-leaf, #598f3a);
 		color: #ffffff;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 	}
 
 	.flip-btn {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.3rem;
-		background: rgba(0, 0, 0, 0.25);
-		border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
-		border-radius: 8px;
-		padding: 0.3rem 0.6rem;
-		color: var(--muted-fg, #8ba994);
-		font-size: 0.75rem;
+		gap: 0.25rem;
+		background: var(--panel-bg, #ffffff);
+		border: 1px solid var(--border);
+		border-radius: 7px;
+		padding: 0.22rem 0.4rem;
+		color: var(--fg-secondary);
+		font-size: 0.7rem;
 		font-weight: 600;
 		cursor: pointer;
 		transition: all 0.15s ease;
 		line-height: 1;
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
+	:global([data-theme='dark']) .flip-btn,
+	:global(.dark) .flip-btn {
+		background: rgba(0, 0, 0, 0.28);
+		border-color: rgba(255, 255, 255, 0.08);
 	}
 
 	.is-compact .flip-btn {
-		padding: 0.22rem 0.45rem;
-		font-size: 0.68rem;
+		padding: 0.2rem 0.35rem;
+		font-size: 0.65rem;
 	}
 
 	.flip-btn:hover {
-		color: #ffffff;
-		border-color: rgba(255, 255, 255, 0.25);
+		color: var(--fg-primary);
+		border-color: var(--border-hover);
+		background: var(--bg-secondary);
 	}
 
 	.flip-btn.is-active {
 		background: #ffb327;
-		color: #1a2e1f;
+		color: #142418;
 		border-color: #ffb327;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+		font-weight: 700;
 	}
 
-	.slider-row {
+	/* Slider Row */
+	.slider-field {
 		display: flex;
 		align-items: center;
-		gap: 0.5rem;
+		gap: 0.45rem;
 		width: 100%;
+		min-width: 0;
 	}
 
-	.custom-slider {
+	.app-range-slider {
 		flex: 1;
+		min-width: 0;
 		-webkit-appearance: none;
 		appearance: none;
 		height: 5px;
-		background: rgba(0, 0, 0, 0.35);
+		background: var(--border, rgba(0, 0, 0, 0.15));
 		border-radius: 3px;
 		outline: none;
 		cursor: pointer;
 	}
 
-	.custom-slider::-webkit-slider-thumb {
+	:global([data-theme='dark']) .app-range-slider,
+	:global(.dark) .app-range-slider {
+		background: rgba(0, 0, 0, 0.35);
+	}
+
+	.app-range-slider::-webkit-slider-thumb {
 		-webkit-appearance: none;
 		appearance: none;
 		width: 13px;
@@ -451,191 +574,314 @@
 		border-radius: 50%;
 		background: #ffb327;
 		cursor: pointer;
-		border: 1.5px solid #1a2e1f;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+		border: 1.5px solid #142418;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 		transition: transform 0.1s ease;
 	}
 
-	.custom-slider::-webkit-slider-thumb:hover {
+	.app-range-slider::-webkit-slider-thumb:hover {
 		transform: scale(1.18);
 	}
 
-	.custom-slider::-moz-range-thumb {
+	.app-range-slider::-moz-range-thumb {
 		width: 13px;
 		height: 13px;
 		border-radius: 50%;
 		background: #ffb327;
 		cursor: pointer;
-		border: 1.5px solid #1a2e1f;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+		border: 1.5px solid #142418;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 	}
 
-	.slider-indicator {
+	.value-badge {
 		font-family: var(--font-mono, monospace);
 		font-size: 0.72rem;
 		font-weight: 700;
-		color: var(--fg-secondary, #b6d3be);
-		min-width: 32px;
+		color: var(--fg-primary);
+		min-width: 30px;
 		text-align: right;
+		white-space: nowrap;
+		flex-shrink: 0;
 	}
 
-	.offset-badge {
-		min-width: 65px;
-		font-size: 0.65rem;
-	}
-
-	/* ADVANCED CONTROLS (Scale & Offset) */
-	.sub-control-block {
+	/* Progressive Disclosure Accordion for Scale & Offset */
+	.advanced-wrapper {
 		display: flex;
 		flex-direction: column;
-		gap: 0.35rem;
-		padding-top: 0.45rem;
-		border-top: 1px dashed rgba(255, 255, 255, 0.09);
+		margin-top: 0.15rem;
+		width: 100%;
+		min-width: 0;
 	}
 
-	.is-compact .sub-control-block {
-		gap: 0.25rem;
-		padding-top: 0.35rem;
-	}
-
-	.sub-label-row {
+	.advanced-toggle-trigger {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 0.4rem;
-	}
-
-	.sub-label {
-		font-size: 0.68rem;
-		font-weight: 600;
-		color: var(--muted-fg, #8ba994);
-		text-transform: uppercase;
-		letter-spacing: 0.03em;
-	}
-
-	.scale-quick-actions {
-		display: inline-flex;
-		gap: 2px;
-	}
-
-	.micro-step-btn {
-		background: rgba(0, 0, 0, 0.25);
-		border: 1px solid rgba(255, 255, 255, 0.08);
-		border-radius: 4px;
-		color: var(--muted-fg, #8ba994);
-		font-size: 0.65rem;
-		font-weight: 600;
-		padding: 0.15rem 0.35rem;
-		cursor: pointer;
-		line-height: 1;
-		transition: all 0.15s ease;
-	}
-
-	.is-compact .micro-step-btn {
-		padding: 0.12rem 0.28rem;
-		font-size: 0.62rem;
-	}
-
-	.micro-step-btn:hover {
-		background: rgba(255, 255, 255, 0.1);
-		color: #ffffff;
-	}
-
-	.micro-step-btn.is-active {
-		background: var(--brand-leaf, #598f3a);
-		color: #ffffff;
-	}
-
-	/* POSITION CONTROLS */
-	.position-tools-row {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-	}
-
-	.is-compact .position-tools-row {
-		gap: 0.5rem;
-	}
-
-	.dpad-cluster {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 1px;
-		background: rgba(0, 0, 0, 0.3);
-		padding: 2px;
+		gap: 0.3rem;
+		width: 100%;
+		min-width: 0;
+		overflow: hidden;
+		background: var(--panel-bg, #ffffff);
+		border: 1px solid var(--border);
 		border-radius: 6px;
-		border: 1px solid rgba(255, 255, 255, 0.08);
-	}
-
-	.dpad-mid-row {
-		display: flex;
-		align-items: center;
-		gap: 1px;
-	}
-
-	.dpad-btn {
-		width: 20px;
-		height: 20px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: transparent;
-		border: none;
-		color: var(--fg-secondary, #b6d3be);
-		font-size: 0.6rem;
+		padding: 0.3rem 0.45rem;
 		cursor: pointer;
-		border-radius: 3px;
-		transition: background 0.12s ease;
-		line-height: 1;
-		padding: 0;
+		color: var(--fg-secondary);
+		transition: all 0.15s ease;
+		box-sizing: border-box;
 	}
 
-	.is-compact .dpad-btn {
-		width: 18px;
-		height: 18px;
-		font-size: 0.55rem;
+	:global([data-theme='dark']) .advanced-toggle-trigger,
+	:global(.dark) .advanced-toggle-trigger {
+		background: rgba(0, 0, 0, 0.22);
+		border-color: rgba(255, 255, 255, 0.08);
 	}
 
-	.dpad-btn:hover {
-		background: rgba(255, 255, 255, 0.15);
-		color: #ffffff;
+	.advanced-toggle-trigger:hover {
+		background: var(--bg-secondary);
+		border-color: var(--border-hover);
+		color: var(--fg-primary);
 	}
 
-	.dpad-center {
-		font-size: 0.75rem;
+	.advanced-toggle-trigger.has-custom {
+		border-color: rgba(255, 179, 39, 0.45);
+		background: rgba(255, 179, 39, 0.08);
+	}
+
+	.advanced-toggle-trigger.is-open {
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+		border-color: var(--border-hover);
+		background: var(--bg-secondary);
+	}
+
+	.toggle-meta-left {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		min-width: 0;
+		overflow: hidden;
+	}
+
+	.tune-icon {
+		color: #925c00;
+		flex-shrink: 0;
+	}
+
+	:global([data-theme='dark']) .tune-icon,
+	:global(.dark) .tune-icon {
 		color: #ffb327;
 	}
 
-	.offset-sliders-stack {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
-		flex: 1;
+	.toggle-text {
+		font-size: 0.67rem;
+		font-weight: 600;
+		letter-spacing: 0.02em;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
-	.axis-slider-row {
+	.toggle-meta-right {
 		display: flex;
 		align-items: center;
-		gap: 0.4rem;
+		gap: 0.25rem;
+		flex-shrink: 0;
+		margin-left: auto;
 	}
 
-	.axis-label {
+	.active-summary-pill {
 		font-family: var(--font-mono, monospace);
-		font-size: 0.65rem;
+		font-size: 0.58rem;
 		font-weight: 700;
-		color: var(--muted-fg, #8ba994);
-		width: 12px;
+		background: rgba(255, 179, 39, 0.2);
+		color: #925c00;
+		border: 1px solid rgba(255, 179, 39, 0.35);
+		padding: 1px 4px;
+		border-radius: 4px;
+		white-space: nowrap;
+		line-height: 1.1;
 	}
 
-	@keyframes fadeIn {
+	:global([data-theme='dark']) .active-summary-pill,
+	:global(.dark) .active-summary-pill {
+		background: rgba(255, 179, 39, 0.15);
+		color: #ffb327;
+		border-color: transparent;
+	}
+
+	.toggle-chevron {
+		color: var(--fg-muted, var(--fg-secondary));
+		transition: transform 0.18s ease;
+		flex-shrink: 0;
+	}
+
+	.toggle-chevron.is-rotated {
+		transform: rotate(180deg);
+	}
+
+	/* Drawer Body */
+	.advanced-drawer {
+		display: flex;
+		flex-direction: column;
+		gap: 0.45rem;
+		background: var(--panel-bg, #ffffff);
+		border: 1px solid var(--border);
+		border-top: none;
+		border-bottom-left-radius: 6px;
+		border-bottom-right-radius: 6px;
+		padding: 0.45rem 0.45rem 0.55rem 0.45rem;
+		animation: drawerIn 0.16s ease-out;
+		box-sizing: border-box;
+		overflow: hidden;
+		max-width: 100%;
+	}
+
+	:global([data-theme='dark']) .advanced-drawer,
+	:global(.dark) .advanced-drawer {
+		background: rgba(0, 0, 0, 0.32);
+		border-color: rgba(255, 255, 255, 0.12);
+	}
+
+	@keyframes drawerIn {
 		from {
 			opacity: 0;
-			transform: translateY(-2px);
+			transform: translateY(-4px);
 		}
 		to {
 			opacity: 1;
 			transform: translateY(0);
 		}
+	}
+
+	.drawer-field-block {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		width: 100%;
+		min-width: 0;
+	}
+
+	.position-drawer-block {
+		padding-top: 0.4rem;
+		border-top: 1px dashed var(--border);
+	}
+
+	.field-meta-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.25rem;
+		width: 100%;
+		min-width: 0;
+		box-sizing: border-box;
+	}
+
+	.field-label-text {
+		font-size: 0.65rem;
+		font-weight: 700;
+		color: var(--fg-secondary);
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
+	.quick-pills-cluster {
+		display: inline-flex;
+		gap: 2px;
+		flex-shrink: 0;
+	}
+
+	.quick-micro-pill {
+		background: var(--bg-secondary);
+		border: 1px solid var(--border);
+		border-radius: 4px;
+		color: var(--fg-secondary);
+		font-size: 0.61rem;
+		font-weight: 600;
+		padding: 0.1rem 0.28rem;
+		cursor: pointer;
+		line-height: 1;
+		transition: all 0.12s ease;
+		white-space: nowrap;
+	}
+
+	.quick-micro-pill:hover {
+		background: var(--panel-bg);
+		border-color: var(--border-hover);
+		color: var(--fg-primary);
+	}
+
+	.quick-micro-pill.is-active {
+		background: var(--brand-leaf, #598f3a);
+		border-color: var(--brand-leaf, #598f3a);
+		color: #ffffff;
+	}
+
+	.center-reset-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.2rem;
+		background: rgba(255, 179, 39, 0.15);
+		border: 1px solid rgba(255, 179, 39, 0.35);
+		border-radius: 4px;
+		color: #925c00;
+		font-size: 0.61rem;
+		font-weight: 700;
+		padding: 0.1rem 0.35rem;
+		cursor: pointer;
+		line-height: 1;
+		transition: all 0.12s ease;
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
+	:global([data-theme='dark']) .center-reset-btn,
+	:global(.dark) .center-reset-btn {
+		background: rgba(255, 179, 39, 0.12);
+		border-color: rgba(255, 179, 39, 0.25);
+		color: #ffb327;
+	}
+
+	.center-reset-btn:hover {
+		background: rgba(255, 179, 39, 0.25);
+		border-color: #ffb327;
+	}
+
+	/* Axis Full-Width Slider Rows */
+	.axis-control-row {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		width: 100%;
+		min-width: 0;
+		box-sizing: border-box;
+	}
+
+	.axis-label-tag {
+		font-family: var(--font-mono, monospace);
+		font-size: 0.68rem;
+		font-weight: 800;
+		color: #925c00;
+		width: 12px;
+		text-align: center;
+		flex-shrink: 0;
+	}
+
+	:global([data-theme='dark']) .axis-label-tag,
+	:global(.dark) .axis-label-tag {
+		color: #ffb327;
+	}
+
+	.axis-num-readout {
+		font-family: var(--font-mono, monospace);
+		font-size: 0.63rem;
+		font-weight: 600;
+		color: var(--fg-secondary);
+		min-width: 34px;
+		text-align: right;
+		white-space: nowrap;
+		flex-shrink: 0;
 	}
 </style>

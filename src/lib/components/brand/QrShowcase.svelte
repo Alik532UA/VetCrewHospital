@@ -9,6 +9,7 @@
 	import OracalColorPicker from '$lib/components/brand/OracalColorPicker.svelte';
 	import QrShapePicker from '$lib/components/brand/QrShapePicker.svelte';
 	import QrTransformControls from '$lib/components/brand/QrTransformControls.svelte';
+	import IosToggle from '$lib/components/IosToggle.svelte';
 	import type { PngResolution } from '$lib/data/pngResolutions';
 	import {
 		getOracalColorByCode,
@@ -739,17 +740,13 @@
 						: 'Shared Graphics & QR Color:'}
 					align="right"
 				/>
-				<label
-					class="sync-checkbox-label"
+				<IosToggle
+					bind:checked={syncFgColors}
+					label={langStore.current === 'uk' ? 'Єдиний колір' : 'Linked'}
 					title={langStore.current === 'uk'
 						? 'Синхронізувати колір графіки на всіх 4 табличках'
 						: 'Sync graphics color across all 4 plaques'}
-				>
-					<input type="checkbox" class="sync-checkbox" bind:checked={syncFgColors} />
-					<span class="sync-text">
-						{langStore.current === 'uk' ? 'Єдиний колір' : 'Linked'}
-					</span>
-				</label>
+				/>
 			</div>
 
 			<StageBgSwitcher bind:current={stageTheme} />
@@ -777,7 +774,7 @@
 					offsetX={sharedBgTransform.offsetX}
 					offsetY={sharedBgTransform.offsetY}
 					onchange={(t) => setSharedTransform(t)}
-					label={langStore.current === 'uk' ? 'Поворот, масштаб, рух:' : 'Transform:'}
+					label={langStore.current === 'uk' ? 'Трансформація:' : 'Transform:'}
 				/>
 			</div>
 
@@ -804,17 +801,13 @@
 					<span>{langStore.current === 'uk' ? 'Застосувати до всіх' : 'Apply to all'}</span>
 				</button>
 
-				<label
-					class="sync-checkbox-label"
+				<IosToggle
+					bind:checked={syncBgShapes}
+					label={langStore.current === 'uk' ? 'Синхронізувати форму' : 'Linked Shape'}
 					title={langStore.current === 'uk'
 						? 'Синхронізація: зміна форми в будь-якій табличці змінюватиме всі інші'
 						: 'Link shapes: editing shape in any plaque syncs all others'}
-				>
-					<input type="checkbox" class="sync-checkbox" bind:checked={syncBgShapes} />
-					<span class="sync-text">
-						{langStore.current === 'uk' ? 'Синхронізувати форму' : 'Linked Shape'}
-					</span>
-				</label>
+				/>
 			</div>
 		</div>
 	{/if}
@@ -879,7 +872,7 @@
 								offsetY={tmplTransform.offsetY}
 								onchange={(t) => setCardTransform('background', t)}
 								compact
-								label={langStore.current === 'uk' ? 'Поворот, масштаб, рух:' : 'Transform:'}
+								label={langStore.current === 'uk' ? 'Трансформація:' : 'Transform:'}
 							/>
 						{/if}
 					</div>
@@ -992,7 +985,7 @@
 								{:else if id === 'reviews'}
 									{langStore.current === 'uk' ? 'Відгуки' : 'Reviews'}
 								{:else if id === 'website'}
-									{langStore.current === 'uk' ? 'Офіційний сайт' : 'Website'}
+									{langStore.current === 'uk' ? 'Сайт' : 'Website'}
 								{/if}
 							</h4>
 						</div>
@@ -1076,7 +1069,7 @@
 									offsetY={cardTransform.offsetY}
 									onchange={(t) => setCardTransform(id, t)}
 									compact
-									label={langStore.current === 'uk' ? 'Поворот, масштаб, рух:' : 'Transform:'}
+									label={langStore.current === 'uk' ? 'Трансформація:' : 'Transform:'}
 								/>
 							</div>
 						{/if}

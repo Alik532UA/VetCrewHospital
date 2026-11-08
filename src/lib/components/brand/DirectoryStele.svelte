@@ -4,6 +4,7 @@
 	import { logService } from '$lib/services/logService.svelte';
 	import { downloadUrlAsPng } from '$lib/utils/exportPng';
 	import StageBgSwitcher from '$lib/components/brand/StageBgSwitcher.svelte';
+	import IosToggle from '$lib/components/IosToggle.svelte';
 	import {
 		PNG_RESOLUTIONS,
 		DEFAULT_PNG_RESOLUTION,
@@ -1264,14 +1265,14 @@
 				</div>
 
 				<!-- Border link option -->
-				<label class="border-link-checkbox">
-					<input type="checkbox" bind:checked={isBorderLinked} />
-					<span
-						>{langStore.current === 'uk'
+				<div class="border-link-toggle-wrap">
+					<IosToggle
+						bind:checked={isBorderLinked}
+						label={langStore.current === 'uk'
 							? 'Колір рамки однаковий з текстом та іконками'
-							: 'Sync border color with graphics'}</span
-					>
-				</label>
+							: 'Sync border color with graphics'}
+					/>
+				</div>
 
 				<!-- Live Specification & Copy Button -->
 				<div class="oracal-spec-summary">
@@ -2595,13 +2596,7 @@
 		background: rgba(255, 255, 255, 0.1);
 	}
 
-	.border-link-checkbox {
-		display: flex;
-		align-items: center;
-		gap: 0.4rem;
-		font-size: 0.75rem;
-		color: var(--text-secondary);
-		cursor: pointer;
+	.border-link-toggle-wrap {
 		margin-bottom: 0.75rem;
 	}
 

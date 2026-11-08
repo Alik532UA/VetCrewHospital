@@ -343,13 +343,6 @@
 				: langStore.current === 'uk'
 					? 'Увімкнути темну тему'
 					: 'Switch to Dark Mode'}
-			title={themeStore.current === 'dark'
-				? langStore.current === 'uk'
-					? 'Увімкнути світлу тему'
-					: 'Switch to Light Mode'
-				: langStore.current === 'uk'
-					? 'Увімкнути темну тему'
-					: 'Switch to Dark Mode'}
 		>
 			<span class="toc-icon-wrap">
 				{#if themeStore.current === 'dark'}
@@ -407,7 +400,7 @@
 		top: 50%;
 		transform: translateY(-50%);
 		align-self: start;
-		z-index: 30;
+		z-index: 100;
 	}
 
 	.toc-list {
@@ -445,6 +438,7 @@
 		color: var(--brand-leaf);
 		border-color: var(--border-hover);
 		background: var(--panel-bg);
+		z-index: 10;
 	}
 
 	.toc-btn.is-active {
@@ -494,7 +488,7 @@
 		display: flex;
 		align-items: center;
 		gap: 0.45rem;
-		z-index: 50;
+		z-index: 200;
 	}
 
 	:global([data-theme='dark']) .toc-tooltip,
@@ -568,7 +562,7 @@
 			transform: translateX(-50%);
 			width: calc(100% - 1.5rem);
 			max-width: 480px;
-			z-index: 45;
+			z-index: 100;
 			pointer-events: none;
 		}
 

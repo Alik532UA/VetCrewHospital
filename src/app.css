@@ -250,3 +250,79 @@ a:focus-visible {
 	outline: 2px solid var(--brand-gold);
 	outline-offset: 3px;
 }
+
+/* ==========================================================================
+   GLOBAL ACCESSIBLE iOS-STYLE SWITCH & CHECKBOX BASELINE
+   ========================================================================== */
+input[type='checkbox']:not(.ios-toggle-input) {
+	appearance: none;
+	-webkit-appearance: none;
+	position: relative;
+	display: inline-block;
+	width: 36px;
+	height: 20px;
+	border-radius: 9999px;
+	background-color: rgba(120, 120, 128, 0.24);
+	border: 1px solid rgba(0, 0, 0, 0.06);
+	outline: none;
+	cursor: pointer;
+	flex-shrink: 0;
+	vertical-align: middle;
+	transition:
+		background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+		border-color 0.25s ease,
+		box-shadow 0.2s ease;
+}
+
+:root[data-theme='dark'] input[type='checkbox']:not(.ios-toggle-input),
+.dark input[type='checkbox']:not(.ios-toggle-input) {
+	background-color: rgba(255, 255, 255, 0.16);
+	border-color: rgba(255, 255, 255, 0.08);
+}
+
+input[type='checkbox']:not(.ios-toggle-input)::after {
+	content: '';
+	position: absolute;
+	top: 1px;
+	left: 1px;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background-color: #ffffff;
+	box-shadow:
+		0 2px 4px rgba(0, 0, 0, 0.22),
+		0 0 1px rgba(0, 0, 0, 0.15);
+	transition:
+		transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+		width 0.15s ease;
+}
+
+input[type='checkbox']:not(.ios-toggle-input):checked {
+	background-color: #34c759;
+	border-color: rgba(0, 0, 0, 0.04);
+}
+
+:root[data-theme='dark'] input[type='checkbox']:not(.ios-toggle-input):checked,
+.dark input[type='checkbox']:not(.ios-toggle-input):checked {
+	background-color: #30d158;
+	border-color: rgba(48, 209, 88, 0.25);
+}
+
+input[type='checkbox']:not(.ios-toggle-input):checked::after {
+	transform: translateX(16px);
+}
+
+input[type='checkbox']:not(.ios-toggle-input):active::after {
+	width: 19px;
+}
+
+input[type='checkbox']:not(.ios-toggle-input):checked:active::after {
+	transform: translateX(13px);
+	width: 19px;
+}
+
+input[type='checkbox']:not(.ios-toggle-input):focus-visible {
+	outline: 2px solid #34c759;
+	outline-offset: 2px;
+	box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.35);
+}
