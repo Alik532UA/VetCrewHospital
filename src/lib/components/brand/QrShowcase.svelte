@@ -37,8 +37,8 @@
 	} from '$lib/data/qrShowcase';
 
 	// Signage mode: with background container vs transparent
-	let withBg = $state(true);
-	let stageTheme = $state<StageTheme>('checker');
+	let withBg = $state(DEFAULT_QR_CONFIG.withBg);
+	let stageTheme = $state<StageTheme>(DEFAULT_QR_CONFIG.stageTheme as StageTheme);
 
 	// Default order of the 4 service mockups (reorderable with arrows)
 	let serviceOrder = $state<ServiceId[]>([...DEFAULT_QR_CONFIG.serviceOrder]);
@@ -87,7 +87,7 @@
 	});
 
 	// Background shapes & transformation states
-	let syncBgShapes = $state<boolean>(false); // Individual shapes per plaque by default
+	let syncBgShapes = $state<boolean>(DEFAULT_QR_CONFIG.syncBgShapes);
 
 	let sharedBgTransform = $state<QrBgTransform>({
 		...DEFAULT_BG_TRANSFORM

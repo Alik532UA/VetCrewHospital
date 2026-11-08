@@ -1,4 +1,4 @@
-import { DEFAULT_BG_SHAPE_ID, getQrBgShapeById } from './qrBackgroundShapes';
+import { getQrBgShapeById } from './qrBackgroundShapes';
 
 export type ServiceId = 'wifi' | 'instagram' | 'reviews' | 'website';
 export type PlaqueId = 'background' | ServiceId;
@@ -89,12 +89,12 @@ export interface QrParsedConfig {
 }
 
 export const DEFAULT_BG_TRANSFORM: QrBgTransform = {
-	shapeId: DEFAULT_BG_SHAPE_ID,
+	shapeId: 'shape-spot-2',
 	rotation: 0,
 	flipX: false,
-	scale: 1.0,
-	offsetX: 0,
-	offsetY: 0
+	scale: 1.05,
+	offsetX: 5,
+	offsetY: 46
 };
 
 export const DEFAULT_QR_CONFIG: QrShowcaseConfig = {
@@ -102,7 +102,7 @@ export const DEFAULT_QR_CONFIG: QrShowcaseConfig = {
 	reviewVariant: 'reviews',
 	websiteVariant: 'v2',
 	withBg: true,
-	stageTheme: 'checker',
+	stageTheme: 'dark',
 	syncFgColors: true,
 	sharedFgCode: '060M',
 	cardBgCodes: {
@@ -118,7 +118,7 @@ export const DEFAULT_QR_CONFIG: QrShowcaseConfig = {
 		reviews: '060M',
 		website: '060M'
 	},
-	syncBgShapes: false,
+	syncBgShapes: true,
 	sharedBgTransform: { ...DEFAULT_BG_TRANSFORM },
 	cardBgTransforms: {
 		background: { ...DEFAULT_BG_TRANSFORM },

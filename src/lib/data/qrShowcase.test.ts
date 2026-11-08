@@ -57,15 +57,19 @@ describe('qrShowcase data and shapes', () => {
 			expect(parsed.data.reviewVariant).toBe('reviews');
 			expect(parsed.data.websiteVariant).toBe('v2');
 			expect(parsed.data.withBg).toBe(true);
+			expect(parsed.data.stageTheme).toBe('dark');
 			expect(parsed.data.sharedFgCode).toBe('060M');
 			expect(parsed.data.cardBgCodes.background).toBe('020M');
 			expect(parsed.data.cardBgCodes.reviews).toBe('021M');
 			expect(parsed.data.cardBgCodes.website).toBe('010M');
 			expect(parsed.data.cardBgCodes.wifi).toBe('063M');
 			expect(parsed.data.cardBgCodes.instagram).toBe('021M');
-			expect(parsed.data.syncBgShapes).toBe(false);
+			expect(parsed.data.syncBgShapes).toBe(true);
 			expect(parsed.data.sharedBgTransform).toEqual(DEFAULT_BG_TRANSFORM);
-			expect(parsed.data.cardBgTransforms.wifi.shapeId).toBe('shape-default');
+			expect(parsed.data.cardBgTransforms.wifi.shapeId).toBe('shape-spot-2');
+			expect(parsed.data.cardBgTransforms.wifi.scale).toBe(1.05);
+			expect(parsed.data.cardBgTransforms.wifi.offsetX).toBe(5);
+			expect(parsed.data.cardBgTransforms.wifi.offsetY).toBe(46);
 		}
 	});
 
@@ -196,12 +200,7 @@ describe('qrShowcase data and shapes', () => {
 		expect(parsed.success).toBe(true);
 		if (parsed.success) {
 			expect(parsed.data.syncBgShapes).toBe(true);
-			expect(parsed.data.sharedBgTransform.shapeId).toBe('shape-default');
-			expect(parsed.data.sharedBgTransform.rotation).toBe(0);
-			expect(parsed.data.sharedBgTransform.flipX).toBe(false);
-			expect(parsed.data.sharedBgTransform.scale).toBe(1.0);
-			expect(parsed.data.sharedBgTransform.offsetX).toBe(0);
-			expect(parsed.data.sharedBgTransform.offsetY).toBe(0);
+			expect(parsed.data.sharedBgTransform).toEqual(DEFAULT_BG_TRANSFORM);
 		}
 	});
 
@@ -246,7 +245,7 @@ describe('qrShowcase data and shapes', () => {
 		const token = serializeQrConfig(DEFAULT_QR_CONFIG);
 		const shareText = generateQrShareText(DEFAULT_QR_CONFIG, token);
 		expect(shareText).toContain('Конфігурація QR-навігації');
-		expect(shareText).toContain('Форма підкладки: індивідуальна для кожної таблички');
+		expect(shareText).toContain('Форма підкладки: Силует плями 2');
 		expect(shareText).toContain(token);
 
 		const parsedFromText = parseQrConfig(shareText);
