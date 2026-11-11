@@ -1,3 +1,9 @@
+---
+Назва: Контекст проєкту VetCrewHospital
+Канон: selection_criteria/v10 та product_criteria/v10
+Дата оновлення: 2026-11-11
+---
+
 # Vet Crew Hospital — Project Context
 
 ## 1. Загальні відомості
@@ -159,3 +165,25 @@
   - `src/lib/services/`: нереактивні сервіси та адаптери (`storage.ts`, `fullscreen.ts`, `logService.svelte.ts`).
   - `src/lib/utils/`: чисті допоміжні функції (`exportPng.ts`, `staleBuild.ts`).
   - `src/lib/siblings.ts`: навігація між сайтами екосистеми.
+
+## 15. Опціональні критерії інженерного та продуктового пакетів
+
+| Критерій | Застосовано | Причина / Локація |
+| :--- | :---: | :--- |
+| **I18N** | Так | Двомовність UA/EN, `src/lib/controllers/lang.svelte.ts` |
+| **CUSTOM-DOMAIN** | Так | Власний домен `vet-crew-hospital.org`, `src/custom-domain.test.ts` |
+| **DEPENDENCIES** | Так | Регулярний аудит, Dependabot, `scripts/check-audit.js` |
+| **VERSIONING** | Так | `__APP_VERSION__`, `scripts/bump-version.mjs` |
+| **ACCESSIBILITY** | Так | WCAG 2.2 AA, `:focus-visible`, `prefers-reduced-motion` |
+| **STORAGE-NAMESPACE** | Так | Префікс `vetcrewhospital_`, `src/lib/services/storage.ts` |
+| **ERROR-HANDLING** | Так | `<svelte:boundary>`, stale-build захист у `hooks.client.ts` |
+| **SECURITY-SCAN** | Так | `src/security.test.ts`, `src/csp-hash.test.ts` |
+| **BRAND-STUDIO** | Так | Інтерактивна студія брендбуку, експорт шпалер |
+
+## 16. Свідомі відхилення від канону
+
+1. **Двостадійний скрол-інтерфейс (ADR 0001)**:
+   - *Причина*: На відміну від стандартних лендінгів, перша стадія фіксує 3D-лого для візуального брендингу, а друга стадія плавно розгортає контактну матрицю без ривків сторінки.
+2. **Локальний рендеринг шпалер у Canvas без сервера**:
+   - *Причина*: Генерація шпалер високої роздільної здатності (4K) безпосередньо у клієнтському браузері без передачі на бекенд гарантує приватність та миттєвий експорт.
+
