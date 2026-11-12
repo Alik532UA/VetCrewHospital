@@ -926,6 +926,9 @@
 		overflow: visible;
 		isolation: isolate;
 		background: transparent;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.custom-picker-btn::before {
