@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 	import { themeStore } from '$lib/theme.svelte';
@@ -8,7 +9,7 @@
 	import PngDownloadBtn from '$lib/components/brand/PngDownloadBtn.svelte';
 	import type { PngResolution } from '$lib/data/pngResolutions';
 
-	import { ANIMALS, type AnimalItem } from '$lib/data/animals';
+	import { ANIMALS, type AnimalItem, type AnimalCategory } from '$lib/data/animals';
 
 	interface Props {
 		customSelectedColor?: string | null;
@@ -23,6 +24,82 @@
 	let searchQuery = $state('');
 	let selectedCategory = $state<'all' | 'birds' | 'reptiles' | 'mammals' | 'exotics'>('all');
 	let isDownloading = $state<string | null>(null);
+	let activeModalAnimal = $state<AnimalItem | null>(null);
+
+	let currentAnimalIndex = $derived.by(() => {
+		if (!activeModalAnimal) return -1;
+		const list = filteredAnimals.length > 0 ? filteredAnimals : ANIMALS;
+		return list.findIndex((a) => a.id === activeModalAnimal!.id);
+	});
+
+	let currentAnimalTotal = $derived.by(() => {
+		return (filteredAnimals.length > 0 ? filteredAnimals : ANIMALS).length;
+	});
+
+	function openModal(animal: AnimalItem) {
+		activeModalAnimal = animal;
+	}
+
+	function closeModal() {
+		activeModalAnimal = null;
+	}
+
+	function nextAnimal() {
+		if (!activeModalAnimal) return;
+		const list = filteredAnimals.length > 0 ? filteredAnimals : ANIMALS;
+		const idx = list.findIndex((a) => a.id === activeModalAnimal!.id);
+		if (idx === -1) return;
+		const nextIdx = (idx + 1) % list.length;
+		activeModalAnimal = list[nextIdx] ?? null;
+	}
+
+	function prevAnimal() {
+		if (!activeModalAnimal) return;
+		const list = filteredAnimals.length > 0 ? filteredAnimals : ANIMALS;
+		const idx = list.findIndex((a) => a.id === activeModalAnimal!.id);
+		if (idx === -1) return;
+		const prevIdx = (idx - 1 + list.length) % list.length;
+		activeModalAnimal = list[prevIdx] ?? null;
+	}
+
+	function handleKeydown(e: KeyboardEvent) {
+		if (!activeModalAnimal) return;
+		if (e.key === 'Escape') {
+			closeModal();
+		} else if (e.key === 'ArrowRight') {
+			nextAnimal();
+		} else if (e.key === 'ArrowLeft') {
+			prevAnimal();
+		}
+	}
+
+	function getCategoryLabel(cat: AnimalCategory): string {
+		const uk = langStore.current === 'uk';
+		switch (cat) {
+			case 'birds':
+				return uk ? 'Птахи' : 'Birds';
+			case 'reptiles':
+				return uk ? 'Рептилії & Амфібії' : 'Reptiles & Amphibians';
+			case 'mammals':
+				return uk ? 'Ссавці & Гризуни' : 'Mammals & Rodents';
+			case 'exotics':
+				return uk ? 'Екзотичні & Примати' : 'Exotics & Primates';
+			default:
+				return cat;
+		}
+	}
+
+	$effect(() => {
+		if (!browser) return;
+		if (activeModalAnimal) {
+			const originalOverflow = document.body.style.overflow;
+			document.body.style.overflow = 'hidden';
+			return () => {
+				document.body.style.overflow = originalOverflow;
+			};
+		}
+		return undefined;
+	});
 
 	let filteredAnimals = $derived.by(() => {
 		const q = searchQuery.trim().toLowerCase();
@@ -89,6 +166,8 @@
 		}
 	}
 </script>
+
+<svelte:window onkeydown={handleKeydown} />
 
 <div class="animal-gallery-widget">
 	<!-- Color Selector & Filters Toolbar -->
@@ -197,20 +276,50 @@
 			<div class="animal-card">
 				<div class="card-badge">#{a.num}</div>
 
-				<div class="icon-stage stage--{stageTheme}">
-					<div
-						class="animal-svg-mask"
-						style:background-color={animalColor}
-						style:--mask-url="url('{base}/brand/animals/{encodeURIComponent(a.file)}')"
-						aria-hidden="true"
-					></div>
-				</div>
+				<button
+					type="button"
+					class="animal-preview-btn"
+					onclick={() => openModal(a)}
+					title={langStore.current === 'uk'
+						? `Відкрити ${a.nameUk} у великому розмірі`
+						: `Preview ${a.nameEn} in full size`}
+					aria-label={langStore.current === 'uk'
+						? `Відкрити ${a.nameUk} у великому розмірі`
+						: `Preview ${a.nameEn} in full size`}
+				>
+					<div class="icon-stage stage--{stageTheme}">
+						<div
+							class="animal-svg-mask"
+							style:background-color={animalColor}
+							style:--mask-url="url('{base}/brand/animals/{encodeURIComponent(a.file)}')"
+							aria-hidden="true"
+						></div>
+						<span class="preview-zoom-pill" aria-hidden="true">
+							<svg
+								width="12"
+								height="12"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2.5"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<circle cx="11" cy="11" r="8"></circle>
+								<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+								<line x1="11" y1="8" x2="11" y2="14"></line>
+								<line x1="8" y1="11" x2="14" y2="11"></line>
+							</svg>
+							<span>{langStore.current === 'uk' ? 'Збільшити' : 'Zoom'}</span>
+						</span>
+					</div>
 
-				<div class="card-meta">
-					<span class="animal-name-primary">
-						{langStore.current === 'uk' ? a.nameUk : a.nameEn}
-					</span>
-				</div>
+					<div class="card-meta">
+						<span class="animal-name-primary">
+							{langStore.current === 'uk' ? a.nameUk : a.nameEn}
+						</span>
+					</div>
+				</button>
 
 				<div class="animal-card-actions">
 					<button
@@ -247,6 +356,185 @@
 			</div>
 		{/each}
 	</div>
+
+	<!-- LIGHTBOX MODAL (ALMOST FULLSCREEN PREVIEW) -->
+	{#if activeModalAnimal}
+		<div class="animal-lightbox-backdrop" role="presentation" onclick={closeModal}>
+			<div
+				class="animal-lightbox-dialog"
+				role="dialog"
+				aria-modal="true"
+				aria-labelledby="animal-lightbox-title"
+				tabindex="-1"
+				onclick={(e) => e.stopPropagation()}
+				onkeydown={(e) => {
+					if (e.key === 'Escape') closeModal();
+				}}
+			>
+				<!-- LIGHTBOX HEADER -->
+				<div class="lightbox-header">
+					<div class="lightbox-title-wrap">
+						<span class="lightbox-badge">#{activeModalAnimal.num}</span>
+						<div class="lightbox-titles">
+							<h3 id="animal-lightbox-title" class="lightbox-title">
+								{langStore.current === 'uk' ? activeModalAnimal.nameUk : activeModalAnimal.nameEn}
+								<span class="lightbox-subtitle">
+									/ {langStore.current === 'uk'
+										? activeModalAnimal.nameEn
+										: activeModalAnimal.nameUk}
+								</span>
+							</h3>
+							<span class="lightbox-category-tag">
+								{getCategoryLabel(activeModalAnimal.category)}
+							</span>
+						</div>
+					</div>
+
+					<div class="lightbox-header-actions">
+						<div class="lightbox-counter">
+							{currentAnimalIndex + 1} / {currentAnimalTotal}
+						</div>
+
+						<div class="lightbox-stage-switcher">
+							<StageBgSwitcher bind:current={stageTheme} />
+						</div>
+
+						<button
+							type="button"
+							class="lightbox-close-btn"
+							onclick={closeModal}
+							title={langStore.current === 'uk' ? 'Закрити (Esc)' : 'Close (Esc)'}
+							aria-label={langStore.current === 'uk' ? 'Закрити перегляд' : 'Close preview'}
+						>
+							<svg
+								width="18"
+								height="18"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2.2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								aria-hidden="true"
+							>
+								<line x1="18" y1="6" x2="6" y2="18" />
+								<line x1="6" y1="6" x2="18" y2="18" />
+							</svg>
+						</button>
+					</div>
+				</div>
+
+				<!-- LIGHTBOX BODY / DISPLAY STAGE -->
+				<div class="lightbox-body">
+					<!-- Prev Button -->
+					<button
+						type="button"
+						class="lightbox-nav-btn lightbox-nav-prev"
+						onclick={prevAnimal}
+						disabled={currentAnimalTotal <= 1}
+						title={langStore.current === 'uk' ? 'Попередня тварина (←)' : 'Previous animal (←)'}
+						aria-label={langStore.current === 'uk' ? 'Попередня тварина' : 'Previous animal'}
+					>
+						<svg
+							width="22"
+							height="22"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<polyline points="15 18 9 12 15 6" />
+						</svg>
+					</button>
+
+					<!-- Main Vector Stage -->
+					<div class="lightbox-stage stage--{stageTheme}">
+						<div
+							class="lightbox-svg-mask"
+							style:background-color={animalColor}
+							style:--mask-url="url('{base}/brand/animals/{encodeURIComponent(
+								activeModalAnimal.file
+							)}')"
+							role="img"
+							aria-label="{activeModalAnimal.nameUk} SVG Graphic"
+						></div>
+					</div>
+
+					<!-- Next Button -->
+					<button
+						type="button"
+						class="lightbox-nav-btn lightbox-nav-next"
+						onclick={nextAnimal}
+						disabled={currentAnimalTotal <= 1}
+						title={langStore.current === 'uk' ? 'Наступна тварина (→)' : 'Next animal (→)'}
+						aria-label={langStore.current === 'uk' ? 'Наступна тварина' : 'Next animal'}
+					>
+						<svg
+							width="22"
+							height="22"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<polyline points="9 18 15 12 9 6" />
+						</svg>
+					</button>
+				</div>
+
+				<!-- LIGHTBOX FOOTER -->
+				<div class="lightbox-footer">
+					<div class="lightbox-file-meta">
+						<span class="file-code-badge">{activeModalAnimal.file}</span>
+						<span class="color-indicator">
+							<span class="color-dot" style:background-color={animalColor}></span>
+							<span class="color-val">{animalColor}</span>
+						</span>
+					</div>
+
+					<div class="lightbox-download-group">
+						<button
+							type="button"
+							class="lightbox-download-svg-btn"
+							onclick={(e) => downloadColoredSvg(e, activeModalAnimal!)}
+							disabled={isDownloading === activeModalAnimal.id}
+							title={langStore.current === 'uk'
+								? `Завантажити SVG (${animalColor})`
+								: `Download SVG (${animalColor})`}
+						>
+							<svg
+								width="14"
+								height="14"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2.2"
+								aria-hidden="true"
+							>
+								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+								<polyline points="7 10 12 15 17 10"></polyline>
+								<line x1="12" y1="15" x2="12" y2="3"></line>
+							</svg>
+							<span>{isDownloading === activeModalAnimal.id ? '...' : 'Завантажити SVG'}</span>
+						</button>
+
+						<PngDownloadBtn
+							onselect={(res) => downloadColoredPng(activeModalAnimal!, res)}
+							isDownloading={isDownloading === `${activeModalAnimal.id}-png`}
+							size="compact"
+							align="right"
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -467,9 +755,33 @@
 		font-family: monospace;
 		font-weight: 700;
 		color: var(--fg-muted);
+		z-index: 2;
+		pointer-events: none;
+	}
+
+	/* CARD PREVIEW TRIGGER BUTTON */
+	.animal-preview-btn {
+		background: none;
+		border: none;
+		padding: 0;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		cursor: pointer;
+		text-align: center;
+		outline: none;
+		border-radius: 12px;
+		transition: outline 0.15s ease;
+	}
+
+	.animal-preview-btn:focus-visible {
+		outline: 2px solid var(--brand-gold);
+		outline-offset: 4px;
 	}
 
 	.icon-stage {
+		position: relative;
 		width: 84px;
 		height: 84px;
 		display: flex;
@@ -478,12 +790,42 @@
 		margin: 0.35rem 0 0.5rem;
 		border-radius: 12px;
 		padding: 0.65rem;
-		transition: transform 0.2s ease;
+		transition:
+			transform 0.2s ease,
+			box-shadow 0.2s ease;
 		border: 1px solid var(--border);
+		overflow: hidden;
 	}
 
 	.animal-card:hover .icon-stage {
 		transform: scale(1.05);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	}
+
+	.preview-zoom-pill {
+		position: absolute;
+		bottom: 5px;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		padding: 0.18rem 0.45rem;
+		border-radius: 999px;
+		background: rgba(0, 0, 0, 0.68);
+		backdrop-filter: blur(6px);
+		-webkit-backdrop-filter: blur(6px);
+		color: #ffffff;
+		font-size: 0.62rem;
+		font-weight: 700;
+		opacity: 0;
+		transform: translateY(4px);
+		transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+		pointer-events: none;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+	}
+
+	.animal-card:hover .preview-zoom-pill {
+		opacity: 1;
+		transform: translateY(0);
 	}
 
 	.animal-svg-mask {
@@ -525,6 +867,8 @@
 		gap: 0.35rem;
 		width: 100%;
 		margin-top: auto;
+		position: relative;
+		z-index: 3;
 	}
 
 	.download-animal-btn {
@@ -574,6 +918,348 @@
 		cursor: wait;
 	}
 
+	/* ==========================================================================
+	   LIGHTBOX MODAL (ALMOST FULLSCREEN PREVIEW)
+	   ========================================================================== */
+	.animal-lightbox-backdrop {
+		position: fixed;
+		inset: 0;
+		z-index: 10050;
+		background: rgba(0, 0, 0, 0.82);
+		backdrop-filter: blur(14px);
+		-webkit-backdrop-filter: blur(14px);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 1.5rem;
+		animation: lightboxFade 0.2s ease;
+	}
+
+	@keyframes lightboxFade {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+	.animal-lightbox-dialog {
+		background: var(--panel-bg);
+		border: 1px solid var(--border);
+		border-radius: 24px;
+		width: 100%;
+		max-width: 960px;
+		height: min(88vh, 800px);
+		box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
+		backdrop-filter: blur(24px);
+		-webkit-backdrop-filter: blur(24px);
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		position: relative;
+		animation: lightboxPop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+		outline: none;
+	}
+
+	@keyframes lightboxPop {
+		from {
+			opacity: 0;
+			transform: scale(0.96);
+		}
+		to {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+
+	.lightbox-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 1rem 1.4rem;
+		border-bottom: 1px solid var(--border);
+		background: var(--bg-secondary);
+		flex-shrink: 0;
+	}
+
+	.lightbox-title-wrap {
+		display: flex;
+		align-items: center;
+		gap: 0.85rem;
+		min-width: 0;
+	}
+
+	.lightbox-badge {
+		font-size: 0.88rem;
+		font-family: monospace;
+		font-weight: 800;
+		padding: 0.25rem 0.6rem;
+		border-radius: 8px;
+		background: var(--panel-bg);
+		border: 1px solid var(--border);
+		color: var(--brand-leaf);
+	}
+
+	:global([data-theme='dark']) .lightbox-badge {
+		color: var(--brand-gold);
+	}
+
+	.lightbox-titles {
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+		min-width: 0;
+	}
+
+	.lightbox-title {
+		margin: 0;
+		font-size: 1.18rem;
+		font-weight: 800;
+		color: var(--fg-primary);
+		line-height: 1.2;
+		display: flex;
+		align-items: baseline;
+		gap: 0.45rem;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.lightbox-subtitle {
+		font-size: 0.88rem;
+		font-weight: 500;
+		color: var(--fg-muted);
+	}
+
+	.lightbox-category-tag {
+		font-size: 0.72rem;
+		font-weight: 600;
+		color: var(--fg-secondary);
+	}
+
+	.lightbox-header-actions {
+		display: flex;
+		align-items: center;
+		gap: 0.85rem;
+		flex-shrink: 0;
+	}
+
+	.lightbox-counter {
+		font-size: 0.76rem;
+		font-weight: 700;
+		font-family: monospace;
+		color: var(--fg-muted);
+		background: var(--panel-bg);
+		padding: 0.3rem 0.65rem;
+		border-radius: 999px;
+		border: 1px solid var(--border);
+	}
+
+	.lightbox-close-btn {
+		width: 36px;
+		height: 36px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: var(--panel-bg);
+		border: 1px solid var(--border);
+		color: var(--fg-secondary);
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.lightbox-close-btn:hover {
+		color: var(--fg-primary);
+		border-color: var(--border-hover);
+		background: rgba(255, 60, 60, 0.14);
+		transform: scale(1.05);
+	}
+
+	/* LIGHTBOX BODY */
+	.lightbox-body {
+		flex: 1;
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 1.25rem 4.75rem;
+		min-height: 0;
+		overflow: hidden;
+	}
+
+	.lightbox-stage {
+		width: 100%;
+		height: 100%;
+		max-height: 520px;
+		border-radius: 20px;
+		border: 1px solid var(--border);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 2.5rem;
+		box-shadow: inset 0 2px 14px rgba(0, 0, 0, 0.08);
+		transition: background-color 0.2s ease;
+		overflow: hidden;
+	}
+
+	.lightbox-svg-mask {
+		width: 100%;
+		height: 100%;
+		max-width: 480px;
+		max-height: 480px;
+		-webkit-mask-image: var(--mask-url);
+		mask-image: var(--mask-url);
+		-webkit-mask-size: contain;
+		mask-size: contain;
+		-webkit-mask-repeat: no-repeat;
+		mask-repeat: no-repeat;
+		-webkit-mask-position: center;
+		mask-position: center;
+		transition:
+			background-color 0.2s ease,
+			transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+		filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.12));
+	}
+
+	.lightbox-nav-btn {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		background: var(--panel-bg);
+		border: 1px solid var(--border);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		color: var(--fg-primary);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
+		z-index: 5;
+	}
+
+	.lightbox-nav-btn:hover:not(:disabled) {
+		transform: translateY(-50%) scale(1.1);
+		border-color: var(--border-hover);
+		color: var(--brand-leaf);
+	}
+
+	:global([data-theme='dark']) .lightbox-nav-btn:hover:not(:disabled) {
+		color: var(--brand-gold);
+	}
+
+	.lightbox-nav-btn:disabled {
+		opacity: 0.35;
+		cursor: not-allowed;
+	}
+
+	.lightbox-nav-prev {
+		left: 1.25rem;
+	}
+
+	.lightbox-nav-next {
+		right: 1.25rem;
+	}
+
+	/* LIGHTBOX FOOTER */
+	.lightbox-footer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.95rem 1.4rem;
+		border-top: 1px solid var(--border);
+		background: var(--bg-secondary);
+		flex-shrink: 0;
+		flex-wrap: wrap;
+	}
+
+	.lightbox-file-meta {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		flex-wrap: wrap;
+	}
+
+	.file-code-badge {
+		font-size: 0.74rem;
+		font-family: monospace;
+		font-weight: 600;
+		color: var(--fg-muted);
+		background: var(--panel-bg);
+		padding: 0.25rem 0.55rem;
+		border-radius: 6px;
+		border: 1px solid var(--border);
+	}
+
+	.color-indicator {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.74rem;
+		font-family: monospace;
+		font-weight: 700;
+		color: var(--fg-secondary);
+	}
+
+	.color-dot {
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		border: 1px solid rgba(0, 0, 0, 0.15);
+	}
+
+	.lightbox-download-group {
+		display: flex;
+		align-items: center;
+		gap: 0.55rem;
+	}
+
+	.lightbox-download-svg-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0.45rem 0.95rem;
+		border-radius: 9px;
+		font-size: 0.78rem;
+		font-weight: 700;
+		cursor: pointer;
+		background: var(--brand-emerald, #13371b);
+		border: 1px solid var(--brand-emerald, #13371b);
+		color: #ffffff;
+		transition: all 0.2s ease;
+	}
+
+	.lightbox-download-svg-btn:hover:not(:disabled) {
+		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba(19, 55, 27, 0.35);
+		filter: brightness(1.1);
+	}
+
+	:global([data-theme='dark']) .lightbox-download-svg-btn {
+		background: rgba(255, 179, 39, 0.15);
+		border-color: var(--brand-gold, #ffb327);
+		color: var(--brand-gold, #ffb327);
+	}
+
+	:global([data-theme='dark']) .lightbox-download-svg-btn:hover:not(:disabled) {
+		background: var(--brand-gold, #ffb327);
+		color: #101e14;
+		box-shadow: 0 4px 14px rgba(255, 179, 39, 0.35);
+	}
+
+	.lightbox-download-svg-btn:disabled {
+		opacity: 0.55;
+		cursor: wait;
+	}
+
 	@media (max-width: 768px) {
 		.gallery-controls-card {
 			padding: 1rem;
@@ -597,6 +1283,61 @@
 		.animals-grid {
 			grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
 			gap: 0.65rem;
+		}
+
+		.animal-lightbox-backdrop {
+			padding: 0.5rem;
+		}
+
+		.animal-lightbox-dialog {
+			height: 94vh;
+			border-radius: 18px;
+		}
+
+		.lightbox-header {
+			padding: 0.75rem 1rem;
+		}
+
+		.lightbox-stage-switcher {
+			display: none;
+		}
+
+		.lightbox-body {
+			padding: 0.75rem 0.5rem;
+		}
+
+		.lightbox-stage {
+			padding: 1rem;
+			max-height: none;
+		}
+
+		.lightbox-nav-btn {
+			width: 40px;
+			height: 40px;
+		}
+
+		.lightbox-nav-prev {
+			left: 0.5rem;
+		}
+
+		.lightbox-nav-next {
+			right: 0.5rem;
+		}
+
+		.lightbox-footer {
+			padding: 0.75rem 1rem;
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.lightbox-download-group {
+			width: 100%;
+			justify-content: stretch;
+		}
+
+		.lightbox-download-svg-btn {
+			flex: 1;
+			justify-content: center;
 		}
 	}
 </style>
