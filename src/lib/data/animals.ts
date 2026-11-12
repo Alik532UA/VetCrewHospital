@@ -266,6 +266,38 @@ export const ANIMALS: AnimalItem[] = [
 		nameEn: 'Penguin',
 		file: '33 - penguin.svg',
 		category: 'birds'
+	},
+	{
+		id: 'lynx',
+		num: '34',
+		nameUk: 'Рись',
+		nameEn: 'Lynx',
+		file: '34 - lynx.svg',
+		category: 'mammals'
+	},
+	{
+		id: 'leopard',
+		num: '35',
+		nameUk: 'Леопард',
+		nameEn: 'Leopard',
+		file: '35 - leopard.svg',
+		category: 'mammals'
+	},
+	{
+		id: 'dodo',
+		num: '36',
+		nameUk: 'Дронт',
+		nameEn: 'Dodo',
+		file: '36 - dodo.svg',
+		category: 'birds'
+	},
+	{
+		id: 'ant',
+		num: '37',
+		nameUk: 'Мураха',
+		nameEn: 'Ant',
+		file: '37 - ant.svg',
+		category: 'exotics'
 	}
 ];
 

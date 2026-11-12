@@ -555,15 +555,15 @@
 					<BrandSlogan stageTheme={sloganStage} bind:butterflyColor={activeButterflyColor} />
 				</section>
 
-				<!-- SECTION 05: ANIMAL ICONOGRAPHY (33) -->
+				<!-- SECTION 05: ANIMAL ICONOGRAPHY (37) -->
 				<section class="guide-card" id="animals">
 					<div class="card-head">
 						<span class="step-num">05</span>
 						<div>
 							<h2 class="card-title">
 								{langStore.current === 'uk'
-									? 'Фірмова іконографіка (33 тварини)'
-									: 'Animal Iconography (33 Species)'}
+									? 'Фірмова іконографіка (37 тварин)'
+									: 'Animal Iconography (37 Species)'}
 							</h2>
 						</div>
 					</div>

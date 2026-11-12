@@ -53,8 +53,8 @@
 		{
 			id: 'animals',
 			num: '05',
-			titleUk: 'Іконки 33 тварин',
-			titleEn: 'Animal Icons (33)',
+			titleUk: 'Іконки 37 тварин',
+			titleEn: 'Animal Icons (37)',
 			iconType: 'animals'
 		},
 		{ id: 'qr', num: '06', titleUk: 'QR-таблички', titleEn: 'QR Signage', iconType: 'qr' },
