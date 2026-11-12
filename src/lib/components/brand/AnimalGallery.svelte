@@ -184,7 +184,7 @@
 					onclick={() => (selectedCategory = 'all')}
 				>
 					<span>{langStore.current === 'uk' ? 'Всі пацієнти' : 'All Species'}</span>
-					<span class="chip-count">24</span>
+					<span class="chip-count">{ANIMALS.length}</span>
 				</button>
 				<button
 					type="button"
@@ -193,7 +193,7 @@
 					onclick={() => (selectedCategory = 'birds')}
 				>
 					<span>{langStore.current === 'uk' ? 'Птахи' : 'Birds'}</span>
-					<span class="chip-count">6</span>
+					<span class="chip-count">{ANIMALS.filter((a) => a.category === 'birds').length}</span>
 				</button>
 				<button
 					type="button"
@@ -202,7 +202,7 @@
 					onclick={() => (selectedCategory = 'reptiles')}
 				>
 					<span>{langStore.current === 'uk' ? 'Рептилії & Амфібії' : 'Reptiles & Amphibians'}</span>
-					<span class="chip-count">6</span>
+					<span class="chip-count">{ANIMALS.filter((a) => a.category === 'reptiles').length}</span>
 				</button>
 				<button
 					type="button"
@@ -211,7 +211,7 @@
 					onclick={() => (selectedCategory = 'mammals')}
 				>
 					<span>{langStore.current === 'uk' ? 'Ссавці & Гризуни' : 'Mammals & Rodents'}</span>
-					<span class="chip-count">8</span>
+					<span class="chip-count">{ANIMALS.filter((a) => a.category === 'mammals').length}</span>
 				</button>
 				<button
 					type="button"
@@ -220,7 +220,7 @@
 					onclick={() => (selectedCategory = 'exotics')}
 				>
 					<span>{langStore.current === 'uk' ? 'Екзотичні & Примати' : 'Exotics & Primates'}</span>
-					<span class="chip-count">4</span>
+					<span class="chip-count">{ANIMALS.filter((a) => a.category === 'exotics').length}</span>
 				</button>
 			</div>
 

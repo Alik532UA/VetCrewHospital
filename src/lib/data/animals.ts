@@ -182,7 +182,7 @@ export const ANIMALS: AnimalItem[] = [
 	{
 		id: 'monkey',
 		num: '23',
-		nameUk: 'Мавпа',
+		nameUk: 'Капуцин',
 		nameEn: 'Monkey',
 		file: '23 - monkey.svg',
 		category: 'exotics'
@@ -190,10 +190,82 @@ export const ANIMALS: AnimalItem[] = [
 	{
 		id: 'chimpanzee',
 		num: '24',
-		nameUk: 'Шимпанзе',
+		nameUk: 'Магот',
 		nameEn: 'Chimpanzee',
 		file: '24 - chimpanzee.svg',
 		category: 'exotics'
+	},
+	{
+		id: 'axolotl',
+		num: '25',
+		nameUk: 'Аксолотль',
+		nameEn: 'Axolotl',
+		file: '25 - axolotl.svg',
+		category: 'exotics'
+	},
+	{
+		id: 'iguana',
+		num: '26',
+		nameUk: 'Ігуана',
+		nameEn: 'Iguana',
+		file: '26 - iguana.svg',
+		category: 'reptiles'
+	},
+	{
+		id: 'capybara',
+		num: '27',
+		nameUk: 'Капібара',
+		nameEn: 'Capybara',
+		file: '27 - capybara.svg',
+		category: 'mammals'
+	},
+	{
+		id: 'raccoon',
+		num: '28',
+		nameUk: 'Єнот',
+		nameEn: 'Raccoon',
+		file: '28 - raccoon.svg',
+		category: 'mammals'
+	},
+	{
+		id: 'meerkat',
+		num: '29',
+		nameUk: 'Сурикат',
+		nameEn: 'Meerkat',
+		file: '29 - meerkat.svg',
+		category: 'mammals'
+	},
+	{
+		id: 'lemur',
+		num: '30',
+		nameUk: 'Лемур',
+		nameEn: 'Lemur',
+		file: '30 - lemur.svg',
+		category: 'mammals'
+	},
+	{
+		id: 'flamingo',
+		num: '31',
+		nameUk: 'Фламінго',
+		nameEn: 'Flamingo',
+		file: '31 - flamingo.svg',
+		category: 'birds'
+	},
+	{
+		id: 'red-panda',
+		num: '32',
+		nameUk: 'Червона панда',
+		nameEn: 'Red Panda',
+		file: '32 - red-panda.svg',
+		category: 'mammals'
+	},
+	{
+		id: 'penguin',
+		num: '33',
+		nameUk: 'Пінгвін',
+		nameEn: 'Penguin',
+		file: '33 - penguin.svg',
+		category: 'birds'
 	}
 ];
 
