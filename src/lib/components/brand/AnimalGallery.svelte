@@ -9,7 +9,12 @@
 	import PngDownloadBtn from '$lib/components/brand/PngDownloadBtn.svelte';
 	import type { PngResolution } from '$lib/data/pngResolutions';
 
-	import { ANIMALS, type AnimalItem, type AnimalCategory } from '$lib/data/animals';
+	import {
+		ANIMALS,
+		type AnimalItem,
+		type AnimalCategory,
+		type AnimalIconStyle
+	} from '$lib/data/animals';
 
 	interface Props {
 		customSelectedColor?: string | null;
@@ -20,11 +25,17 @@
 		customSelectedColor ?? (themeStore.current === 'dark' ? '#93C84A' : '#13371B')
 	);
 
+	let iconStyle = $state<AnimalIconStyle>('solid');
 	let stageTheme = $state<StageTheme>('checker');
 	let searchQuery = $state('');
 	let selectedCategory = $state<'all' | 'birds' | 'reptiles' | 'mammals' | 'exotics'>('all');
 	let isDownloading = $state<string | null>(null);
 	let activeModalAnimal = $state<AnimalItem | null>(null);
+
+	function getIconUrl(animal: AnimalItem, style: AnimalIconStyle = iconStyle): string {
+		const sub = style === 'linear' ? 'linear/' : '';
+		return `${base}/brand/animals/${sub}${encodeURIComponent(animal.file)}`;
+	}
 
 	let currentAnimalIndex = $derived.by(() => {
 		if (!activeModalAnimal) return -1;
@@ -118,7 +129,7 @@
 		e.preventDefault();
 		isDownloading = animal.id;
 		try {
-			const res = await fetch(`${base}/brand/animals/${encodeURIComponent(animal.file)}`);
+			const res = await fetch(getIconUrl(animal, iconStyle));
 			let text = await res.text();
 
 			// Inject color attribute
@@ -132,7 +143,8 @@
 			const url = URL.createObjectURL(blob);
 			const link = document.createElement('a');
 			link.href = url;
-			link.download = `${animal.num} - ${animal.nameUk} (${animalColor}).svg`;
+			const styleSuffix = iconStyle === 'linear' ? ' (linear)' : '';
+			link.download = `${animal.num} - ${animal.nameUk}${styleSuffix} (${animalColor}).svg`;
 			document.body.appendChild(link);
 			link.click();
 			document.body.removeChild(link);
@@ -147,9 +159,10 @@
 	async function downloadColoredPng(animal: AnimalItem, res: PngResolution) {
 		isDownloading = `${animal.id}-png`;
 		try {
+			const styleSuffix = iconStyle === 'linear' ? ' (linear)' : '';
 			await downloadUrlAsPng(
-				`${base}/brand/animals/${encodeURIComponent(animal.file)}`,
-				`${animal.num} - ${animal.nameUk} (${animalColor}, ${res.label}).png`,
+				getIconUrl(animal, iconStyle),
+				`${animal.num} - ${animal.nameUk}${styleSuffix} (${animalColor}, ${res.label}).png`,
 				res.px,
 				(svgText) => {
 					if (svgText.includes('fill=')) {
@@ -173,8 +186,52 @@
 	<!-- Color Selector & Filters Toolbar -->
 	<div class="gallery-controls-card">
 		<div class="gallery-toolbar">
-			<div class="stage-switcher-wrap">
-				<StageBgSwitcher bind:current={stageTheme} />
+			<div class="toolbar-toggles-wrap">
+				<div class="stage-switcher-wrap">
+					<StageBgSwitcher bind:current={stageTheme} />
+				</div>
+				<div
+					class="style-toggle-group"
+					role="radiogroup"
+					aria-label={langStore.current === 'uk' ? 'Стиль іконок' : 'Icon style'}
+				>
+					<button
+						type="button"
+						class="style-toggle-btn"
+						class:is-active={iconStyle === 'solid'}
+						onclick={() => (iconStyle = 'solid')}
+						role="radio"
+						aria-checked={iconStyle === 'solid'}
+						title={langStore.current === 'uk' ? 'Суцільний силует' : 'Solid silhouette'}
+					>
+						<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+							<circle cx="12" cy="12" r="9" />
+						</svg>
+						<span>{langStore.current === 'uk' ? 'Силует' : 'Solid'}</span>
+					</button>
+					<button
+						type="button"
+						class="style-toggle-btn"
+						class:is-active={iconStyle === 'linear'}
+						onclick={() => (iconStyle = 'linear')}
+						role="radio"
+						aria-checked={iconStyle === 'linear'}
+						title={langStore.current === 'uk' ? 'Лінійний контур' : 'Linear outline'}
+					>
+						<svg
+							width="13"
+							height="13"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2.2"
+							aria-hidden="true"
+						>
+							<circle cx="12" cy="12" r="8" />
+						</svg>
+						<span>{langStore.current === 'uk' ? 'Контур' : 'Linear'}</span>
+					</button>
+				</div>
 			</div>
 			<div class="category-chips">
 				<button
@@ -291,7 +348,7 @@
 						<div
 							class="animal-svg-mask"
 							style:background-color={animalColor}
-							style:--mask-url="url('{base}/brand/animals/{encodeURIComponent(a.file)}')"
+							style:--mask-url="url('{getIconUrl(a, iconStyle)}')"
 							aria-hidden="true"
 						></div>
 						<span class="preview-zoom-pill" aria-hidden="true">
@@ -395,6 +452,51 @@
 							{currentAnimalIndex + 1} / {currentAnimalTotal}
 						</div>
 
+						<div class="lightbox-style-switcher">
+							<div
+								class="style-toggle-group"
+								role="radiogroup"
+								aria-label={langStore.current === 'uk' ? 'Стиль іконок' : 'Icon style'}
+							>
+								<button
+									type="button"
+									class="style-toggle-btn"
+									class:is-active={iconStyle === 'solid'}
+									onclick={() => (iconStyle = 'solid')}
+									role="radio"
+									aria-checked={iconStyle === 'solid'}
+									title={langStore.current === 'uk' ? 'Суцільний силует' : 'Solid silhouette'}
+								>
+									<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+										<circle cx="12" cy="12" r="9" />
+									</svg>
+									<span>{langStore.current === 'uk' ? 'Силует' : 'Solid'}</span>
+								</button>
+								<button
+									type="button"
+									class="style-toggle-btn"
+									class:is-active={iconStyle === 'linear'}
+									onclick={() => (iconStyle = 'linear')}
+									role="radio"
+									aria-checked={iconStyle === 'linear'}
+									title={langStore.current === 'uk' ? 'Лінійний контур' : 'Linear outline'}
+								>
+									<svg
+										width="12"
+										height="12"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2.2"
+										aria-hidden="true"
+									>
+										<circle cx="12" cy="12" r="8" />
+									</svg>
+									<span>{langStore.current === 'uk' ? 'Контур' : 'Linear'}</span>
+								</button>
+							</div>
+						</div>
+
 						<div class="lightbox-stage-switcher">
 							<StageBgSwitcher bind:current={stageTheme} />
 						</div>
@@ -455,9 +557,7 @@
 						<div
 							class="lightbox-svg-mask"
 							style:background-color={animalColor}
-							style:--mask-url="url('{base}/brand/animals/{encodeURIComponent(
-								activeModalAnimal.file
-							)}')"
+							style:--mask-url="url('{getIconUrl(activeModalAnimal, iconStyle)}')"
 							role="img"
 							aria-label="{activeModalAnimal.nameUk} SVG Graphic"
 						></div>
@@ -491,7 +591,9 @@
 				<!-- LIGHTBOX FOOTER -->
 				<div class="lightbox-footer">
 					<div class="lightbox-file-meta">
-						<span class="file-code-badge">{activeModalAnimal.file}</span>
+						<span class="file-code-badge">
+							{iconStyle === 'linear' ? `linear/${activeModalAnimal.file}` : activeModalAnimal.file}
+						</span>
 						<span class="color-indicator">
 							<span class="color-dot" style:background-color={animalColor}></span>
 							<span class="color-val">{animalColor}</span>
@@ -618,6 +720,54 @@
 		justify-content: space-between;
 		gap: 0.85rem;
 		flex-wrap: wrap;
+	}
+
+	.toolbar-toggles-wrap {
+		display: flex;
+		align-items: center;
+		gap: 0.65rem;
+		flex-wrap: wrap;
+	}
+
+	.style-toggle-group {
+		display: inline-flex;
+		align-items: center;
+		padding: 3px;
+		background: var(--panel-bg);
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		gap: 3px;
+	}
+
+	.style-toggle-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		padding: 0.35rem 0.75rem;
+		font-size: 0.78rem;
+		font-weight: 600;
+		color: var(--fg-secondary);
+		background: transparent;
+		border: none;
+		border-radius: 999px;
+		cursor: pointer;
+		transition: all 0.18s ease;
+		white-space: nowrap;
+	}
+
+	.style-toggle-btn:hover {
+		color: var(--fg-primary);
+	}
+
+	.style-toggle-btn.is-active {
+		background: var(--brand-leaf);
+		color: #ffffff;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+	}
+
+	:global([data-theme='dark']) .style-toggle-btn.is-active {
+		background: var(--brand-gold);
+		color: #13371b;
 	}
 
 	.category-chips {

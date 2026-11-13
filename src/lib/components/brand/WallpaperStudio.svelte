@@ -5,7 +5,7 @@
 	import { logService } from '$lib/services/logService.svelte';
 	import logoPaths from '$lib/assets/logo-paths.json';
 	import vetcrewLogoPaths from '$lib/assets/vetcrew-logo-paths.json';
-	import { ANIMALS } from '$lib/data/animals';
+	import { ANIMALS, type AnimalIconStyle } from '$lib/data/animals';
 
 	interface ColorOption {
 		hex: string;
@@ -45,6 +45,7 @@
 	// Animal state
 	let selectedAnimalId = $state<string>('owl');
 	let animalCategory = $state<'all' | 'birds' | 'reptiles' | 'mammals' | 'exotics'>('all');
+	let animalIconStyle = $state<AnimalIconStyle>('solid');
 	let animalSearch = $state<string>('');
 	let animalSvgCache = $state<Record<string, string>>({});
 
@@ -220,9 +221,12 @@
 	$effect(() => {
 		if (!browser || symbolType !== 'animal') return;
 		const animal = selectedAnimal;
-		if (animalSvgCache[animal.id]) return;
+		const style = animalIconStyle;
+		const cacheKey = `${animal.id}_${style}`;
+		if (animalSvgCache[cacheKey]) return;
 
-		fetch(`${base}/brand/animals/${encodeURIComponent(animal.file)}`)
+		const sub = style === 'linear' ? 'linear/' : '';
+		fetch(`${base}/brand/animals/${sub}${encodeURIComponent(animal.file)}`)
 			.then((res) => (res.ok ? res.text() : ''))
 			.then((text) => {
 				if (!text) return;
@@ -233,7 +237,7 @@
 					.replace(/<svg[^>]*>/i, '')
 					.replace(/<\/svg>/i, '')
 					.replace(/fill="[^"]*"/gi, '');
-				animalSvgCache = { ...animalSvgCache, [animal.id]: inner };
+				animalSvgCache = { ...animalSvgCache, [cacheKey]: inner };
 			})
 			.catch((e) => logService.warn('brand', 'Failed to fetch animal SVG', e));
 	});
@@ -310,7 +314,8 @@
 			const k = targetSize / 2048;
 			const tx = (W - targetSize) / 2;
 			const ty = (H - targetSize) / 2;
-			const inner = animalSvgCache[selectedAnimal.id] ?? '';
+			const cacheKey = `${selectedAnimal.id}_${animalIconStyle}`;
+			const inner = animalSvgCache[cacheKey] ?? '';
 
 			symbolContent = `
 			<g id="wallpaper-symbol" transform="translate(${tx}, ${ty}) scale(${k})" fill="${animalColor}">
@@ -331,7 +336,8 @@
 		let symbolPrefix = 'vet-crew';
 		if (symbolType === 'hospital') symbolPrefix = 'vet-crew-hospital';
 		else if (symbolType === 'butterfly') symbolPrefix = 'vet-crew-butterfly';
-		else if (symbolType === 'animal') symbolPrefix = `vet-crew-${selectedAnimal.id}`;
+		else if (symbolType === 'animal')
+			symbolPrefix = `vet-crew-${selectedAnimal.id}${animalIconStyle === 'linear' ? '-linear' : ''}`;
 
 		return `${symbolPrefix}-wallpaper-${device}-${resolution}.png`;
 	});
@@ -600,47 +606,92 @@
 		{#if symbolType === 'animal'}
 			<div class="animal-picker-panel">
 				<div class="animal-filter-row">
-					<div class="cat-pills">
-						<button
-							type="button"
-							class="cat-chip"
-							class:is-active={animalCategory === 'all'}
-							onclick={() => (animalCategory = 'all')}
+					<div class="animal-filter-left">
+						<div
+							class="style-toggle-group"
+							role="radiogroup"
+							aria-label={langStore.current === 'uk' ? 'Стиль іконок' : 'Icon style'}
 						>
-							{langStore.current === 'uk' ? 'Усі (24)' : 'All (24)'}
-						</button>
-						<button
-							type="button"
-							class="cat-chip"
-							class:is-active={animalCategory === 'birds'}
-							onclick={() => (animalCategory = 'birds')}
-						>
-							{langStore.current === 'uk' ? 'Птахи' : 'Birds'}
-						</button>
-						<button
-							type="button"
-							class="cat-chip"
-							class:is-active={animalCategory === 'reptiles'}
-							onclick={() => (animalCategory = 'reptiles')}
-						>
-							{langStore.current === 'uk' ? 'Рептилії' : 'Reptiles'}
-						</button>
-						<button
-							type="button"
-							class="cat-chip"
-							class:is-active={animalCategory === 'mammals'}
-							onclick={() => (animalCategory = 'mammals')}
-						>
-							{langStore.current === 'uk' ? 'Ссавці' : 'Mammals'}
-						</button>
-						<button
-							type="button"
-							class="cat-chip"
-							class:is-active={animalCategory === 'exotics'}
-							onclick={() => (animalCategory = 'exotics')}
-						>
-							{langStore.current === 'uk' ? 'Екзотичні' : 'Exotics'}
-						</button>
+							<button
+								type="button"
+								class="style-toggle-btn"
+								class:is-active={animalIconStyle === 'solid'}
+								onclick={() => (animalIconStyle = 'solid')}
+								role="radio"
+								aria-checked={animalIconStyle === 'solid'}
+								title={langStore.current === 'uk' ? 'Суцільний силует' : 'Solid silhouette'}
+							>
+								<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+									<circle cx="12" cy="12" r="9" />
+								</svg>
+								<span>{langStore.current === 'uk' ? 'Силует' : 'Solid'}</span>
+							</button>
+							<button
+								type="button"
+								class="style-toggle-btn"
+								class:is-active={animalIconStyle === 'linear'}
+								onclick={() => (animalIconStyle = 'linear')}
+								role="radio"
+								aria-checked={animalIconStyle === 'linear'}
+								title={langStore.current === 'uk' ? 'Лінійний контур' : 'Linear outline'}
+							>
+								<svg
+									width="12"
+									height="12"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2.2"
+									aria-hidden="true"
+								>
+									<circle cx="12" cy="12" r="8" />
+								</svg>
+								<span>{langStore.current === 'uk' ? 'Контур' : 'Linear'}</span>
+							</button>
+						</div>
+
+						<div class="cat-pills">
+							<button
+								type="button"
+								class="cat-chip"
+								class:is-active={animalCategory === 'all'}
+								onclick={() => (animalCategory = 'all')}
+							>
+								{langStore.current === 'uk' ? `Усі (${ANIMALS.length})` : `All (${ANIMALS.length})`}
+							</button>
+							<button
+								type="button"
+								class="cat-chip"
+								class:is-active={animalCategory === 'birds'}
+								onclick={() => (animalCategory = 'birds')}
+							>
+								{langStore.current === 'uk' ? 'Птахи' : 'Birds'}
+							</button>
+							<button
+								type="button"
+								class="cat-chip"
+								class:is-active={animalCategory === 'reptiles'}
+								onclick={() => (animalCategory = 'reptiles')}
+							>
+								{langStore.current === 'uk' ? 'Рептилії' : 'Reptiles'}
+							</button>
+							<button
+								type="button"
+								class="cat-chip"
+								class:is-active={animalCategory === 'mammals'}
+								onclick={() => (animalCategory = 'mammals')}
+							>
+								{langStore.current === 'uk' ? 'Ссавці' : 'Mammals'}
+							</button>
+							<button
+								type="button"
+								class="cat-chip"
+								class:is-active={animalCategory === 'exotics'}
+								onclick={() => (animalCategory = 'exotics')}
+							>
+								{langStore.current === 'uk' ? 'Екзотичні' : 'Exotics'}
+							</button>
+						</div>
 					</div>
 
 					<input
@@ -1373,6 +1424,54 @@
 		justify-content: space-between;
 		gap: 1rem;
 		flex-wrap: wrap;
+	}
+
+	.animal-filter-left {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		flex-wrap: wrap;
+	}
+
+	.style-toggle-group {
+		display: inline-flex;
+		align-items: center;
+		padding: 3px;
+		background: var(--bg-secondary);
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		gap: 3px;
+	}
+
+	.style-toggle-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		padding: 0.32rem 0.65rem;
+		font-size: 0.76rem;
+		font-weight: 600;
+		color: var(--fg-secondary);
+		background: transparent;
+		border: none;
+		border-radius: 999px;
+		cursor: pointer;
+		transition: all 0.15s ease;
+		white-space: nowrap;
+	}
+
+	.style-toggle-btn:hover {
+		color: var(--fg-primary);
+	}
+
+	.style-toggle-btn.is-active {
+		background: var(--brand-leaf);
+		color: #ffffff;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+	}
+
+	:global([data-theme='dark']) .style-toggle-btn.is-active {
+		background: var(--brand-gold);
+		color: #13371b;
 	}
 
 	.cat-pills {

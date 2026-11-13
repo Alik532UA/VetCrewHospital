@@ -1,4 +1,5 @@
 export type AnimalCategory = 'birds' | 'reptiles' | 'mammals' | 'exotics';
+export type AnimalIconStyle = 'solid' | 'linear';
 
 export interface AnimalItem {
 	id: string;
