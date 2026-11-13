@@ -31,6 +31,7 @@
 	let selectedCategory = $state<'all' | 'birds' | 'reptiles' | 'mammals' | 'exotics'>('all');
 	let isDownloading = $state<string | null>(null);
 	let activeModalAnimal = $state<AnimalItem | null>(null);
+	let lightboxBodyEl = $state<HTMLDivElement | null>(null);
 
 	function getIconUrl(animal: AnimalItem, style: AnimalIconStyle = iconStyle): string {
 		const sub = style === 'linear' ? 'linear/' : '';
@@ -100,13 +101,88 @@
 		}
 	}
 
+	let lastWheelTime = 0;
+
+	function handleWheelNavigation(e: WheelEvent) {
+		if (!activeModalAnimal) return;
+		e.preventDefault();
+
+		const now = performance.now();
+		// Throttle: 220ms cooldown prevents rapid multi-skips from trackpad gestures or fast wheel clicks
+		if (now - lastWheelTime < 220) return;
+
+		// Prioritize dominant axis (vertical or horizontal)
+		const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+		// Threshold: ignore micro-movements and inertia noise
+		if (Math.abs(delta) < 20) return;
+
+		lastWheelTime = now;
+		if (delta > 0) {
+			nextAnimal();
+		} else {
+			prevAnimal();
+		}
+	}
+
+	let touchStartX = 0;
+	let touchStartY = 0;
+
+	function handleTouchStart(e: TouchEvent) {
+		const touch = e.touches[0];
+		if (!touch) return;
+		touchStartX = touch.clientX;
+		touchStartY = touch.clientY;
+	}
+
+	function handleTouchEnd(e: TouchEvent) {
+		const touch = e.changedTouches[0];
+		if (!touch) return;
+		const diffX = touch.clientX - touchStartX;
+		const diffY = touch.clientY - touchStartY;
+
+		if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
+			if (diffX < 0) {
+				nextAnimal();
+			} else {
+				prevAnimal();
+			}
+		} else if (Math.abs(diffY) > 50) {
+			if (diffY < 0) {
+				nextAnimal();
+			} else {
+				prevAnimal();
+			}
+		}
+	}
+
 	$effect(() => {
 		if (!browser) return;
 		if (activeModalAnimal) {
-			const originalOverflow = document.body.style.overflow;
+			const originalBodyOverflow = document.body.style.overflow;
+			const originalHtmlOverflow = document.documentElement.style.overflow;
 			document.body.style.overflow = 'hidden';
+			document.documentElement.style.overflow = 'hidden';
+
+			const onWindowWheel = (e: WheelEvent) => {
+				handleWheelNavigation(e);
+			};
+
+			window.addEventListener('wheel', onWindowWheel, { passive: false });
+
+			const el = lightboxBodyEl;
+			if (el) {
+				el.addEventListener('touchstart', handleTouchStart, { passive: true });
+				el.addEventListener('touchend', handleTouchEnd, { passive: true });
+			}
+
 			return () => {
-				document.body.style.overflow = originalOverflow;
+				document.body.style.overflow = originalBodyOverflow;
+				document.documentElement.style.overflow = originalHtmlOverflow;
+				window.removeEventListener('wheel', onWindowWheel);
+				if (el) {
+					el.removeEventListener('touchstart', handleTouchStart);
+					el.removeEventListener('touchend', handleTouchEnd);
+				}
 			};
 		}
 		return undefined;
@@ -533,7 +609,7 @@
 				</div>
 
 				<!-- LIGHTBOX BODY / DISPLAY STAGE -->
-				<div class="lightbox-body">
+				<div class="lightbox-body" bind:this={lightboxBodyEl}>
 					<!-- Prev Button -->
 					<button
 						type="button"
@@ -1089,6 +1165,7 @@
 		justify-content: center;
 		padding: 1.5rem;
 		animation: lightboxFade 0.2s ease;
+		overscroll-behavior: contain;
 	}
 
 	@keyframes lightboxFade {
@@ -1113,6 +1190,7 @@
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
+		overscroll-behavior: contain;
 		position: relative;
 		animation: lightboxPop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 		outline: none;
@@ -1244,6 +1322,8 @@
 		padding: 1.25rem 4.75rem;
 		min-height: 0;
 		overflow: hidden;
+		overscroll-behavior: contain;
+		touch-action: none;
 	}
 
 	.lightbox-stage {
@@ -1259,6 +1339,7 @@
 		box-shadow: inset 0 2px 14px rgba(0, 0, 0, 0.08);
 		transition: background-color 0.2s ease;
 		overflow: hidden;
+		overscroll-behavior: contain;
 	}
 
 	.lightbox-svg-mask {
