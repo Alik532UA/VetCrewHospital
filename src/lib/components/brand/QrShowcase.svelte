@@ -3,6 +3,7 @@
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 	import { downloadSvgAsPng } from '$lib/utils/exportPng';
+	import { portal } from '$lib/utils/portal';
 	import { logService } from '$lib/services/logService.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 	import PngDownloadBtn from '$lib/components/brand/PngDownloadBtn.svelte';
@@ -1159,7 +1160,7 @@
 
 	<!-- IMPORT CONFIGURATION MODAL -->
 	{#if isImportModalOpen}
-		<div class="qr-modal-backdrop" role="presentation" onclick={closeImportModal}>
+		<div use:portal class="qr-modal-backdrop" role="presentation" onclick={closeImportModal}>
 			<div
 				class="qr-modal-dialog"
 				role="dialog"

@@ -4,6 +4,7 @@
 	import { langStore } from '$lib/lang.svelte';
 	import { themeStore } from '$lib/theme.svelte';
 	import { downloadUrlAsPng } from '$lib/utils/exportPng';
+	import { portal } from '$lib/utils/portal';
 	import { logService } from '$lib/services/logService.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 	import PngDownloadBtn from '$lib/components/brand/PngDownloadBtn.svelte';
@@ -492,7 +493,7 @@
 
 	<!-- LIGHTBOX MODAL (ALMOST FULLSCREEN PREVIEW) -->
 	{#if activeModalAnimal}
-		<div class="animal-lightbox-backdrop" role="presentation" onclick={closeModal}>
+		<div use:portal class="animal-lightbox-backdrop" role="presentation" onclick={closeModal}>
 			<div
 				class="animal-lightbox-dialog"
 				role="dialog"
@@ -1156,6 +1157,14 @@
 	.animal-lightbox-backdrop {
 		position: fixed;
 		inset: 0;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		width: 100vw;
+		width: 100dvw;
+		height: 100vh;
+		height: 100dvh;
 		z-index: 10050;
 		background: rgba(0, 0, 0, 0.82);
 		backdrop-filter: blur(14px);
@@ -1194,6 +1203,7 @@
 		position: relative;
 		animation: lightboxPop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 		outline: none;
+		margin: auto;
 	}
 
 	@keyframes lightboxPop {

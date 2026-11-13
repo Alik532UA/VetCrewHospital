@@ -3,6 +3,7 @@
 	import { langStore } from '$lib/lang.svelte';
 	import { logService } from '$lib/services/logService.svelte';
 	import { downloadUrlAsPng } from '$lib/utils/exportPng';
+	import { portal } from '$lib/utils/portal';
 	import StageBgSwitcher from '$lib/components/brand/StageBgSwitcher.svelte';
 	import IosToggle from '$lib/components/IosToggle.svelte';
 	import {
@@ -1700,7 +1701,7 @@
 
 	<!-- IMPORT CONFIGURATION MODAL -->
 	{#if isImportModalOpen}
-		<div class="stele-modal-backdrop" role="presentation" onclick={closeImportModal}>
+		<div use:portal class="stele-modal-backdrop" role="presentation" onclick={closeImportModal}>
 			<div
 				class="stele-modal-dialog"
 				role="dialog"
