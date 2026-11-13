@@ -2,13 +2,16 @@
 	import '../app.css';
 	import { setContext } from 'svelte';
 	import { updated } from '$app/state';
-	import { beforeNavigate } from '$app/navigation';
+	import { beforeNavigate, goto } from '$app/navigation';
+	import { base } from '$app/paths';
 	import { themeStore } from '$lib/theme.svelte';
 	import { langStore } from '$lib/lang.svelte';
 	import { toggleFullscreen } from '$lib/services/fullscreen';
 	import { logService } from '$lib/services/logService.svelte';
 	import { freshLoad } from '$lib/utils/staleBuild';
 	import { HotkeyService } from '$lib/hotkeys/hotkeys';
+	import { listenForSequences } from '$lib/debug/keySequence';
+	import { createBrandbookSequence } from '$lib/hotkeys/brandbookSequence';
 	import ServiceBadge from '$lib/components/ServiceBadge.svelte';
 	import ErrorFallback from '$lib/components/ErrorFallback.svelte';
 	import type { Snippet } from 'svelte';
@@ -47,10 +50,23 @@
 
 	setContext('hotkeys', hotkeys);
 
+	const brandbookSequence = createBrandbookSequence(() => {
+		if (typeof window !== 'undefined' && window.location.pathname.endsWith('/brandbook')) {
+			return;
+		}
+		logService.info('hotkeys', 'Navigating to brandbook via secret 7xB shortcut');
+		void goto(`${base}/brandbook`);
+	});
+
 	// CODE-QUALITY § 5.3: сигнал гідратації — лише в браузері після монтування
 	$effect(() => {
 		document.documentElement.dataset.hydrated = '';
-		return hotkeys.init(document);
+		const cleanupHotkeys = hotkeys.init(document);
+		const cleanupSequence = listenForSequences(brandbookSequence);
+		return () => {
+			cleanupHotkeys();
+			cleanupSequence();
+		};
 	});
 </script>
 
