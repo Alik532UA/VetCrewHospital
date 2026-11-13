@@ -621,7 +621,13 @@
 								aria-checked={animalIconStyle === 'solid'}
 								title={langStore.current === 'uk' ? 'Суцільний силует' : 'Solid silhouette'}
 							>
-								<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+								<svg
+									width="12"
+									height="12"
+									viewBox="0 0 24 24"
+									fill="currentColor"
+									aria-hidden="true"
+								>
 									<circle cx="12" cy="12" r="9" />
 								</svg>
 								<span>{langStore.current === 'uk' ? 'Силует' : 'Solid'}</span>
