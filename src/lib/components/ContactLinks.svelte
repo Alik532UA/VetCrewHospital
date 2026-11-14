@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { langStore } from '../lang.svelte';
+	import { bgStore } from '../controllers/background.svelte';
 
 	interface Props {
 		isExpanded?: boolean;
@@ -43,7 +44,11 @@
 </script>
 
 <div class="contact-container" class:is-expanded={isExpanded} class:is-shifted-up={isShiftedUp}>
-	<nav class="contact-links" aria-label="Hospital Contacts">
+	<nav
+		class="contact-links"
+		class:has-capsule={bgStore.showMenuCapsule}
+		aria-label="Hospital Contacts"
+	>
 		{#each channels as item (item.id)}
 			<a
 				href={item.getUrl()}
@@ -108,11 +113,31 @@
 		align-items: center;
 		padding: 0.25rem 1rem;
 		pointer-events: auto;
-		transition: grid-template-columns 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+		border: 1px solid transparent;
+		border-radius: 9999px;
+		transition:
+			grid-template-columns 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+			padding 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+			background-color 0.3s ease,
+			border-color 0.3s ease,
+			box-shadow 0.3s ease;
+	}
+
+	.contact-links.has-capsule {
+		background: var(--panel-bg);
+		backdrop-filter: blur(20px) saturate(180%);
+		-webkit-backdrop-filter: blur(20px) saturate(180%);
+		border-color: var(--panel-border);
+		box-shadow: var(--panel-shadow);
+		padding: 0.55rem 1rem;
 	}
 
 	.is-expanded .contact-links {
 		grid-template-columns: repeat(3, 160px);
+	}
+
+	.is-expanded .contact-links.has-capsule {
+		padding: 0.75rem 1.25rem 0.85rem;
 	}
 
 	.link-item {
@@ -249,9 +274,18 @@
 			padding: 0.2rem 0.5rem;
 		}
 
+		.contact-links.has-capsule {
+			padding: 0.35rem 0.5rem;
+		}
+
 		.is-expanded .contact-links {
 			grid-template-columns: repeat(3, minmax(88px, 1fr));
 			gap: 0;
+			padding: 0.25rem 0.25rem;
+		}
+
+		.is-expanded .contact-links.has-capsule {
+			padding: 0.45rem 0.65rem 0.55rem;
 		}
 
 		.link-item {

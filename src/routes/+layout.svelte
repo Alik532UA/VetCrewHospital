@@ -14,6 +14,8 @@
 	import { createBrandbookSequence } from '$lib/hotkeys/brandbookSequence';
 	import ServiceBadge from '$lib/components/ServiceBadge.svelte';
 	import ErrorFallback from '$lib/components/ErrorFallback.svelte';
+	import BackgroundLayer from '$lib/components/BackgroundLayer.svelte';
+	import BackgroundSettingsPanel from '$lib/components/BackgroundSettingsPanel.svelte';
 	import type { Snippet } from 'svelte';
 
 	interface Props {
@@ -73,6 +75,9 @@
 <a href="#main-content" class="skip-link">{langStore.t('skip_to_content')}</a>
 
 <div class="app-root">
+	<!-- Background image and overlay layer -->
+	<BackgroundLayer />
+
 	<!-- Dynamic ambient glow background -->
 	<div class="ambient-glow"></div>
 
@@ -88,6 +93,7 @@
 	</svelte:boundary>
 
 	<ServiceBadge />
+	<BackgroundSettingsPanel />
 </div>
 
 <style>

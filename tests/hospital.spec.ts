@@ -45,4 +45,29 @@ test.describe('Vet Crew Hospital Portal E2E', () => {
 		const title = page.locator('h1, .brandbook-title');
 		await expect(title.first()).toBeVisible();
 	});
+
+	test('Динамічний шар фону та секретна комбінація 7x S для налаштувань', async ({ page }) => {
+		await page.goto('/');
+
+		// Фоновий шар наявний на сторінці
+		const bgLayer = page.locator('[data-testid="background-layer"]');
+		await expect(bgLayer).toBeAttached();
+
+		// Панель налаштувань прихована за замовчуванням
+		const panel = page.locator('[data-testid="bg-settings-panel"]');
+		await expect(panel).not.toBeVisible();
+
+		// Натискаємо 's' 7 разів
+		for (let i = 0; i < 7; i++) {
+			await page.keyboard.press('s');
+		}
+
+		// Панель з’являється
+		await expect(panel).toBeVisible();
+
+		// Закриваємо панель
+		const closeBtn = page.locator('[data-testid="bg-settings-close-btn"]');
+		await closeBtn.click();
+		await expect(panel).not.toBeVisible();
+	});
 });
