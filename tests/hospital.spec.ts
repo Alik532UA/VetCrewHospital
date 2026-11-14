@@ -53,6 +53,12 @@ test.describe('Vet Crew Hospital Portal E2E', () => {
 		const bgLayer = page.locator('[data-testid="background-layer"]');
 		await expect(bgLayer).toBeAttached();
 
+		// Тематичні фони (світлий та темний)
+		const lightBg = page.locator('[data-testid="bg-image-light"]');
+		const darkBg = page.locator('[data-testid="bg-image-dark"]');
+		await expect(lightBg).toBeAttached();
+		await expect(darkBg).toBeAttached();
+
 		// Панель налаштувань прихована за замовчуванням
 		const panel = page.locator('[data-testid="bg-settings-panel"]');
 		await expect(panel).not.toBeVisible();

@@ -4,7 +4,8 @@
 
 	const isImageMode = $derived(bgStore.mode === 'image');
 	const overlayAlpha = $derived(bgStore.currentOpacity / 100);
-	const bgUrl = `${base}/bg/vetcrew-bg.webp`;
+	const bgLightUrl = `${base}/bg/vetcrew-bg-light.webp`;
+	const bgDarkUrl = `${base}/bg/vetcrew-bg-dark.webp`;
 	const solidBg = $derived(bgStore.currentSolidColor);
 	const overlayBg = $derived(bgStore.currentOverlayColor);
 </script>
@@ -19,9 +20,16 @@
 >
 	{#if isImageMode}
 		<div
-			class="bg-image-layer"
-			style:background-image="url('{bgUrl}')"
+			class="bg-image-layer bg-image-light"
+			style:background-image="url('{bgLightUrl}')"
 			style:--bg-blur="{bgStore.blur}px"
+			data-testid="bg-image-light"
+		></div>
+		<div
+			class="bg-image-layer bg-image-dark"
+			style:background-image="url('{bgDarkUrl}')"
+			style:--bg-blur="{bgStore.blur}px"
+			data-testid="bg-image-dark"
 		></div>
 		<div
 			class="bg-overlay-layer"
@@ -55,8 +63,38 @@
 		background-repeat: no-repeat;
 		filter: blur(var(--bg-blur, 0px));
 		transform: scale(1.06) translateZ(0);
-		will-change: filter, transform;
-		transition: filter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+		will-change: filter, transform, opacity;
+		transition:
+			filter 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+			opacity 0.3s ease;
+	}
+
+	.bg-image-light {
+		opacity: 1;
+	}
+
+	.bg-image-dark {
+		opacity: 0;
+	}
+
+	:global([data-theme='dark']) .bg-image-light,
+	:global(.dark) .bg-image-light {
+		opacity: 0;
+	}
+
+	:global([data-theme='dark']) .bg-image-dark,
+	:global(.dark) .bg-image-dark {
+		opacity: 1;
+	}
+
+	:global([data-theme='light']) .bg-image-light,
+	:global(.light) .bg-image-light {
+		opacity: 1;
+	}
+
+	:global([data-theme='light']) .bg-image-dark,
+	:global(.light) .bg-image-dark {
+		opacity: 0;
 	}
 
 	@media (max-width: 900px), (orientation: portrait) {

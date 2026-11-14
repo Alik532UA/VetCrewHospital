@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { existsSync, readFileSync } from 'node:fs';
 
 vi.mock('$app/environment', () => ({ browser: true }));
 
@@ -159,5 +160,16 @@ describe('bgStore controller', () => {
 		expect(bgStore.currentSolidColor).toBe('#E5E5E5');
 		bgStore.setOverlayColor('#FFB327');
 		expect(bgStore.currentOverlayColor).toBe('#FFB327');
+	});
+
+	it('підтримує розділені фонові зображення для світлої та темної тем', () => {
+		expect(existsSync('static/bg/vetcrew-bg-light.webp')).toBe(true);
+		expect(existsSync('static/bg/vetcrew-bg-dark.webp')).toBe(true);
+		expect(existsSync('static/bg/vetcrew-bg.webp')).toBe(false);
+
+		const bgLayerCode = readFileSync('src/lib/components/BackgroundLayer.svelte', 'utf8');
+		expect(bgLayerCode).toContain('vetcrew-bg-light.webp');
+		expect(bgLayerCode).toContain('vetcrew-bg-dark.webp');
+		expect(bgLayerCode).not.toContain('/bg/vetcrew-bg.webp');
 	});
 });
