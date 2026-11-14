@@ -7,6 +7,7 @@ export type SiblingId =
 	| 'VetCrewEmergency'
 	| 'vetcrewgames'
 	| 'vetcrewhospital'
+	| 'vetcrew'
 	| 'digitalworkshop'
 	| 'cv'
 	| 'mindstep'
@@ -50,6 +51,14 @@ export const SIBLINGS = {
 		defaultLocale: 'uk',
 		transport: 'path',
 		trailingSlash: true
+	},
+	vetcrew: {
+		origin: 'https://vet-crew.org',
+		base: '',
+		locales: ['uk', 'en'],
+		defaultLocale: 'uk',
+		transport: 'query',
+		trailingSlash: false
 	},
 	vetcrewhospital: {
 		origin: 'https://vet-crew-hospital.org',
