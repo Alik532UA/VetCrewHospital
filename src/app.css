@@ -168,7 +168,8 @@ html:has(.brandbook-page) {
 }
 
 body:has(.brandbook-page) {
-	overflow: visible !important;
+	overflow-x: clip !important;
+	overflow-y: visible !important;
 	height: auto !important;
 	min-height: 100% !important;
 	user-select: text !important;

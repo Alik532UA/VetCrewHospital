@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-	getStageBgColor,
-	injectSvgBackground,
-	STAGE_BG_COLORS
-} from './exportPng';
+import { getStageBgColor, injectSvgBackground, STAGE_BG_COLORS } from './exportPng';
 
 describe('exportPng utility', () => {
 	it('повертає коректні кольори для тем сцени та undefined для сітки/прозорого', () => {
@@ -25,7 +21,9 @@ describe('exportPng utility', () => {
 	it('вставляє rect з точними координатами viewBox', () => {
 		const svg = '<svg viewBox="0 0 970.62 970.62"><circle cx="485" cy="485" r="400"/></svg>';
 		const result = injectSvgBackground(svg, '#13371b');
-		expect(result).toContain('<rect id="stage-bg" x="0" y="0" width="970.62" height="970.62" fill="#13371b"/>');
+		expect(result).toContain(
+			'<rect id="stage-bg" x="0" y="0" width="970.62" height="970.62" fill="#13371b"/>'
+		);
 		expect(result.indexOf('<rect id="stage-bg"')).toBeGreaterThan(result.indexOf('<svg'));
 		expect(result.indexOf('<rect id="stage-bg"')).toBeLessThan(result.indexOf('<circle'));
 	});
@@ -37,7 +35,8 @@ describe('exportPng utility', () => {
 	});
 
 	it('оновлює колір існуючого stage-bg rect замість дублювання', () => {
-		const svg = '<svg viewBox="0 0 50 50"><rect id="stage-bg" x="0" y="0" width="50" height="50" fill="#ffffff"/><path d="M0 0"/></svg>';
+		const svg =
+			'<svg viewBox="0 0 50 50"><rect id="stage-bg" x="0" y="0" width="50" height="50" fill="#ffffff"/><path d="M0 0"/></svg>';
 		const result = injectSvgBackground(svg, '#141716');
 		expect(result).toContain('fill="#141716"');
 		expect(result).not.toContain('fill="#ffffff"');

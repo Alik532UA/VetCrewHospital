@@ -1517,7 +1517,7 @@
 
 	.animal-chips-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(min(130px, 100%), 1fr));
 		gap: 0.45rem;
 		max-height: 180px;
 		overflow-y: auto;
@@ -2056,6 +2056,15 @@
 	}
 
 	@media (max-width: 640px) {
+		.preview-wrapper {
+			padding: 0.75rem 0.5rem;
+			min-height: 280px;
+		}
+
+		.device-bezel.is-phone {
+			width: min(250px, 100%);
+		}
+
 		.presets-bar {
 			align-items: flex-start;
 		}
@@ -2063,6 +2072,16 @@
 		.presets-title {
 			width: 100%;
 			margin-bottom: 0.15rem;
+		}
+
+		.scale-bar {
+			flex-wrap: wrap;
+			gap: 0.5rem;
+		}
+
+		.badge-option-bar {
+			flex-wrap: wrap;
+			gap: 0.5rem;
 		}
 	}
 </style>

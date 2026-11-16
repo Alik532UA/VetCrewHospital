@@ -1185,26 +1185,45 @@
 	/* RESPONSIVE */
 	@media (max-width: 900px) {
 		.brandbook-page {
-			padding: 1.5rem 1rem calc(4.5rem + 50px);
+			padding: 1.25rem clamp(0.5rem, 3vw, 1rem) calc(4.5rem + 50px);
+			max-width: 100%;
+			overflow-x: clip;
+		}
+
+		.brandbook-container {
+			width: 100%;
+			max-width: 100%;
+			min-width: 0;
 		}
 
 		.brandbook-header {
 			padding: 0;
+			width: 100%;
+			min-width: 0;
 		}
 
 		.brandbook-layout {
 			grid-template-columns: minmax(0, 1fr);
 			gap: 1rem;
+			width: 100%;
+			max-width: 100%;
+			min-width: 0;
 		}
 
 		.brandbook-sections {
 			gap: 1.75rem;
+			width: 100%;
+			max-width: 100%;
+			min-width: 0;
 		}
 
 		.guide-card {
-			padding: 1.5rem;
+			padding: clamp(1rem, 3.5vw, 1.5rem);
 			border-radius: 1.25rem;
 			gap: 1.5rem;
+			width: 100%;
+			max-width: 100%;
+			min-width: 0;
 		}
 
 		.palette-grid {

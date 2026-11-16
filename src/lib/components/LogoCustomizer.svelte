@@ -1252,15 +1252,17 @@
 		}
 
 		.variant-toggle-pills {
-			display: grid;
-			grid-template-columns: 1fr 1fr;
+			display: flex;
+			flex-direction: column;
 			width: 100%;
 		}
 
 		.variant-pill {
 			justify-content: center;
-			padding: 0.45rem 0.5rem;
-			font-size: 0.75rem;
+			padding: 0.5rem 0.75rem;
+			font-size: 0.8rem;
+			width: 100%;
+			min-width: 0;
 		}
 
 		.control-row.bg-toggle-row {
@@ -1271,7 +1273,7 @@
 
 		.toggle-pill-wrap {
 			display: grid;
-			grid-template-columns: repeat(3, 1fr);
+			grid-template-columns: repeat(3, minmax(0, 1fr));
 			width: 100%;
 		}
 
@@ -1281,6 +1283,13 @@
 			justify-content: center;
 			text-align: center;
 			gap: 0.2rem;
+			min-width: 0;
+		}
+
+		.pill-btn span {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
 
 		.element-tabs--three {

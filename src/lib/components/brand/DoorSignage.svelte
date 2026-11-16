@@ -274,7 +274,10 @@
 						.replace(/stroke:\s*#[0-9a-fA-F]{6}/gi, `stroke: ${signColor}`)
 						.replace(/stroke="(?!(?:none))#[0-9a-fA-F]{6}"/gi, `stroke="${signColor}"`);
 					if (arrowAngle !== 0) {
-						svgText = svgText.replace(/<path\s+/i, `<path transform="rotate(${arrowAngle} 12 12)" `);
+						svgText = svgText.replace(
+							/<path\s+/i,
+							`<path transform="rotate(${arrowAngle} 12 12)" `
+						);
 					}
 					return svgText;
 				},
@@ -897,6 +900,8 @@
 		padding: 0.35rem;
 		border-radius: 12px;
 		border: 1px solid var(--border);
+		flex-wrap: wrap;
+		max-width: 100%;
 	}
 
 	.format-tab-btn {
@@ -1063,24 +1068,24 @@
 		flex-direction: column;
 		gap: 0.15rem;
 		overflow: hidden;
+		min-width: 0;
+		flex: 1 1 auto;
 	}
 
 	.sign-name-uk {
 		font-size: 1rem;
 		font-weight: 800;
 		color: var(--fg-primary);
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		white-space: normal;
+		overflow-wrap: break-word;
 	}
 
 	.sign-name-en {
 		font-size: 0.78rem;
 		font-weight: 600;
 		color: var(--fg-secondary);
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		white-space: normal;
+		overflow-wrap: break-word;
 	}
 
 	/* PREVIEW STAGE */
@@ -1253,6 +1258,8 @@
 		background: var(--bg-secondary);
 		border: 1px solid var(--border);
 		border-radius: 10px;
+		flex-wrap: wrap;
+		max-width: 100%;
 	}
 
 	.res-pill-btn {
@@ -1593,6 +1600,9 @@
 		display: flex;
 		align-items: center;
 		gap: 0.75rem;
+		min-width: 0;
+		flex: 1 1 auto;
+		width: 100%;
 	}
 
 	.direction-pills-wrap {

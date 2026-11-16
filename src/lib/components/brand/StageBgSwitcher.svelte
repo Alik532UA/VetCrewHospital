@@ -259,8 +259,9 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.6rem;
-		flex-wrap: nowrap;
-		white-space: nowrap;
+		flex-wrap: wrap;
+		max-width: 100%;
+		min-width: 0;
 	}
 
 	.bg-switch-label {
@@ -279,7 +280,9 @@
 		background: var(--bg-secondary);
 		border: 1px solid var(--border);
 		border-radius: 9px;
-		flex-wrap: nowrap;
+		flex-wrap: wrap;
+		max-width: 100%;
+		min-width: 0;
 	}
 
 	.theme-btn {

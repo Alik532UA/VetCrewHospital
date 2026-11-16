@@ -2054,7 +2054,7 @@
 	/* WORKSPACE LAYOUT */
 	.stele-workspace {
 		display: grid;
-		grid-template-columns: minmax(320px, 380px) 1fr;
+		grid-template-columns: minmax(min(320px, 100%), 380px) 1fr;
 		gap: 1.5rem;
 		align-items: start;
 	}
@@ -2062,6 +2062,44 @@
 	@media (max-width: 960px) {
 		.stele-workspace {
 			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 720px) {
+		.stele-header {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 1rem;
+		}
+
+		.stele-badge-group {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.5rem;
+			width: 100%;
+			min-width: 0;
+		}
+
+		.stele-titles {
+			width: 100%;
+			min-width: 0;
+		}
+
+		.stele-top-actions {
+			width: 100%;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+		}
+
+		.action-btn {
+			flex: 1 1 auto;
+			min-width: 0;
+			justify-content: center;
+		}
+
+		.stele-preview-stage {
+			padding: 1rem 0.5rem;
+			min-height: 420px;
 		}
 	}
 

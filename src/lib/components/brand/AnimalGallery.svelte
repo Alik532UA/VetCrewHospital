@@ -959,7 +959,7 @@
 	/* GRID */
 	.animals-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(min(148px, 100%), 1fr));
 		gap: 0.85rem;
 	}
 
@@ -1535,7 +1535,7 @@
 		}
 
 		.animals-grid {
-			grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+			grid-template-columns: repeat(auto-fill, minmax(min(130px, 100%), 1fr));
 			gap: 0.65rem;
 		}
 

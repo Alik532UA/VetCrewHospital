@@ -135,6 +135,16 @@
 		};
 	});
 
+	$effect(() => {
+		if (!browser || !host || window.innerWidth > 900) return;
+		if (activeId) {
+			const activeBtn = host.querySelector('.toc-btn.is-active') as HTMLElement | null;
+			if (activeBtn) {
+				activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
+			}
+		}
+	});
+
 	function scrollToSection(e: MouseEvent, id: string) {
 		e.preventDefault();
 		const el = document.getElementById(id);
@@ -560,7 +570,7 @@
 			bottom: calc(max(0.6rem, env(safe-area-inset-bottom, 0.6rem)));
 			left: 50%;
 			transform: translateX(-50%);
-			width: calc(100% - 1.5rem);
+			width: min(calc(100% - 1.2rem), 480px);
 			max-width: 480px;
 			z-index: 100;
 			pointer-events: none;
@@ -569,28 +579,40 @@
 		.toc-list {
 			pointer-events: auto;
 			flex-direction: row;
-			justify-content: space-between;
+			justify-content: flex-start;
+			align-items: center;
 			width: 100%;
-			gap: 4px;
-			padding: 0.35rem 0.45rem;
+			gap: 5px;
+			padding: 0.35rem 0.5rem;
 			border-radius: 16px;
-			box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+			background: #ffffff;
+			border: 1px solid var(--border);
+			box-shadow: 0 10px 32px rgba(0, 0, 0, 0.28);
 			overflow-x: auto;
+			-webkit-overflow-scrolling: touch;
 			scrollbar-width: none;
+		}
+
+		:global([data-theme='dark']) .toc-list,
+		:global(.dark) .toc-list {
+			background: #0e1a11;
+			border-color: rgba(255, 255, 255, 0.18);
+			box-shadow: 0 10px 32px rgba(0, 0, 0, 0.7);
 		}
 
 		.toc-divider {
 			width: 1px;
-			height: 28px;
+			height: 24px;
 			align-self: center;
 			margin: 0 2px;
+			flex-shrink: 0;
 		}
 
 		.toc-btn {
-			width: clamp(32px, 8.5vw, 40px);
-			height: clamp(32px, 8.5vw, 40px);
+			width: clamp(34px, 8vw, 38px);
+			height: clamp(34px, 8vw, 38px);
 			border-radius: 9px;
-			flex-shrink: 1;
+			flex-shrink: 0;
 		}
 
 		.toc-tooltip {

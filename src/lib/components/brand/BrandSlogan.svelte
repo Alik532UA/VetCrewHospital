@@ -91,11 +91,7 @@
 			</div>
 
 			<div class="slogan-actions">
-				<button
-					type="button"
-					onclick={downloadSloganSvg}
-					class="download-brand-btn"
-				>
+				<button type="button" onclick={downloadSloganSvg} class="download-brand-btn">
 					<svg
 						width="13"
 						height="13"
@@ -173,7 +169,7 @@
 
 	.slogan-container {
 		display: grid;
-		grid-template-columns: minmax(280px, 380px) 1fr;
+		grid-template-columns: minmax(min(280px, 100%), 380px) 1fr;
 		gap: 2rem;
 		align-items: center;
 		padding: 1.5rem;
@@ -317,7 +313,7 @@
 		cursor: wait;
 	}
 
-	@media (max-width: 768px) {
+	@media (max-width: 900px) {
 		.slogan-container {
 			grid-template-columns: 1fr;
 			padding: 1.25rem;
