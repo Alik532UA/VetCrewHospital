@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
-	import { downloadUrlAsPng } from '$lib/utils/exportPng';
+	import { downloadUrlAsPng, downloadSvgUrl, getStageBgColor } from '$lib/utils/exportPng';
 	import { logService } from '$lib/services/logService.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 	import PngDownloadBtn from '$lib/components/brand/PngDownloadBtn.svelte';
@@ -54,13 +54,31 @@
 	let stageTheme = $state<StageTheme>('checker');
 	let isDownloading = $state<string | null>(null);
 
+	async function downloadEmblemSvg(e: MouseEvent, item: EmblemItem) {
+		e.preventDefault();
+		isDownloading = `${item.id}-svg`;
+		try {
+			await downloadSvgUrl(
+				`${base}/brand/emblems/${item.svgFile}`,
+				`vet-crew-${item.num}-${item.nameUk}.svg`,
+				getStageBgColor(stageTheme)
+			);
+		} catch (err) {
+			logService.error('brand', 'Emblem SVG download error', err);
+		} finally {
+			isDownloading = null;
+		}
+	}
+
 	async function downloadEmblemPng(item: EmblemItem, res: PngResolution) {
 		isDownloading = `${item.id}-png`;
 		try {
 			await downloadUrlAsPng(
 				`${base}/brand/emblems/${item.svgFile}`,
 				`vet-crew-${item.num}-${item.nameUk}-${res.label}.png`,
-				res.px
+				res.px,
+				undefined,
+				getStageBgColor(stageTheme)
 			);
 		} catch (err) {
 			logService.error('brand', 'Emblem PNG download error', err);
@@ -101,9 +119,10 @@
 
 					<!-- Two dedicated download buttons for SVG and PNG -->
 					<div class="emblem-card-actions">
-						<a
-							href="{base}/brand/emblems/{item.svgFile}"
-							download="vet-crew-{item.num}-{item.nameUk}.svg"
+						<button
+							type="button"
+							onclick={(e) => downloadEmblemSvg(e, item)}
+							disabled={isDownloading === `${item.id}-svg`}
 							class="download-btn svg-btn"
 							title={langStore.current === 'uk'
 								? `Завантажити векторний SVG (${item.num} ${item.nameUk})`
@@ -122,7 +141,7 @@
 								<line x1="12" y1="15" x2="12" y2="3"></line>
 							</svg>
 							<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
-						</a>
+						</button>
 
 						<PngDownloadBtn
 							onselect={(res) => downloadEmblemPng(item, res)}

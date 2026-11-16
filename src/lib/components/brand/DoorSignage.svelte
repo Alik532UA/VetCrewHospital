@@ -3,7 +3,7 @@
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 	import { themeStore } from '$lib/theme.svelte';
-	import { downloadUrlAsPng } from '$lib/utils/exportPng';
+	import { downloadUrlAsPng, getStageBgColor, injectSvgBackground } from '$lib/utils/exportPng';
 	import { logService } from '$lib/services/logService.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 	import DirectoryStele from '$lib/components/brand/DirectoryStele.svelte';
@@ -145,6 +145,11 @@
 				(m, word) => `>${formatSteleTitle(word, textCase)}</tspan>`
 			);
 
+			const bgColor = getStageBgColor(stageTheme);
+			if (bgColor) {
+				svgText = injectSvgBackground(svgText, bgColor);
+			}
+
 			const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
 			const downloadUrl = URL.createObjectURL(blob);
 			const link = document.createElement('a');
@@ -179,6 +184,7 @@
 						? 'Тільки напис'
 						: 'Іконка';
 			const formattedTitle = formatSteleTitle(item.titleUk, textCase);
+			const bgColor = getStageBgColor(stageTheme);
 			await downloadUrlAsPng(
 				url,
 				`${item.num} - ${formattedTitle} (${formatLabel}, ${signColor}, ${res.label}).png`,
@@ -191,7 +197,8 @@
 						(m, word) => `>${formatSteleTitle(word, textCase)}</tspan>`
 					);
 					return svgText;
-				}
+				},
+				bgColor
 			);
 		} catch (err) {
 			logService.error('brand', 'Download PNG error', err);
@@ -217,6 +224,11 @@
 
 			if (arrowAngle !== 0) {
 				svgText = svgText.replace(/<path\s+/i, `<path transform="rotate(${arrowAngle} 12 12)" `);
+			}
+
+			const bgColor = getStageBgColor(stageTheme);
+			if (bgColor) {
+				svgText = injectSvgBackground(svgText, bgColor);
 			}
 
 			const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
@@ -250,17 +262,24 @@
 					: currentArrowDir.labelEn
 				: `${arrowAngle}°`;
 			const filename = `${langStore.current === 'uk' ? 'Навігаційна стрілка' : 'Directional Arrow'} (${dirLabel}, ${signColor}, ${res.label}).png`;
-			await downloadUrlAsPng(url, filename, res.px, (svgText) => {
-				svgText = svgText
-					.replace(/fill:\s*#[0-9a-fA-F]{6}/gi, `fill: ${signColor}`)
-					.replace(/fill="(?!(?:none))#[0-9a-fA-F]{6}"/gi, `fill="${signColor}"`)
-					.replace(/stroke:\s*#[0-9a-fA-F]{6}/gi, `stroke: ${signColor}`)
-					.replace(/stroke="(?!(?:none))#[0-9a-fA-F]{6}"/gi, `stroke="${signColor}"`);
-				if (arrowAngle !== 0) {
-					svgText = svgText.replace(/<path\s+/i, `<path transform="rotate(${arrowAngle} 12 12)" `);
-				}
-				return svgText;
-			});
+			const bgColor = getStageBgColor(stageTheme);
+			await downloadUrlAsPng(
+				url,
+				filename,
+				res.px,
+				(svgText) => {
+					svgText = svgText
+						.replace(/fill:\s*#[0-9a-fA-F]{6}/gi, `fill: ${signColor}`)
+						.replace(/fill="(?!(?:none))#[0-9a-fA-F]{6}"/gi, `fill="${signColor}"`)
+						.replace(/stroke:\s*#[0-9a-fA-F]{6}/gi, `stroke: ${signColor}`)
+						.replace(/stroke="(?!(?:none))#[0-9a-fA-F]{6}"/gi, `stroke="${signColor}"`);
+					if (arrowAngle !== 0) {
+						svgText = svgText.replace(/<path\s+/i, `<path transform="rotate(${arrowAngle} 12 12)" `);
+					}
+					return svgText;
+				},
+				bgColor
+			);
 		} catch (err) {
 			logService.error('brand', 'Download Arrow PNG error', err);
 		} finally {

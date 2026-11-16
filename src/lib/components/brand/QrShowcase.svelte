@@ -2,7 +2,7 @@
 	import { browser } from '$app/environment';
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
-	import { downloadSvgAsPng } from '$lib/utils/exportPng';
+	import { downloadSvgAsPng, getStageBgColor, injectSvgBackground } from '$lib/utils/exportPng';
 	import { portal } from '$lib/utils/portal';
 	import { logService } from '$lib/services/logService.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
@@ -505,7 +505,13 @@
 		fg: OracalColor,
 		showBg: boolean
 	) {
-		const fullSvg = renderFullSvg(id, activeFgFile, bg, fg, showBg);
+		let fullSvg = renderFullSvg(id, activeFgFile, bg, fg, showBg);
+		if (!showBg) {
+			const stageBg = getStageBgColor(stageTheme);
+			if (stageBg) {
+				fullSvg = injectSvgBackground(fullSvg, stageBg);
+			}
+		}
 		const blob = new Blob([fullSvg], { type: 'image/svg+xml;charset=utf-8' });
 		const url = URL.createObjectURL(blob);
 		const link = document.createElement('a');
@@ -527,9 +533,10 @@
 		res: PngResolution
 	) {
 		const fullSvg = renderFullSvg(id, activeFgFile, bg, fg, showBg);
+		const stageBg = !showBg ? getStageBgColor(stageTheme) : undefined;
 		isExporting = filename;
 		try {
-			await downloadSvgAsPng(fullSvg, `${filename}-${res.label}.png`, res.px);
+			await downloadSvgAsPng(fullSvg, `${filename}-${res.label}.png`, res.px, stageBg);
 		} catch (err) {
 			logService.error('brand', 'PNG export error', err);
 		} finally {

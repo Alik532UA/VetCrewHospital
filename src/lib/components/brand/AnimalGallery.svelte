@@ -3,7 +3,7 @@
 	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
 	import { themeStore } from '$lib/theme.svelte';
-	import { downloadUrlAsPng } from '$lib/utils/exportPng';
+	import { downloadUrlAsPng, getStageBgColor, injectSvgBackground } from '$lib/utils/exportPng';
 	import { portal } from '$lib/utils/portal';
 	import { logService } from '$lib/services/logService.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
@@ -216,6 +216,11 @@
 				text = text.replace('<svg ', `<svg fill="${animalColor}" `);
 			}
 
+			const bgColor = getStageBgColor(stageTheme);
+			if (bgColor) {
+				text = injectSvgBackground(text, bgColor);
+			}
+
 			const blob = new Blob([text], { type: 'image/svg+xml;charset=utf-8' });
 			const url = URL.createObjectURL(blob);
 			const link = document.createElement('a');
@@ -237,6 +242,7 @@
 		isDownloading = `${animal.id}-png`;
 		try {
 			const styleSuffix = iconStyle === 'linear' ? ' (linear)' : '';
+			const bgColor = getStageBgColor(stageTheme);
 			await downloadUrlAsPng(
 				getIconUrl(animal, iconStyle),
 				`${animal.num} - ${animal.nameUk}${styleSuffix} (${animalColor}, ${res.label}).png`,
@@ -247,7 +253,8 @@
 					} else {
 						return svgText.replace('<svg ', `<svg fill="${animalColor}" `);
 					}
-				}
+				},
+				bgColor
 			);
 		} catch (err) {
 			logService.error('brand', 'PNG download error', err);

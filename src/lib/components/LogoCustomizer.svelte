@@ -4,6 +4,7 @@
 	import logoPaths from '$lib/assets/logo-paths.json';
 	import vetcrewLogoPaths from '$lib/assets/vetcrew-logo-paths.json';
 	import { logService } from '$lib/services/logService.svelte';
+	import { getStageBgColor } from '$lib/utils/exportPng';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 	import PngDownloadBtn from '$lib/components/brand/PngDownloadBtn.svelte';
 	import { DEFAULT_PNG_RESOLUTION, type PngResolution } from '$lib/data/pngResolutions';
@@ -282,13 +283,16 @@
 
 	// Dynamic SVG string generation for download and canvas export
 	let svgString = $derived.by(() => {
+		const stageBg = getStageBgColor(previewGrid);
 		if (activeVariant === 'hospital') {
 			const bgElement =
 				bgShape === 'circle'
 					? `<circle id="bg-circle" cx="485.31" cy="485.31" r="461.76" fill="${bgCircleColor}"/>`
 					: bgShape === 'solid'
 						? `<rect id="bg-solid" x="0" y="0" width="970.62" height="970.62" rx="36" fill="${bgCircleColor}"/>`
-						: '';
+						: stageBg
+							? `<rect id="stage-bg" x="0" y="0" width="970.62" height="970.62" fill="${stageBg}"/>`
+							: '';
 
 			return `<svg id="vet-crew-hospital-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 970.62 970.62" width="970.62" height="970.62">
   <title>Vet Crew Hospital Logo</title>
@@ -311,7 +315,9 @@
 					? `<circle id="bg-circle" cx="2048" cy="2048" r="1948.6" fill="${bgCircleColor}"/>`
 					: bgShape === 'solid'
 						? `<rect id="bg-solid" x="0" y="0" width="4096" height="4096" rx="152" fill="${bgCircleColor}"/>`
-						: '';
+						: stageBg
+							? `<rect id="stage-bg" x="0" y="0" width="4096" height="4096" fill="${stageBg}"/>`
+							: '';
 
 			return `<svg id="vet-crew-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4096 4096" width="4096" height="4096">
   <title>Vet Crew Logo</title>
@@ -336,7 +342,14 @@
 		const link = document.createElement('a');
 		link.href = url;
 		const prefix = activeVariant === 'hospital' ? 'VetCrewHospital' : 'VetCrew';
-		const suffix = bgShape === 'circle' ? 'badge' : bgShape === 'solid' ? 'solid' : 'transparent';
+		const suffix =
+			bgShape === 'circle'
+				? 'badge'
+				: bgShape === 'solid'
+					? 'solid'
+					: previewGrid !== 'checker'
+						? `bg-${previewGrid}`
+						: 'transparent';
 		link.download = `${prefix}-${suffix}.svg`;
 		document.body.appendChild(link);
 		link.click();
@@ -358,8 +371,12 @@
 			const ctx = canvas.getContext('2d');
 			if (!ctx) return;
 
+			const stageBg = getStageBgColor(previewGrid);
 			if (bgShape === 'solid') {
 				ctx.fillStyle = bgCircleColor;
+				ctx.fillRect(0, 0, size, size);
+			} else if (bgShape === 'transparent' && stageBg) {
+				ctx.fillStyle = stageBg;
 				ctx.fillRect(0, 0, size, size);
 			}
 
@@ -384,7 +401,13 @@
 				link.href = pngUrl;
 				const prefix = activeVariant === 'hospital' ? 'VetCrewHospital' : 'VetCrew';
 				const suffix =
-					bgShape === 'circle' ? 'badge' : bgShape === 'solid' ? 'solid' : 'transparent';
+					bgShape === 'circle'
+						? 'badge'
+						: bgShape === 'solid'
+							? 'solid'
+							: previewGrid !== 'checker'
+								? `bg-${previewGrid}`
+								: 'transparent';
 				link.download = `${prefix}-${suffix}-${res.label}.png`;
 				document.body.appendChild(link);
 				link.click();

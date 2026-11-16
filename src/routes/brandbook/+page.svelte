@@ -4,7 +4,7 @@
 	import { langStore } from '$lib/lang.svelte';
 	import { themeStore } from '$lib/theme.svelte';
 	import LogoCustomizer from '$lib/components/LogoCustomizer.svelte';
-	import { downloadUrlAsPng } from '$lib/utils/exportPng';
+	import { downloadUrlAsPng, downloadSvgUrl, getStageBgColor } from '$lib/utils/exportPng';
 	import BrandToc from '$lib/components/brand/BrandToc.svelte';
 	import BrandSlogan from '$lib/components/brand/BrandSlogan.svelte';
 	import AnimalGallery from '$lib/components/brand/AnimalGallery.svelte';
@@ -20,6 +20,10 @@
 	let copiedVal = $state<string | null>(null);
 	let namingStage = $state<StageTheme>('checker');
 	let sloganStage = $state<StageTheme>('checker');
+
+	async function downloadNamingSvg(url: string, filename: string) {
+		await downloadSvgUrl(url, filename, getStageBgColor(namingStage));
+	}
 	// Active section and color states for universal right-side color palette
 	let activeSection = $state<string>('palette');
 	let activeLogoColor = $state<string>('#13371B');
@@ -458,10 +462,14 @@
 									{langStore.current === 'uk' ? 'Вет Крю Хоспітал (UA)' : 'Vet Crew Hospital (UA)'}
 								</h3>
 								<div class="branding-actions">
-									<a
-										href="{base}/brand/naming/vet-crew-hospital-ua.svg"
-										download="vet-crew-hospital-ua.svg"
+									<button
+										type="button"
 										class="download-brand-btn svg-btn"
+										onclick={() =>
+											downloadNamingSvg(
+												`${base}/brand/naming/vet-crew-hospital-ua.svg`,
+												'vet-crew-hospital-ua.svg'
+											)}
 									>
 										<svg
 											width="13"
@@ -476,13 +484,15 @@
 											<line x1="12" y1="15" x2="12" y2="3"></line>
 										</svg>
 										<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
-									</a>
+									</button>
 									<PngDownloadBtn
 										onselect={(res) =>
 											downloadUrlAsPng(
 												`${base}/brand/naming/vet-crew-hospital-ua.svg`,
 												`vet-crew-hospital-ua-${res.label}.png`,
-												res.px
+												res.px,
+												undefined,
+												getStageBgColor(namingStage)
 											)}
 										btnClass="download-brand-btn"
 									/>
@@ -502,10 +512,14 @@
 							<div class="branding-info">
 								<h3 class="branding-title">VET CREW SHOP</h3>
 								<div class="branding-actions">
-									<a
-										href="{base}/brand/subbrands/vet-crew-shop.svg"
-										download="vet-crew-shop.svg"
+									<button
+										type="button"
 										class="download-brand-btn svg-btn"
+										onclick={() =>
+											downloadNamingSvg(
+												`${base}/brand/subbrands/vet-crew-shop.svg`,
+												'vet-crew-shop.svg'
+											)}
 									>
 										<svg
 											width="13"
@@ -520,13 +534,15 @@
 											<line x1="12" y1="15" x2="12" y2="3"></line>
 										</svg>
 										<span>{langStore.current === 'uk' ? 'SVG (Вектор)' : 'Vector (SVG)'}</span>
-									</a>
+									</button>
 									<PngDownloadBtn
 										onselect={(res) =>
 											downloadUrlAsPng(
 												`${base}/brand/subbrands/vet-crew-shop.svg`,
 												`vet-crew-shop-${res.label}.png`,
-												res.px
+												res.px,
+												undefined,
+												getStageBgColor(namingStage)
 											)}
 										btnClass="download-brand-btn"
 									/>
