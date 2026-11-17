@@ -706,7 +706,7 @@
 		transform: translateY(-50%);
 		align-self: start;
 		z-index: 50;
-		max-height: 94vh;
+		max-height: 94dvh;
 		opacity: 0;
 		visibility: hidden;
 		pointer-events: none;
@@ -1162,7 +1162,7 @@
 
 	.flyout-swatches-grid {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
+		grid-template-columns: repeat(3, minmax(0, 1fr));
 		gap: 0.3rem;
 		max-height: 280px;
 		overflow-y: auto;

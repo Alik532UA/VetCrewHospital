@@ -2525,7 +2525,7 @@
 	.stele-svg-render {
 		width: 100%;
 		height: auto;
-		max-height: min(680px, calc(100vh - 12rem));
+		max-height: min(680px, calc(100dvh - 12rem));
 		display: block;
 		overflow: visible;
 	}

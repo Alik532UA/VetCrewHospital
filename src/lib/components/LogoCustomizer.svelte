@@ -1152,13 +1152,13 @@
 	/* ELEMENT TABS */
 	.element-tabs {
 		display: grid;
-		grid-template-columns: repeat(4, 1fr);
+		grid-template-columns: repeat(4, minmax(0, 1fr));
 		gap: 0.65rem;
 		transition: grid-template-columns 0.2s ease;
 	}
 
 	.element-tabs--three {
-		grid-template-columns: repeat(3, 1fr);
+		grid-template-columns: repeat(3, minmax(0, 1fr));
 	}
 
 	.element-tab {
@@ -1233,15 +1233,15 @@
 		}
 
 		.element-tabs {
-			grid-template-columns: repeat(2, 1fr);
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 
 		.element-tabs--three {
-			grid-template-columns: repeat(3, 1fr);
+			grid-template-columns: repeat(3, minmax(0, 1fr));
 		}
 
 		.swatches-grid {
-			grid-template-columns: repeat(2, 1fr);
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
 

@@ -134,7 +134,7 @@
 	:global(body:has(.brandbook-page)) .app-root,
 	:global(body:has(.error-page-container)) .app-root {
 		height: auto !important;
-		min-height: 100vh !important;
+		min-height: 100dvh !important;
 		overflow: visible !important;
 	}
 

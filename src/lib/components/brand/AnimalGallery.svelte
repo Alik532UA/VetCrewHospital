@@ -1168,9 +1168,7 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		width: 100vw;
 		width: 100dvw;
-		height: 100vh;
 		height: 100dvh;
 		z-index: 10050;
 		background: rgba(0, 0, 0, 0.82);
@@ -1199,7 +1197,7 @@
 		border-radius: 24px;
 		width: 100%;
 		max-width: 960px;
-		height: min(88vh, 800px);
+		height: min(88dvh, 800px);
 		box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
 		backdrop-filter: blur(24px);
 		-webkit-backdrop-filter: blur(24px);
@@ -1544,7 +1542,7 @@
 		}
 
 		.animal-lightbox-dialog {
-			height: 94vh;
+			height: 94dvh;
 			border-radius: 18px;
 		}
 

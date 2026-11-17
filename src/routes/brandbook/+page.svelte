@@ -694,7 +694,7 @@
 	}
 
 	.brandbook-page {
-		min-height: 100vh;
+		min-height: 100dvh;
 		padding: 2.5rem 1.5rem 6rem;
 		position: relative;
 		z-index: 10;
@@ -811,7 +811,7 @@
 	}
 
 	.main-title {
-		font-size: clamp(1.8rem, 4vw, 2.75rem);
+		font-size: clamp(1.8rem, 1.4rem + 1.5vw, 2.75rem);
 		font-weight: 800;
 		letter-spacing: -0.02em;
 		color: var(--fg-primary);
@@ -912,7 +912,7 @@
 	/* PALETTE GRID */
 	.palette-grid {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
+		grid-template-columns: repeat(3, minmax(0, 1fr));
 		gap: 1.25rem;
 	}
 
@@ -1065,7 +1065,7 @@
 	/* SECTION 03: NAMING & SUB-BRANDS */
 	.naming-grid {
 		display: grid;
-		grid-template-columns: repeat(2, 1fr);
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 1.5rem;
 	}
 

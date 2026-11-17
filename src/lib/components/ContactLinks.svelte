@@ -269,7 +269,7 @@
 		}
 
 		.contact-links {
-			grid-template-columns: repeat(3, minmax(70px, 1fr));
+			grid-template-columns: repeat(3, minmax(0, 1fr));
 			gap: 0;
 			padding: 0.2rem 0.5rem;
 		}
@@ -279,7 +279,7 @@
 		}
 
 		.is-expanded .contact-links {
-			grid-template-columns: repeat(3, minmax(88px, 1fr));
+			grid-template-columns: repeat(3, minmax(0, 1fr));
 			gap: 0;
 			padding: 0.25rem 0.25rem;
 		}
@@ -309,8 +309,8 @@
 		}
 
 		.link-sublabel {
-			font-size: clamp(0.5rem, 2.5vw, 0.74rem);
-			font-size: clamp(0.5rem, 9.4cqw, 0.74rem);
+			font-size: clamp(0.5rem, 0.45rem + 0.8vw, 0.74rem);
+			font-size: clamp(0.5rem, 0.45rem + 3cqi, 0.74rem);
 			letter-spacing: -0.015em;
 			margin-top: 6px;
 			width: 100%;
@@ -321,8 +321,8 @@
 		}
 
 		.is-expanded .link-sublabel {
-			font-size: clamp(0.5rem, 2.5vw, 0.74rem);
-			font-size: clamp(0.5rem, 9.4cqw, 0.74rem);
+			font-size: clamp(0.5rem, 0.45rem + 0.8vw, 0.74rem);
+			font-size: clamp(0.5rem, 0.45rem + 3cqi, 0.74rem);
 			letter-spacing: -0.015em;
 			margin-top: 6px;
 			max-height: 24px;
