@@ -29,7 +29,9 @@ test.describe('the narrow end (FLUID-SIZING-v10)', () => {
 
 				const over = measured.scrollWidth - measured.viewport;
 				if (over > 1) {
-					offenders.push(`${path}: ${measured.scrollWidth}px in ${measured.viewport}px window (${over}px over)`);
+					offenders.push(
+						`${path}: ${measured.scrollWidth}px in ${measured.viewport}px window (${over}px over)`
+					);
 				}
 			}
 
@@ -38,12 +40,16 @@ test.describe('the narrow end (FLUID-SIZING-v10)', () => {
 	}
 
 	for (const { width, height, label } of SIZES) {
-		test(`${width}×${height} (${label}) keeps header and main actions reachable`, async ({ page }) => {
+		test(`${width}×${height} (${label}) keeps header and main actions reachable`, async ({
+			page
+		}) => {
 			await page.setViewportSize({ width, height });
 			await page.goto('/');
 			await page.waitForLoadState('domcontentloaded');
 
-			const controls = page.locator('header a, header button, .contact-links a').filter({ visible: true });
+			const controls = page
+				.locator('header a, header button, .contact-links a')
+				.filter({ visible: true });
 			const count = await controls.count();
 			expect(count).toBeGreaterThan(0);
 

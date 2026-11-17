@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getStageBgColor, injectSvgBackground, STAGE_BG_COLORS } from './exportPng';
+import { getStageBgColor, injectSvgBackground } from './exportPng';
 
 describe('exportPng utility', () => {
 	it('повертає коректні кольори для тем сцени та undefined для сітки/прозорого', () => {
