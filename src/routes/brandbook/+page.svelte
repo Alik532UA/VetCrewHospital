@@ -14,6 +14,7 @@
 	import BrandColorNav from '$lib/components/brand/BrandColorNav.svelte';
 	import PhotoLogos from '$lib/components/brand/PhotoLogos.svelte';
 	import WallpaperStudio from '$lib/components/brand/WallpaperStudio.svelte';
+	import BusinessCardStudio from '$lib/components/brand/BusinessCardStudio.svelte';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 	import PngDownloadBtn from '$lib/components/brand/PngDownloadBtn.svelte';
 
@@ -666,6 +667,22 @@
 					</div>
 
 					<WallpaperStudio brandColors={colors} />
+				</section>
+
+				<!-- SECTION 11: BUSINESS CARD STUDIO -->
+				<section class="guide-card" id="business-card">
+					<div class="card-head">
+						<span class="step-num">11</span>
+						<div>
+							<h2 class="card-title">
+								{langStore.current === 'uk'
+									? 'Фірмова візитка госпіталю (Business Card Studio)'
+									: 'Official Hospital Business Card Studio'}
+							</h2>
+						</div>
+					</div>
+
+					<BusinessCardStudio />
 				</section>
 			</div>
 			<!-- STICKY RIGHT UNIVERSAL COLOR NAVIGATION -->

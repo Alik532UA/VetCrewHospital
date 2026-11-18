@@ -18,7 +18,8 @@
 			| 'typography'
 			| 'doors'
 			| 'photo'
-			| 'wallpaper';
+			| 'wallpaper'
+			| 'card';
 	}
 
 	export const SECTIONS: TocSection[] = [
@@ -85,6 +86,13 @@
 			titleUk: 'Генератор шпалер',
 			titleEn: 'Wallpaper Studio',
 			iconType: 'wallpaper'
+		},
+		{
+			id: 'business-card',
+			num: '11',
+			titleUk: 'Фірмова візитка',
+			titleEn: 'Business Card Studio',
+			iconType: 'card'
 		}
 	];
 
@@ -328,6 +336,21 @@
 							<rect width="20" height="14" x="2" y="3" rx="2" />
 							<line x1="8" x2="16" y1="21" y2="21" />
 							<line x1="12" x2="12" y1="17" y2="21" />
+						</svg>
+					{:else if s.iconType === 'card'}
+						<svg
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<rect width="20" height="14" x="2" y="5" rx="2" />
+							<line x1="2" x2="22" y1="10" y2="10" />
 						</svg>
 					{/if}
 				</span>
