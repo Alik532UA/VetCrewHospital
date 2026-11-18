@@ -3,7 +3,7 @@
 // Features official integrated Vet Crew Hospital vector logo mark, Telegram QR code, and strict clinic schedule.
 
 import logoPaths from '../assets/logo-paths.json';
-import { TELEGRAM_QR_MODULES } from './telegramQrData';
+import { renderTelegramQrModules, TELEGRAM_QR_VIEWBOX } from './telegramQrData';
 
 export type CardFormat = 'standard' | 'euro';
 export type CardMaterial = 'frosted' | 'double' | 'single';
@@ -124,22 +124,22 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 	const isDoubleFront = material === 'double' && side === 'front';
 
 	// Determine palette colors
-	let bgFill = 'none';
-	let primaryInk = '#13371B';
-	let secondaryInk = '#598F3A';
-	let textMuted = '#445D48';
-
-	// Logo element colors
-	let logoColors = {
-		paw: '#13371B',
-		pad: '#FFB327',
-		vetCrew: '#FFB327',
-		hospital: '#598F3A',
-		circleBg: '#13371B'
+	let bgFill: string;
+	let primaryInk: string;
+	let secondaryInk: string;
+	let textMuted: string;
+	let centerBg: string;
+	let logoColors: {
+		paw: string;
+		pad: string;
+		vetCrew: string;
+		hospital: string;
+		circleBg: string;
 	};
 
 	if (isFrosted) {
 		bgFill = 'none';
+		centerBg = 'none';
 		if (frostedInk === 'white') {
 			primaryInk = '#FFFFFF';
 			secondaryInk = 'rgba(255, 255, 255, 0.9)';
@@ -179,6 +179,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 		// Solid or Double cardstock
 		if (solidTheme === 'dark') {
 			bgFill = '#13371B';
+			centerBg = '#13371B';
 			primaryInk = '#FFFFFF';
 			secondaryInk = '#93C84A';
 			textMuted = '#B5D1BC';
@@ -191,6 +192,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 			};
 		} else {
 			bgFill = '#FFFFFF';
+			centerBg = '#FFFFFF';
 			primaryInk = '#13371B';
 			secondaryInk = '#598F3A';
 			textMuted = '#526857';
@@ -204,17 +206,20 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 		}
 	}
 
-	const statusText = lang === 'uk' ? CARD_INFO.statusUk : CARD_INFO.statusEn;
 	const scheduleText = lang === 'uk' ? CARD_INFO.scheduleUk : CARD_INFO.scheduleEn;
 	const qrLabel = lang === 'uk' ? CARD_INFO.qrCaptionUk : CARD_INFO.qrCaptionEn;
+	const cityText = lang === 'uk' ? CARD_INFO.cityUk : CARD_INFO.cityEn;
 
-	let content = '';
+	let content: string;
 
 	if (isDoubleFront) {
-		// FRONT of Double-Sided card: Centered Official Logo & Slogan
-		const centerLogoSize = format === 'standard' ? 220 : 235;
+		// FRONT of Double-Sided card: Centered Official Logo & Slogan (>80% content coverage)
+		const isEuro = format === 'euro';
+		const centerLogoSize = isEuro ? 340 : 320;
 		const centerLogoX = (w - centerLogoSize) / 2;
 		const centerLogoY = (h - centerLogoSize) / 2 - 35;
+		const websiteY = centerLogoY + centerLogoSize + 48;
+		const sloganY = websiteY + 28;
 
 		content = `
     <!-- FRONT PRESENTATION -->
@@ -233,31 +238,42 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
       </g>
     </svg>
 
-    <!-- Clinic Subtitle & Slogan -->
-    <text x="${w / 2}" y="${centerLogoY + centerLogoSize + 45}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="600" font-size="15" letter-spacing="4" fill="${secondaryInk}">
-      ${statusText}
+    <!-- Clinic Website & Slogan -->
+    <text x="${w / 2}" y="${websiteY}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="700" font-size="20" letter-spacing="2" fill="${secondaryInk}">
+      ${CARD_INFO.website}
     </text>
-    <text x="${w / 2}" y="${centerLogoY + centerLogoSize + 78}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="400" font-size="11.5" letter-spacing="2" fill="${textMuted}">
+    <text x="${w / 2}" y="${sloganY}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="500" font-size="13.5" letter-spacing="1.5" fill="${textMuted}">
       ${CARD_INFO.slogan}
     </text>
     `;
 	} else {
 		// ALL-IN-ONE LAYOUT (Frosted Acrylic, Single-Sided, or Back of Double-Sided)
-		// Left: Full Official Logo + Subtitle + Phone + Schedule + Website
-		// Right: Telegram QR Code + Handle
+		// Left: Full Official Logo + Direct Phone + Strictly Clinic Schedule + Website + City
+		// Right: Telegram QR Code + Handle + Caption (>80% visual coverage)
 		const isEuro = format === 'euro';
-		const leftX = isEuro ? 65 : 65;
-		const logoSize = isEuro ? 180 : 170;
-		const logoY = isEuro ? 70 : 65;
+		const leftX = 45;
+		const logoSize = isEuro ? 245 : 230;
+		const logoY = isEuro ? 40 : 35;
 
-		const qrSize = isEuro ? 220 : 210;
-		const qrX = w - (isEuro ? 65 : 65) - qrSize;
-		const qrY = isEuro ? 135 : 120;
+		const phoneY = isEuro ? 345 : 320;
+		const phoneFontSize = isEuro ? 31 : 30;
 
-		const statusY = logoY + logoSize + 30;
-		const phoneY = statusY + 55;
-		const scheduleY = phoneY + 30;
-		const websiteY = scheduleY + 40;
+		const scheduleY = isEuro ? 390 : 362;
+		const scheduleFontSize = isEuro ? 17 : 16;
+
+		const websiteY = isEuro ? 438 : 408;
+		const websiteFontSize = isEuro ? 19 : 18;
+
+		const cityY = isEuro ? 476 : 444;
+		const cityFontSize = isEuro ? 15 : 14;
+
+		const qrSize = isEuro ? 360 : 340;
+		const qrX = w - 45 - qrSize;
+		const qrY = isEuro ? 40 : 35;
+		const qrCaptionY = qrY + qrSize + (isEuro ? 38 : 36);
+		const qrCaptionFontSize = isEuro ? 21 : 20;
+		const qrSubCaptionY = qrCaptionY + (isEuro ? 32 : 30);
+		const qrSubCaptionFontSize = isEuro ? 14 : 13;
 
 		content = `
     <!-- LEFT COLUMN: OFFICIAL LOGO & CONTACTS -->
@@ -276,36 +292,40 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
       </g>
     </svg>
 
-    <!-- Subtitle: Veterinary Hospital -->
-    <text x="${leftX}" y="${statusY}" font-family="'Montserrat', sans-serif" font-weight="600" font-size="12.5" letter-spacing="3" fill="${secondaryInk}">
-      ${statusText}
-    </text>
-
     <!-- Direct Emergency / Call Telephone -->
-    <text x="${leftX}" y="${phoneY}" font-family="'Montserrat', sans-serif" font-weight="700" font-size="22" letter-spacing="1.2" fill="${primaryInk}">
+    <text x="${leftX}" y="${phoneY}" font-family="'Montserrat', sans-serif" font-weight="700" font-size="${phoneFontSize}" letter-spacing="1.2" fill="${primaryInk}">
       ${CARD_INFO.phoneDisplay}
     </text>
 
     <!-- Working Hours Schedule (CRITICAL: Strictly Mon-Fri 10:00-18:00, non-stop care claim is forbidden) -->
-    <text x="${leftX}" y="${scheduleY}" font-family="'Montserrat', sans-serif" font-weight="500" font-size="12" letter-spacing="0.5" fill="${textMuted}">
+    <text x="${leftX}" y="${scheduleY}" font-family="'Montserrat', sans-serif" font-weight="600" font-size="${scheduleFontSize}" letter-spacing="0.5" fill="${textMuted}">
       ${scheduleText}
     </text>
 
     <!-- Official Website URL -->
-    <text x="${leftX}" y="${websiteY}" font-family="'Montserrat', sans-serif" font-weight="600" font-size="12" letter-spacing="1" fill="${secondaryInk}">
+    <text x="${leftX}" y="${websiteY}" font-family="'Montserrat', sans-serif" font-weight="700" font-size="${websiteFontSize}" letter-spacing="0.8" fill="${secondaryInk}">
       ${CARD_INFO.website}
+    </text>
+
+    <!-- City & Country -->
+    <text x="${leftX}" y="${cityY}" font-family="'Montserrat', sans-serif" font-weight="500" font-size="${cityFontSize}" letter-spacing="0.5" fill="${textMuted}">
+      ${cityText}
     </text>
 
     <!-- RIGHT COLUMN: TELEGRAM QR CODE -->
     <g transform="translate(${qrX}, ${qrY})">
-      <svg x="0" y="0" width="${qrSize}" height="${qrSize}" viewBox="0 0 740 740" fill="${primaryInk}">
+      <svg x="0" y="0" width="${qrSize}" height="${qrSize}" viewBox="${TELEGRAM_QR_VIEWBOX}" fill="${primaryInk}">
         <g class="telegram-qr-modules">
-          ${TELEGRAM_QR_MODULES}
+          ${renderTelegramQrModules(centerBg)}
         </g>
       </svg>
       <!-- Telegram Handle Caption -->
-      <text x="${qrSize / 2}" y="${qrSize + 32}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="600" font-size="13" letter-spacing="1.2" fill="${primaryInk}">
+      <text x="${qrSize / 2}" y="${qrCaptionY - qrY}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="700" font-size="${qrCaptionFontSize}" letter-spacing="0.8" fill="${primaryInk}">
         ${qrLabel}
+      </text>
+      <!-- Telegram Sub-Caption -->
+      <text x="${qrSize / 2}" y="${qrSubCaptionY - qrY}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="500" font-size="${qrSubCaptionFontSize}" letter-spacing="0.8" fill="${secondaryInk}">
+        Telegram
       </text>
     </g>
     `;

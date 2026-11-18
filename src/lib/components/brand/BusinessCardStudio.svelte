@@ -1,13 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { base } from '$app/paths';
 	import { langStore } from '$lib/lang.svelte';
-	import { themeStore } from '$lib/theme.svelte';
-	import {
-		downloadSvgText,
-		downloadSvgAsPng,
-		getStageBgColor
-	} from '$lib/utils/exportPng';
+	import { downloadSvgText, downloadSvgAsPng, getStageBgColor } from '$lib/utils/exportPng';
 	import StageBgSwitcher, { type StageTheme } from '$lib/components/brand/StageBgSwitcher.svelte';
 	import PngDownloadBtn from '$lib/components/brand/PngDownloadBtn.svelte';
 	import {
@@ -67,10 +61,7 @@
 	function getExportFilename(ext: 'svg' | 'png', resLabel?: string): string {
 		const matName = material === 'frosted' ? 'frosted-acrylic' : material;
 		const sideName = material === 'double' ? `-${side}` : '';
-		const inkName =
-			material === 'frosted'
-				? `-${frostedInk}-ink`
-				: `-${solidTheme}`;
+		const inkName = material === 'frosted' ? `-${frostedInk}-ink` : `-${solidTheme}`;
 		const styleName = `-${logoStyle}`;
 		const resPart = resLabel ? `-${resLabel}` : '';
 		return `vet-crew-card-${matName}${inkName}${styleName}-${format}${sideName}${resPart}.${ext}`;
@@ -85,9 +76,7 @@
 		const filename = getExportFilename('png', res.label);
 		// For frosted acrylic, we keep transparent background if stage is checker
 		const bg =
-			material === 'frosted' && stageTheme === 'checker'
-				? undefined
-				: getStageBgColor(stageTheme);
+			material === 'frosted' && stageTheme === 'checker' ? undefined : getStageBgColor(stageTheme);
 		await downloadSvgAsPng(activeSvg, filename, res.px, bg);
 	}
 
@@ -123,7 +112,14 @@
 						stageTheme = 'checker'; // Best for showing transparent acrylic
 					}}
 				>
-					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="15"
+						height="15"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<rect x="3" y="3" width="18" height="18" rx="3" />
 						<path d="M3 9h18M9 21V9" stroke-dasharray="2,2" />
 					</svg>
@@ -135,7 +131,14 @@
 					class:active={material === 'double'}
 					onclick={() => (material = 'double')}
 				>
-					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="15"
+						height="15"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<rect x="2" y="5" width="20" height="14" rx="2" />
 						<path d="M12 5v14" />
 					</svg>
@@ -147,7 +150,14 @@
 					class:active={material === 'single'}
 					onclick={() => (material = 'single')}
 				>
-					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="15"
+						height="15"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<rect x="2" y="5" width="20" height="14" rx="2" />
 					</svg>
 					<span>{langStore.current === 'uk' ? 'Одностороння' : 'Single-Sided'}</span>
@@ -219,7 +229,10 @@
 						class:active={frostedInk === 'brand'}
 						onclick={() => (frostedInk = 'brand')}
 					>
-						<span class="ink-dot" style="background: linear-gradient(135deg, #13371B 50%, #FFB327 50%); border: 1px solid #ccc;"></span>
+						<span
+							class="ink-dot"
+							style="background: linear-gradient(135deg, #13371B 50%, #FFB327 50%); border: 1px solid #ccc;"
+						></span>
 						<span>{langStore.current === 'uk' ? 'Фірмовий' : 'Brand Colors'}</span>
 					</button>
 				</div>
@@ -258,7 +271,9 @@
 					class="pill-tab"
 					class:active={logoStyle === 'emblem'}
 					onclick={() => (logoStyle = 'emblem')}
-					title={langStore.current === 'uk' ? 'Чиста векторна емблема (без фонового круга)' : 'Clean Vector Emblem'}
+					title={langStore.current === 'uk'
+						? 'Чиста векторна емблема (без фонового круга)'
+						: 'Clean Vector Emblem'}
 				>
 					<span>{langStore.current === 'uk' ? 'Емблема' : 'Emblem'}</span>
 				</button>
@@ -298,11 +313,20 @@
 					class:active={side === 'front'}
 					onclick={() => (side = 'front')}
 				>
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="14"
+						height="14"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<circle cx="12" cy="12" r="10" />
 						<path d="M12 6v6l4 2" />
 					</svg>
-					<span>{langStore.current === 'uk' ? 'Лицьова сторона (Бренд)' : 'Front Side (Brand)'}</span>
+					<span
+						>{langStore.current === 'uk' ? 'Лицьова сторона (Бренд)' : 'Front Side (Brand)'}</span
+					>
 				</button>
 				<button
 					type="button"
@@ -310,13 +334,24 @@
 					class:active={side === 'back'}
 					onclick={() => (side = 'back')}
 				>
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="14"
+						height="14"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<rect x="3" y="3" width="7" height="7" />
 						<rect x="14" y="3" width="7" height="7" />
 						<rect x="14" y="14" width="7" height="7" />
 						<rect x="3" y="14" width="7" height="7" />
 					</svg>
-					<span>{langStore.current === 'uk' ? 'Зворотна сторона (Контакти & QR)' : 'Back Side (Contacts & QR)'}</span>
+					<span
+						>{langStore.current === 'uk'
+							? 'Зворотна сторона (Контакти & QR)'
+							: 'Back Side (Contacts & QR)'}</span
+					>
 				</button>
 			</div>
 			<span class="side-hint">
@@ -357,11 +392,7 @@
 			{/if}
 
 			<!-- Vector SVG Layer -->
-			<img
-				src={svgDataUrl}
-				alt="{CARD_INFO.clinicName} Business Card"
-				class="card-svg-render"
-			/>
+			<img src={svgDataUrl} alt="{CARD_INFO.clinicName} Business Card" class="card-svg-render" />
 		</div>
 	</div>
 
@@ -376,19 +407,37 @@
 					onclick={copyPhone}
 					title={langStore.current === 'uk' ? 'Натисніть щоб скопіювати' : 'Click to copy'}
 				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+					<svg
+						width="13"
+						height="13"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
+						<path
+							d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+						/>
 					</svg>
 					<span>{CARD_INFO.phoneDisplay}</span>
 					{#if copiedPhone}
-						<span class="copied-badge">{langStore.current === 'uk' ? 'Скопійовано!' : 'Copied!'}</span>
+						<span class="copied-badge"
+							>{langStore.current === 'uk' ? 'Скопійовано!' : 'Copied!'}</span
+						>
 					{/if}
 				</button>
 			</div>
 			<div class="meta-row meta-row--hours">
 				<span class="meta-label">{langStore.current === 'uk' ? 'Графік:' : 'Hours:'}</span>
 				<span class="hours-badge">
-					<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="12"
+						height="12"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<circle cx="12" cy="12" r="10" />
 						<polyline points="12 6 12 12 16 14" />
 					</svg>
@@ -404,8 +453,17 @@
 					class="meta-link"
 				>
 					<span>@VetCrewHospital</span>
-					<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" />
+					<svg
+						width="12"
+						height="12"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
+						<path
+							d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"
+						/>
 					</svg>
 				</a>
 			</div>
@@ -417,9 +475,18 @@
 				type="button"
 				class="export-btn svg-export-btn"
 				onclick={downloadCurrentSvg}
-				title={langStore.current === 'uk' ? 'Завантажити векторний SVG для друкарні' : 'Download Print Vector SVG'}
+				title={langStore.current === 'uk'
+					? 'Завантажити векторний SVG для друкарні'
+					: 'Download Print Vector SVG'}
 			>
-				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<svg
+					width="15"
+					height="15"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+				>
 					<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 					<polyline points="7 10 12 15 17 10"></polyline>
 					<line x1="12" y1="15" x2="12" y2="3"></line>
@@ -430,7 +497,9 @@
 			<PngDownloadBtn
 				onselect={downloadCurrentPng}
 				btnClass="export-btn png-export-btn"
-				title={langStore.current === 'uk' ? 'Експорт PNG (поліграфічна роздільність 300 DPI / 4K)' : 'Export PNG (Print 300 DPI / 4K)'}
+				title={langStore.current === 'uk'
+					? 'Експорт PNG (поліграфічна роздільність 300 DPI / 4K)'
+					: 'Export PNG (Print 300 DPI / 4K)'}
 			/>
 		</div>
 	</div>
@@ -628,7 +697,8 @@
 	/* Stage theme backgrounds matching global app patterns */
 	.preview-stage.stage--checker {
 		background-color: #f1f5f9;
-		background-image: linear-gradient(45deg, #cbd5e1 25%, transparent 25%),
+		background-image:
+			linear-gradient(45deg, #cbd5e1 25%, transparent 25%),
 			linear-gradient(-45deg, #cbd5e1 25%, transparent 25%),
 			linear-gradient(45deg, transparent 75%, #cbd5e1 75%),
 			linear-gradient(-45deg, transparent 75%, #cbd5e1 75%);
@@ -642,7 +712,8 @@
 
 	:global([data-theme='dark']) .preview-stage.stage--checker {
 		background-color: #141815;
-		background-image: linear-gradient(45deg, #242c26 25%, transparent 25%),
+		background-image:
+			linear-gradient(45deg, #242c26 25%, transparent 25%),
 			linear-gradient(-45deg, #242c26 25%, transparent 25%),
 			linear-gradient(45deg, transparent 75%, #242c26 75%),
 			linear-gradient(-45deg, transparent 75%, #242c26 75%);
@@ -710,7 +781,9 @@
 			0 20px 45px -10px rgba(0, 0, 0, 0.35),
 			0 10px 20px -5px rgba(0, 0, 0, 0.2),
 			0 0 1px rgba(0, 0, 0, 0.1);
-		transition: transform 0.25s ease, box-shadow 0.25s ease;
+		transition:
+			transform 0.25s ease,
+			box-shadow 0.25s ease;
 		overflow: hidden;
 	}
 

@@ -1,11 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-	CARD_DIMENSIONS,
-	CARD_INFO,
-	generateCardSvg,
-	type CardFormat,
-	type CardMaterial
-} from './businessCardData';
+import { CARD_DIMENSIONS, CARD_INFO, generateCardSvg } from './businessCardData';
 
 describe('Business Card Data & Generator (ADR 0003)', () => {
 	it('має точні фізичні розміри для стандартного та євро форматів', () => {
@@ -29,7 +23,7 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 		expect(CARD_INFO.website).toBe('vet-crew-hospital.org');
 	});
 
-	it('генерує валідний SVG для прозорого пластику (frosted)', () => {
+	it('генерує валідний SVG для прозорого пластику (frosted) з адаптивним QR та іконкою літачка', () => {
 		const svgDark = generateCardSvg({
 			material: 'frosted',
 			frostedInk: 'dark',
@@ -43,6 +37,16 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 		expect(svgDark).toContain('telegram-qr-modules');
 		expect(svgDark).toContain('id="text-vet-crew"');
 		expect(svgDark).toContain('id="text-hospital"');
+
+		// Telegram QR & messaging icon
+		expect(svgDark).toContain('viewBox="0 0 820 820"');
+		expect(svgDark).toContain('qr-center-badge');
+		expect(svgDark).toContain('m22 2-7 20-4-9-9-4Z');
+		expect(svgDark).toContain('M22 2 11 13');
+
+		// Invariant: no redundant plain-text subtitle
+		expect(svgDark).not.toContain('ВЕТЕРИНАРНИЙ ГОСПІТАЛЬ');
+		expect(svgDark).not.toContain('VETERINARY HOSPITAL');
 
 		// CRITICAL INVARIANT: NEVER 24/7 or цілодобово
 		expect(svgDark.toLowerCase()).not.toContain('цілодобов');
@@ -71,8 +75,10 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 		});
 		expect(front).toContain('id="text-vet-crew"');
 		expect(front).toContain('id="text-hospital"');
-		expect(front).toContain('ВЕТЕРИНАРНИЙ ГОСПІТАЛЬ');
+		expect(front).toContain('vet-crew-hospital.org');
 		expect(front).toContain('Exotic, Wild & Special');
+		// Redundant subtitle omitted
+		expect(front).not.toContain('ВЕТЕРИНАРНИЙ ГОСПІТАЛЬ');
 		// Front does not contain QR code
 		expect(front).not.toContain('telegram-qr-modules');
 
@@ -85,7 +91,9 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 		expect(back).toContain('+380 77 501 01 01');
 		expect(back).toContain('Пн–Пт 10:00 – 18:00');
 		expect(back).toContain('telegram-qr-modules');
+		expect(back).toContain('qr-center-badge');
 		expect(back).toContain('vet-crew-hospital.org');
+		expect(back).not.toContain('ВЕТЕРИНАРНИЙ ГОСПІТАЛЬ');
 	});
 
 	it('генерує валідний SVG для односторонньої картки (solid)', () => {
@@ -97,6 +105,8 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 		expect(singleDark).toContain('fill="#13371B"');
 		expect(singleDark).toContain('+380 77 501 01 01');
 		expect(singleDark).toContain('telegram-qr-modules');
+		expect(singleDark).toContain('qr-center-badge');
+		expect(singleDark).not.toContain('ВЕТЕРИНАРНИЙ ГОСПІТАЛЬ');
 
 		const singleLight = generateCardSvg({
 			material: 'single',
@@ -104,8 +114,8 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 			lang: 'en'
 		});
 		expect(singleLight).toContain('fill="#FFFFFF"');
-		expect(singleLight).toContain('VETERINARY HOSPITAL');
 		expect(singleLight).toContain('Mon–Fri 10:00 – 18:00');
+		expect(singleLight).not.toContain('VETERINARY HOSPITAL');
 	});
 
 	it('включає лінії під обріз та безпечну зону при showBleed: true', () => {
