@@ -46,8 +46,9 @@
 ## 4. Контактні канали
 
 1. **Телефон**: `+380 77 501 01 01` (`tel:+380775010101`)
-2. **Instagram**: `https://www.instagram.com/vet.crew.hospital`
-3. **Карта (Google Maps)**: `https://maps.app.goo.gl/sTe5ePLTwwwQEZQz6`
+2. **Telegram**: `https://t.me/VetCrewHospital` (`@VetCrewHospital`)
+3. **Instagram**: `https://www.instagram.com/vet.crew.hospital`
+4. **Карта (Google Maps)**: `https://maps.app.goo.gl/sTe5ePLTwwwQEZQz6`
 
 ## 5. Двостадійний скрол-інтерфейс та Динамічний фон
 

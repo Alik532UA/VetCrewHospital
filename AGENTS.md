@@ -13,7 +13,7 @@
 
 Офіційний інтерактивний веб-портал ветеринарного госпіталю **Vet Crew Hospital** (`https://vet-crew-hospital.org/`).
 
-- **Основні функції**: інтерактивні канали зв'язку клініки (телефон `+380 77 501 01 01`, Instagram, локація на Google Maps), динамічне 3D-лого клініки з фізикою нахилу, двостадійний скрол-інтерфейс, внутрішній цифровий брендбук та студія шпалер (Wallpaper Studio з 4K експортом).
+- **Основні функції**: інтерактивні канали зв'язку клініки (телефон `+380 77 501 01 01`, Telegram `@VetCrewHospital`, Instagram, локація на Google Maps), динамічне 3D-лого клініки з фізикою нахилу, двостадійний скрол-інтерфейс, внутрішній цифровий брендбук та студія шпалер (Wallpaper Studio з 4K експортом).
 - **Стек**: SvelteKit 2 + Svelte 5 (Runes), TypeScript 6, `@sveltejs/adapter-static`, CSS Custom Properties.
 - **Хостинг**: GitHub Pages на власному домені `vet-crew-hospital.org` з переадресацією 301 зі старої адреси `alik532ua.github.io/VetCrewHospital/`.
 

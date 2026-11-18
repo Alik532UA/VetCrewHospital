@@ -17,10 +17,14 @@ describe('langStore controller', () => {
 		langStore.set('uk');
 		expect(langStore.current).toBe('uk');
 		expect(langStore.t('btn_phone')).toBe('Телефон');
+		expect(langStore.t('btn_telegram')).toBe('Telegram');
+		expect(langStore.t('btn_telegram_display')).toBe('Написати');
 
 		langStore.toggle();
 		expect(langStore.current).toBe('en');
 		expect(langStore.t('btn_phone')).toBe('Phone');
+		expect(langStore.t('btn_telegram')).toBe('Telegram');
+		expect(langStore.t('btn_telegram_display')).toBe('Message');
 
 		langStore.set('uk');
 		expect(langStore.current).toBe('uk');

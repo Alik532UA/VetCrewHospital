@@ -157,6 +157,7 @@
 			longitude: 30.7326
 		},
 		sameAs: [
+			'https://t.me/VetCrewHospital',
 			'https://www.instagram.com/vet.crew.hospital',
 			'https://maps.app.goo.gl/sTe5ePLTwwwQEZQz6'
 		],
