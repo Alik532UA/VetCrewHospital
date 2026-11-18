@@ -18,7 +18,8 @@
 		type CardMaterial,
 		type CardSide,
 		type FrostedInk,
-		type SolidTheme
+		type SolidTheme,
+		type LogoStyle
 	} from '$lib/data/businessCardData';
 
 	// Studio States
@@ -27,6 +28,7 @@
 	let side = $state<CardSide>('front');
 	let frostedInk = $state<FrostedInk>('dark');
 	let solidTheme = $state<SolidTheme>('dark');
+	let logoStyle = $state<LogoStyle>('emblem');
 	let showBleed = $state<boolean>(false);
 	let stageTheme = $state<StageTheme>('checker');
 	let copiedPhone = $state<boolean>(false);
@@ -49,6 +51,7 @@
 			side: effectiveSide,
 			frostedInk,
 			solidTheme,
+			logoStyle,
 			showBleed,
 			lang: langStore.current
 		})
@@ -68,8 +71,9 @@
 			material === 'frosted'
 				? `-${frostedInk}-ink`
 				: `-${solidTheme}`;
+		const styleName = `-${logoStyle}`;
 		const resPart = resLabel ? `-${resLabel}` : '';
-		return `vet-crew-card-${matName}${inkName}-${format}${sideName}${resPart}.${ext}`;
+		return `vet-crew-card-${matName}${inkName}${styleName}-${format}${sideName}${resPart}.${ext}`;
 	}
 
 	async function downloadCurrentSvg() {
@@ -198,7 +202,7 @@
 						onclick={() => (frostedInk = 'dark')}
 					>
 						<span class="ink-dot" style="background: #13371B;"></span>
-						<span>{langStore.current === 'uk' ? 'Смарагд (#13371B)' : 'Dark Green'}</span>
+						<span>{langStore.current === 'uk' ? 'Смарагд (#13371B)' : 'Emerald'}</span>
 					</button>
 					<button
 						type="button"
@@ -208,6 +212,15 @@
 					>
 						<span class="ink-dot" style="background: #FFFFFF; border: 1px solid #ccc;"></span>
 						<span>{langStore.current === 'uk' ? 'Білий (#FFFFFF)' : 'White'}</span>
+					</button>
+					<button
+						type="button"
+						class="pill-tab ink-tab"
+						class:active={frostedInk === 'brand'}
+						onclick={() => (frostedInk = 'brand')}
+					>
+						<span class="ink-dot" style="background: linear-gradient(135deg, #13371B 50%, #FFB327 50%); border: 1px solid #ccc;"></span>
+						<span>{langStore.current === 'uk' ? 'Фірмовий' : 'Brand Colors'}</span>
 					</button>
 				</div>
 			{:else}
@@ -232,6 +245,33 @@
 					</button>
 				</div>
 			{/if}
+		</div>
+
+		<!-- Logo Style: Emblem vs Circle Badge -->
+		<div class="toolbar-group">
+			<span class="group-label">
+				{langStore.current === 'uk' ? 'Стиль логотипа:' : 'Logo Style:'}
+			</span>
+			<div class="pill-tabs">
+				<button
+					type="button"
+					class="pill-tab"
+					class:active={logoStyle === 'emblem'}
+					onclick={() => (logoStyle = 'emblem')}
+					title={langStore.current === 'uk' ? 'Чиста векторна емблема (без фонового круга)' : 'Clean Vector Emblem'}
+				>
+					<span>{langStore.current === 'uk' ? 'Емблема' : 'Emblem'}</span>
+				</button>
+				<button
+					type="button"
+					class="pill-tab"
+					class:active={logoStyle === 'badge'}
+					onclick={() => (logoStyle = 'badge')}
+					title={langStore.current === 'uk' ? 'Круглий фірмовий бейдж' : 'Round Signature Badge'}
+				>
+					<span>{langStore.current === 'uk' ? 'Круглий бейдж' : 'Round Badge'}</span>
+				</button>
+			</div>
 		</div>
 
 		<!-- Bleed Guide Toggle -->
@@ -313,6 +353,7 @@
 			<!-- Frosted Glare Layer (Acrylic Light Sheen) -->
 			{#if material === 'frosted'}
 				<div class="frosted-glare" aria-hidden="true"></div>
+				<div class="frosted-stack-accent" aria-hidden="true"></div>
 			{/if}
 
 			<!-- Vector SVG Layer -->
@@ -343,6 +384,16 @@
 						<span class="copied-badge">{langStore.current === 'uk' ? 'Скопійовано!' : 'Copied!'}</span>
 					{/if}
 				</button>
+			</div>
+			<div class="meta-row meta-row--hours">
+				<span class="meta-label">{langStore.current === 'uk' ? 'Графік:' : 'Hours:'}</span>
+				<span class="hours-badge">
+					<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<circle cx="12" cy="12" r="10" />
+						<polyline points="12 6 12 12 16 14" />
+					</svg>
+					<span>{langStore.current === 'uk' ? CARD_INFO.scheduleUk : CARD_INFO.scheduleEn}</span>
+				</span>
 			</div>
 			<div class="meta-row">
 				<span class="meta-label">Telegram:</span>
@@ -576,25 +627,25 @@
 
 	/* Stage theme backgrounds matching global app patterns */
 	.preview-stage.stage--checker {
-		background-color: #e5e7eb;
-		background-image: linear-gradient(45deg, #d1d5db 25%, transparent 25%),
-			linear-gradient(-45deg, #d1d5db 25%, transparent 25%),
-			linear-gradient(45deg, transparent 75%, #d1d5db 75%),
-			linear-gradient(-45deg, transparent 75%, #d1d5db 75%);
-		background-size: 24px 24px;
+		background-color: #f1f5f9;
+		background-image: linear-gradient(45deg, #cbd5e1 25%, transparent 25%),
+			linear-gradient(-45deg, #cbd5e1 25%, transparent 25%),
+			linear-gradient(45deg, transparent 75%, #cbd5e1 75%),
+			linear-gradient(-45deg, transparent 75%, #cbd5e1 75%);
+		background-size: 32px 32px;
 		background-position:
 			0 0,
-			0 12px,
-			12px -12px,
-			-12px 0px;
+			0 16px,
+			16px -16px,
+			-16px 0px;
 	}
 
 	:global([data-theme='dark']) .preview-stage.stage--checker {
-		background-color: #181c19;
-		background-image: linear-gradient(45deg, #232a24 25%, transparent 25%),
-			linear-gradient(-45deg, #232a24 25%, transparent 25%),
-			linear-gradient(45deg, transparent 75%, #232a24 75%),
-			linear-gradient(-45deg, transparent 75%, #232a24 75%);
+		background-color: #141815;
+		background-image: linear-gradient(45deg, #242c26 25%, transparent 25%),
+			linear-gradient(-45deg, #242c26 25%, transparent 25%),
+			linear-gradient(45deg, transparent 75%, #242c26 75%),
+			linear-gradient(-45deg, transparent 75%, #242c26 75%);
 	}
 
 	.preview-stage.stage--dark {
@@ -672,19 +723,39 @@
 
 	/* Frosted Acrylic Glass Physics */
 	.card-mockup-outer.is-frosted {
-		background: rgba(255, 255, 255, 0.18);
-		backdrop-filter: blur(14px) saturate(160%);
-		-webkit-backdrop-filter: blur(14px) saturate(160%);
-		border: 1px solid rgba(255, 255, 255, 0.45);
+		background: rgba(255, 255, 255, 0.28);
+		backdrop-filter: blur(8px) saturate(135%);
+		-webkit-backdrop-filter: blur(8px) saturate(135%);
+		border: 1.5px solid rgba(255, 255, 255, 0.65);
 		box-shadow:
-			0 25px 50px -12px rgba(0, 0, 0, 0.25),
-			inset 0 1px 1px 0 rgba(255, 255, 255, 0.6),
-			inset 0 -1px 2px 0 rgba(0, 0, 0, 0.1);
+			0 28px 60px -12px rgba(0, 0, 0, 0.28),
+			0 12px 24px -6px rgba(0, 0, 0, 0.15),
+			inset 0 1px 2px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -1px 2px 0 rgba(0, 0, 0, 0.08);
 	}
 
 	:global([data-theme='dark']) .card-mockup-outer.is-frosted {
 		background: rgba(255, 255, 255, 0.12);
-		border-color: rgba(255, 255, 255, 0.3);
+		border-color: rgba(255, 255, 255, 0.4);
+		box-shadow:
+			0 28px 60px -12px rgba(0, 0, 0, 0.5),
+			0 12px 24px -6px rgba(0, 0, 0, 0.3),
+			inset 0 1px 2px 0 rgba(255, 255, 255, 0.4),
+			inset 0 -1px 2px 0 rgba(0, 0, 0, 0.2);
+	}
+
+	.card-mockup-outer.is-frosted.is-white-ink {
+		background: rgba(20, 32, 24, 0.35);
+		border-color: rgba(255, 255, 255, 0.65);
+	}
+
+	.frosted-stack-accent {
+		position: absolute;
+		inset: 0;
+		border-radius: 12px;
+		background: rgba(255, 255, 255, 0.04);
+		pointer-events: none;
+		z-index: 0;
 	}
 
 	.card-mockup-outer.is-frosted.is-white-ink {
@@ -794,6 +865,25 @@
 		padding: 0.1rem 0.35rem;
 		border-radius: 4px;
 		font-weight: 600;
+	}
+
+	.hours-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: 0.82rem;
+		font-weight: 700;
+		color: #13371b;
+		background: rgba(19, 55, 27, 0.07);
+		border: 1px solid rgba(19, 55, 27, 0.18);
+		padding: 0.2rem 0.55rem;
+		border-radius: 6px;
+	}
+
+	:global([data-theme='dark']) .hours-badge {
+		color: #93c84a;
+		background: rgba(147, 200, 74, 0.08);
+		border-color: rgba(147, 200, 74, 0.25);
 	}
 
 	.meta-link {

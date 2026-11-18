@@ -161,6 +161,14 @@
 			'https://www.instagram.com/vet.crew.hospital',
 			'https://maps.app.goo.gl/sTe5ePLTwwwQEZQz6'
 		],
+		openingHoursSpecification: [
+			{
+				'@type': 'OpeningHoursSpecification',
+				dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+				opens: '10:00',
+				closes: '18:00'
+			}
+		],
 		description:
 			langStore.current === 'uk'
 				? 'Ветеринарний госпіталь та кваліфікована допомога диким, екзотичним і домашнім тваринам в Одесі.'

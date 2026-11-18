@@ -55,9 +55,9 @@ export const DEPARTMENTS: DepartmentItem[] = [
 		titleUk: 'Відділення інтенсивної терапії та реанімації',
 		titleEn: 'Intensive Care Unit (ICU)',
 		descriptionUk:
-			'Цілодобовий моніторинг життєвих показників, кисневі бокси та клімат-контрольовані інкубатори.',
+			'Інтенсивний моніторинг життєвих показників, кисневі бокси та клімат-контрольовані інкубатори.',
 		descriptionEn:
-			'Round-the-clock vital signs monitoring, oxygen chambers, and climate-controlled incubators.',
+			'Intensive vital signs monitoring, oxygen chambers, and climate-controlled incubators.',
 		specialty: 'intensive_care',
 		equipment: [
 			{

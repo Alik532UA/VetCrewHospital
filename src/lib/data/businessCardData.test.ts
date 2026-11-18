@@ -20,9 +20,11 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 		expect(CARD_DIMENSIONS.euro.heightUnits).toBe(550);
 	});
 
-	it('містить актуальний телефон клініки та Telegram дескриптор', () => {
+	it('містить актуальний телефон клініки, графік та Telegram дескриптор', () => {
 		expect(CARD_INFO.phoneDisplay).toBe('+380 77 501 01 01');
 		expect(CARD_INFO.phoneTel).toBe('+380775010101');
+		expect(CARD_INFO.scheduleUk).toBe('Пн–Пт 10:00 – 18:00');
+		expect(CARD_INFO.scheduleEn).toBe('Mon–Fri 10:00 – 18:00');
 		expect(CARD_INFO.qrCaptionUk).toContain('@VetCrewHospital');
 		expect(CARD_INFO.website).toBe('vet-crew-hospital.org');
 	});
@@ -37,7 +39,15 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 		expect(svgDark).toContain('<svg');
 		expect(svgDark).toContain('viewBox="0 0 900 500"');
 		expect(svgDark).toContain('+380 77 501 01 01');
+		expect(svgDark).toContain('Пн–Пт 10:00 – 18:00');
 		expect(svgDark).toContain('telegram-qr-modules');
+		expect(svgDark).toContain('id="text-vet-crew"');
+		expect(svgDark).toContain('id="text-hospital"');
+
+		// CRITICAL INVARIANT: NEVER 24/7 or цілодобово
+		expect(svgDark.toLowerCase()).not.toContain('цілодобов');
+		expect(svgDark).not.toContain('24/7');
+
 		// Frosted has no solid rect background
 		expect(svgDark).not.toContain('<rect width="900" height="500" fill="#');
 
@@ -49,6 +59,7 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 		});
 		expect(svgWhite).toContain('viewBox="0 0 850 550"');
 		expect(svgWhite).toContain('fill="#FFFFFF"');
+		expect(svgWhite).toContain('Mon–Fri 10:00 – 18:00');
 	});
 
 	it('генерує валідний SVG для двосторонньої візитки (лице та зворот)', () => {
@@ -58,7 +69,8 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 			solidTheme: 'dark',
 			lang: 'uk'
 		});
-		expect(front).toContain('VET CREW HOSPITAL');
+		expect(front).toContain('id="text-vet-crew"');
+		expect(front).toContain('id="text-hospital"');
 		expect(front).toContain('ВЕТЕРИНАРНИЙ ГОСПІТАЛЬ');
 		expect(front).toContain('Exotic, Wild & Special');
 		// Front does not contain QR code
@@ -71,6 +83,7 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 			lang: 'uk'
 		});
 		expect(back).toContain('+380 77 501 01 01');
+		expect(back).toContain('Пн–Пт 10:00 – 18:00');
 		expect(back).toContain('telegram-qr-modules');
 		expect(back).toContain('vet-crew-hospital.org');
 	});
@@ -92,6 +105,7 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 		});
 		expect(singleLight).toContain('fill="#FFFFFF"');
 		expect(singleLight).toContain('VETERINARY HOSPITAL');
+		expect(singleLight).toContain('Mon–Fri 10:00 – 18:00');
 	});
 
 	it('включає лінії під обріз та безпечну зону при showBleed: true', () => {

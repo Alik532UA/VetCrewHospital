@@ -43,12 +43,17 @@
 | `lang`              | `vetcrewhospital_lang`        | Мова інтерфейсу                                                    | `'uk'`, `'en'`                                                                                                                                                                                                               |
 | `bg_settings`       | `vetcrewhospital_bg_settings` | Налаштування фону (режим, розмиття, пелена, палітра, капсула меню) | JSON `{ mode: 'image' \| 'solid', blur: number, lightOpacity: number, darkOpacity: number, lightOverlayColor: string, darkOverlayColor: string, lightSolidColor: string, darkSolidColor: string, showMenuCapsule: boolean }` |
 
-## 4. Контактні канали
+## 4. Контактні канали та Графік роботи
 
 1. **Телефон**: `+380 77 501 01 01` (`tel:+380775010101`)
 2. **Telegram**: `https://t.me/VetCrewHospital` (`@VetCrewHospital`)
 3. **Instagram**: `https://www.instagram.com/vet.crew.hospital`
 4. **Карта (Google Maps)**: `https://maps.app.goo.gl/sTe5ePLTwwwQEZQz6`
+
+### Графік роботи госпіталю (CRITICAL INVARIANT):
+- **Понеділок – П'ятниця: 10:00 – 18:00**
+- **Субота – Неділя: вихідні**
+- **СУВОРА ЗАБОРОНА**: Госпіталь **НІКОЛИ НЕ ЗАЯВЛЯЄТЬСЯ ЯК ЦІЛОДОБОВИЙ (НЕ 24/7)**. Будь-які формулювання на кшталт «цілодобово», «24/7», «цілодобовий прийом/стаціонар» СУВОРО ЗАБОРОНЕНІ в усьому проєкті (коді, текстах, бейджах та генераціях AI). Госпіталь веде прийом виключно за графіком Пн–Пт 10:00–18:00.
 
 ## 5. Двостадійний скрол-інтерфейс та Динамічний фон
 
