@@ -1,7 +1,7 @@
 // Canonical Telegram QR Vector Modules (viewBox 0 0 820 820)
 // Source: C:\Users\alik5\Downloads\qrcode-t.me_VetCrewHospital_+logo.svg
 // Features smooth rounded finder corners (rx=28/20), rounded modules (rx=6.67),
-// and the official Paper Airplane messaging icon from the hospital contact channels.
+// and the official Paper Airplane messaging icon (clean, no border stroke outline).
 
 export const TELEGRAM_QR_VIEWBOX = '0 0 820 820';
 
@@ -421,9 +421,14 @@ export const TELEGRAM_QR_RAW_MODULES = `
 `.trim();
 
 /**
- * Returns QR vector group with customizable center quiet zone background (e.g. 'none' for frosted acrylic)
+ * Returns QR vector group with customizable center quiet zone background (e.g. 'none' for frosted acrylic).
+ * Center messaging icon is rendered cleanly without any outer bounding stroke outline.
  */
 export function renderTelegramQrModules(centerBg: string = '#FFFFFF'): string {
+	const bgRect =
+		centerBg !== 'none'
+			? `<rect x="0" y="0" width="220" height="220" rx="44" fill="${centerBg}" />`
+			: '';
 	return `
     <rect x="241.0" y="81.0" rx="6.67" ry="6.67" width="18" height="18" />
     <rect x="301.0" y="81.0" rx="6.67" ry="6.67" width="18" height="18" />
@@ -837,10 +842,10 @@ export function renderTelegramQrModules(centerBg: string = '#FFFFFF'): string {
     <rect x="120" y="120" rx="20" ry="20" width="60" height="60" />
     <rect x="640" y="120" rx="20" ry="20" width="60" height="60" />
     <rect x="120" y="640" rx="20" ry="20" width="60" height="60" />
-    <!-- Telegram Message (Paper Airplane) Center Badge -->
+    <!-- Telegram Message (Paper Airplane) Center Badge (clean, no border outline) -->
     <g class="qr-center-badge" transform="translate(300, 300)">
-      <rect x="0" y="0" width="220" height="220" rx="44" fill="${centerBg}" stroke="currentColor" stroke-width="8" />
-      <g transform="translate(42, 42) scale(5.666)" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      ${bgRect}
+      <g transform="translate(38, 38) scale(6)" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path d="m22 2-7 20-4-9-9-4Z" />
         <path d="M22 2 11 13" />
       </g>

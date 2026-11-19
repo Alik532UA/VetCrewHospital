@@ -60,6 +60,8 @@ export interface CardInfoText {
 	qrCaptionUk: string;
 	qrCaptionEn: string;
 	website: string;
+	addressUk: string;
+	addressEn: string;
 	cityUk: string;
 	cityEn: string;
 	slogan: string;
@@ -76,8 +78,10 @@ export const CARD_INFO: CardInfoText = {
 	qrCaptionUk: '@VetCrewHospital',
 	qrCaptionEn: '@VetCrewHospital',
 	website: 'vet-crew-hospital.org',
-	cityUk: 'Одеса, Україна',
-	cityEn: 'Odesa, Ukraine',
+	addressUk: 'Одеса, вул. Майстрова, 4',
+	addressEn: '4 Maystrova St, Odesa',
+	cityUk: 'Одеса, вул. Майстрова, 4',
+	cityEn: '4 Maystrova St, Odesa',
 	slogan: 'Exotic, Wild & Special'
 };
 
@@ -208,7 +212,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 
 	const scheduleText = lang === 'uk' ? CARD_INFO.scheduleUk : CARD_INFO.scheduleEn;
 	const qrLabel = lang === 'uk' ? CARD_INFO.qrCaptionUk : CARD_INFO.qrCaptionEn;
-	const cityText = lang === 'uk' ? CARD_INFO.cityUk : CARD_INFO.cityEn;
+	const addressText = lang === 'uk' ? CARD_INFO.addressUk : CARD_INFO.addressEn;
 
 	let content: string;
 
@@ -219,7 +223,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 		const centerLogoX = (w - centerLogoSize) / 2;
 		const centerLogoY = (h - centerLogoSize) / 2 - 35;
 		const websiteY = centerLogoY + centerLogoSize + 48;
-		const sloganY = websiteY + 28;
+		const addressY = websiteY + 28;
 
 		content = `
     <!-- FRONT PRESENTATION -->
@@ -238,18 +242,18 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
       </g>
     </svg>
 
-    <!-- Clinic Website & Slogan -->
+    <!-- Clinic Website & Full Address -->
     <text x="${w / 2}" y="${websiteY}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="700" font-size="20" letter-spacing="2" fill="${secondaryInk}">
       ${CARD_INFO.website}
     </text>
-    <text x="${w / 2}" y="${sloganY}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="500" font-size="13.5" letter-spacing="1.5" fill="${textMuted}">
-      ${CARD_INFO.slogan}
+    <text x="${w / 2}" y="${addressY}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="500" font-size="14" letter-spacing="1.2" fill="${textMuted}">
+      ${addressText}
     </text>
     `;
 	} else {
 		// ALL-IN-ONE LAYOUT (Frosted Acrylic, Single-Sided, or Back of Double-Sided)
-		// Left: Full Official Logo + Direct Phone + Strictly Clinic Schedule + Website + City
-		// Right: Telegram QR Code + Handle + Caption (>80% visual coverage)
+		// Left: Full Official Logo + Direct Phone + Strictly Clinic Schedule + Website + Full Address (Майстрова, 4)
+		// Right: Telegram QR Code + Clean Handle (no redundant 'Telegram' label, >80% visual coverage)
 		const isEuro = format === 'euro';
 		const leftX = 45;
 		const logoSize = isEuro ? 245 : 230;
@@ -264,16 +268,14 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 		const websiteY = isEuro ? 438 : 408;
 		const websiteFontSize = isEuro ? 19 : 18;
 
-		const cityY = isEuro ? 476 : 444;
-		const cityFontSize = isEuro ? 15 : 14;
+		const addressY = isEuro ? 478 : 446;
+		const addressFontSize = isEuro ? 16 : 15.5;
 
 		const qrSize = isEuro ? 360 : 340;
 		const qrX = w - 45 - qrSize;
 		const qrY = isEuro ? 40 : 35;
-		const qrCaptionY = qrY + qrSize + (isEuro ? 38 : 36);
-		const qrCaptionFontSize = isEuro ? 21 : 20;
-		const qrSubCaptionY = qrCaptionY + (isEuro ? 32 : 30);
-		const qrSubCaptionFontSize = isEuro ? 14 : 13;
+		const qrCaptionY = qrY + qrSize + (isEuro ? 46 : 44);
+		const qrCaptionFontSize = isEuro ? 22 : 21;
 
 		content = `
     <!-- LEFT COLUMN: OFFICIAL LOGO & CONTACTS -->
@@ -307,9 +309,9 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
       ${CARD_INFO.website}
     </text>
 
-    <!-- City & Country -->
-    <text x="${leftX}" y="${cityY}" font-family="'Montserrat', sans-serif" font-weight="500" font-size="${cityFontSize}" letter-spacing="0.5" fill="${textMuted}">
-      ${cityText}
+    <!-- Full Address with Maystrova 4 -->
+    <text x="${leftX}" y="${addressY}" font-family="'Montserrat', sans-serif" font-weight="600" font-size="${addressFontSize}" letter-spacing="0.5" fill="${textMuted}">
+      ${addressText}
     </text>
 
     <!-- RIGHT COLUMN: TELEGRAM QR CODE -->
@@ -319,13 +321,9 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
           ${renderTelegramQrModules(centerBg)}
         </g>
       </svg>
-      <!-- Telegram Handle Caption -->
+      <!-- Telegram Handle Caption (clean, no duplicate label) -->
       <text x="${qrSize / 2}" y="${qrCaptionY - qrY}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="700" font-size="${qrCaptionFontSize}" letter-spacing="0.8" fill="${primaryInk}">
         ${qrLabel}
-      </text>
-      <!-- Telegram Sub-Caption -->
-      <text x="${qrSize / 2}" y="${qrSubCaptionY - qrY}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="500" font-size="${qrSubCaptionFontSize}" letter-spacing="0.8" fill="${secondaryInk}">
-        Telegram
       </text>
     </g>
     `;

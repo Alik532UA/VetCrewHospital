@@ -35,7 +35,7 @@ modules_body = '\n    '.join(modules + finder_paths + finder_rects)
 ts_content = f'''// Canonical Telegram QR Vector Modules (viewBox 0 0 820 820)
 // Source: C:\\Users\\alik5\\Downloads\\qrcode-t.me_VetCrewHospital_+logo.svg
 // Features smooth rounded finder corners (rx=28/20), rounded modules (rx=6.67),
-// and the official Paper Airplane messaging icon from the hospital contact channels.
+// and the official Paper Airplane messaging icon (clean, no border stroke outline).
 
 export const TELEGRAM_QR_VIEWBOX = '0 0 820 820';
 
@@ -44,15 +44,20 @@ export const TELEGRAM_QR_RAW_MODULES = `
 `.trim();
 
 /**
- * Returns QR vector group with customizable center quiet zone background (e.g. 'none' for frosted acrylic)
+ * Returns QR vector group with customizable center quiet zone background (e.g. 'none' for frosted acrylic).
+ * Center messaging icon is rendered cleanly without any outer bounding stroke outline.
  */
 export function renderTelegramQrModules(centerBg: string = '#FFFFFF'): string {{
+	const bgRect =
+		centerBg !== 'none'
+			? `<rect x="0" y="0" width="220" height="220" rx="44" fill="${{centerBg}}" />`
+			: '';
 	return `
     {modules_body}
-    <!-- Telegram Message (Paper Airplane) Center Badge -->
+    <!-- Telegram Message (Paper Airplane) Center Badge (clean, no border outline) -->
     <g class="qr-center-badge" transform="translate(300, 300)">
-      <rect x="0" y="0" width="220" height="220" rx="44" fill="${{centerBg}}" stroke="currentColor" stroke-width="8" />
-      <g transform="translate(42, 42) scale(5.666)" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      ${{bgRect}}
+      <g transform="translate(38, 38) scale(6)" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path d="m22 2-7 20-4-9-9-4Z" />
         <path d="M22 2 11 13" />
       </g>
@@ -83,10 +88,10 @@ standalone_svg = f'''<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 820" width="820" height="820" fill="#13371B">
   <g class="telegram-qr-modules">
     {modules_body}
-    <!-- Telegram Message (Paper Airplane) Center Badge -->
+    <!-- Telegram Message (Paper Airplane) Center Badge (clean, no border outline) -->
     <g class="qr-center-badge" transform="translate(300, 300)">
-      <rect x="0" y="0" width="220" height="220" rx="44" fill="#FFFFFF" stroke="currentColor" stroke-width="8" />
-      <g transform="translate(42, 42) scale(5.666)" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="0" y="0" width="220" height="220" rx="44" fill="#FFFFFF" />
+      <g transform="translate(38, 38) scale(6)" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path d="m22 2-7 20-4-9-9-4Z" />
         <path d="M22 2 11 13" />
       </g>
