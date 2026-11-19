@@ -190,4 +190,21 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 		expect(addrIdx).toBeGreaterThan(phoneIdx);
 		expect(webIdx).toBeGreaterThan(addrIdx);
 	});
+
+	it('використовує за замовчуванням емблему "04 сходи" (хамелеон, білка, черепаха, морська свинка, сова) та підтримує інші версії', () => {
+		const cardDefault = generateCardSvg();
+		// 04 сходи animal path starts with M871.68,1130.64
+		expect(cardDefault).toContain('M871.68,1130.64');
+
+		const card01 = generateCardSvg({ emblemVariant: '01' });
+		// 01 вхід animal path starts with M648.0,1118.64
+		expect(card01).toContain('M648.0,1118.64');
+		expect(card01).not.toContain('M871.68,1130.64');
+
+		const card02 = generateCardSvg({ emblemVariant: '02' });
+		expect(card02).toContain('id="animal-silhouettes"');
+
+		const card03 = generateCardSvg({ emblemVariant: '03' });
+		expect(card03).toContain('id="animal-silhouettes"');
+	});
 });

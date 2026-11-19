@@ -6,8 +6,13 @@ import { renderTelegramQrModules, TELEGRAM_QR_VIEWBOX } from './telegramQrData';
 import {
 	renderEmblemAnimals,
 	EMBLEM_ANIMALS_VIEWBOX,
-	type EmblemAnimalsColors
+	type EmblemAnimalsColors,
+	type EmblemVariantId,
+	EMBLEM_VARIANTS
 } from './emblemAnimalsData';
+
+export type { EmblemVariantId, EmblemVariantInfo } from './emblemAnimalsData';
+export { EMBLEM_VARIANTS } from './emblemAnimalsData';
 
 export type CardFormat = 'standard' | 'euro';
 export type CardMaterial = 'frosted' | 'double' | 'single';
@@ -114,6 +119,7 @@ export interface CardRenderOptions {
 	frostedInk?: FrostedInk;
 	solidTheme?: SolidTheme;
 	logoStyle?: LogoStyle;
+	emblemVariant?: EmblemVariantId;
 	showBleed?: boolean;
 	lang?: 'uk' | 'en';
 }
@@ -127,6 +133,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 	const side = options.side ?? 'front';
 	const frostedInk = options.frostedInk ?? 'dark';
 	const solidTheme = options.solidTheme ?? 'dark';
+	const emblemVariant = options.emblemVariant ?? '04';
 	const showBleed = options.showBleed ?? false;
 	const lang = options.lang ?? 'uk';
 
@@ -262,7 +269,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 		content = `
     <!-- FRONT PRESENTATION: OFFICIAL EMBLEM WITH ANIMALS & TITLES -->
     <svg x="${centerLogoX}" y="${centerLogoY}" width="${centerLogoSize}" height="${centerLogoSize}" viewBox="${EMBLEM_ANIMALS_VIEWBOX}">
-      ${renderEmblemAnimals(emblemColors)}
+      ${renderEmblemAnimals(emblemColors, emblemVariant)}
     </svg>
 
     <!-- Clinic Website & Full Address -->
@@ -320,7 +327,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 		content = `
     <!-- LEFT COLUMN: OFFICIAL EMBLEM WITH ANIMAL SILHOUETTES & TITLES -->
     <svg x="${emblemX}" y="${emblemY}" width="${emblemSize}" height="${emblemSize}" viewBox="${EMBLEM_ANIMALS_VIEWBOX}">
-      ${renderEmblemAnimals(emblemColors)}
+      ${renderEmblemAnimals(emblemColors, emblemVariant)}
     </svg>
 
     <!-- CENTER VERTICAL DIVIDER -->

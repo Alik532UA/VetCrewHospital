@@ -8,11 +8,13 @@
 		CARD_DIMENSIONS,
 		CARD_INFO,
 		generateCardSvg,
+		EMBLEM_VARIANTS,
 		type CardFormat,
 		type CardMaterial,
 		type CardSide,
 		type FrostedInk,
-		type SolidTheme
+		type SolidTheme,
+		type EmblemVariantId
 	} from '$lib/data/businessCardData';
 
 	// Studio States
@@ -21,6 +23,7 @@
 	let side = $state<CardSide>('front');
 	let frostedInk = $state<FrostedInk>('dark');
 	let solidTheme = $state<SolidTheme>('dark');
+	let emblemVariant = $state<EmblemVariantId>('04');
 	let showBleed = $state<boolean>(false);
 	let stageTheme = $state<StageTheme>('checker');
 	let copiedPhone = $state<boolean>(false);
@@ -43,6 +46,7 @@
 			side: effectiveSide,
 			frostedInk,
 			solidTheme,
+			emblemVariant,
 			showBleed,
 			lang: langStore.current
 		})
@@ -59,8 +63,9 @@
 		const matName = material === 'frosted' ? 'frosted-acrylic' : material;
 		const sideName = material === 'double' ? `-${side}` : '';
 		const inkName = material === 'frosted' ? `-${frostedInk}-ink` : `-${solidTheme}`;
+		const emblemPart = `-emblem-${emblemVariant}`;
 		const resPart = resLabel ? `-${resLabel}` : '';
-		return `vet-crew-card-${matName}${inkName}-${format}${sideName}${resPart}.${ext}`;
+		return `vet-crew-card-${matName}${inkName}${emblemPart}-${format}${sideName}${resPart}.${ext}`;
 	}
 
 	async function downloadCurrentSvg() {
@@ -254,6 +259,25 @@
 					</button>
 				</div>
 			{/if}
+		</div>
+
+		<!-- Emblem Animals Variant Selection -->
+		<div class="toolbar-group">
+			<span class="group-label">
+				{langStore.current === 'uk' ? 'Логотип (тварини):' : 'Emblem Animals:'}
+			</span>
+			<div class="pill-tabs" role="tablist">
+				{#each EMBLEM_VARIANTS as variant}
+					<button
+						type="button"
+						class="pill-tab"
+						class:active={emblemVariant === variant.id}
+						onclick={() => (emblemVariant = variant.id)}
+					>
+						<span>{variant.num} {langStore.current === 'uk' ? variant.nameUk : variant.nameEn}</span>
+					</button>
+				{/each}
+			</div>
 		</div>
 
 		<!-- Bleed Guide Toggle -->
