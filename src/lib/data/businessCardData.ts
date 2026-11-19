@@ -210,7 +210,6 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 		}
 	}
 
-	const scheduleText = lang === 'uk' ? CARD_INFO.scheduleUk : CARD_INFO.scheduleEn;
 	const qrLabel = lang === 'uk' ? CARD_INFO.qrCaptionUk : CARD_INFO.qrCaptionEn;
 	const addressText = lang === 'uk' ? CARD_INFO.addressUk : CARD_INFO.addressEn;
 
@@ -252,29 +251,26 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
     `;
 	} else {
 		// ALL-IN-ONE LAYOUT (Frosted Acrylic, Single-Sided, or Back of Double-Sided)
-		// Left: Full Official Logo + Direct Phone + Strictly Clinic Schedule + Website + Full Address (Майстрова, 4)
-		// Right: Telegram QR Code + Clean Handle (no redundant 'Telegram' label, >80% visual coverage)
+		// Left: Full Official Logo + Direct Phone + Website + Full Address (Майстрова, 4)
+		// Right: Telegram QR Code + Clean Handle (no redundant schedule or 'Telegram' label, >80% visual coverage)
 		const isEuro = format === 'euro';
 		const leftX = 45;
 		const logoSize = isEuro ? 245 : 230;
-		const logoY = isEuro ? 40 : 35;
+		const logoY = isEuro ? 45 : 38;
 
-		const phoneY = isEuro ? 345 : 320;
-		const phoneFontSize = isEuro ? 31 : 30;
+		const phoneY = isEuro ? 352 : 328;
+		const phoneFontSize = isEuro ? 33 : 32;
 
-		const scheduleY = isEuro ? 390 : 362;
-		const scheduleFontSize = isEuro ? 17 : 16;
+		const websiteY = isEuro ? 414 : 384;
+		const websiteFontSize = isEuro ? 21 : 20;
 
-		const websiteY = isEuro ? 438 : 408;
-		const websiteFontSize = isEuro ? 19 : 18;
-
-		const addressY = isEuro ? 478 : 446;
-		const addressFontSize = isEuro ? 16 : 15.5;
+		const addressY = isEuro ? 470 : 436;
+		const addressFontSize = isEuro ? 17.5 : 16.5;
 
 		const qrSize = isEuro ? 360 : 340;
 		const qrX = w - 45 - qrSize;
 		const qrY = isEuro ? 40 : 35;
-		const qrCaptionY = qrY + qrSize + (isEuro ? 46 : 44);
+		const qrCaptionY = qrY + qrSize + (isEuro ? 48 : 46);
 		const qrCaptionFontSize = isEuro ? 22 : 21;
 
 		content = `
@@ -299,11 +295,6 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
       ${CARD_INFO.phoneDisplay}
     </text>
 
-    <!-- Working Hours Schedule (CRITICAL: Strictly Mon-Fri 10:00-18:00, non-stop care claim is forbidden) -->
-    <text x="${leftX}" y="${scheduleY}" font-family="'Montserrat', sans-serif" font-weight="600" font-size="${scheduleFontSize}" letter-spacing="0.5" fill="${textMuted}">
-      ${scheduleText}
-    </text>
-
     <!-- Official Website URL -->
     <text x="${leftX}" y="${websiteY}" font-family="'Montserrat', sans-serif" font-weight="700" font-size="${websiteFontSize}" letter-spacing="0.8" fill="${secondaryInk}">
       ${CARD_INFO.website}
@@ -316,9 +307,9 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 
     <!-- RIGHT COLUMN: TELEGRAM QR CODE -->
     <g transform="translate(${qrX}, ${qrY})">
-      <svg x="0" y="0" width="${qrSize}" height="${qrSize}" viewBox="${TELEGRAM_QR_VIEWBOX}" fill="${primaryInk}">
+      <svg x="0" y="0" width="${qrSize}" height="${qrSize}" viewBox="${TELEGRAM_QR_VIEWBOX}" fill="${primaryInk}" color="${primaryInk}">
         <g class="telegram-qr-modules">
-          ${renderTelegramQrModules(centerBg)}
+          ${renderTelegramQrModules(centerBg, primaryInk)}
         </g>
       </svg>
       <!-- Telegram Handle Caption (clean, no duplicate label) -->

@@ -1,7 +1,7 @@
 // Canonical Telegram QR Vector Modules (viewBox 0 0 820 820)
 // Source: C:\Users\alik5\Downloads\qrcode-t.me_VetCrewHospital_+logo.svg
 // Features smooth rounded finder corners (rx=28/20), rounded modules (rx=6.67),
-// and the official Paper Airplane messaging icon (clean, no border stroke outline).
+// and the official Paper Airplane messaging icon matching the QR ink color exactly.
 
 export const TELEGRAM_QR_VIEWBOX = '0 0 820 820';
 
@@ -421,10 +421,13 @@ export const TELEGRAM_QR_RAW_MODULES = `
 `.trim();
 
 /**
- * Returns QR vector group with customizable center quiet zone background (e.g. 'none' for frosted acrylic).
- * Center messaging icon is rendered cleanly without any outer bounding stroke outline.
+ * Returns QR vector group with customizable center quiet zone background (e.g. 'none' for frosted acrylic)
+ * and matching ink color for the center paper-airplane messaging icon.
  */
-export function renderTelegramQrModules(centerBg: string = '#FFFFFF'): string {
+export function renderTelegramQrModules(
+	centerBg: string = '#FFFFFF',
+	iconColor: string = 'currentColor'
+): string {
 	const bgRect =
 		centerBg !== 'none'
 			? `<rect x="0" y="0" width="220" height="220" rx="44" fill="${centerBg}" />`
@@ -842,10 +845,10 @@ export function renderTelegramQrModules(centerBg: string = '#FFFFFF'): string {
     <rect x="120" y="120" rx="20" ry="20" width="60" height="60" />
     <rect x="640" y="120" rx="20" ry="20" width="60" height="60" />
     <rect x="120" y="640" rx="20" ry="20" width="60" height="60" />
-    <!-- Telegram Message (Paper Airplane) Center Badge (clean, no border outline) -->
+    <!-- Telegram Message (Paper Airplane) Center Badge (clean, matching QR ink color) -->
     <g class="qr-center-badge" transform="translate(300, 300)">
       ${bgRect}
-      <g transform="translate(38, 38) scale(6)" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <g transform="translate(38, 38) scale(6)" fill="none" stroke="${iconColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path d="m22 2-7 20-4-9-9-4Z" />
         <path d="M22 2 11 13" />
       </g>
@@ -853,15 +856,15 @@ export function renderTelegramQrModules(centerBg: string = '#FFFFFF'): string {
   `.trim();
 }
 
-export const TELEGRAM_QR_MODULES = renderTelegramQrModules('#FFFFFF');
+export const TELEGRAM_QR_MODULES = renderTelegramQrModules('#FFFFFF', '#13371B');
 
 /**
  * Returns complete standalone Telegram QR SVG with custom ink and center background
  */
 export function getTelegramQrSvg(fillColor = '#13371B', centerBg = '#FFFFFF'): string {
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 820" width="820" height="820" fill="${fillColor}">
+	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 820" width="820" height="820" fill="${fillColor}" color="${fillColor}">
   <g class="telegram-qr-modules">
-    ${renderTelegramQrModules(centerBg)}
+    ${renderTelegramQrModules(centerBg, fillColor)}
   </g>
 </svg>`.trim();
 }
