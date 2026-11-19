@@ -12,8 +12,7 @@
 		type CardMaterial,
 		type CardSide,
 		type FrostedInk,
-		type SolidTheme,
-		type LogoStyle
+		type SolidTheme
 	} from '$lib/data/businessCardData';
 
 	// Studio States
@@ -22,7 +21,6 @@
 	let side = $state<CardSide>('front');
 	let frostedInk = $state<FrostedInk>('dark');
 	let solidTheme = $state<SolidTheme>('dark');
-	let logoStyle = $state<LogoStyle>('emblem');
 	let showBleed = $state<boolean>(false);
 	let stageTheme = $state<StageTheme>('checker');
 	let copiedPhone = $state<boolean>(false);
@@ -45,7 +43,6 @@
 			side: effectiveSide,
 			frostedInk,
 			solidTheme,
-			logoStyle,
 			showBleed,
 			lang: langStore.current
 		})
@@ -62,9 +59,8 @@
 		const matName = material === 'frosted' ? 'frosted-acrylic' : material;
 		const sideName = material === 'double' ? `-${side}` : '';
 		const inkName = material === 'frosted' ? `-${frostedInk}-ink` : `-${solidTheme}`;
-		const styleName = `-${logoStyle}`;
 		const resPart = resLabel ? `-${resLabel}` : '';
-		return `vet-crew-card-${matName}${inkName}${styleName}-${format}${sideName}${resPart}.${ext}`;
+		return `vet-crew-card-${matName}${inkName}-${format}${sideName}${resPart}.${ext}`;
 	}
 
 	async function downloadCurrentSvg() {
@@ -258,35 +254,6 @@
 					</button>
 				</div>
 			{/if}
-		</div>
-
-		<!-- Logo Style: Emblem vs Circle Badge -->
-		<div class="toolbar-group">
-			<span class="group-label">
-				{langStore.current === 'uk' ? 'Стиль логотипа:' : 'Logo Style:'}
-			</span>
-			<div class="pill-tabs">
-				<button
-					type="button"
-					class="pill-tab"
-					class:active={logoStyle === 'emblem'}
-					onclick={() => (logoStyle = 'emblem')}
-					title={langStore.current === 'uk'
-						? 'Чиста векторна емблема (без фонового круга)'
-						: 'Clean Vector Emblem'}
-				>
-					<span>{langStore.current === 'uk' ? 'Емблема' : 'Emblem'}</span>
-				</button>
-				<button
-					type="button"
-					class="pill-tab"
-					class:active={logoStyle === 'badge'}
-					onclick={() => (logoStyle = 'badge')}
-					title={langStore.current === 'uk' ? 'Круглий фірмовий бейдж' : 'Round Signature Badge'}
-				>
-					<span>{langStore.current === 'uk' ? 'Круглий бейдж' : 'Round Badge'}</span>
-				</button>
-			</div>
 		</div>
 
 		<!-- Bleed Guide Toggle -->

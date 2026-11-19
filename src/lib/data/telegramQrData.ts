@@ -426,12 +426,17 @@ export const TELEGRAM_QR_RAW_MODULES = `
  */
 export function renderTelegramQrModules(
 	centerBg: string = '#FFFFFF',
-	iconColor: string = 'currentColor'
+	iconColor: string = 'currentColor',
+	badgeBg?: string,
+	planeColor?: string
 ): string {
 	const bgRect =
 		centerBg !== 'none'
 			? `<rect x="0" y="0" width="220" height="220" rx="44" fill="${centerBg}" />`
 			: '';
+
+	const effectiveBadgeBg = badgeBg ?? (iconColor === 'currentColor' ? '#13371B' : iconColor);
+	const effectivePlaneColor = planeColor ?? '#FFFFFF';
 	return `
     <rect x="241.0" y="81.0" rx="6.67" ry="6.67" width="18" height="18" />
     <rect x="301.0" y="81.0" rx="6.67" ry="6.67" width="18" height="18" />
@@ -845,12 +850,13 @@ export function renderTelegramQrModules(
     <rect x="120" y="120" rx="20" ry="20" width="60" height="60" />
     <rect x="640" y="120" rx="20" ry="20" width="60" height="60" />
     <rect x="120" y="640" rx="20" ry="20" width="60" height="60" />
-    <!-- Telegram Message (Paper Airplane) Center Badge (clean, matching QR ink color) -->
+    <!-- Telegram Message (Paper Airplane) Center Badge (clean circular badge with white paper airplane) -->
     <g class="qr-center-badge" transform="translate(300, 300)">
       ${bgRect}
-      <g transform="translate(38, 38) scale(6)" fill="none" stroke="${iconColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="m22 2-7 20-4-9-9-4Z" />
-        <path d="M22 2 11 13" />
+      <circle cx="110" cy="110" r="104" fill="${effectiveBadgeBg}" />
+      <g transform="translate(38, 38) scale(6)" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m22 2-7 20-4-9-9-4Z" fill="${effectivePlaneColor}" stroke="${effectivePlaneColor}" stroke-width="0.8" />
+        <path d="M22 2 11 13" fill="none" stroke="${effectiveBadgeBg}" stroke-width="1.6" />
       </g>
     </g>
   `.trim();

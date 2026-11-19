@@ -153,4 +153,43 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 		});
 		expect(withoutBleed).not.toContain('SAFE AREA');
 	});
+
+	it('повторює затверджений клієнтський макет: емблема з тваринами, розділювач, пігулка Telegram, телефон, адреса та сайт', () => {
+		const card = generateCardSvg({
+			material: 'frosted',
+			frostedInk: 'dark',
+			format: 'standard',
+			lang: 'uk'
+		});
+
+		// 1. Ліва колонка: повна емблема з силуетами тварин та написами
+		expect(card).toContain('id="animal-silhouettes"');
+		expect(card).toContain('id="text-center-treatment"');
+		expect(card).toContain('id="text-subtitle"');
+		expect(card).toContain('id="text-vet-crew"');
+		expect(card).toContain('id="text-hospital"');
+
+		// 2. Центральний тонкий вертикальний розділювач
+		expect(card).toMatch(/<line x1="\d+" y1="\d+" x2="\d+" y2="\d+"/);
+
+		// 3. Права колонка: Telegram QR з круглим бейджем та літачком
+		expect(card).toContain('telegram-qr-modules');
+		expect(card).toContain('qr-center-badge');
+
+		// 4. Зелена плашка-пігулка "Запис у Telegram"
+		expect(card).toContain('Запис у Telegram');
+
+		// 5. Контактний блок з іконками: телефон, адреса та сайт під адресою
+		expect(card).toContain('+380 77 501 01 01');
+		expect(card).toContain('Майстрова, 4');
+		expect(card).toContain('vet-crew-hospital.org');
+
+		// Порядок елементів у правому блоці: телефон -> адреса -> сайт
+		const phoneIdx = card.indexOf('+380 77 501 01 01');
+		const addrIdx = card.indexOf('Майстрова, 4');
+		const webIdx = card.indexOf('vet-crew-hospital.org');
+		expect(phoneIdx).toBeGreaterThan(0);
+		expect(addrIdx).toBeGreaterThan(phoneIdx);
+		expect(webIdx).toBeGreaterThan(addrIdx);
+	});
 });
