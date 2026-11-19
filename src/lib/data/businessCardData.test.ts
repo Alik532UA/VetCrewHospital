@@ -45,11 +45,9 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 		// Telegram QR & messaging icon (clean without outer stroke outline, matching ink color)
 		expect(svgDark).toContain('viewBox="0 0 820 820"');
 		expect(svgDark).toContain('qr-center-badge');
-		expect(svgDark).toContain('m22 2-7 20-4-9-9-4Z');
-		expect(svgDark).toContain('M22 2 11 13');
+		expect(svgDark).toContain('M365.32 132.19');
+		expect(svgDark).toContain('M256 0C114.61');
 		expect(svgDark).not.toContain('stroke-width="8"');
-		// Icon stroke is strictly the same color as the QR modules
-		expect(svgDark).toContain('stroke="#13371B"');
 
 		// Only @VetCrewHospital under QR, no redundant 'Telegram' label
 		expect(svgDark).toContain('@VetCrewHospital');

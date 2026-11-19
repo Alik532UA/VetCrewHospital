@@ -39,6 +39,12 @@ ts_content = f'''// Canonical Telegram QR Vector Modules (viewBox 0 0 820 820)
 
 export const TELEGRAM_QR_VIEWBOX = '0 0 820 820';
 
+// Authentic Telegram vector badge paths (Source: message_telegram_512.svg, viewBox 0 0 512 512)
+export const TELEGRAM_CIRCLE_PATH =
+	'M256 0C114.61 0 0 114.61 0 256s114.61 256 256 256 256-114.61 256-256S397.39 0 256 0';
+export const TELEGRAM_PLANE_PATH =
+	'M365.32 132.19 94.4 237.77c-8.77 3.42-8.24 16.01.79 18.68l68.84 20.33 25.7 81.53c2.68 8.52 13.48 11.1 19.72 4.72l35.6-36.35 69.84 51.26c8.54 6.27 20.72 1.61 22.89-8.76l46.25-221.15c2.27-10.84-8.39-19.86-18.7-15.84Zm-33.96 49.08L205.52 292.55a6.8 6.8 0 0 0-2.24 4.31l-4.84 43.07c-.16 1.4-2.12 1.59-2.54.24l-19.94-64.23c-.92-2.94.28-6.12 2.89-7.75l148.61-92.17c3.42-2.12 6.92 2.59 3.9 5.25';
+
 export const TELEGRAM_QR_RAW_MODULES = `
     {modules_body}
 `.trim();
@@ -47,20 +53,28 @@ export const TELEGRAM_QR_RAW_MODULES = `
  * Returns QR vector group with customizable center quiet zone background (e.g. 'none' for frosted acrylic)
  * and matching ink color for the center paper-airplane messaging icon.
  */
-export function renderTelegramQrModules(centerBg: string = '#FFFFFF', iconColor: string = 'currentColor'): string {{
+export function renderTelegramQrModules(
+	centerBg: string = '#FFFFFF',
+	iconColor: string = 'currentColor',
+	badgeBg?: string,
+	planeColor?: string
+): string {{
 	const bgRect =
 		centerBg !== 'none'
 			? `<rect x="0" y="0" width="220" height="220" rx="44" fill="${{centerBg}}" />`
 			: '';
+
+	const effectiveBadgeBg = badgeBg ?? (iconColor === 'currentColor' ? '#13371B' : iconColor);
+	const effectivePlaneColor = planeColor ?? '#FFFFFF';
 	return `
     {modules_body}
-    <!-- Telegram Message (Paper Airplane) Center Badge (clean, matching QR ink color) -->
+    <!-- Telegram Official Messaging Center Badge (Source: message_telegram_512.svg) -->
     <g class="qr-center-badge" transform="translate(300, 300)">
       ${{bgRect}}
-      <g transform="translate(38, 38) scale(6)" fill="none" stroke="${{iconColor}}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="m22 2-7 20-4-9-9-4Z" />
-        <path d="M22 2 11 13" />
-      </g>
+      <svg x="6" y="6" width="208" height="208" viewBox="0 0 512 512">
+        <path d="${{TELEGRAM_CIRCLE_PATH}}" fill="${{effectiveBadgeBg}}" />
+        <path d="${{TELEGRAM_PLANE_PATH}}" fill="${{effectivePlaneColor}}" />
+      </svg>
     </g>
   `.trim();
 }}
@@ -88,13 +102,13 @@ standalone_svg = f'''<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 820" width="820" height="820" fill="#13371B" color="#13371B">
   <g class="telegram-qr-modules">
     {modules_body}
-    <!-- Telegram Message (Paper Airplane) Center Badge (clean, matching QR ink color) -->
+    <!-- Telegram Official Messaging Center Badge (Source: message_telegram_512.svg) -->
     <g class="qr-center-badge" transform="translate(300, 300)">
       <rect x="0" y="0" width="220" height="220" rx="44" fill="#FFFFFF" />
-      <g transform="translate(38, 38) scale(6)" fill="none" stroke="#13371B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="m22 2-7 20-4-9-9-4Z" />
-        <path d="M22 2 11 13" />
-      </g>
+      <svg x="6" y="6" width="208" height="208" viewBox="0 0 512 512">
+        <path d="M256 0C114.61 0 0 114.61 0 256s114.61 256 256 256 256-114.61 256-256S397.39 0 256 0" fill="#13371B" />
+        <path d="M365.32 132.19 94.4 237.77c-8.77 3.42-8.24 16.01.79 18.68l68.84 20.33 25.7 81.53c2.68 8.52 13.48 11.1 19.72 4.72l35.6-36.35 69.84 51.26c8.54 6.27 20.72 1.61 22.89-8.76l46.25-221.15c2.27-10.84-8.39-19.86-18.7-15.84Zm-33.96 49.08L205.52 292.55a6.8 6.8 0 0 0-2.24 4.31l-4.84 43.07c-.16 1.4-2.12 1.59-2.54.24l-19.94-64.23c-.92-2.94.28-6.12 2.89-7.75l148.61-92.17c3.42-2.12 6.92 2.59 3.9 5.25" fill="#FFFFFF" />
+      </svg>
     </g>
   </g>
 </svg>

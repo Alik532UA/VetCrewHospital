@@ -5,6 +5,14 @@
 
 export const TELEGRAM_QR_VIEWBOX = '0 0 820 820';
 
+/**
+ * Authentic Telegram vector badge paths (Source: message_telegram_512.svg, viewBox 0 0 512 512)
+ */
+export const TELEGRAM_CIRCLE_PATH =
+	'M256 0C114.61 0 0 114.61 0 256s114.61 256 256 256 256-114.61 256-256S397.39 0 256 0';
+export const TELEGRAM_PLANE_PATH =
+	'M365.32 132.19 94.4 237.77c-8.77 3.42-8.24 16.01.79 18.68l68.84 20.33 25.7 81.53c2.68 8.52 13.48 11.1 19.72 4.72l35.6-36.35 69.84 51.26c8.54 6.27 20.72 1.61 22.89-8.76l46.25-221.15c2.27-10.84-8.39-19.86-18.7-15.84Zm-33.96 49.08L205.52 292.55a6.8 6.8 0 0 0-2.24 4.31l-4.84 43.07c-.16 1.4-2.12 1.59-2.54.24l-19.94-64.23c-.92-2.94.28-6.12 2.89-7.75l148.61-92.17c3.42-2.12 6.92 2.59 3.9 5.25';
+
 export const TELEGRAM_QR_RAW_MODULES = `
     <rect x="241.0" y="81.0" rx="6.67" ry="6.67" width="18" height="18" />
     <rect x="301.0" y="81.0" rx="6.67" ry="6.67" width="18" height="18" />
@@ -850,14 +858,13 @@ export function renderTelegramQrModules(
     <rect x="120" y="120" rx="20" ry="20" width="60" height="60" />
     <rect x="640" y="120" rx="20" ry="20" width="60" height="60" />
     <rect x="120" y="640" rx="20" ry="20" width="60" height="60" />
-    <!-- Telegram Message (Paper Airplane) Center Badge (clean circular badge with white paper airplane) -->
+    <!-- Telegram Official Messaging Center Badge (Source: message_telegram_512.svg) -->
     <g class="qr-center-badge" transform="translate(300, 300)">
       ${bgRect}
-      <circle cx="110" cy="110" r="104" fill="${effectiveBadgeBg}" />
-      <g transform="translate(38, 38) scale(6)" stroke-linecap="round" stroke-linejoin="round">
-        <path d="m22 2-7 20-4-9-9-4Z" fill="${effectivePlaneColor}" stroke="${effectivePlaneColor}" stroke-width="0.8" />
-        <path d="M22 2 11 13" fill="none" stroke="${effectiveBadgeBg}" stroke-width="1.6" />
-      </g>
+      <svg x="6" y="6" width="208" height="208" viewBox="0 0 512 512">
+        <path d="${TELEGRAM_CIRCLE_PATH}" fill="${effectiveBadgeBg}" />
+        <path d="${TELEGRAM_PLANE_PATH}" fill="${effectivePlaneColor}" />
+      </svg>
     </g>
   `.trim();
 }
