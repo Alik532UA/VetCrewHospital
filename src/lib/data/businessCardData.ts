@@ -146,8 +146,8 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 		centerBg = 'none';
 		if (frostedInk === 'white') {
 			primaryInk = '#FFFFFF';
-			secondaryInk = 'rgba(255, 255, 255, 0.9)';
-			textMuted = 'rgba(255, 255, 255, 0.72)';
+			secondaryInk = 'rgba(255, 255, 255, 0.95)';
+			textMuted = 'rgba(255, 255, 255, 0.92)';
 			logoColors = {
 				paw: '#FFFFFF',
 				pad: '#FFFFFF',
@@ -158,7 +158,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 		} else if (frostedInk === 'brand') {
 			primaryInk = '#13371B';
 			secondaryInk = '#598F3A';
-			textMuted = '#4A6B50';
+			textMuted = '#13371B';
 			logoColors = {
 				paw: '#13371B',
 				pad: '#FFB327',
@@ -170,7 +170,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 			// frostedInk === 'dark' (luxury emerald monochrome print)
 			primaryInk = '#13371B';
 			secondaryInk = '#13371B';
-			textMuted = 'rgba(19, 55, 27, 0.75)';
+			textMuted = '#13371B';
 			logoColors = {
 				paw: '#13371B',
 				pad: '#13371B',
@@ -186,7 +186,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 			centerBg = '#13371B';
 			primaryInk = '#FFFFFF';
 			secondaryInk = '#93C84A';
-			textMuted = '#B5D1BC';
+			textMuted = '#E2EFE5';
 			logoColors = {
 				paw: '#FFFFFF',
 				pad: '#FFB327',
@@ -199,7 +199,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 			centerBg = '#FFFFFF';
 			primaryInk = '#13371B';
 			secondaryInk = '#598F3A';
-			textMuted = '#526857';
+			textMuted = '#13371B';
 			logoColors = {
 				paw: '#13371B',
 				pad: '#FFB327',
@@ -222,7 +222,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 		const centerLogoX = (w - centerLogoSize) / 2;
 		const centerLogoY = (h - centerLogoSize) / 2 - 35;
 		const websiteY = centerLogoY + centerLogoSize + 48;
-		const addressY = websiteY + 28;
+		const addressY = websiteY + 30;
 
 		content = `
     <!-- FRONT PRESENTATION -->
@@ -242,36 +242,36 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
     </svg>
 
     <!-- Clinic Website & Full Address -->
-    <text x="${w / 2}" y="${websiteY}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="700" font-size="20" letter-spacing="2" fill="${secondaryInk}">
+    <text x="${w / 2}" y="${websiteY}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="700" font-size="23" letter-spacing="2" fill="${secondaryInk}">
       ${CARD_INFO.website}
     </text>
-    <text x="${w / 2}" y="${addressY}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="500" font-size="14" letter-spacing="1.2" fill="${textMuted}">
+    <text x="${w / 2}" y="${addressY}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="600" font-size="18" letter-spacing="1.2" fill="${textMuted}">
       ${addressText}
     </text>
     `;
 	} else {
 		// ALL-IN-ONE LAYOUT (Frosted Acrylic, Single-Sided, or Back of Double-Sided)
-		// Left: Full Official Logo + Direct Phone + Website + Full Address (Майстрова, 4)
-		// Right: Telegram QR Code + Clean Handle (no redundant schedule or 'Telegram' label, >80% visual coverage)
+		// Left: Full Official Logo + Direct Phone (34px) + Website (23px) + Full Address (20px, Майстрова 4)
+		// Right: Telegram QR Code + Handle (24px, no redundant schedule or 'Telegram' label, >80% visual coverage)
 		const isEuro = format === 'euro';
 		const leftX = 45;
 		const logoSize = isEuro ? 245 : 230;
-		const logoY = isEuro ? 45 : 38;
+		const logoY = isEuro ? 40 : 35;
 
 		const phoneY = isEuro ? 352 : 328;
-		const phoneFontSize = isEuro ? 33 : 32;
+		const phoneFontSize = isEuro ? 35 : 34;
 
 		const websiteY = isEuro ? 414 : 384;
-		const websiteFontSize = isEuro ? 21 : 20;
+		const websiteFontSize = isEuro ? 24 : 23;
 
-		const addressY = isEuro ? 470 : 436;
-		const addressFontSize = isEuro ? 17.5 : 16.5;
+		const addressY = isEuro ? 472 : 438;
+		const addressFontSize = isEuro ? 21 : 20;
 
 		const qrSize = isEuro ? 360 : 340;
 		const qrX = w - 45 - qrSize;
 		const qrY = isEuro ? 40 : 35;
 		const qrCaptionY = qrY + qrSize + (isEuro ? 48 : 46);
-		const qrCaptionFontSize = isEuro ? 22 : 21;
+		const qrCaptionFontSize = isEuro ? 25 : 24;
 
 		content = `
     <!-- LEFT COLUMN: OFFICIAL LOGO & CONTACTS -->
@@ -291,7 +291,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
     </svg>
 
     <!-- Direct Emergency / Call Telephone -->
-    <text x="${leftX}" y="${phoneY}" font-family="'Montserrat', sans-serif" font-weight="700" font-size="${phoneFontSize}" letter-spacing="1.2" fill="${primaryInk}">
+    <text x="${leftX}" y="${phoneY}" font-family="'Montserrat', sans-serif" font-weight="800" font-size="${phoneFontSize}" letter-spacing="1.2" fill="${primaryInk}">
       ${CARD_INFO.phoneDisplay}
     </text>
 
@@ -312,8 +312,8 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
           ${renderTelegramQrModules(centerBg, primaryInk)}
         </g>
       </svg>
-      <!-- Telegram Handle Caption (clean, no duplicate label) -->
-      <text x="${qrSize / 2}" y="${qrCaptionY - qrY}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="700" font-size="${qrCaptionFontSize}" letter-spacing="0.8" fill="${primaryInk}">
+      <!-- Telegram Handle Caption (24px, bold, clean) -->
+      <text x="${qrSize / 2}" y="${qrCaptionY - qrY}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="800" font-size="${qrCaptionFontSize}" letter-spacing="0.8" fill="${primaryInk}">
         ${qrLabel}
       </text>
     </g>
@@ -337,7 +337,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${dim.widthMm}mm" height="${dim.heightMm}mm">
   <defs>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&amp;display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&amp;display=swap');
     </style>
   </defs>
   <!-- BACKGROUND -->
