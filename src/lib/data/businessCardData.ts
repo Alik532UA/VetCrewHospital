@@ -293,29 +293,29 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 		// Right Column: Center X
 		const rightCenterX = isEuro ? (dividerX + w) / 2 : (dividerX + w) / 2;
 
-		// QR Code
-		const qrSize = isEuro ? 220 : 208;
+		// QR Code (enlarged by ~10-12% for dominant visual hierarchy matching client mockup)
+		const qrSize = isEuro ? 244 : 232;
 		const qrX = rightCenterX - qrSize / 2;
-		const qrY = isEuro ? 42 : 38;
+		const qrY = isEuro ? 32 : 28;
 
 		// Pill Badge: "Запис у Telegram"
-		const pillW = isEuro ? 246 : 236;
-		const pillH = isEuro ? 36 : 34;
+		const pillW = isEuro ? 270 : 262;
+		const pillH = isEuro ? 42 : 40;
 		const pillX = rightCenterX - pillW / 2;
-		const pillY = qrY + qrSize + (isEuro ? 16 : 15);
-		const pillTextY = pillY + (isEuro ? 23.5 : 22.5);
-		const pillFontSize = isEuro ? 15.5 : 15;
+		const pillY = qrY + qrSize + (isEuro ? 16 : 14);
+		const pillTextY = pillY + (isEuro ? 26.5 : 25.5);
+		const pillFontSize = isEuro ? 18 : 17;
 
 		// Contacts List (Phone, Address, Website)
-		const contactX = isEuro ? 495 : 525;
-		const contactRowGap = isEuro ? 38 : 35;
-		const phoneY = pillY + pillH + (isEuro ? 36 : 33);
+		const contactX = isEuro ? 480 : 512;
+		const contactRowGap = isEuro ? 50 : 46;
+		const phoneY = pillY + pillH + (isEuro ? 44 : 40);
 		const addressY = phoneY + contactRowGap;
 		const websiteY = addressY + contactRowGap;
 
-		const phoneFontSize = isEuro ? 17.5 : 17;
-		const addressFontSize = isEuro ? 15.5 : 15;
-		const websiteFontSize = isEuro ? 16 : 15.5;
+		const phoneFontSize = isEuro ? 24.5 : 23;
+		const addressFontSize = isEuro ? 19 : 18;
+		const websiteFontSize = isEuro ? 20 : 19;
 
 		content = `
     <!-- LEFT COLUMN: OFFICIAL EMBLEM WITH ANIMAL SILHOUETTES & TITLES -->
@@ -346,30 +346,30 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
     <!-- CONTACT ITEMS -->
     <!-- 1. Direct Emergency / Call Telephone -->
     <g transform="translate(${contactX}, ${phoneY})">
-      <g transform="translate(0, -17) scale(0.9)" fill="none" stroke="${contactIconColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <g transform="translate(0, -20) scale(1.15)" fill="none" stroke="${contactIconColor}" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
         ${CARD_CONTACT_ICONS.phone}
       </g>
-      <text x="32" y="0" font-family="'Montserrat', sans-serif" font-weight="700" font-size="${phoneFontSize}" letter-spacing="0.5" fill="${primaryInk}">
+      <text x="36" y="0" font-family="'Montserrat', sans-serif" font-weight="800" font-size="${phoneFontSize}" letter-spacing="0.5" fill="${primaryInk}">
         ${CARD_INFO.phoneDisplay}
       </text>
     </g>
 
     <!-- 2. Full Clinic Address -->
     <g transform="translate(${contactX}, ${addressY})">
-      <g transform="translate(0, -17) scale(0.9)" fill="none" stroke="${contactIconColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <g transform="translate(0, -18) scale(1.05)" fill="none" stroke="${contactIconColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         ${CARD_CONTACT_ICONS.pin}
       </g>
-      <text x="32" y="0" font-family="'Montserrat', sans-serif" font-weight="600" font-size="${addressFontSize}" letter-spacing="0.3" fill="${primaryInk}">
+      <text x="36" y="0" font-family="'Montserrat', sans-serif" font-weight="600" font-size="${addressFontSize}" letter-spacing="0.3" fill="${primaryInk}">
         ${addressText}
       </text>
     </g>
 
     <!-- 3. Official Website (under address as requested) -->
     <g transform="translate(${contactX}, ${websiteY})">
-      <g transform="translate(0, -17) scale(0.9)" fill="none" stroke="${websiteColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <g transform="translate(0, -18) scale(1.05)" fill="none" stroke="${websiteColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         ${CARD_CONTACT_ICONS.globe}
       </g>
-      <text x="32" y="0" font-family="'Montserrat', sans-serif" font-weight="700" font-size="${websiteFontSize}" letter-spacing="0.4" fill="${websiteColor}">
+      <text x="36" y="0" font-family="'Montserrat', sans-serif" font-weight="700" font-size="${websiteFontSize}" letter-spacing="0.4" fill="${websiteColor}">
         ${CARD_INFO.website}
       </text>
     </g>
