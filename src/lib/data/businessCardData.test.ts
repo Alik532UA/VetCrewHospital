@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { CARD_DIMENSIONS, CARD_INFO, generateCardSvg } from './businessCardData';
+import { CARD_DIMENSIONS, CARD_INFO, CARD_CONTACT_ICONS, generateCardSvg } from './businessCardData';
 
 describe('Business Card Data & Generator (ADR 0003)', () => {
 	it('має точні фізичні розміри для стандартного та євро форматів', () => {
@@ -206,5 +206,11 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 
 		const card03 = generateCardSvg({ emblemVariant: '03' });
 		expect(card03).toContain('id="animal-silhouettes"');
+	});
+
+	it('фарбує текст сайту та іконку сайту в темно-зелений колір (#13371B) для темного чорнила / світлої теми', () => {
+		const card = generateCardSvg({ material: 'frosted', frostedInk: 'dark' });
+		expect(card).toContain('stroke="#13371B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">\n        ' + CARD_CONTACT_ICONS.globe);
+		expect(card).toContain('fill="#13371B">\n        vet-crew-hospital.org');
 	});
 });

@@ -189,7 +189,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 			pillBg = '#C2E29B';
 			pillTextColor = '#13371B';
 			contactIconColor = '#13371B';
-			websiteColor = '#598F3A';
+			websiteColor = '#13371B';
 			qrBadgeBg = '#13371B';
 			qrPlaneFill = '#FFFFFF';
 			emblemColors = {
@@ -236,7 +236,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 			pillBg = '#C2E29B';
 			pillTextColor = '#13371B';
 			contactIconColor = '#13371B';
-			websiteColor = '#598F3A';
+			websiteColor = '#13371B';
 			qrBadgeBg = '#13371B';
 			qrPlaneFill = '#FFFFFF';
 			emblemColors = {
@@ -273,7 +273,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
     </svg>
 
     <!-- Clinic Website & Full Address -->
-    <text x="${w / 2}" y="${websiteY}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="700" font-size="22" letter-spacing="1.5" fill="${secondaryInk}">
+    <text x="${w / 2}" y="${websiteY}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="700" font-size="22" letter-spacing="1.5" fill="${websiteColor}">
       ${CARD_INFO.website}
     </text>
     <text x="${w / 2}" y="${addressY}" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="600" font-size="16" letter-spacing="1" fill="${primaryInk}">
