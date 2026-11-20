@@ -850,6 +850,9 @@
 		gap: 1.5rem;
 		align-items: start;
 		min-width: 0;
+		width: 100%;
+		max-width: 100%;
+		box-sizing: border-box;
 	}
 
 	.brandbook-sections {
@@ -858,6 +861,9 @@
 		flex-direction: column;
 		gap: 2.75rem;
 		min-width: 0;
+		width: 100%;
+		max-width: 100%;
+		box-sizing: border-box;
 		zoom: var(--brandbook-zoom, 1);
 	}
 
@@ -877,6 +883,9 @@
 		gap: 2rem;
 		scroll-margin-top: 2rem;
 		min-width: 0;
+		width: 100%;
+		max-width: 100%;
+		box-sizing: border-box;
 	}
 
 	/* Elevate section with open picker or dropdown so subsequent sections (with backdrop-filter) do not cut it off */
@@ -930,10 +939,29 @@
 	}
 
 	/* PALETTE GRID */
+	#palette {
+		container-type: inline-size;
+	}
+
 	.palette-grid {
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 		gap: 1.25rem;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+	}
+
+	@container (max-width: 840px) {
+		.palette-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@container (max-width: 560px) {
+		.palette-grid {
+			grid-template-columns: minmax(0, 1fr);
+		}
 	}
 
 	.color-tile {
@@ -1083,10 +1111,23 @@
 	}
 
 	/* SECTION 03: NAMING & SUB-BRANDS */
+	#naming {
+		container-type: inline-size;
+	}
+
 	.naming-grid {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 1.5rem;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+	}
+
+	@container (max-width: 720px) {
+		.naming-grid {
+			grid-template-columns: minmax(0, 1fr);
+		}
 	}
 
 	.branding-card {

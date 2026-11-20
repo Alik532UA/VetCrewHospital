@@ -1334,6 +1334,9 @@
 		flex-direction: column;
 		gap: 1.5rem;
 		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		container-type: inline-size;
 	}
 
 	/* STUDIO HEADER */
@@ -1617,9 +1620,12 @@
 	/* WORKSPACE GRID */
 	.workspace-grid {
 		display: grid;
-		grid-template-columns: 1fr 340px;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
 		gap: 1.5rem;
 		align-items: start;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
 	}
 
 	/* PREVIEW COLUMN */
@@ -2037,7 +2043,27 @@
 	/* RESPONSIVE */
 	@media (max-width: 960px) {
 		.workspace-grid {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.download-action-bar {
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.action-buttons {
+			flex-direction: column;
+		}
+
+		.export-btn {
+			justify-content: center;
+			width: 100%;
+		}
+	}
+
+	@container (max-width: 960px) {
+		.workspace-grid {
+			grid-template-columns: minmax(0, 1fr);
 		}
 
 		.download-action-bar {

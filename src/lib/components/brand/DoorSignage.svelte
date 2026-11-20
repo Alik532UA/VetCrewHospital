@@ -840,6 +840,9 @@
 		flex-direction: column;
 		gap: 1.8rem;
 		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		container-type: inline-size;
 	}
 
 	/* UNIFIED CONTROLS PANEL */
@@ -852,6 +855,10 @@
 		background: var(--bg-secondary);
 		border: 1px solid var(--border);
 		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		box-sizing: border-box;
 	}
 
 	.control-row {
@@ -997,7 +1004,18 @@
 	@media (max-width: 960px) {
 		.grid--composite,
 		.grid--text {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.grid--icon {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@container (max-width: 960px) {
+		.grid--composite,
+		.grid--text {
+			grid-template-columns: minmax(0, 1fr);
 		}
 
 		.grid--icon {
@@ -1007,7 +1025,13 @@
 
 	@media (max-width: 540px) {
 		.grid--icon {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+
+	@container (max-width: 540px) {
+		.grid--icon {
+			grid-template-columns: minmax(0, 1fr);
 		}
 	}
 

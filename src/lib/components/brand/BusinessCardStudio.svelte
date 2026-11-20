@@ -502,6 +502,9 @@
 		flex-direction: column;
 		gap: 1.25rem;
 		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		container-type: inline-size;
 	}
 
 	/* TOOLBAR */
@@ -515,6 +518,10 @@
 		border: 1px solid var(--color-border, #e5e7eb);
 		border-radius: 12px;
 		padding: 0.85rem 1.15rem;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		box-sizing: border-box;
 	}
 
 	:global([data-theme='dark']) .studio-toolbar {
@@ -1009,6 +1016,32 @@
 	}
 
 	@media (max-width: 768px) {
+		.studio-toolbar {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.card-mockup-outer {
+			max-width: 100%;
+		}
+
+		.studio-bottom-bar {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.studio-export-actions {
+			width: 100%;
+			justify-content: stretch;
+		}
+
+		.export-btn {
+			flex: 1;
+			justify-content: center;
+		}
+	}
+
+	@container (max-width: 768px) {
 		.studio-toolbar {
 			flex-direction: column;
 			align-items: flex-start;

@@ -814,6 +814,9 @@
 		flex-direction: column;
 		gap: 1.25rem;
 		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		container-type: inline-size;
 	}
 
 	/* VARIANT SWITCHER BAR */
@@ -974,9 +977,12 @@
 	/* WORKSPACE */
 	.customizer-workspace {
 		display: grid;
-		grid-template-columns: 360px 1fr;
+		grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
 		gap: 1.75rem;
 		align-items: start;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
 	}
 
 	/* LEFT STAGE */
@@ -988,6 +994,10 @@
 		border: 1px solid var(--border);
 		border-radius: 1.25rem;
 		padding: 1.25rem;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		box-sizing: border-box;
 	}
 
 	.stage-toolbar {
@@ -1077,6 +1087,11 @@
 		border: 1px solid var(--border);
 		border-radius: 1.25rem;
 		padding: 1.5rem;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		box-sizing: border-box;
+		container-type: inline-size;
 	}
 
 	/* TOGGLE ROW */
@@ -1087,6 +1102,7 @@
 		gap: 1rem;
 		padding-bottom: 1.25rem;
 		border-bottom: 1px solid var(--border);
+		flex-wrap: wrap;
 	}
 
 	.row-meta {
@@ -1108,7 +1124,7 @@
 		background: var(--bg-secondary);
 		border-radius: 10px;
 		border: 1px solid var(--border);
-		flex-shrink: 0;
+		max-width: 100%;
 	}
 
 	.pill-btn {
@@ -1155,6 +1171,9 @@
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 		gap: 0.65rem;
 		transition: grid-template-columns 0.2s ease;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
 	}
 
 	.element-tabs--three {
@@ -1172,6 +1191,7 @@
 		cursor: pointer;
 		text-align: left;
 		transition: all 0.2s ease;
+		min-width: 0;
 	}
 
 	.element-tab.is-selected {
@@ -1227,9 +1247,27 @@
 		padding-top: 0.5rem;
 	}
 
-	@media (max-width: 900px) {
+	@media (max-width: 980px) {
 		.customizer-workspace {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.element-tabs {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.element-tabs--three {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+
+		.swatches-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@container (max-width: 980px) {
+		.customizer-workspace {
+			grid-template-columns: minmax(0, 1fr);
 		}
 
 		.element-tabs {
@@ -1293,7 +1331,65 @@
 		}
 
 		.element-tabs--three {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+
+	@container (max-width: 640px) {
+		.variant-bar {
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.variant-toggle-pills {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+		}
+
+		.variant-pill {
+			justify-content: center;
+			padding: 0.5rem 0.75rem;
+			font-size: 0.8rem;
+			width: 100%;
+			min-width: 0;
+		}
+
+		.control-row.bg-toggle-row {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 0.75rem;
+		}
+
+		.toggle-pill-wrap {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			width: 100%;
+		}
+
+		.pill-btn {
+			padding: 0.45rem 0.25rem;
+			font-size: 0.72rem;
+			justify-content: center;
+			text-align: center;
+			gap: 0.2rem;
+			min-width: 0;
+		}
+
+		.pill-btn span {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.element-tabs--three {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+
+	@container (max-width: 440px) {
+		.element-tabs {
+			grid-template-columns: minmax(0, 1fr);
 		}
 	}
 </style>
