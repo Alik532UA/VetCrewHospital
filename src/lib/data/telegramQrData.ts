@@ -3,7 +3,7 @@
 // Features smooth rounded finder corners (rx=28/20), rounded modules (rx=6.67),
 // and the official Paper Airplane messaging icon matching the QR ink color exactly.
 
-export const TELEGRAM_QR_VIEWBOX = '0 0 820 820';
+export const TELEGRAM_QR_VIEWBOX = '70 70 680 680';
 
 /**
  * Authentic Telegram vector badge paths (Source: message_telegram_512.svg, viewBox 0 0 512 512)

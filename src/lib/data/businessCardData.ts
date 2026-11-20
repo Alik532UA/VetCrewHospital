@@ -303,24 +303,24 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 		// Right Column: Center X
 		const rightCenterX = isEuro ? 647 : 673;
 
-		// QR Code (enlarged so pill is closer to QR code than to phone)
-		const qrSize = isEuro ? 264 : 252;
+		// QR Code (balanced margins within safe area, with tight viewBox so modules dominate)
+		const qrSize = isEuro ? 244 : 230;
 		const qrX = rightCenterX - qrSize / 2;
-		const qrY = isEuro ? 26 : 22;
+		const qrY = isEuro ? 54 : 46;
 
 		// Pill Badge: "Запис у Telegram" (close to QR code)
 		const pillW = isEuro ? 270 : 262;
-		const pillH = isEuro ? 42 : 40;
+		const pillH = isEuro ? 40 : 38;
 		const pillX = rightCenterX - pillW / 2;
-		const pillY = qrY + qrSize + 10;
-		const pillTextY = pillY + (isEuro ? 26.5 : 25.5);
+		const pillY = qrY + qrSize + 8;
+		const pillTextY = pillY + (isEuro ? 25.5 : 24.5);
 		const pillFontSize = isEuro ? 18 : 17;
 
 		// Contacts List (Phone, Address, Website)
 		// Unified font weight (700) across all items
 		const contactX = isEuro ? 485 : 505;
-		const contactRowGap = isEuro ? 48 : 44;
-		const phoneY = pillY + pillH + (isEuro ? 46 : 42);
+		const contactRowGap = isEuro ? 46 : 42;
+		const phoneY = pillY + pillH + (isEuro ? 46 : 44);
 		const addressY = phoneY + contactRowGap;
 		const websiteY = addressY + contactRowGap;
 

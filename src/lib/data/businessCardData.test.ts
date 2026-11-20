@@ -43,7 +43,7 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 		expect(svgDark).not.toContain('10:00 – 18:00');
 
 		// Telegram QR & messaging icon (clean without outer stroke outline, matching ink color)
-		expect(svgDark).toContain('viewBox="0 0 820 820"');
+		expect(svgDark).toContain('viewBox="70 70 680 680"');
 		expect(svgDark).toContain('qr-center-badge');
 		expect(svgDark).toContain('M365.32 132.19');
 		expect(svgDark).toContain('M256 0C114.61');
