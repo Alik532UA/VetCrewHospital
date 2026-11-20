@@ -732,6 +732,7 @@
 		gap: 1.5rem;
 		padding: 0 calc(64px + 1.5rem);
 		transition: padding 0.2s ease;
+		zoom: var(--brandbook-zoom, 1);
 	}
 
 	.top-nav-bar {
@@ -852,10 +853,12 @@
 	}
 
 	.brandbook-sections {
+		grid-column: 2;
 		display: flex;
 		flex-direction: column;
 		gap: 2.75rem;
 		min-width: 0;
+		zoom: var(--brandbook-zoom, 1);
 	}
 
 	/* CARDS */
@@ -1228,6 +1231,7 @@
 		}
 
 		.brandbook-sections {
+			grid-column: auto;
 			gap: 1.75rem;
 			width: 100%;
 			max-width: 100%;

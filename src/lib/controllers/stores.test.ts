@@ -6,6 +6,7 @@ vi.mock('$app/environment', () => ({ browser: true }));
 import { langStore } from './lang.svelte';
 import { themeStore } from './theme.svelte';
 import { bgStore, DEFAULT_BG_SETTINGS } from './background.svelte';
+import { zoomStore, MIN_ZOOM, MAX_ZOOM, ZOOM_STEP } from './zoom.svelte';
 
 describe('langStore controller', () => {
 	it('має початкову мову uk або en та коректний переклад назви госпіталю', () => {
@@ -175,5 +176,36 @@ describe('bgStore controller', () => {
 		expect(bgLayerCode).toContain('vetcrew-bg-light.webp');
 		expect(bgLayerCode).toContain('vetcrew-bg-dark.webp');
 		expect(bgLayerCode).not.toContain('/bg/vetcrew-bg.webp');
+	});
+});
+
+describe('zoomStore controller', () => {
+	it('ініціалізується дефолтним масштабом 100%', () => {
+		zoomStore.reset();
+		expect(zoomStore.level).toBe(100);
+		expect(zoomStore.scale).toBe(1.0);
+	});
+
+	it('збільшує масштаб з кроком ZOOM_STEP і не перевищує MAX_ZOOM', () => {
+		zoomStore.set(120);
+		zoomStore.zoomIn();
+		expect(zoomStore.level).toBe(MAX_ZOOM);
+		zoomStore.zoomIn();
+		expect(zoomStore.level).toBe(MAX_ZOOM);
+	});
+
+	it('зменшує масштаб з кроком ZOOM_STEP і не опускається нижче MIN_ZOOM', () => {
+		zoomStore.set(80);
+		zoomStore.zoomOut();
+		expect(zoomStore.level).toBe(MIN_ZOOM);
+		zoomStore.zoomOut();
+		expect(zoomStore.level).toBe(MIN_ZOOM);
+	});
+
+	it('скидає масштаб до 100% при reset()', () => {
+		zoomStore.set(70);
+		zoomStore.reset();
+		expect(zoomStore.level).toBe(100);
+		expect(zoomStore.scale).toBe(1.0);
 	});
 });

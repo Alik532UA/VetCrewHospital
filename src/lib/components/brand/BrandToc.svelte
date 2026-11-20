@@ -2,6 +2,7 @@
 	import { browser } from '$app/environment';
 	import { langStore } from '$lib/lang.svelte';
 	import { themeStore } from '$lib/theme.svelte';
+	import { zoomStore, MIN_ZOOM, MAX_ZOOM } from '$lib/zoom.svelte';
 
 	interface TocSection {
 		id: string;
@@ -151,6 +152,27 @@
 				activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
 			}
 		}
+	});
+
+	$effect(() => {
+		if (!browser) return;
+		const updateLeft = () => {
+			if (window.innerWidth <= 900) {
+				host?.style.removeProperty('--brand-toc-left');
+				return;
+			}
+			const layout = document.querySelector('.brandbook-layout');
+			if (layout) {
+				const rect = layout.getBoundingClientRect();
+				host?.style.setProperty('--brand-toc-left', `${rect.left}px`);
+			}
+		};
+
+		updateLeft();
+		window.addEventListener('resize', updateLeft, { passive: true });
+		return () => {
+			window.removeEventListener('resize', updateLeft);
+		};
 	});
 
 	function scrollToSection(e: MouseEvent, id: string) {
@@ -424,30 +446,125 @@
 				>
 			</span>
 		</button>
+
+		<div class="toc-divider" aria-hidden="true"></div>
+
+		<!-- ZOOM OUT (-) -->
+		<button
+			type="button"
+			class="toc-btn toc-zoom-btn"
+			onclick={() => zoomStore.zoomOut()}
+			ondblclick={() => zoomStore.reset()}
+			disabled={zoomStore.level <= MIN_ZOOM}
+			aria-label={langStore.current === 'uk'
+				? `Зменшити масштаб (${zoomStore.level}%)`
+				: `Zoom Out (${zoomStore.level}%)`}
+			title={langStore.current === 'uk'
+				? `Зменшити масштаб (${zoomStore.level}%)`
+				: `Zoom Out (${zoomStore.level}%)`}
+		>
+			<span class="toc-icon-wrap">
+				<svg
+					width="18"
+					height="18"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<line x1="5" y1="12" x2="19" y2="12" />
+				</svg>
+			</span>
+			<span class="toc-tooltip" role="tooltip">
+				<span class="tooltip-num">{zoomStore.level}%</span>
+				<span class="tooltip-text"
+					>{langStore.current === 'uk' ? 'Зменшити масштаб' : 'Zoom Out'}</span
+				>
+			</span>
+		</button>
+
+		<!-- ZOOM IN (+) -->
+		<button
+			type="button"
+			class="toc-btn toc-zoom-btn"
+			onclick={() => zoomStore.zoomIn()}
+			ondblclick={() => zoomStore.reset()}
+			disabled={zoomStore.level >= MAX_ZOOM}
+			aria-label={langStore.current === 'uk'
+				? `Збільшити масштаб (${zoomStore.level}%)`
+				: `Zoom In (${zoomStore.level}%)`}
+			title={langStore.current === 'uk'
+				? `Збільшити масштаб (${zoomStore.level}%)`
+				: `Zoom In (${zoomStore.level}%)`}
+		>
+			<span class="toc-icon-wrap">
+				<svg
+					width="18"
+					height="18"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<line x1="12" y1="5" x2="12" y2="19" />
+					<line x1="5" y1="12" x2="19" y2="12" />
+				</svg>
+			</span>
+			<span class="toc-tooltip" role="tooltip">
+				<span class="tooltip-num">{zoomStore.level}%</span>
+				<span class="tooltip-text"
+					>{langStore.current === 'uk' ? 'Збільшити масштаб' : 'Zoom In'}</span
+				>
+			</span>
+		</button>
 	</div>
 </nav>
 
 <style>
 	.brand-toc {
-		position: sticky;
+		position: fixed;
+		left: var(--brand-toc-left, max(1.5rem, calc((100vw - 1280px) / 2)));
 		top: 50%;
 		transform: translateY(-50%);
-		align-self: start;
 		z-index: 100;
+		max-height: calc(100dvh - 1.5rem);
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		pointer-events: none;
 	}
 
 	.toc-list {
+		pointer-events: auto;
+		--toc-btn-size: clamp(26px, 4.3dvh, 42px);
+		--toc-gap: clamp(2px, 0.5dvh, 6px);
+		--toc-pad: clamp(4px, 0.6dvh, 8px);
 		display: flex;
 		flex-direction: column;
-		gap: 0.6rem;
+		gap: var(--toc-gap);
 		background: var(--panel-bg);
 		backdrop-filter: blur(14px);
 		-webkit-backdrop-filter: blur(14px);
-		padding: 0.55rem;
-		border-radius: 18px;
+		padding: var(--toc-pad);
+		border-radius: calc(var(--toc-btn-size) * 0.4 + 4px);
 		border: 1px solid var(--border);
 		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 		width: fit-content;
+		max-height: calc(100dvh - 1.5rem);
+		overflow-y: auto;
+		overflow-x: hidden;
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+	}
+
+	.toc-list::-webkit-scrollbar {
+		display: none;
 	}
 
 	.toc-btn {
@@ -455,23 +572,30 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: 46px;
-		height: 46px;
-		border-radius: 12px;
+		width: var(--toc-btn-size);
+		height: var(--toc-btn-size);
+		border-radius: calc(var(--toc-btn-size) * 0.26);
 		background: var(--bg-secondary);
 		border: 2px solid transparent;
 		color: var(--fg-secondary);
 		text-decoration: none;
 		transition: all 0.2s ease;
 		cursor: pointer;
+		flex-shrink: 0;
 	}
 
-	.toc-btn:hover {
+	.toc-btn:hover:not(:disabled) {
 		transform: scale(1.06);
 		color: var(--brand-leaf);
 		border-color: var(--border-hover);
 		background: var(--panel-bg);
 		z-index: 10;
+	}
+
+	.toc-btn:disabled {
+		opacity: 0.32;
+		cursor: not-allowed;
+		transform: none !important;
 	}
 
 	.toc-btn.is-active {
@@ -489,8 +613,13 @@
 		height: 100%;
 	}
 
+	.toc-icon-wrap svg {
+		width: calc(var(--toc-btn-size) * 0.48);
+		height: calc(var(--toc-btn-size) * 0.48);
+	}
+
 	.type-glyph {
-		font-size: 1.05rem;
+		font-size: 0.95rem;
 		font-weight: 800;
 		font-family:
 			'Montserrat',
@@ -563,6 +692,7 @@
 		width: 100%;
 		background: var(--border);
 		margin: 2px 0;
+		flex-shrink: 0;
 	}
 
 	.toc-theme-btn {
@@ -575,6 +705,19 @@
 
 	:global([data-theme='dark']) .toc-theme-btn:hover,
 	:global(.dark) .toc-theme-btn:hover {
+		color: var(--brand-gold);
+	}
+
+	.toc-zoom-btn {
+		color: var(--fg-secondary);
+	}
+
+	.toc-zoom-btn:hover:not(:disabled) {
+		color: var(--brand-leaf);
+	}
+
+	:global([data-theme='dark']) .toc-zoom-btn:hover:not(:disabled),
+	:global(.dark) .toc-zoom-btn:hover:not(:disabled) {
 		color: var(--brand-gold);
 	}
 
@@ -593,8 +736,9 @@
 			bottom: calc(max(0.6rem, env(safe-area-inset-bottom, 0.6rem)));
 			left: 50%;
 			transform: translateX(-50%);
-			width: min(calc(100% - 1.2rem), 480px);
-			max-width: 480px;
+			width: min(calc(100% - 1.2rem), 540px);
+			max-width: 540px;
+			max-height: none;
 			z-index: 100;
 			pointer-events: none;
 		}
@@ -605,6 +749,7 @@
 			justify-content: flex-start;
 			align-items: center;
 			width: 100%;
+			max-height: none;
 			gap: 5px;
 			padding: 0.35rem 0.5rem;
 			border-radius: 16px;
@@ -612,6 +757,7 @@
 			border: 1px solid var(--border);
 			box-shadow: 0 10px 32px rgba(0, 0, 0, 0.28);
 			overflow-x: auto;
+			overflow-y: hidden;
 			-webkit-overflow-scrolling: touch;
 			scrollbar-width: none;
 		}
@@ -636,6 +782,15 @@
 			height: clamp(34px, 8vw, 38px);
 			border-radius: 9px;
 			flex-shrink: 0;
+		}
+
+		.toc-icon-wrap svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		.type-glyph {
+			font-size: 0.95rem;
 		}
 
 		.toc-tooltip {
