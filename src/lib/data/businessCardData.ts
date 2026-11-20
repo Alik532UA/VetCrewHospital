@@ -133,7 +133,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 	const side = options.side ?? 'front';
 	const frostedInk = options.frostedInk ?? 'dark';
 	const solidTheme = options.solidTheme ?? 'dark';
-	const emblemVariant = options.emblemVariant ?? '04';
+	const emblemVariant = options.emblemVariant ?? '01';
 	const showBleed = options.showBleed ?? false;
 	const lang = options.lang ?? 'uk';
 
@@ -289,34 +289,38 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 
 		// Left Column: Official Emblem with Animals & Titles
 		const emblemSize = isEuro ? 450 : 425;
-		const emblemX = isEuro ? 12 : 18;
+		const emblemX = isEuro ? 16 : 20;
 		const emblemY = isEuro ? 50 : 38;
 
-		// Divider Line
-		const dividerX = isEuro ? 440 : 465;
+		// Center Vertical Divider (Spindle / Needle tapering at edges, slightly expanding at center)
+		// Exactly halfway between visual right of emblem and contact block left
+		const dividerX = isEuro ? 443 : 445;
 		const dividerY1 = isEuro ? 45 : 45;
 		const dividerY2 = isEuro ? 505 : 455;
+		const dividerH = dividerY2 - dividerY1;
+		const dividerHw = isEuro ? 1.6 : 1.5;
 
 		// Right Column: Center X
-		const rightCenterX = isEuro ? (dividerX + w) / 2 : (dividerX + w) / 2;
+		const rightCenterX = isEuro ? 647 : 673;
 
-		// QR Code (enlarged by ~10-12% for dominant visual hierarchy matching client mockup)
-		const qrSize = isEuro ? 244 : 232;
+		// QR Code (enlarged so pill is closer to QR code than to phone)
+		const qrSize = isEuro ? 264 : 252;
 		const qrX = rightCenterX - qrSize / 2;
-		const qrY = isEuro ? 32 : 28;
+		const qrY = isEuro ? 26 : 22;
 
-		// Pill Badge: "Запис у Telegram"
+		// Pill Badge: "Запис у Telegram" (close to QR code)
 		const pillW = isEuro ? 270 : 262;
 		const pillH = isEuro ? 42 : 40;
 		const pillX = rightCenterX - pillW / 2;
-		const pillY = qrY + qrSize + (isEuro ? 16 : 14);
+		const pillY = qrY + qrSize + 10;
 		const pillTextY = pillY + (isEuro ? 26.5 : 25.5);
 		const pillFontSize = isEuro ? 18 : 17;
 
 		// Contacts List (Phone, Address, Website)
-		const contactX = isEuro ? 480 : 512;
-		const contactRowGap = isEuro ? 50 : 46;
-		const phoneY = pillY + pillH + (isEuro ? 44 : 40);
+		// Unified font weight (700) across all items
+		const contactX = isEuro ? 485 : 505;
+		const contactRowGap = isEuro ? 48 : 44;
+		const phoneY = pillY + pillH + (isEuro ? 46 : 42);
 		const addressY = phoneY + contactRowGap;
 		const websiteY = addressY + contactRowGap;
 
@@ -330,8 +334,8 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
       ${renderEmblemAnimals(emblemColors, emblemVariant)}
     </svg>
 
-    <!-- CENTER VERTICAL DIVIDER -->
-    <line x1="${dividerX}" y1="${dividerY1}" x2="${dividerX}" y2="${dividerY2}" stroke="${dividerColor}" stroke-width="1.5" opacity="0.5" stroke-linecap="round" />
+    <!-- CENTER VERTICAL DIVIDER (ELEGANT TAPERED SPINDLE) -->
+    <path d="M ${dividerX} ${dividerY1} C ${dividerX - dividerHw} ${dividerY1 + dividerH * 0.28}, ${dividerX - dividerHw} ${dividerY2 - dividerH * 0.28}, ${dividerX} ${dividerY2} C ${dividerX + dividerHw} ${dividerY2 - dividerH * 0.28}, ${dividerX + dividerHw} ${dividerY1 + dividerH * 0.28}, ${dividerX} ${dividerY1} Z" fill="${dividerColor}" opacity="0.65" />
 
     <!-- RIGHT COLUMN: TELEGRAM QR CODE -->
     <g transform="translate(${qrX}, ${qrY})">
@@ -353,10 +357,10 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
     <!-- CONTACT ITEMS -->
     <!-- 1. Direct Emergency / Call Telephone -->
     <g transform="translate(${contactX}, ${phoneY})">
-      <g transform="translate(0, -20) scale(1.15)" fill="none" stroke="${contactIconColor}" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+      <g transform="translate(0, -20) scale(1.15)" fill="none" stroke="${contactIconColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         ${CARD_CONTACT_ICONS.phone}
       </g>
-      <text x="36" y="0" font-family="'Montserrat', sans-serif" font-weight="800" font-size="${phoneFontSize}" letter-spacing="0.5" fill="${primaryInk}">
+      <text x="36" y="0" font-family="'Montserrat', sans-serif" font-weight="700" font-size="${phoneFontSize}" letter-spacing="0.5" fill="${primaryInk}">
         ${CARD_INFO.phoneDisplay}
       </text>
     </g>
@@ -366,7 +370,7 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
       <g transform="translate(0, -18) scale(1.05)" fill="none" stroke="${contactIconColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         ${CARD_CONTACT_ICONS.pin}
       </g>
-      <text x="36" y="0" font-family="'Montserrat', sans-serif" font-weight="600" font-size="${addressFontSize}" letter-spacing="0.3" fill="${primaryInk}">
+      <text x="36" y="0" font-family="'Montserrat', sans-serif" font-weight="700" font-size="${addressFontSize}" letter-spacing="0.3" fill="${primaryInk}">
         ${addressText}
       </text>
     </g>

@@ -23,7 +23,7 @@
 	let side = $state<CardSide>('front');
 	let frostedInk = $state<FrostedInk>('dark');
 	let solidTheme = $state<SolidTheme>('dark');
-	let emblemVariant = $state<EmblemVariantId>('04');
+	let emblemVariant = $state<EmblemVariantId>('01');
 	let showBleed = $state<boolean>(false);
 	let stageTheme = $state<StageTheme>('checker');
 	let copiedPhone = $state<boolean>(false);

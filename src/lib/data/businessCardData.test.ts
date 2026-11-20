@@ -167,8 +167,8 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 		expect(card).toContain('id="text-vet-crew"');
 		expect(card).toContain('id="text-hospital"');
 
-		// 2. Центральний тонкий вертикальний розділювач
-		expect(card).toMatch(/<line x1="\d+" y1="\d+" x2="\d+" y2="\d+"/);
+		// 2. Центральний вертикальний розділювач зі звуженням по краях та розширенням по центру
+		expect(card).toContain('M 445 45 C');
 
 		// 3. Права колонка: Telegram QR з круглим бейджем та літачком
 		expect(card).toContain('telegram-qr-modules');
@@ -191,21 +191,34 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 		expect(webIdx).toBeGreaterThan(addrIdx);
 	});
 
-	it('використовує за замовчуванням емблему "04 сходи" (хамелеон, білка, черепаха, морська свинка, сова) та підтримує інші версії', () => {
+	it('використовує за замовчуванням емблему "01 вхід" (гекон, кролик, миша, їжак, какаду) та підтримує інші версії', () => {
 		const cardDefault = generateCardSvg();
-		// 04 сходи animal path starts with M871.68,1130.64
-		expect(cardDefault).toContain('M871.68,1130.64');
-
-		const card01 = generateCardSvg({ emblemVariant: '01' });
 		// 01 вхід animal path starts with M648.0,1118.64
-		expect(card01).toContain('M648.0,1118.64');
-		expect(card01).not.toContain('M871.68,1130.64');
+		expect(cardDefault).toContain('M648.0,1118.64');
+
+		const card04 = generateCardSvg({ emblemVariant: '04' });
+		// 04 сходи animal path starts with M871.68,1130.64
+		expect(card04).toContain('M871.68,1130.64');
+		expect(card04).not.toContain('M648.0,1118.64');
 
 		const card02 = generateCardSvg({ emblemVariant: '02' });
 		expect(card02).toContain('id="animal-silhouettes"');
 
 		const card03 = generateCardSvg({ emblemVariant: '03' });
 		expect(card03).toContain('id="animal-silhouettes"');
+	});
+
+	it('має однакову товщину шрифта (700) для списку контактів (телефон, адреса, сайт)', () => {
+		const card = generateCardSvg();
+		expect(card).toContain('font-weight="700" font-size="23" letter-spacing="0.5" fill="#13371B">\n        +380 77 501 01 01');
+		expect(card).toContain('font-weight="700" font-size="18" letter-spacing="0.3" fill="#13371B">\n        м. Одеса, вул. Майстрова, 4');
+		expect(card).toContain('font-weight="700" font-size="19" letter-spacing="0.4" fill="#13371B">\n        vet-crew-hospital.org');
+	});
+
+	it('має розділювач з однаковою відстанню до логотипу та до контактів', () => {
+		const card = generateCardSvg({ format: 'standard' });
+		expect(card).toContain('M 445 45 C');
+		expect(card).toContain('transform="translate(505, ');
 	});
 
 	it('фарбує текст сайту та іконку сайту в темно-зелений колір (#13371B) для темного чорнила / світлої теми', () => {
