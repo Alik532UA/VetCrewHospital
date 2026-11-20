@@ -449,80 +449,108 @@
 
 		<div class="toc-divider" aria-hidden="true"></div>
 
-		<!-- ZOOM OUT (-) -->
-		<button
-			type="button"
-			class="toc-btn toc-zoom-btn"
-			onclick={() => zoomStore.zoomOut()}
-			ondblclick={() => zoomStore.reset()}
-			disabled={zoomStore.level <= MIN_ZOOM}
-			aria-label={langStore.current === 'uk'
-				? `Зменшити масштаб (${zoomStore.level}%)`
-				: `Zoom Out (${zoomStore.level}%)`}
-			title={langStore.current === 'uk'
-				? `Зменшити масштаб (${zoomStore.level}%)`
-				: `Zoom Out (${zoomStore.level}%)`}
+		<!-- ZOOM CONTROLS (ROW: - | RESET | +) -->
+		<div
+			class="toc-zoom-row"
+			role="group"
+			aria-label={langStore.current === 'uk' ? 'Масштаб сторінки' : 'Page Zoom'}
 		>
-			<span class="toc-icon-wrap">
+			<!-- ZOOM OUT (-) -->
+			<button
+				type="button"
+				class="toc-mini-btn"
+				onclick={() => zoomStore.zoomOut()}
+				disabled={zoomStore.level <= MIN_ZOOM}
+				aria-label={langStore.current === 'uk'
+					? `Зменшити масштаб (${zoomStore.level}%)`
+					: `Zoom Out (${zoomStore.level}%)`}
+			>
 				<svg
-					width="18"
-					height="18"
+					width="10"
+					height="10"
 					viewBox="0 0 24 24"
 					fill="none"
 					stroke="currentColor"
-					stroke-width="2.5"
+					stroke-width="3"
 					stroke-linecap="round"
-					stroke-linejoin="round"
 					aria-hidden="true"
 				>
-					<line x1="5" y1="12" x2="19" y2="12" />
+					<line x1="4" y1="12" x2="20" y2="12" />
 				</svg>
-			</span>
-			<span class="toc-tooltip" role="tooltip">
-				<span class="tooltip-num">{zoomStore.level}%</span>
-				<span class="tooltip-text"
-					>{langStore.current === 'uk' ? 'Зменшити масштаб' : 'Zoom Out'}</span
-				>
-			</span>
-		</button>
+				<span class="toc-tooltip" role="tooltip">
+					<span class="tooltip-num">{zoomStore.level}%</span>
+					<span class="tooltip-text"
+						>{langStore.current === 'uk' ? 'Зменшити масштаб' : 'Zoom Out'}</span
+					>
+				</span>
+			</button>
 
-		<!-- ZOOM IN (+) -->
-		<button
-			type="button"
-			class="toc-btn toc-zoom-btn"
-			onclick={() => zoomStore.zoomIn()}
-			ondblclick={() => zoomStore.reset()}
-			disabled={zoomStore.level >= MAX_ZOOM}
-			aria-label={langStore.current === 'uk'
-				? `Збільшити масштаб (${zoomStore.level}%)`
-				: `Zoom In (${zoomStore.level}%)`}
-			title={langStore.current === 'uk'
-				? `Збільшити масштаб (${zoomStore.level}%)`
-				: `Zoom In (${zoomStore.level}%)`}
-		>
-			<span class="toc-icon-wrap">
+			<!-- RESET TO DEFAULT (100%) -->
+			<button
+				type="button"
+				class="toc-mini-btn"
+				class:is-active-reset={zoomStore.level !== 100}
+				onclick={() => zoomStore.reset()}
+				disabled={zoomStore.level === 100}
+				aria-label={langStore.current === 'uk'
+					? `Скинути масштаб (${zoomStore.level}%)`
+					: `Reset Zoom (${zoomStore.level}%)`}
+			>
 				<svg
-					width="18"
-					height="18"
+					width="10"
+					height="10"
 					viewBox="0 0 24 24"
 					fill="none"
 					stroke="currentColor"
-					stroke-width="2.5"
+					stroke-width="2.6"
 					stroke-linecap="round"
 					stroke-linejoin="round"
 					aria-hidden="true"
 				>
-					<line x1="12" y1="5" x2="12" y2="19" />
-					<line x1="5" y1="12" x2="19" y2="12" />
+					<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+					<path d="M3 3v5h5" />
 				</svg>
-			</span>
-			<span class="toc-tooltip" role="tooltip">
-				<span class="tooltip-num">{zoomStore.level}%</span>
-				<span class="tooltip-text"
-					>{langStore.current === 'uk' ? 'Збільшити масштаб' : 'Zoom In'}</span
+				<span class="toc-tooltip" role="tooltip">
+					<span class="tooltip-num">{zoomStore.level}%</span>
+					<span class="tooltip-text"
+						>{langStore.current === 'uk'
+							? 'Скинути за замовчуванням (100%)'
+							: 'Reset to default (100%)'}</span
+					>
+				</span>
+			</button>
+
+			<!-- ZOOM IN (+) -->
+			<button
+				type="button"
+				class="toc-mini-btn"
+				onclick={() => zoomStore.zoomIn()}
+				disabled={zoomStore.level >= MAX_ZOOM}
+				aria-label={langStore.current === 'uk'
+					? `Збільшити масштаб (${zoomStore.level}%)`
+					: `Zoom In (${zoomStore.level}%)`}
+			>
+				<svg
+					width="10"
+					height="10"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="3"
+					stroke-linecap="round"
+					aria-hidden="true"
 				>
-			</span>
-		</button>
+					<line x1="12" y1="4" x2="12" y2="20" />
+					<line x1="4" y1="12" x2="20" y2="12" />
+				</svg>
+				<span class="toc-tooltip" role="tooltip">
+					<span class="tooltip-num">{zoomStore.level}%</span>
+					<span class="tooltip-text"
+						>{langStore.current === 'uk' ? 'Збільшити масштаб' : 'Zoom In'}</span
+					>
+				</span>
+			</button>
+		</div>
 	</div>
 </nav>
 
@@ -681,7 +709,9 @@
 	}
 
 	.toc-btn:hover .toc-tooltip,
-	.toc-btn:focus-visible .toc-tooltip {
+	.toc-btn:focus-visible .toc-tooltip,
+	.toc-mini-btn:hover .toc-tooltip,
+	.toc-mini-btn:focus-visible .toc-tooltip {
 		opacity: 1;
 		visibility: visible;
 		transform: translateY(-50%) translateX(0);
@@ -708,16 +738,57 @@
 		color: var(--brand-gold);
 	}
 
-	.toc-zoom-btn {
+	/* ZOOM 3-IN-A-ROW ROW (- | RESET | +) */
+	.toc-zoom-row {
+		position: relative;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+		gap: 2px;
+		width: var(--toc-btn-size);
+		height: clamp(20px, 2.8dvh, 26px);
+		flex-shrink: 0;
+	}
+
+	.toc-mini-btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 100%;
+		border-radius: 4px;
+		background: var(--bg-secondary);
+		border: 1px solid transparent;
 		color: var(--fg-secondary);
+		padding: 0;
+		cursor: pointer;
+		transition: all 0.18s ease;
 	}
 
-	.toc-zoom-btn:hover:not(:disabled) {
+	.toc-mini-btn:hover:not(:disabled) {
 		color: var(--brand-leaf);
+		border-color: var(--border-hover);
+		background: var(--panel-bg);
+		z-index: 5;
 	}
 
-	:global([data-theme='dark']) .toc-zoom-btn:hover:not(:disabled),
-	:global(.dark) .toc-zoom-btn:hover:not(:disabled) {
+	.toc-mini-btn:disabled {
+		opacity: 0.3;
+		cursor: not-allowed;
+	}
+
+	.toc-mini-btn.is-active-reset {
+		color: var(--brand-leaf);
+		border-color: rgba(89, 143, 58, 0.4);
+	}
+
+	:global([data-theme='dark']) .toc-mini-btn.is-active-reset,
+	:global(.dark) .toc-mini-btn.is-active-reset {
+		color: var(--brand-gold);
+		border-color: rgba(255, 179, 39, 0.4);
+	}
+
+	:global([data-theme='dark']) .toc-mini-btn:hover:not(:disabled),
+	:global(.dark) .toc-mini-btn:hover:not(:disabled) {
 		color: var(--brand-gold);
 	}
 
@@ -782,6 +853,21 @@
 			height: clamp(34px, 8vw, 38px);
 			border-radius: 9px;
 			flex-shrink: 0;
+		}
+
+		.toc-zoom-row {
+			width: clamp(60px, 15vw, 76px);
+			height: clamp(34px, 8vw, 38px);
+			gap: 3px;
+		}
+
+		.toc-mini-btn {
+			border-radius: 6px;
+		}
+
+		.toc-mini-btn svg {
+			width: 13px;
+			height: 13px;
 		}
 
 		.toc-icon-wrap svg {
