@@ -6,7 +6,7 @@ vi.mock('$app/environment', () => ({ browser: true }));
 import { langStore } from './lang.svelte';
 import { themeStore } from './theme.svelte';
 import { bgStore, DEFAULT_BG_SETTINGS } from './background.svelte';
-import { zoomStore, MIN_ZOOM, MAX_ZOOM, ZOOM_STEP } from './zoom.svelte';
+import { zoomStore, MIN_ZOOM, MAX_ZOOM } from './zoom.svelte';
 
 describe('langStore controller', () => {
 	it('має початкову мову uk або en та коректний переклад назви госпіталю', () => {

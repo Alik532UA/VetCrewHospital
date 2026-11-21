@@ -267,14 +267,15 @@
 				{langStore.current === 'uk' ? 'Логотип (тварини):' : 'Emblem Animals:'}
 			</span>
 			<div class="pill-tabs" role="tablist">
-				{#each EMBLEM_VARIANTS as variant}
+				{#each EMBLEM_VARIANTS as variant (variant.id)}
 					<button
 						type="button"
 						class="pill-tab"
 						class:active={emblemVariant === variant.id}
 						onclick={() => (emblemVariant = variant.id)}
 					>
-						<span>{variant.num} {langStore.current === 'uk' ? variant.nameUk : variant.nameEn}</span>
+						<span>{variant.num} {langStore.current === 'uk' ? variant.nameUk : variant.nameEn}</span
+						>
 					</button>
 				{/each}
 			</div>

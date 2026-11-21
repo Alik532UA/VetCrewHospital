@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { CARD_DIMENSIONS, CARD_INFO, CARD_CONTACT_ICONS, generateCardSvg } from './businessCardData';
+import {
+	CARD_DIMENSIONS,
+	CARD_INFO,
+	CARD_CONTACT_ICONS,
+	generateCardSvg
+} from './businessCardData';
 
 describe('Business Card Data & Generator (ADR 0003)', () => {
 	it('має точні фізичні розміри для стандартного та євро форматів', () => {
@@ -210,9 +215,15 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 
 	it('має однакову товщину шрифта (700) для списку контактів (телефон, адреса, сайт)', () => {
 		const card = generateCardSvg();
-		expect(card).toContain('font-weight="700" font-size="23" letter-spacing="0.5" fill="#13371B">\n        +380 77 501 01 01');
-		expect(card).toContain('font-weight="700" font-size="18" letter-spacing="0.3" fill="#13371B">\n        м. Одеса, вул. Майстрова, 4');
-		expect(card).toContain('font-weight="700" font-size="19" letter-spacing="0.4" fill="#13371B">\n        vet-crew-hospital.org');
+		expect(card).toContain(
+			'font-weight="700" font-size="23" letter-spacing="0.5" fill="#13371B">\n        +380 77 501 01 01'
+		);
+		expect(card).toContain(
+			'font-weight="700" font-size="18" letter-spacing="0.3" fill="#13371B">\n        м. Одеса, вул. Майстрова, 4'
+		);
+		expect(card).toContain(
+			'font-weight="700" font-size="19" letter-spacing="0.4" fill="#13371B">\n        vet-crew-hospital.org'
+		);
 	});
 
 	it('має розділювач з однаковою відстанню до логотипу та до контактів', () => {
@@ -223,7 +234,10 @@ describe('Business Card Data & Generator (ADR 0003)', () => {
 
 	it('фарбує текст сайту та іконку сайту в темно-зелений колір (#13371B) для темного чорнила / світлої теми', () => {
 		const card = generateCardSvg({ material: 'frosted', frostedInk: 'dark' });
-		expect(card).toContain('stroke="#13371B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">\n        ' + CARD_CONTACT_ICONS.globe);
+		expect(card).toContain(
+			'stroke="#13371B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">\n        ' +
+				CARD_CONTACT_ICONS.globe
+		);
 		expect(card).toContain('fill="#13371B">\n        vet-crew-hospital.org');
 	});
 });

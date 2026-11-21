@@ -7,8 +7,7 @@ import {
 	renderEmblemAnimals,
 	EMBLEM_ANIMALS_VIEWBOX,
 	type EmblemAnimalsColors,
-	type EmblemVariantId,
-	EMBLEM_VARIANTS
+	type EmblemVariantId
 } from './emblemAnimalsData';
 
 export type { EmblemVariantId, EmblemVariantInfo } from './emblemAnimalsData';
@@ -147,7 +146,6 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 	// Determine palette colors
 	let bgFill: string;
 	let primaryInk: string;
-	let secondaryInk: string;
 	let dividerColor: string;
 	let pillBg: string;
 	let pillTextColor: string;
@@ -163,7 +161,6 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 		centerBg = 'none';
 		if (frostedInk === 'white') {
 			primaryInk = '#FFFFFF';
-			secondaryInk = 'rgba(255, 255, 255, 0.95)';
 			dividerColor = 'rgba(255, 255, 255, 0.55)';
 			pillBg = 'rgba(255, 255, 255, 0.22)';
 			pillTextColor = '#FFFFFF';
@@ -184,7 +181,6 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 		} else {
 			// Luxury Emerald / Brand (Client Mockup Standard)
 			primaryInk = '#13371B';
-			secondaryInk = '#598F3A';
 			dividerColor = '#13371B';
 			pillBg = '#C2E29B';
 			pillTextColor = '#13371B';
@@ -209,7 +205,6 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 			bgFill = '#13371B';
 			centerBg = '#13371B';
 			primaryInk = '#FFFFFF';
-			secondaryInk = '#93C84A';
 			dividerColor = 'rgba(255, 255, 255, 0.35)';
 			pillBg = '#93C84A';
 			pillTextColor = '#13371B';
@@ -231,7 +226,6 @@ export function generateCardSvg(options: CardRenderOptions = {}): string {
 			bgFill = '#FFFFFF';
 			centerBg = '#FFFFFF';
 			primaryInk = '#13371B';
-			secondaryInk = '#598F3A';
 			dividerColor = 'rgba(19, 55, 27, 0.35)';
 			pillBg = '#C2E29B';
 			pillTextColor = '#13371B';
